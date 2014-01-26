@@ -21,13 +21,12 @@ import de.static_interface.sinkchat.channel.ChannelUtil;
 import de.static_interface.sinkchat.channel.IChannel;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Vector;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
 
-public class HelpChannel extends JavaPlugin implements IChannel
+public class HelpChannel implements IChannel
 {
 
     Vector<Player> exceptedPlayers = new Vector<>();
