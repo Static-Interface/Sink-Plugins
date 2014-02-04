@@ -96,7 +96,7 @@ public class SinkAntiSpamListener implements Listener
             return;
         }
 
-        String word = listContainsString(blacklistedWords, message);
+        String word = containsBlacklistedWord(message, blacklistedWords);
         if ( word != null && !word.isEmpty() && SinkLibrary.getSettings().isBlacklistedWordsEnabled() )
         {
             message = message.replace(word, ChatColor.BLUE.toString() + ChatColor.BOLD.toString() + ChatColor.UNDERLINE.toString() + word + ChatColor.RESET.toString());
@@ -138,7 +138,7 @@ public class SinkAntiSpamListener implements Listener
             {
                 return;
             }
-            if ( listContainsString(whiteListDomains, match) != null )
+            if ( containsBlacklistedWord(match, whiteListDomains) != null )
             {
                 return;
             }
@@ -154,14 +154,14 @@ public class SinkAntiSpamListener implements Listener
         }
     }
 
-    private static String listContainsString(List<String> listString, String input)
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+    private static String containsBlacklistedWord(String input, List<String> blacklistedWords)
     {
-        for ( String s : listString )
+        for ( String blacklistedWord : blacklistedWords )
         {
-            if ( input.toLowerCase().contains(' ' + s.toLowerCase() + ' ') || input.toLowerCase().contains(' ' + s.toLowerCase()) || input.toLowerCase().contains(s.toLowerCase() + ' ') ||
-                    (listString.toArray().length == 0 && input.toLowerCase().contains(s.toLowerCase())) || input.equals(s) )
+            for ( String word : input.split(" ") )
             {
-                return s;
+                if ( word.equals(blacklistedWord) ) return word;
             }
         }
         return null;
