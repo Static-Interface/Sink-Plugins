@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,6 +217,4 @@ public abstract class ConfigurationBase
         if ( !exists() ) return;
         load();
     }
-
-
 }

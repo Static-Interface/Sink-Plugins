@@ -37,8 +37,7 @@ permissions:
   sinkchat.*:
     description: Gives access to all commands
     children:
-      sinkchat.spy: true
-      sinkchat.spynewbie: true
+      sinkchat.spy.all: true
       sinkchat.shout: true
       sinkchat.color: true
       sinkchat.nick: true
@@ -55,6 +54,8 @@ permissions:
   sinkchat.spy.all:
       description: Players with this permission can read spy of all players, even of them with bypass permissions
       default: false
+      children:
+        sinkchat.spy: true
 
   sinkchat.color:
     description: Allows to use chat colors

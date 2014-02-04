@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.*;
@@ -38,7 +39,7 @@ public class SinkCommands extends JavaPlugin
 
     private static CommandsTimer timer;
 
-    SinkLibrary sinkLibrary = null;
+    private static boolean initialized = false;
 
     public void onEnable()
     {
@@ -53,8 +54,14 @@ public class SinkCommands extends JavaPlugin
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
-        registerEvents();
-        registerCommands();
+
+        if ( !initialized )
+        {
+            registerEvents();
+            registerCommands();
+            initialized = true;
+        }
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
         {
             @Override
@@ -68,21 +75,12 @@ public class SinkCommands extends JavaPlugin
 
     private boolean checkDependencies()
     {
-
-        PluginManager pm = Bukkit.getPluginManager();
-        try
-        {
-            sinkLibrary = (SinkLibrary) pm.getPlugin("SinkLibrary");
-        }
-        catch ( NoClassDefFoundError ignored )
-        {
-            sinkLibrary = null;
-        }
+        Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
 
         if ( sinkLibrary == null )
         {
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
-            pm.disablePlugin(this);
+            Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
         return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -68,7 +69,7 @@ public class WarnCommand implements CommandExecutor
         }
 
         target.sendMessage(PREFIX + ChatColor.RED + "Du wurdest von " + BukkitUtil.getSenderName(sender) + ChatColor.RED + " verwarnt. Grund: " + reason);
-        BukkitUtil.broadcast(PREFIX + target.getDisplayName() + " wurde von " + BukkitUtil.getSenderName(sender) + " verwarnt. Grund: " + reason, "sinkcommands.warn.message", true);
+        BukkitUtil.broadcast(PREFIX + SinkLibrary.getUser(target).getDisplayName() + " wurde von " + BukkitUtil.getSenderName(sender) + " verwarnt. Grund: " + reason, "sinkcommands.warn.message", true);
         return true;
     }
 }

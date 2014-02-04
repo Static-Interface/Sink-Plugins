@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ public class ChatListenerLowest implements Listener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
-
         User user = SinkLibrary.getUser(event.getPlayer());
 
         String groupPrefix = SinkLibrary.isPermissionsAvailable() ? ChatColor.RESET.toString() + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.RESET + ChatColor.GRAY + "] " : "";

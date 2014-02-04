@@ -42,13 +42,28 @@ public class Logger
 
     public void log(Level level, String message)
     {
-        logToFile(level, ChatColor.stripColor(message));
+        try
+        {
+            logToFile(level, ChatColor.stripColor(message));
+        }
+        catch ( Exception e )
+        {
+            Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
+        }
+
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message));
     }
 
     public void log(Level level, String message, Throwable throwable)
     {
-        logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", throwable));
+        try
+        {
+            logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", throwable));
+        }
+        catch ( Exception e )
+        {
+            Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
+        }
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message), throwable);
     }
 
@@ -126,5 +141,4 @@ public class Logger
     {
         return fileWriter;
     }
-
 }

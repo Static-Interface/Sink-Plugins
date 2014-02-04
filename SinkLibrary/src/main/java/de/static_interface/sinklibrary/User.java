@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,9 +164,7 @@ public class User
                 return playerPrefix + base.getName() + ChatColor.RESET;
             }
         }
-        catch ( Exception ignored )
-        {
-        }
+        catch ( Exception ignored ) {}
 
         String prefix = base.isOp() ? ChatColor.RED.toString() : ChatColor.WHITE.toString();
         return prefix + base.getName() + ChatColor.RESET;

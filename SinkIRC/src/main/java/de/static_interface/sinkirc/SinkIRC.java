@@ -20,6 +20,7 @@ import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
 import de.static_interface.sinkirc.commands.IrclistCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jibble.pircbot.IrcException;
 
@@ -28,10 +29,10 @@ import java.util.logging.Level;
 
 public class SinkIRC extends JavaPlugin
 {
+    private static boolean initialized = false;
 
     static SinkIRCBot sinkIrcBot;
     static String mainChannel;
-
 
     @Override
     public void onEnable()
@@ -86,43 +87,35 @@ public class SinkIRC extends JavaPlugin
                 {
                     sinkIrcBot.joinChannel(mainChannel);
                 }
-                try
-                {
-                    getCommand("irclist").setExecutor(new IrclistCommand());
-                    getCommand("ircmsg").setExecutor(new IrcPrivateMessageCommand());
-                }
-                catch ( Exception ignored )
-                {
-                    //Already registered? Throws NullPointer with /sreload
-                }
             }
         }.start();
-        Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
+
+        if ( !initialized )
+        {
+            Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
+            getCommand("irclist").setExecutor(new IrclistCommand());
+            getCommand("ircmsg").setExecutor(new IrcPrivateMessageCommand());
+            initialized = true;
+        }
     }
 
     private boolean checkDependencies()
     {
-        if ( Bukkit.getPluginManager().getPlugin("SinkLibrary") == null )
+        Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
+        Plugin sinkChat = Bukkit.getPluginManager().getPlugin("SinkChat");
+        if ( sinkLibrary == null || sinkChat == null )
         {
-            getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
+            SinkLibrary.getCustomLogger().log(Level.WARNING, "This plugin requires SinkLibrary and SinkChat");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
-
-        if ( Bukkit.getPluginManager().getPlugin("SinkChat") == null )
-        {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, "This plugin will not work without SinkChat.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return false;
-        }
-
         return true;
     }
 
     @Override
     public void onDisable()
     {
-        sinkIrcBot.quitServer("Plugin reload or plugin has been deactivated");
+        sinkIrcBot.quitServer("Plugin is reloading or server is shutting down...");
         System.gc();
     }
 

@@ -52,18 +52,18 @@ public class SinkLibrary extends JavaPlugin
     private static Permission perm;
     private static Chat chat;
     private static File dataFolder;
-
-    private static boolean economyAvailable = true;
-    private static boolean permissionsAvailable = true;
-    private static boolean chatAvailable = true;
-
     private static String version;
     private static Settings settings;
     private static List<JavaPlugin> registeredPlugins;
     private static HashMap<String, User> users;
-
     private static PluginDescriptionFile description;
+    private static boolean economyAvailable = true;
+    private static boolean permissionsAvailable = true;
+    private static boolean chatAvailable = true;
+    private static boolean initialized = false;
+
     static Logger logger;
+
 
     public void onEnable()
     {
@@ -133,9 +133,12 @@ public class SinkLibrary extends JavaPlugin
         }
 
         // Register Listeners and Commands
-        registerListeners();
-        registerCommands();
-
+        if ( !initialized )
+        {
+            registerListeners();
+            registerCommands();
+            initialized = true;
+        }
         // Check for updates
         update();
 

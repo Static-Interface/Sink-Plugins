@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ public class SinkAntiSpam extends JavaPlugin
 {
     public static String prefix;
 
+    private static boolean initialized = false;
+
     public void onEnable()
     {
         if ( !checkDependencies() )
@@ -39,7 +41,12 @@ public class SinkAntiSpam extends JavaPlugin
             return;
         }
         SinkLibrary.registerPlugin(this);
-        Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
+        if ( !initialized )
+        {
+            Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
+            initialized = true;
+        }
+
         prefix = _("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
     }
 

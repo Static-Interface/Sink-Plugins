@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,14 @@ import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
 public class SinkChat extends JavaPlugin
 {
+    private static boolean initialized = false;
+
     public void onEnable()
     {
         if ( !checkDependencies() )
@@ -51,8 +52,13 @@ public class SinkChat extends JavaPlugin
         hc.registerChannel();
         fc.registerChannel();
 
-        registerEvents(Bukkit.getPluginManager());
-        registerCommands();
+        if ( !initialized )
+        {
+            registerEvents();
+            registerCommands();
+            initialized = true;
+        }
+
     }
 
     public void onDisable()
@@ -72,10 +78,10 @@ public class SinkChat extends JavaPlugin
         return true;
     }
 
-    private void registerEvents(PluginManager pm)
+    private void registerEvents()
     {
-        pm.registerEvents(new ChatListenerLowest(), this);
-        pm.registerEvents(new ChatListenerHighest(), this);
+        Bukkit.getPluginManager().registerEvents(new ChatListenerLowest(), this);
+        Bukkit.getPluginManager().registerEvents(new ChatListenerHighest(), this);
     }
 
     private void registerCommands()

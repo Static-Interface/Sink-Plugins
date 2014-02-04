@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 adventuria.eu / static-interface.de
+ * Copyright (c) 2014 adventuria.eu / static-interface.de
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,12 @@ import de.static_interface.sinkchat.channel.ChannelUtil;
 import de.static_interface.sinkchat.channel.IChannel;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Vector;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
 
-public class TradeChannel extends JavaPlugin implements IChannel
+public class TradeChannel implements IChannel
 {
     Vector<Player> exceptedPlayers = new Vector<>();
     String PREFIX = ChatColor.GRAY + "[" + ChatColor.GOLD + getChannelName() + ChatColor.GRAY + "] " + ChatColor.RESET;

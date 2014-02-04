@@ -257,7 +257,7 @@ public class LanguageConfiguration
             SinkLibrary.getCustomLogger().log(Level.WARNING, yamlFile.getName() + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage() + " Using default value.");
             value = (String) getDefault(path);
         }
-        return value;
+        return ChatColor.translateAlternateColorCodes('&', value);
     }
 
     /**

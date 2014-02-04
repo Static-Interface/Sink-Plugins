@@ -28,6 +28,9 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SinkIRCBot extends PircBot
 {
     public static final String IRC_PREFIX = ChatColor.GRAY + "[IRC] " + ChatColor.RESET;
@@ -244,7 +247,7 @@ public class SinkIRCBot extends PircBot
                     }
                 });
 
-                sinkIrcBot.sendMessage(source, source + ": " + "Executed command: \"" + commandWithArgs + '"');
+                sinkIrcBot.sendMessage(source, sender + ": " + "Executed command: \"" + commandWithArgs + '"');
             }
 
             if ( command.equals("say") ) //Speak to ingame players
@@ -321,12 +324,11 @@ public class SinkIRCBot extends PircBot
 
             }
 
-
             if ( command.equals("privmsg") )
             {
                 if ( args.length < 2 )
                 {
-                    sinkIrcBot.sendCleanMessage(sender, sender + ": " + "Usage: " + IRCListener.COMMAND_PREFIX + "privmsg <target> <msg>");
+                    sinkIrcBot.sendCleanMessage(source, sender + ": " + "Usage: " + IRCListener.COMMAND_PREFIX + "privmsg <target> <msg>");
                     return;
                 }
                 de.static_interface.sinklibrary.User target;
@@ -337,7 +339,7 @@ public class SinkIRCBot extends PircBot
                     return;
                 }
 
-                String message = ChatColor.GRAY + "[IRC] [PRIVMSG] " + ChatColor.DARK_AQUA + sender + ChatColor.GRAY + ": " + ChatColor.WHITE;
+                String message = ChatColor.YELLOW + "[IRC] [PRIVMSG] " + ChatColor.DARK_AQUA + sender + ChatColor.YELLOW + ": " + ChatColor.WHITE;
 
                 for ( int x = 1; x < args.length; x++ )
                 {
@@ -345,6 +347,7 @@ public class SinkIRCBot extends PircBot
                 }
 
                 target.getPlayer().sendMessage(message);
+                sinkIrcBot.sendCleanMessage(source, "Message was send to \"" + target.getDisplayName() + "\"!");
                 return;
             }
 
@@ -403,5 +406,37 @@ public class SinkIRCBot extends PircBot
     public static boolean isDisabled()
     {
         return disabled;
+    }
+
+    /**
+     * Get online Player by name.
+     *
+     * @param name Name of the
+     * @return If more than one matches, it will return the player with exact name.
+     */
+    public User getUser(String name)
+    {
+        List<User> matchedPlayers = new ArrayList<>();
+        User exactUser = null;
+        for ( User user : getUsers(SinkIRC.getMainChannel()) )
+        {
+            if ( user.getNick().toLowerCase().contains(name.toLowerCase()) ) matchedPlayers.add(user);
+            if ( user.getNick().equalsIgnoreCase(name) ) exactUser = user;
+        }
+        if ( matchedPlayers.toArray().length > 1 && exactUser != null )
+        {
+            return exactUser;
+        }
+        else
+        {
+            try
+            {
+                return matchedPlayers.get(0);
+            }
+            catch ( Exception ignored )
+            {
+                return null;
+            }
+        }
     }
 }

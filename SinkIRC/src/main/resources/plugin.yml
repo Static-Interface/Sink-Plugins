@@ -12,17 +12,21 @@ commands:
     description: Shows online Users in IRC
     permission: sinkirc.irclist
 
+  ircprivatemessage:
+    description: Send a private message to an IRC User
+    permission: sinkirc.privatemessage
+
 permissions:
   sinkirc.*:
     description: Gives access to all IRC commands
     children:
-      sinkirc.irc: true
       sinkirc.irclist: true
-
-  sinkirc.irc:
-    description: Shows information about the IRC
-    default: true
+      sinkirc.privatemessage: true
 
   sinkirc.irclist:
     description: Shows online users in IRC
-    permission: sinkirc.irclist
+    default: true
+
+  sinkirc.privatemessage:
+    description: Allows to send private messages to IRC Users
+    default: true
