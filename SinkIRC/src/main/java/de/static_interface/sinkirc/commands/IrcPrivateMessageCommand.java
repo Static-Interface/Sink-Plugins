@@ -49,7 +49,8 @@ public class IrcPrivateMessageCommand implements CommandExecutor
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
 
-        SinkIRC.getIRCBot().sendMessage(target.getNick(), message);
+        message = message.replaceFirst("null", "").trim();
+        SinkIRC.getIRCBot().sendMessage(target.getNick(), ' ' + message);
 
         sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
 
