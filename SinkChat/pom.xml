@@ -42,7 +42,6 @@
     </organization>
 
     <scm>
-
         <connection>scm:git:https://github.com/Adventuria/Sink-Plugins.git</connection>
         <developerConnection>scm:git:https://github.com/Adventuria/Sink-Plugins.git</developerConnection>
         <url>https://github.com/Adventuria/Sink-Plugins</url>

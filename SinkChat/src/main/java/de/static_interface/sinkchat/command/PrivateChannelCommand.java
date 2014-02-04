@@ -245,8 +245,7 @@ public class PrivateChannelCommand implements CommandExecutor
                     reason = reason + ' ' + args[x];
                 }
 
-                Bukkit.getLogger().severe(privateChannel.toString());
-                //Target participates in channel, command sender is channel owner & channel participant. 
+                //Target participates in channel, command sender is channel owner & channel participant.
                 privateChannel.kickPlayer(Bukkit.getPlayer(args[2]), (Player) sender, reason);
                 return true;
             }

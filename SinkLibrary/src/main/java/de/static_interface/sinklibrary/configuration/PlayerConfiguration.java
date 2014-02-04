@@ -253,5 +253,4 @@ public class PlayerConfiguration extends ConfigurationBase
     {
         set("General.ExceptionTrackingEnabled", value);
     }
-
 }

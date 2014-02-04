@@ -44,7 +44,7 @@ public class IrclistCommand implements CommandExecutor
             {
                 name = ChatColor.RED + name + ChatColor.RESET;
             }
-            if ( message.equals("") )
+            if ( message.isEmpty() )
             {
                 message = name;
             }
