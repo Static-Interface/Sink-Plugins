@@ -4,11 +4,12 @@ For more information, visit <a href="http://dev.bukkit.org/bukkit-plugins/sink-p
 
 License
 ==============
-This work is licensed under an Apache License Version 2.0. For more information, read the LICENSE file.
+This work is licensed under an GNU General Public Licenese v3. For more information, read the LICENSE file.
 
 
 Coding Standards and Rules
 ==============
+* Each public method should have a javadoc comment
 * JavaDoc, comments, commit message etc. must be of course written in english.
 * Every single "{" and "}" needs to start on a new line.
 * Each keyword like "if", "else", "for" etc. needs to start on a new line. Except "else if (...)" which is allowed.
