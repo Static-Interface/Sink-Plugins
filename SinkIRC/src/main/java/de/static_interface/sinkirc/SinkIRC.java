@@ -95,7 +95,7 @@ public class SinkIRC extends JavaPlugin
         {
             Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
             getCommand("irclist").setExecutor(new IrclistCommand());
-            getCommand("ircmsg").setExecutor(new IrcPrivateMessageCommand());
+            getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
             initialized = true;
         }
     }

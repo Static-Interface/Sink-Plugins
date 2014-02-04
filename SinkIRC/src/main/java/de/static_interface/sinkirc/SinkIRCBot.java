@@ -51,6 +51,7 @@ public class SinkIRCBot extends PircBot
 
     public static String replaceColorCodes(String input)
     {
+        if ( input == null || input.isEmpty() ) return input;
         input = input.replace(ChatColor.BLACK.toString(), Colors.BLACK);
         input = input.replace(ChatColor.DARK_BLUE.toString(), Colors.DARK_BLUE);
         input = input.replace(ChatColor.DARK_GREEN.toString(), Colors.DARK_GREEN);

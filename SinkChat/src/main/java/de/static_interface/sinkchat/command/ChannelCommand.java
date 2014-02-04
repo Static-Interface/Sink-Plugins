@@ -26,12 +26,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
 
-public class ChannelCommand extends JavaPlugin implements CommandExecutor
+public class ChannelCommand implements CommandExecutor
 {
     public static final String PREFIX = _("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
 
