@@ -18,42 +18,40 @@
 package de.static_interface.sinkcommands.listener;
 
 
-import de.static_interface.sinkcommands.commands.SpectateCommands;
+import de.static_interface.sinkcommands.commands.DutyCommands;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-
-public class SpectateListener implements Listener
+public class DutyListener implements Listener
 {
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        if ( SpectateCommands.specedPlayers.containsValue(event.getPlayer()) )
+        for ( String user : DutyCommands.dutyPlayers.keySet() )
         {
-            Player player = getHashMapKey(SpectateCommands.specedPlayers, event.getPlayer());
-            SpectateCommands.specedPlayers.remove(player);
-            SpectateCommands.show(player);
-            player.sendMessage(SpectateCommands.PREFIX + "Spieler hat das Spiel verlassen, Spectate Modus wurde beendet.");
-        }
-        if ( SpectateCommands.specedPlayers.containsKey(event.getPlayer()) )
-        {
-            SpectateCommands.specedPlayers.remove(event.getPlayer());
+            if ( !user.equals(event.getPlayer().getName()) ) continue;
+            DutyCommands.DutyCommand.deactivateDutyMode(user);
+            return;
         }
     }
 
-    private Player getHashMapKey(HashMap<Player, Player> hashmap, Player value)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event)
     {
-        for ( Player p : hashmap.keySet() )
+        if ( !(event.getEntity() instanceof Player) ) return;
+        Player player = (Player) event.getEntity();
+
+        if ( DutyCommands.godmodeUsers.contains(player.getName()) )
         {
-            if ( hashmap.get(p).equals(value) )
-            {
-                return p;
-            }
+            event.setCancelled(true);
+            event.setDamage(0);
+            player.setFireTicks(0);
+            if ( event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) )
+                event.setCancelled(true);
         }
-        return null;
     }
 }

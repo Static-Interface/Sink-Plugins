@@ -41,21 +41,18 @@ commands:
     permission: sinkcommands.newbiechat
     aliases: nc
 
-  spectate:
-    description: Spectate a player
+  duty:
+    description: Duty commands
     usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler>"
-    permission: sinkcommands.spectate
-    aliases: spec
+    permission: sinkcommands.duty
 
-  unspectate:
-    description: Unspec yourself
-    permission: sinkcommands.spectate
-    aliases: unspec
+  dutylist:
+    description: List on duty users
+    permission: sinkcommands.dutylist
 
-  spectatorlist:
-    description: See speced players
-    permission: sinkcommands.spectate
-    aliases: speclist
+  dutytime:
+    description: Show duty time of players
+    permission: sinkcommands.dutytime
 
   lag:
     description: Shows information about server lag
@@ -106,7 +103,11 @@ commands:
     permission: sinkcommands.stats
 
   raw:
-    description: Send raw commands
+    description: Send raw user
+    permission: sinkcommands.raw
+
+  rawuser:
+    description: Send raw message to an user
     permission: sinkcommands.raw
 
 permissions:
@@ -123,7 +124,7 @@ permissions:
       sinkcommands.teamchat.color: true
       sinkcommands.newbiechat: true
       sinkcommands.newbiechat.color: true
-      sinkcommands:spectate: true
+      sinkcommands.duty.gm: true
       sinkcommands.votekick: true
       sinkcommands.votekick.bypass: true
       sinkcommands.rename: true
@@ -132,7 +133,7 @@ permissions:
       sinkcommands.stats: true
 
   sinkcommands.drug:
-    description: Allows to use the drug command
+    description: Allows to take drugs
     default: true
 
   sinkcommands.milk.*:
@@ -179,31 +180,6 @@ permissions:
     description: Allows to receive a messeage when somebody got warned
     default: op
 
-  sinkcommands.freeze.*:
-    description: Be able to use all freeze commands.
-    children:
-      sinkcommands.freeze.freeze: true
-      sinkcommands.freeze.unfreezeall: true
-      sinkcommands.freeze.list: true
-      sinkcommands.freeze.message: true
-      sinkcommands.freeze.bypass: true
-
-  sinkcommands.freeze.freeze:
-    description: Be able to freeze players.
-    default: op
-
-  sinkcommands.freeze.bypass:
-    description: Bypass freeze.
-    default: op
-
-  sinkcommands.freeze.list:
-    description: Be able to list every frozen player.
-    default: op
-
-  sinkcommands.freeze.message:
-    description: Allows to receive a message when somebody got frozen
-    default: true
-
   sinkcommands.ver:
     description: Allows to use commandsver command
     default: true
@@ -234,15 +210,29 @@ permissions:
     description: Allows you to use color on newbiechat
     default: op
 
-  sinkcommands.spectate:
-    description: Allows to use spec command
+  sinkcommands.duty:
+    description: Allows to use duty command
     default: op
     children:
-      sinkcommands.spectate.bypass: true
+      sinkcommands.dutylist: true
 
-  sinkcommands.spectate.bypass:
-    description: Players with this permission cannot be spectated
+  sinkcommands.dutylist:
+    description: List on duty players
+    default: true
+
+  sinkcommands.dutytime:
+    description: Allows to see duty time
     default: op
+
+  sinkcommands.dutytime.others:
+    description: Allows to see duty time of other players
+    default: op
+
+  sinkcommands.duty.gm:
+    description: Allows to use duty command with godmode
+    default: op
+    children:
+      sinkcommands.duty: true
 
   sinkcommands.votekick:
     default: true

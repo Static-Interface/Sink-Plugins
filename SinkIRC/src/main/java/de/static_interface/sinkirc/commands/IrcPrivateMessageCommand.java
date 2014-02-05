@@ -45,12 +45,11 @@ public class IrcPrivateMessageCommand implements CommandExecutor
             return true;
         }
 
-        String message = SinkLibrary.getUser(sender).getDisplayName() + ": ";
+        String message = ChatColor.GRAY + SinkLibrary.getUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
 
-        message = message.replaceFirst("null", "").trim();
-        SinkIRC.getIRCBot().sendMessage(target.getNick(), ' ' + message);
+        SinkIRC.getIRCBot().sendCleanMessage(target.getNick(), message);
 
         sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
 

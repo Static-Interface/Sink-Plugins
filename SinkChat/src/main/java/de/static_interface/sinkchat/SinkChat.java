@@ -43,8 +43,6 @@ public class SinkChat extends JavaPlugin
             return;
         }
 
-        SinkLibrary.registerPlugin(this);
-
         IChannel fc = new HelpChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Help.Prefix"));
         IChannel sc = new ShoutChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Shout.Prefix"));
         IChannel hc = new TradeChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Trade.Prefix"));
@@ -57,9 +55,9 @@ public class SinkChat extends JavaPlugin
         {
             registerEvents();
             registerCommands();
+            SinkLibrary.registerPlugin(this);
             initialized = true;
         }
-
     }
 
     public void onDisable()

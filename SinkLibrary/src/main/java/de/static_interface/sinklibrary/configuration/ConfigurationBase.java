@@ -88,6 +88,8 @@ public abstract class ConfigurationBase
         try
         {
             Object value = getYamlConfiguration().get(path);
+            if ( !path.equals("General.EnableDebug") && !path.equals("General.EnableLog") )
+                SinkLibrary.getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
             if ( value == null || value == "" )
             {
                 throw new NullPointerException("Path returned null!");

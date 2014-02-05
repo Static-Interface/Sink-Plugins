@@ -159,9 +159,9 @@ public class SinkAntiSpamListener implements Listener
     {
         for ( String blacklistedWord : blacklistedWords )
         {
-            for ( String word : input.split(" ") )
+            for ( String word : input.split(" !?.") )
             {
-                if ( word.equals(blacklistedWord) ) return word;
+                if ( word.equals(blacklistedWord) ) return word.trim();
             }
         }
         return null;

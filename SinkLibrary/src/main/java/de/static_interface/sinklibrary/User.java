@@ -28,6 +28,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.util.UUID;
+
 @SuppressWarnings("NewExceptionWithoutArguments")
 public class User
 {
@@ -222,7 +225,7 @@ public class User
      */
     public boolean isConsole()
     {
-        return (sender.equals(Bukkit.getConsoleSender()));
+        return sender != null && (sender.equals(Bukkit.getConsoleSender()));
     }
 
     /**
@@ -235,6 +238,10 @@ public class User
         if ( isConsole() )
         {
             return ChatColor.RED + "Console" + ChatColor.RESET;
+        }
+        if ( !isOnline() )
+        {
+            return playerName;
         }
         if ( !SinkLibrary.getSettings().isDisplayNamesEnabled() )
         {
@@ -249,5 +256,31 @@ public class User
         {
             return getPlayerConfiguration().getDisplayName();
         }
+    }
+
+    /**
+     * Sends message to user if online
+     *
+     * @param message Message to be displayed
+     */
+    public void sendMessage(String message)
+    {
+        if ( isOnline() )
+        {
+            if ( isConsole() ) sender.sendMessage(message);
+            else base.sendMessage(message);
+        }
+    }
+
+    public UUID getUniqueId()
+    {
+        return base.getUniqueId();
+    }
+
+    public boolean joinedServer()
+    {
+        File playersPath = new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players");
+        File file = new File(playersPath, playerName + ".yml");
+        return file.exists();
     }
 }

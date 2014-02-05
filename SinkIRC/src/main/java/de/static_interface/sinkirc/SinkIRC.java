@@ -46,7 +46,6 @@ public class SinkIRC extends JavaPlugin
         }
 
         sinkIrcBot = new SinkIRCBot(this);
-        SinkLibrary.registerPlugin(this);
         new Thread()
         {
             @Override
@@ -96,6 +95,7 @@ public class SinkIRC extends JavaPlugin
             Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
             getCommand("irclist").setExecutor(new IrclistCommand());
             getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
+            SinkLibrary.registerPlugin(this);
             initialized = true;
         }
     }

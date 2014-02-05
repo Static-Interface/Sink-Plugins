@@ -72,7 +72,7 @@ public class PlayerConfiguration extends ConfigurationBase
         try
         {
             File playersPath = new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players");
-            yamlFile = new File(playersPath, player.getName() + ".yml");
+            yamlFile = new File(playersPath, user.getName() + ".yml");
 
             boolean createNewConfiguration = !exists();
 
@@ -98,7 +98,7 @@ public class PlayerConfiguration extends ConfigurationBase
                 int version;
                 try
                 {
-                    version = (int) get("Main.ConfigVersion");
+                    version = (int) get("ConfigVersion");
                 }
                 catch(NullPointerException e)
                 {
@@ -117,12 +117,13 @@ public class PlayerConfiguration extends ConfigurationBase
 
             yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
 
-            addDefault("Main.ConfigVersion", REQUIRED_VERSION);
-            addDefault("General.StatsEnabled", true);
-            addDefault("General.ExceptionTrackingEnabled", false);
-            addDefault("Spy.Enabled", true);
+            addDefault("ConfigVersion", REQUIRED_VERSION);
+            addDefault("StatsEnabled", true);
+            addDefault("ExceptionTrackingEnabled", false);
+            addDefault("SpyEnabled", true);
             addDefault("Nick.HasDisplayName", false);
             addDefault("Nick.DisplayName", user.getDefaultDisplayName());
+            addDefault("DutyTime", 0);
 
             save();
         }
@@ -165,7 +166,7 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public boolean isSpyEnabled()
     {
-        return (boolean) get("Spy.Enabled");
+        return (boolean) get("SpyEnabled");
     }
 
     /**
@@ -175,7 +176,7 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public void setSpyEnabled(boolean value)
     {
-        set("Spy.Enabled", value);
+        set("SpyEnabled", value);
     }
 
     /**
@@ -183,7 +184,7 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public boolean isStatsEnabled()
     {
-        return (boolean) get("General.StatsEnabled");
+        return (boolean) get("StatsEnabled");
     }
 
     /**
@@ -193,7 +194,7 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public void setStatsEnabled(boolean value)
     {
-        set("General.StatsEnabled", value);
+        set("StatsEnabled", value);
     }
 
     /**
@@ -230,7 +231,8 @@ public class PlayerConfiguration extends ConfigurationBase
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     public boolean getHasDisplayName()
     {
-        return (boolean) get("Nick.HasDisplayName");
+        return true;
+        //return (boolean) get("Nick.HasDisplayName");
     }
 
     /**
@@ -246,11 +248,21 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public boolean getHasExceptionTrackingEnabled()
     {
-        return (boolean) get("General.ExceptionTrackingEnabled");
+        return (boolean) get("ExceptionTrackingEnabled");
     }
 
     public void setHasExceptionTrackingEnabled(boolean value)
     {
-        set("General.ExceptionTrackingEnabled", value);
+        set("ExceptionTrackingEnabled", value);
+    }
+
+    public void setDutyTime(long millis)
+    {
+        set("DutyTime", millis);
+    }
+
+    public long getDutyTime()
+    {
+        return Long.valueOf(String.valueOf(get("DutyTime")));
     }
 }

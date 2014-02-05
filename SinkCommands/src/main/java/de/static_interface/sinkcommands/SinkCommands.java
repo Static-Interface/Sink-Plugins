@@ -42,13 +42,13 @@ public class SinkCommands extends JavaPlugin
 
     private static boolean initialized = false;
 
+    @Override
     public void onEnable()
     {
         if ( !checkDependencies() )
         {
             return;
         }
-        SinkLibrary.registerPlugin(this);
 
         timer = new CommandsTimer();
         LagTimer lagTimer = new LagTimer();
@@ -60,6 +60,7 @@ public class SinkCommands extends JavaPlugin
         {
             registerEvents();
             registerCommands();
+            SinkLibrary.registerPlugin(this);
             initialized = true;
         }
 
@@ -87,17 +88,17 @@ public class SinkCommands extends JavaPlugin
         return true;
     }
 
+    @Override
     public void onDisable()
     {
-        for ( Player p : SpectateCommands.specedPlayers.keySet() )
+        for ( String user : DutyCommands.dutyPlayers.keySet() )
         {
-            Player target = SpectateCommands.specedPlayers.get(p);
-            target.eject();
-            SpectateCommands.show(p);
-            SpectateCommands.specedPlayers.remove(p);
-            p.sendMessage(SpectateCommands.PREFIX + "Du wurdest durch einen Reload gezwungen den Spectate Modus zu verlassen.");
+            SinkLibrary.getUser(user).sendMessage(DutyCommands.PREFIX + ChatColor.DARK_RED + "Du wurdest durch einen Reload gezwungen den Dienst Modus zu verlassen.");
+            DutyCommands.DutyCommand.deactivateDutyMode(user);
         }
+
         SinkLibrary.getCustomLogger().info("Saving player configurations...");
+
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
             User user = SinkLibrary.getUser(p);
@@ -174,7 +175,7 @@ public class SinkCommands extends JavaPlugin
             onlinePlayers.setScore(Bukkit.getOnlinePlayers().length);
         }
 
-        Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Leben: "));
+        Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
         date.setScore((int) player.getHealth());
         team.setAllowFriendlyFire(true);
         team.setCanSeeFriendlyInvisibles(false);
@@ -195,7 +196,7 @@ public class SinkCommands extends JavaPlugin
     {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GlobalMuteListener(), this);
-        pm.registerEvents(new SpectateListener(), this);
+        pm.registerEvents(new DutyListener(), this);
         pm.registerEvents(new VotekickListener(), this);
         pm.registerEvents(new DrugDeadListener(), this);
         pm.registerEvents(new ScoreboardListener(), this);
@@ -210,9 +211,9 @@ public class SinkCommands extends JavaPlugin
         getCommand("globalmute").setExecutor(new GlobalmuteCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        getCommand("spectate").setExecutor(new SpectateCommands.SpectateCommand());
-        getCommand("unspectate").setExecutor(new SpectateCommands.UnspectateCommand());
-        getCommand("spectatorlist").setExecutor(new SpectateCommands.SpectatorlistCommand());
+        getCommand("duty").setExecutor(new DutyCommands.DutyCommand());
+        getCommand("dutylist").setExecutor(new DutyCommands.DutyListCommand());
+        getCommand("dutytime").setExecutor(new DutyCommands.DutyTimeCommand());
         getCommand("lag").setExecutor(new LagCommand());
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
         getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));
@@ -224,6 +225,7 @@ public class SinkCommands extends JavaPlugin
         getCommand("clear").setExecutor(new ClearCommand());
         getCommand("enablestats").setExecutor(new StatsCommands.EnableStatsCommand());
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
-        getCommand("raw").setExecutor(new RawCommand());
+        getCommand("raw").setExecutor(new RawCommands.RawCommand());
+        getCommand("rawuser").setExecutor(new RawCommands.RawUserCommand());
     }
 }
