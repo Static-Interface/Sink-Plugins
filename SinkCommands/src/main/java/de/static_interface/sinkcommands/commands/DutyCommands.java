@@ -75,7 +75,7 @@ public class DutyCommands
                         user.sendMessage(ChatColor.DARK_RED + "You don't have permission");
                         break;
                     }
-                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " ist jetzt im Dienst Modus", true);
+                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " ist jetzt im Dienstmodus", true);
                     activateDutyMode(user.getName(), true);
                     user.sendMessage(PREFIX + "Godmode Modus wurde aktiviert");
                     break;
@@ -83,30 +83,30 @@ public class DutyCommands
                 case "on":
                     if ( isOnDuty(user) )
                     {
-                        user.sendMessage(PREFIX + "Der Dienst Modus ist schon aktiviert!");
+                        user.sendMessage(PREFIX + "Der Dienstmodus ist schon aktiviert!");
                         break;
                     }
-                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " ist jetzt im Dienst Modus", true);
+                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " ist jetzt im Dienstmodus", true);
                     activateDutyMode(user.getName(), false);
                     break;
 
                 case "off":
                     if ( !isOnDuty(user) )
                     {
-                        user.sendMessage(PREFIX + "Der Dienst Modus ist schon deaktiviert!");
+                        user.sendMessage(PREFIX + "Der Dienstmodus ist schon deaktiviert!");
                         break;
                     }
                     deactivateDutyMode(user.getName());
-                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " hat den Dienst Modus verlassen", true);
+                    BukkitUtil.broadcastMessage(CHATPREFIX + "Teammitglied " + user.getDisplayName() + ChatColor.GRAY + " hat den Dienstmodus verlassen", true);
                     break;
 
                 case "status":
                     if ( isOnDuty(user) )
                     {
-                        user.sendMessage(PREFIX + "Der Dienst Modus ist derzeit " + ChatColor.DARK_GREEN + "aktiviert");
+                        user.sendMessage(PREFIX + "Der Dienstmodus ist derzeit " + ChatColor.DARK_GREEN + "aktiviert");
                         break;
                     }
-                    user.sendMessage(PREFIX + "Der Dienst Modus ist derzeit " + ChatColor.RED + "deaktiviert");
+                    user.sendMessage(PREFIX + "Der Dienstmodus ist derzeit " + ChatColor.RED + "deaktiviert");
                     break;
                 default:
                     sendHelp(user);
@@ -117,13 +117,13 @@ public class DutyCommands
         private void sendHelp(User user)
         {
             user.sendMessage(PREFIX + ChatColor.GRAY + "Benutzung:");
-            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty on: Dienst Modus aktivieren");
+            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty on: Dienstmodus aktivieren");
             if ( user.hasPermission("sinkcommands.duty.gm") )
             {
-                user.sendMessage(PREFIX + ChatColor.GRAY + "/duty on gm: Dienst Modus mit Godmode aktivieren");
+                user.sendMessage(PREFIX + ChatColor.GRAY + "/duty on gm: Dienstmodus mit Godmode aktivieren");
             }
-            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty off: Dienst Modus deaktivieren");
-            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty status: Dienst Modus einsehen");
+            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty off: Dienstmodus deaktivieren");
+            user.sendMessage(PREFIX + ChatColor.GRAY + "/duty status: Dienstmodus einsehen");
         }
 
         public static void activateDutyMode(String name, boolean gm)
@@ -168,8 +168,15 @@ public class DutyCommands
 
         public static long getDutyTime(User user)
         {
-            long time = System.currentTimeMillis() - dutyTime.get(user.getName());
-            return user.getPlayerConfiguration().getDutyTime() + time;
+            try
+            {
+                long time = System.currentTimeMillis() - dutyTime.get(user.getName());
+                return user.getPlayerConfiguration().getDutyTime() + time;
+            }
+            catch ( NullPointerException ignored )
+            {
+                return user.getPlayerConfiguration().getDutyTime();
+            }
         }
 
         public static void updateDutyTime(User user, long time)
@@ -242,7 +249,7 @@ public class DutyCommands
 
             if ( args.length < 1 )
             {
-                sender.sendMessage(PREFIX + ChatColor.DARK_GREEN + "Du warst " + DutyCommand.getDutyTime(user) / (1000 * 60) + " Minute(n) im Dienst Modus.");
+                sender.sendMessage(PREFIX + ChatColor.DARK_GREEN + "Du warst " + DutyCommand.getDutyTime(user) / (1000 * 60) + " Minute(n) im Dienstmodus.");
                 return true;
             }
 
@@ -262,11 +269,11 @@ public class DutyCommands
 
             if ( !target.isOnline() )
             {
-                sender.sendMessage(PREFIX + target.getName() + ChatColor.DARK_GREEN + " war " + duttyTime / (1000 * 60) + " Minute(n) im Dienst Modus.");
+                sender.sendMessage(PREFIX + target.getName() + ChatColor.DARK_GREEN + " war " + duttyTime / (1000 * 60) + " Minute(n) im Dienstmodus.");
                 return true;
             }
 
-            sender.sendMessage(PREFIX + target.getDisplayName() + ChatColor.DARK_GREEN + " war " + duttyTime / (1000 * 60) + " Minute(n) im Dienst Modus.");
+            sender.sendMessage(PREFIX + target.getDisplayName() + ChatColor.DARK_GREEN + " war " + duttyTime / (1000 * 60) + " Minute(n) im Dienstmodus.");
             return true;
         }
     }

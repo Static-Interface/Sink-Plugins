@@ -93,7 +93,7 @@ public class SinkCommands extends JavaPlugin
     {
         for ( String user : DutyCommands.dutyPlayers.keySet() )
         {
-            SinkLibrary.getUser(user).sendMessage(DutyCommands.PREFIX + ChatColor.DARK_RED + "Du wurdest durch einen Reload gezwungen den Dienst Modus zu verlassen.");
+            SinkLibrary.getUser(user).sendMessage(DutyCommands.PREFIX + ChatColor.DARK_RED + "Du wurdest durch einen Reload gezwungen den Dienstmodus zu verlassen.");
             DutyCommands.DutyCommand.deactivateDutyMode(user);
         }
 
@@ -227,5 +227,6 @@ public class SinkCommands extends JavaPlugin
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
         getCommand("raw").setExecutor(new RawCommands.RawCommand());
         getCommand("rawuser").setExecutor(new RawCommands.RawUserCommand());
+        getCommand("countdown").setExecutor(new CountDownCommand(this));
     }
 }

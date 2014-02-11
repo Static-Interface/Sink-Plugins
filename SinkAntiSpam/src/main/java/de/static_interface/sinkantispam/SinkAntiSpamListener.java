@@ -99,6 +99,7 @@ public class SinkAntiSpamListener implements Listener
         String word = containsBlacklistedWord(message, blacklistedWords);
         if ( word != null && !word.isEmpty() && SinkLibrary.getSettings().isBlacklistedWordsEnabled() )
         {
+            word = word.trim();
             message = message.replace(word, ChatColor.BLUE.toString() + ChatColor.BOLD.toString() + ChatColor.UNDERLINE.toString() + word + ChatColor.RESET.toString());
             SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.BlacklistedWord"), message));
             if ( event instanceof AsyncPlayerChatEvent )
@@ -120,11 +121,11 @@ public class SinkAntiSpamListener implements Listener
             SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.IP"), match));//"Fremdwerbung für folgende IP: " + match + " !");
             if ( event instanceof AsyncPlayerChatEvent )
             {
-                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match, _("SinkAntiSpam.ReplaceIP")));
+                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceIP") + ' '));
             }
             else
             {
-                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, _("SinkAntiSpam.ReplaceIP")));
+                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceIP") + ' '));
             }
             return;
         }
@@ -142,14 +143,14 @@ public class SinkAntiSpamListener implements Listener
             {
                 return;
             }
-            SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.Domain"), match));
+            SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.Domain"), match.trim()));
             if ( event instanceof AsyncPlayerChatEvent )
             {
-                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match, _("SinkAntiSpam.ReplaceDomain")));
+                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match.trim(), ' ' + _("SinkAntiSpam.ReplaceDomain") + ' '));
             }
             else
             {
-                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, _("SinkAntiSpam.ReplaceDomain")));
+                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceDomain") + ' '));
             }
         }
     }

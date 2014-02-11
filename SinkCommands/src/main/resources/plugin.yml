@@ -110,6 +110,11 @@ commands:
     description: Send raw message to an user
     permission: sinkcommands.raw
 
+  countdown:
+    description: Start a countdown
+    permission: sinkcommands.countdown
+    aliases: cd
+
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
@@ -131,6 +136,7 @@ permissions:
       sinkcommands.clear: true
       sinkcommands.clear.others: true
       sinkcommands.stats: true
+      sinkcommands.countdown: true
 
   sinkcommands.drug:
     description: Allows to take drugs
@@ -288,3 +294,7 @@ permissions:
   sinkcommands.raw:
     default: op
     description: Allows to send raw commands
+
+  sinkcommands.countdown:
+    default: op
+    description: Allows to start countdowns
