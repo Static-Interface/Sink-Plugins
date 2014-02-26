@@ -45,7 +45,7 @@ public class RenameCommand implements CommandExecutor
         }
         Player p = user.getPlayer();
 
-        if ( args.length < 2 )
+        if ( args.length < 1 )
         {
             return false;
         }
@@ -54,7 +54,7 @@ public class RenameCommand implements CommandExecutor
             sender.sendMessage(PREFIX + "Nimm ein Item in die Hand bevor du diesen Befehl ausführst.");
             return true;
         }
-        String text = Util.formatArrayToString(args, "");
+        String text = Util.formatArrayToString(args, " ");
 
         text = ChatColor.translateAlternateColorCodes('&', text);
         ItemStack item = p.getItemInHand();
