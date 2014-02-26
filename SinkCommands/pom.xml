@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.static-interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>2.x-SNAPSHOT</version>
+        <version>1.x</version>
     </parent>
 
     <artifactId>SinkCommands</artifactId>
@@ -51,11 +51,12 @@
         <system>Static Interface</system>
         <url>http://ci.static-interface.de/</url>
     </ciManagement>
+
     <dependencies>
         <dependency>
             <groupId>de.static-interface</groupId>
             <artifactId>SinkLibrary</artifactId>
-            <version>2.x-SNAPSHOT</version>
+            <version>1.x</version>
         </dependency>
     </dependencies>
 </project>

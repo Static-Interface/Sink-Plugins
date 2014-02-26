@@ -1,5 +1,5 @@
 name: SinkLibrary
-version: 2.0
+version: 1.9
 description: Library required for Sink Plugins. This does nothing without a plugin that uses it.
 author: Trojaner
 website: http://static-interface.de
