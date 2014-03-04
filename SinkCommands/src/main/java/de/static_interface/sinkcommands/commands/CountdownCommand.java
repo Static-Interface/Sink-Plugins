@@ -25,12 +25,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CountDownCommand implements CommandExecutor
+public class CountdownCommand implements CommandExecutor
 {
     Plugin plugin;
     static long secondsLeft;
 
-    public CountDownCommand(Plugin plugin)
+    public CountdownCommand(Plugin plugin)
     {
         this.plugin = plugin;
     }

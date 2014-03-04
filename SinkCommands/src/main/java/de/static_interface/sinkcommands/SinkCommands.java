@@ -227,6 +227,6 @@ public class SinkCommands extends JavaPlugin
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
         getCommand("raw").setExecutor(new RawCommands.RawCommand());
         getCommand("rawuser").setExecutor(new RawCommands.RawUserCommand());
-        getCommand("countdown").setExecutor(new CountDownCommand(this));
+        getCommand("countdown").setExecutor(new CountdownCommand(this));
     }
 }
