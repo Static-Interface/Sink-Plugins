@@ -115,6 +115,11 @@ commands:
     permission: sinkcommands.countdown
     aliases: cd
 
+  list:
+    description: Lists all users with specified prefix
+    permission: sinkcommands.list
+    aliases: [online, who]
+
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
@@ -137,6 +142,7 @@ permissions:
       sinkcommands.clear.others: true
       sinkcommands.stats: true
       sinkcommands.countdown: true
+      sinkcommands.list: true
 
   sinkcommands.drug:
     description: Allows to take drugs
@@ -183,7 +189,7 @@ permissions:
       sinkcommands.warn.message: true
 
   sinkcommands.warn.message:
-    description: Allows to receive a messeage when somebody got warned
+    description: Allows to receive a message when somebody got warned
     default: op
 
   sinkcommands.ver:
@@ -298,3 +304,7 @@ permissions:
   sinkcommands.countdown:
     default: op
     description: Allows to start countdowns
+
+  sinkcommands.list:
+    default: true
+    description: Allows to list all users
