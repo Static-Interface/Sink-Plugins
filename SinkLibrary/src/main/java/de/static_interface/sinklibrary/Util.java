@@ -77,7 +77,7 @@ public class Util
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh.mm");
         String date = format.format(new Date());
 
-        Path sourcePath = Paths.get(file.getAbsolutePath());
+        Path sourcePath = file.getAbsoluteFile().toPath();
         Path targetPath = Paths.get(file.getPath() + '.' + date + ".backup");
         try
         {
