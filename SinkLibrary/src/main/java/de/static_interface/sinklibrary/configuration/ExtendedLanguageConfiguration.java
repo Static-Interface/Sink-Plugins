@@ -17,6 +17,7 @@ public class ExtendedLanguageConfiguration extends ConfigurationBase
 	public ExtendedLanguageConfiguration(JavaPlugin plugin)
 	{
 		this.path = new File(plugin.getDataFolder().getAbsolutePath()+File.separator+"Language.yml");
+		create();
 		load();
 	}
 	
