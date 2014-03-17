@@ -361,6 +361,8 @@ public class SinkIRCBot extends PircBot
                     sinkIrcBot.sendCleanMessage(source, "There are currently no online players");
                     return;
                 }
+                
+                String onlineMessage = "Online Players (" + Bukkit.getOnlinePlayers().length + '/' + Bukkit.getMaxPlayers() + "): ";
 
                 for ( Player player : Bukkit.getOnlinePlayers() )
                 {
@@ -373,8 +375,20 @@ public class SinkIRCBot extends PircBot
                     {
                         players = players + ", " + user.getDisplayName();
                     }
+                    
+                    onlineMessage += players;
+                    
+                    if (onlineMessage.length() > 200)
+                    {
+                        sinkIrcBot.sendCleanMessage(source, onlineMessage);
+                        onlineMessage = "";
+                    }
                 }
-                sinkIrcBot.sendCleanMessage(source, "Online Players (" + Bukkit.getOnlinePlayers().length + '/' + Bukkit.getMaxPlayers() + "): " + players);
+                
+                if (onlineMessage.length() > 0)
+                {
+                    sinkIrcBot.sendCleanMessage(source, onlineMessage);
+                }
             }
 
             if ( command.equals("debug") )
