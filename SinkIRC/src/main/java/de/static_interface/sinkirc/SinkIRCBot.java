@@ -355,7 +355,6 @@ public class SinkIRCBot extends PircBot
 
             if ( command.equals("list") ) //List Players
             {
-                String players = "";
                 if ( Bukkit.getOnlinePlayers().length == 0 )
                 {
                     sinkIrcBot.sendCleanMessage(source, "There are currently no online players");
@@ -364,28 +363,28 @@ public class SinkIRCBot extends PircBot
                 
                 String onlineMessage = "Online Players (" + Bukkit.getOnlinePlayers().length + '/' + Bukkit.getMaxPlayers() + "): ";
 
+                boolean firstPlayer = true;
                 for ( Player player : Bukkit.getOnlinePlayers() )
                 {
                     de.static_interface.sinklibrary.User user = SinkLibrary.getUser(player);
-                    if ( players.isEmpty() )
+                    if ( firstPlayer )
                     {
-                        players = user.getDisplayName();
+                        onlineMessage += user.getDisplayName();
+                        firstPlayer = false;
                     }
                     else
                     {
-                        players = players + ", " + user.getDisplayName();
+                        onlineMessage = onlineMessage ", " + user.getDisplayName();
                     }
                     
-                    onlineMessage += players;
-                    
-                    if (onlineMessage.length() > 200)
+                    if ( onlineMessage.length() > 200 )
                     {
                         sinkIrcBot.sendCleanMessage(source, onlineMessage);
                         onlineMessage = "";
                     }
                 }
                 
-                if (onlineMessage.length() > 0)
+                if ( onlineMessage.length() > 0 )
                 {
                     sinkIrcBot.sendCleanMessage(source, onlineMessage);
                 }
