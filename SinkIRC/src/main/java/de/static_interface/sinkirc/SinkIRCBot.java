@@ -374,7 +374,7 @@ public class SinkIRCBot extends PircBot
                     }
                     else
                     {
-                        onlineMessage += ", " + user.getDisplayName();
+                        onlineMessage += ChatColor.RESET + ", " + user.getDisplayName();
                     }
                     
                     if ( onlineMessage.length() > 200 )
