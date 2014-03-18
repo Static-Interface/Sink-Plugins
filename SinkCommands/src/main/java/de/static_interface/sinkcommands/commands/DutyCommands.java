@@ -38,8 +38,8 @@ public class DutyCommands
     public static HashMap<String, Long> dutyTime = new HashMap<>();
     public static List<String> godmodeUsers = new ArrayList<>();
 
-    public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RED + "Duty" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
-    public static final String CHATPREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Duty" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
+    public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RESET + ChatColor.RED + "Duty" + ChatColor.RESET + ChatColor.DARK_RED + "] " + ChatColor.RESET;
+    public static final String CHATPREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.RESET + ChatColor.GRAY + "Duty" + ChatColor.RESET + ChatColor.DARK_GRAY + "] " + ChatColor.RESET + ChatColor.GRAY;
 
     public static class DutyCommand implements CommandExecutor
     {
