@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.events.*;
+import de.static_interface.sinkcommands.SinkCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -388,6 +389,30 @@ public class SinkIRCBot extends PircBot
                 {
                     sinkIrcBot.sendCleanMessage(source, onlineMessage);
                 }
+            }
+            
+            if ( command.equals("lag") ) // shows TPS
+            {
+                String lagPrefix = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
+                
+                double realTPS = SinkCommands.getCommandsTimer().getAverageTPS();
+                DecimalFormat decimalFormat = new DecimalFormat("##.0");
+                String shownTPS = decimalFormat.format(realTPS);
+                
+                if ( realTPS >= 18.5 )
+                {
+                    shownTPS = ChatColor.GREEN + shownTPS;
+                }
+                else if ( realTPS >= 17 )
+                {
+                    shownTPS = ChatColor.YELLOW + shownTPS;
+                }
+                else
+                {
+                    shownTPS = ChatColor.RED + shownTPS;
+                }
+                
+                sinkIrcBot.sendCleanMessage(source, lagPrefix + "TPS: " + shownTPS);
             }
 
             if ( command.equals("debug") )
