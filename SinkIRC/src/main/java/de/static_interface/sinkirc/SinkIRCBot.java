@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.events.*;
-import de.static_interface.sinkcommands.SinkCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,6 +29,7 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +186,7 @@ public class SinkIRCBot extends PircBot
         return false;
     }
 
-    public static void executeCommand(String command, String[] args, String source, String sender, String label, SinkIRCBot sinkIrcBot)
+    public static void handleCommand(String command, String[] args, String source, String sender, String label, SinkIRCBot sinkIrcBot)
     {
         try
         {
@@ -394,8 +394,8 @@ public class SinkIRCBot extends PircBot
             if ( command.equals("lag") ) // shows TPS
             {
                 String lagPrefix = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
-                
-                double realTPS = SinkCommands.getCommandsTimer().getAverageTPS();
+
+                double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
                 DecimalFormat decimalFormat = new DecimalFormat("##.0");
                 String shownTPS = decimalFormat.format(realTPS);
                 

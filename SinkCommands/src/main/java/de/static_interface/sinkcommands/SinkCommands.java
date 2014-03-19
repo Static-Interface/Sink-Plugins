@@ -38,8 +38,6 @@ public class SinkCommands extends JavaPlugin
 {
     public static boolean globalmuteEnabled;
 
-    private static CommandsTimer timer;
-
     private static boolean initialized = false;
 
     @Override
@@ -50,10 +48,7 @@ public class SinkCommands extends JavaPlugin
             return;
         }
 
-        timer = new CommandsTimer();
         LagTimer lagTimer = new LagTimer();
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
 
         if ( !initialized )
@@ -180,16 +175,6 @@ public class SinkCommands extends JavaPlugin
         team.setAllowFriendlyFire(true);
         team.setCanSeeFriendlyInvisibles(false);
         player.setScoreboard(board);
-    }
-
-    /**
-     * Get CommandsTimer
-     *
-     * @return CommandsTimer
-     */
-    public static CommandsTimer getCommandsTimer()
-    {
-        return timer;
     }
 
     private void registerEvents()

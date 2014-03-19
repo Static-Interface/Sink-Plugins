@@ -163,7 +163,7 @@ public class IRCListener implements Listener
         List<String> tmp = new ArrayList<>(Arrays.asList(args));
         tmp.remove(0);
         args = tmp.toArray(args);
-        SinkIRCBot.executeCommand(cmd, args, event.getSender(), event.getSender(), event.getMessage(), sinkIrcBot);
+        SinkIRCBot.handleCommand(cmd, args, event.getSender(), event.getSender(), event.getMessage(), sinkIrcBot);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -204,6 +204,6 @@ public class IRCListener implements Listener
         List<String> tmp = new ArrayList<>(Arrays.asList(args));
         tmp.remove(0);
         args = tmp.toArray(args);
-        SinkIRCBot.executeCommand(cmd, args, channel, sender, message, sinkIrcBot);
+        SinkIRCBot.handleCommand(cmd, args, channel, sender, message, sinkIrcBot);
     }
 }

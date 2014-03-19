@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkcommands.commands;
 
-import de.static_interface.sinkcommands.SinkCommands;
+import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +32,7 @@ public class LagCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        double realTPS = SinkCommands.getCommandsTimer().getAverageTPS();
+        double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
         DecimalFormat decimalFormat = new DecimalFormat("##.0");
         String shownTPS = decimalFormat.format(realTPS);
         if ( realTPS >= 18.5 )

@@ -15,7 +15,7 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkcommands;
+package de.static_interface.sinklibrary;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

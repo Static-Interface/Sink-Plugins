@@ -48,7 +48,7 @@ public class SinkLibrary extends JavaPlugin
 {
 
     public static List<String> tmpBannedPlayers;
-
+    private static CommandsTimer timer;
     private static Economy econ;
     private static Permission perm;
     private static Chat chat;
@@ -76,6 +76,7 @@ public class SinkLibrary extends JavaPlugin
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
+        timer = new CommandsTimer();
 
         // Init language
         LanguageConfiguration.load();
@@ -140,6 +141,9 @@ public class SinkLibrary extends JavaPlugin
             registerCommands();
             initialized = true;
         }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
+
         // Check for updates
         update();
 
@@ -266,6 +270,17 @@ public class SinkLibrary extends JavaPlugin
     {
         return Bukkit.getPluginManager().getPlugin("Vault") != null;
     }
+
+    /**
+     * Get SinkTimer
+     *
+     * @return SinkTimer
+     */
+    public static CommandsTimer getSinkTimer()
+    {
+        return timer;
+    }
+
 
     /**
      * Get Chat instance
