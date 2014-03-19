@@ -97,6 +97,10 @@ public class IRCListener implements Listener
     @EventHandler(priority = EventPriority.MONITOR)
     public void onIRCMessage(IRCSendMessageEvent event)
     {
+        if ( SinkIRCBot.isDisabled() )
+        {
+            return;
+        }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), event.getMessage());
     }
 
