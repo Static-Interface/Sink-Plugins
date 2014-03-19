@@ -118,7 +118,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -134,35 +133,40 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.8</version>
                 <configuration>
-                    <outputDirectory>jars</outputDirectory>
                     <stripVersion>true</stripVersion>
                     <artifactItems>
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>SinkAntiSpam</artifactId>
                             <version>${project.version}</version>
+                            <type>${project.packaging}</type>
                         </artifactItem>
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>SinkChat</artifactId>
                             <version>${project.version}</version>
+                            <type>${project.packaging}</type>
                         </artifactItem>
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>SinkCommands</artifactId>
                             <version>${project.version}</version>
+                            <type>${project.packaging}</type>
                         </artifactItem>
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>SinkIRC</artifactId>
                             <version>${project.version}</version>
+                            <type>${project.packaging}</type>
                         </artifactItem>
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>SinkLibrary</artifactId>
                             <version>${project.version}</version>
+                            <type>${project.packaging}</type>
                         </artifactItem>
                     </artifactItems>
+                    <outputDirectory>../Sink-Plugins/jars</outputDirectory>
                 </configuration>
                 <inherited>false</inherited>
             </plugin>
@@ -216,6 +220,25 @@
                 <configuration>
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <file>${project.build.finalName}.${project.packaging}</file>
+                            <generatePom>false</generatePom>
+                            <pomFile>pom.xml</pomFile>
+                            <version>${build.number}</version>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
