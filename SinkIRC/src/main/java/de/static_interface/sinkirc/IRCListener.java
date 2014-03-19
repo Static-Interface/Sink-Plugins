@@ -53,9 +53,10 @@ public class IRCListener implements Listener
             return;
         }
         String message = event.getJoinMessage();
+        User user = SinkLibrary.getUser(event.getPlayer());
         if ( message == null || message.isEmpty() )
         {
-            message = event.getPlayer().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " betrat das Spiel";
+            message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " betrat das Spiel";
         }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), message);
     }
@@ -68,6 +69,11 @@ public class IRCListener implements Listener
             return;
         }
         String message = event.getQuitMessage();
+        User user = SinkLibrary.getUser(event.getPlayer());
+        if ( message == null || message.isEmpty() )
+        {
+            message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " verliess das Spiel";
+        }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), message);
     }
 
