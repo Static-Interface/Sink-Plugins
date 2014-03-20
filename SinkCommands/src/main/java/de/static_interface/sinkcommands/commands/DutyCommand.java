@@ -18,6 +18,8 @@
 package de.static_interface.sinkcommands.commands;
 
 import java.io.File;
+import java.sql.Time;
+import java.util.Date;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,19 +48,65 @@ public class DutyCommand implements CommandExecutor
 		
 		return true;
 	}
+	
+	public enum dutySumType
+	{
+		TODAY,
+		YESTERDAY,
+		LAST_WEEK,
+		LAST_MONTH,
+		LAST_X_DAYS
+	}
+	
+	public void startDuty(User user)
+	{
+		
+	}
+	
+	public void endDuty(User user)
+	{
+		
+	}
+	
+	public Time getDutySumTime(User user, dutySumType sumType)
+	{
+		return new Time(0);
+	}
+	
+	public Time getLastDutyTime(User user)
+	{
+		return new Time(0);
+	}
 }
+
 class DatabaseHandler
 {
+	private static final String TABLE_DUTY ="duties";
 	private static SQLiteDatabase database = new SQLiteDatabase(SinkLibrary.getCustomDataFolder().getAbsolutePath()+File.separator+"duties.db");
+	
+	private static void initDatabase()
+	{
+		if ( !database.containsTable(TABLE_DUTY) )
+		{
+			database.createTable(TABLE_DUTY, "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+											+ "UUID text, "
+											+ "TIMESTAMP_START timestamp DEFAULT CURRENT_TIMESTAMP, "
+											+ "TIMESTAMP_END TIMESTAMP");
+		}
+	}
 	
 	public static void updateUser(User user, boolean start)
 	{
-		if ( !database.containsTable("duties") )
-		{
-			database.createTable("duties", "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, UUID text, TIMESTAMP_START timestamp DEFAULT CURRENT_TIMESTAMP, TIMESTAMP_END TIMESTAMP");
-		}
+		initDatabase();
 		
-		
-		
+		database.updateRaw("update " 
+								+ TABLE_DUTY 
+							+ " set "
+								+ "TIMESTAMP_END = NOW(), "
+								+ "TIMESTAMP_COMPLETE = SEC_TO_TIME(TIMESTAMP_END - TIMESTAMP_START) "
+							+ "where "
+								+ "UUID='" + user.getUniqueId() + "'"
+								+ " and "
+								+ "TIMESTAMP_COMPLETE is NULL;");
 	}
 }
