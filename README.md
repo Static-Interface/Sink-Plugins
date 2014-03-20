@@ -1,5 +1,7 @@
 Sink-Plugins
 ==============
+<a href="http://ci.static-interface.de/job/Sink-Plugins/"><img src="http://ci.static-interface.de/job/Sink-Plugins/badge/icon"/></a>
+
 For more information, visit <a href="http://dev.bukkit.org/bukkit-plugins/sink-plugins">the BukkitDev page</a>.
 
 License
