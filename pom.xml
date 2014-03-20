@@ -51,7 +51,11 @@
 
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
+            <id>maven-snapshots</id>
+            <url>http://snapshots.maven.codehaus.org/maven2/</url>
+        </repository>
+        <repository>
+        <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
@@ -222,16 +226,47 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
                 <configuration>
-                    <show>public</show>
-                    <windowtitle>Sink-Plugins</windowtitle>
-                    <verbose>false</verbose>
-                    <author>true</author>
-                    <version>true</version>
-                    <linksource>true</linksource>
-                    <bottom><![CDATA[<b>Adventuria, 2014</b>]]></bottom>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0-beta-3</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>jxr-maven-plugin</artifactId>
+                            <version>2.0-beta-1</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.9.1</version>
+                            <configuration>
+                                <show>public</show>
+                                <windowtitle>Sink-Plugins</windowtitle>
+                                <verbose>false</verbose>
+                                <author>true</author>
+                                <version>true</version>
+                                <linksource>true</linksource>
+                                <bottom><![CDATA[<b>Adventuria, 2014</b>]]></bottom>
+                            </configuration>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <report>javadoc</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+                    </reportPlugins>
                 </configuration>
             </plugin>
         </plugins>

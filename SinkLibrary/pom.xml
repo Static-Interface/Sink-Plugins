@@ -81,7 +81,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
                             <minimizeJar>true</minimizeJar>
                             <filters>
                                 <filter>
