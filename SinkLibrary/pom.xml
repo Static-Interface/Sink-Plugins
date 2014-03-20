@@ -64,8 +64,7 @@
             <groupId>pircbot</groupId>
             <artifactId>pircbot</artifactId>
             <version>1.5.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/pircbot.jar</systemPath>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -74,7 +73,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
+                <version>2.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -82,12 +81,28 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>${project.artifactId}-shaded</finalName>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.jibble.pircbot:*</include>
-                                </includes>
-                            </artifactSet>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>pircbot:pircbot</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>Vault:Vault</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.bukkit:bukkit</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
