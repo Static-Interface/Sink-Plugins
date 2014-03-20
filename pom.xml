@@ -81,7 +81,7 @@
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <finalName>${artifactId}-${build.number}</finalName>
+        <finalName>${artifactId}-v${build.number}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -203,6 +203,7 @@
                         <fileset>
                             <directory>${basedir}</directory>
                             <includes>
+                                <include>target/**</include>
                                 <include>jars/**</include>
                             </includes>
                         </fileset>
@@ -221,24 +222,6 @@
                 <configuration>
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>install</phase>
-                        <configuration>
-                            <file>${project.build.finalName}.${project.packaging}</file>
-                            <generatePom>false</generatePom>
-                            <version>${build.number}</version>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <resources>

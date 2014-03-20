@@ -34,6 +34,8 @@ local.properties
 ## Ignore IntelliJ IDEA and Android specified folders and files
 .idea/
 out/
+target/
+jars/
 *.iml
 *.iws
 *.ipr
