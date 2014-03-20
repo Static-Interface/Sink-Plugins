@@ -18,14 +18,18 @@
 package de.static_interface.sinkcommands.commands;
 
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Date;
+import java.util.logging.Level;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.static_interface.shadow.tameru.SQLiteDatabase;
+import de.static_interface.sinkcommands.commands.DutyCommand.dutySumType;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
@@ -55,8 +59,10 @@ public class DutyCommand implements CommandExecutor
 		TODAY,
 		YESTERDAY,
 		LAST_WEEK,
+		LAST_TWO_WEEKS,
 		LAST_MONTH,
-		LAST_X_DAYS
+		ALL,
+		LAST_X_DAYS // not implemented yet
 	}
 	
 	public static void startDuty(User user)
@@ -70,12 +76,12 @@ public class DutyCommand implements CommandExecutor
 	{
 		DatabaseHandler.updateUser(user, false);
 		
-		return getDutySumTime(user, dutySumType.LAST_DUTY_ONLY);
+		return getLastDutyTime(user);
 	}
 	
 	public static Time getDutySumTime(User user, dutySumType sumType)
 	{
-		return new Time(0);
+		return DatabaseHandler.getSumTime(user, sumType);
 	}
 	
 	public static Time getLastDutyTime(User user)
@@ -94,32 +100,104 @@ class DatabaseHandler
 		if ( !database.containsTable(TABLE_DUTY) )
 		{
 			database.createTable(TABLE_DUTY, 
-									"ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-										+ "UUID text, "
-										+ "TIMESTAMP_START timestamp DEFAULT CURRENT_TIMESTAMP, "
-										+ "TIMESTAMP_END TIMESTAMP");
+										"`ID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+										+ "`UUID` TEXT, "
+										+ "`TIMESTAMP_START` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+										+ "`TIMESTAMP_END` TIMESTAMP");
 		}
+	}
+	
+	public static Time getSumTime(User user, dutySumType sumType)
+	{
+		initDatabase();
+		
+		if ((user != null) && (!user.isConsole()))
+		{
+			String additionalClauses = "";
+			
+			switch (sumType) {
+			case LAST_DUTY_ONLY:
+				additionalClauses = " ORDER BY `ID` DESC LIMIT 1";
+				break;
+			case TODAY:
+				additionalClauses = " AND DATE(`TIMESTAMP_START`) = CURDATE()";
+				break;
+			case YESTERDAY:
+				additionalClauses = " AND DATE(`TIMESTAMP_START`) > (NOW() - INTERVAL 1 DAY)";
+				break;
+			case LAST_WEEK:
+				additionalClauses = " AND DATE(`TIMESTAMP_START`) > (NOW() - INTERVAL 7 DAY)";
+				break;
+			case LAST_TWO_WEEKS:
+				additionalClauses = " AND DATE(`TIMESTAMP_START`) > (NOW() - INTERVAL 14 DAY)";
+				break;
+			case LAST_MONTH:
+				additionalClauses = " AND DATE(`TIMESTAMP_START`) > (NOW() - INTERVAL 30 DAY)";
+				break;
+			default:
+				break;
+			}
+			
+			ResultSet set = database.selectRaw("SELECT "
+									+ "SUM(TIME_TO_SEC(`TIMESTAMP_COMPLETE`))"
+										+ " AS totaltime"
+								+ " FROM " 
+									+ TABLE_DUTY 
+								+ " WHERE "
+									+ "UUID='" + user.getUniqueId().toString() + "'"
+								+ additionalClauses);
+			
+			if (set != null) 
+			{
+				try 
+				{
+					set.next();
+					
+					Time sumTime =  set.getTime("totaltime");
+					if (sumTime != null)
+					{
+						return sumTime;
+					}
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		else
+		{
+			SinkLibrary.getCustomLogger().log(Level.SEVERE, "[DutyCommand.updateUser] Kein gültiger User.");
+		}
+		
+		return new Time(-(new Time(0)).getTime());
 	}
 	
 	public static void updateUser(User user, boolean start)
 	{
 		initDatabase();
 		
-		if (start)
+		if ((user != null) && (!user.isConsole()))
 		{
-			database.insertIntoDatabase(TABLE_DUTY, "UUID", user.getUniqueId().toString());
+			if (start)
+			{
+				database.insertIntoDatabase(TABLE_DUTY, "UUID", "'" + user.getUniqueId().toString() + "'");
+			}
+			else
+			{
+				database.updateRaw("UPDATE " 
+										+ TABLE_DUTY 
+									+ " SET "
+										+ "TIMESTAMP_END = NOW(), "
+										+ "TIMESTAMP_COMPLETE = SEC_TO_TIME(TIMESTAMP_END - TIMESTAMP_START) "
+									+ "WHERE "
+										+ "UUID = '" + user.getUniqueId().toString() + "'"
+										+ " AND "
+										+ "TIMESTAMP_COMPLETE IS NULL;");
+			}
 		}
-		else
-		{
-			database.updateRaw("update " 
-									+ TABLE_DUTY 
-								+ " set "
-									+ "TIMESTAMP_END = NOW(), "
-									+ "TIMESTAMP_COMPLETE = SEC_TO_TIME(TIMESTAMP_END - TIMESTAMP_START) "
-								+ "where "
-									+ "UUID='" + user.getUniqueId().toString() + "'"
-									+ " and "
-									+ "TIMESTAMP_COMPLETE is NULL;");
+		else {
+			SinkLibrary.getCustomLogger().log(Level.SEVERE, "[DutyCommand.updateUser] Kein gültiger User.");
 		}
 	}
 }
