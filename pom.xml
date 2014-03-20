@@ -55,7 +55,7 @@
             <url>http://snapshots.maven.codehaus.org/maven2/</url>
         </repository>
         <repository>
-        <id>bukkit-repo</id>
+            <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
@@ -97,29 +97,6 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sun</groupId>
-                        <artifactId>tools</artifactId>
-                        <version>1.5.0</version>
-                        <scope>system</scope>
-                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
-                    </dependency>
-                </dependencies>
-                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +160,7 @@
                 <version>1.5.2</version>
                 <executions>
                     <execution>
-                        <phase>process-sources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>replace</goal>
                         </goals>
@@ -193,7 +170,7 @@
                     <filesToInclude>**/src/main/resources/*</filesToInclude>
                     <replacements>
                         <replacement>
-                            <token>BuildNumber</token>
+                            <token>$${build.number}</token>
                             <value>${build.number}</value>
                         </replacement>
                     </replacements>

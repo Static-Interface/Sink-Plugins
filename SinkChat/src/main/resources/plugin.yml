@@ -1,5 +1,5 @@
 name: SinkChat
-version: 1.9
+version: ${build.number}
 description: General Chat Plugin
 author: Trojaner
 website: http://static-interface.de
