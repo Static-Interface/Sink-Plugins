@@ -58,22 +58,22 @@ public class DutyCommand implements CommandExecutor
 		LAST_X_DAYS
 	}
 	
-	public void startDuty(User user)
+	public static void startDuty(User user)
+	{
+		endDuty(user);
+	}
+	
+	public static void endDuty(User user)
 	{
 		
 	}
 	
-	public void endDuty(User user)
-	{
-		
-	}
-	
-	public Time getDutySumTime(User user, dutySumType sumType)
+	public static Time getDutySumTime(User user, dutySumType sumType)
 	{
 		return new Time(0);
 	}
 	
-	public Time getLastDutyTime(User user)
+	public static Time getLastDutyTime(User user)
 	{
 		return new Time(0);
 	}
@@ -88,10 +88,11 @@ class DatabaseHandler
 	{
 		if ( !database.containsTable(TABLE_DUTY) )
 		{
-			database.createTable(TABLE_DUTY, "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-											+ "UUID text, "
-											+ "TIMESTAMP_START timestamp DEFAULT CURRENT_TIMESTAMP, "
-											+ "TIMESTAMP_END TIMESTAMP");
+			database.createTable(TABLE_DUTY, 
+									"ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+										+ "UUID text, "
+										+ "TIMESTAMP_START timestamp DEFAULT CURRENT_TIMESTAMP, "
+										+ "TIMESTAMP_END TIMESTAMP");
 		}
 	}
 	
