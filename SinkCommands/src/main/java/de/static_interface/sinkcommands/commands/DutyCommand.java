@@ -51,6 +51,7 @@ public class DutyCommand implements CommandExecutor
 	
 	public enum dutySumType
 	{
+		LAST_DUTY_ONLY,
 		TODAY,
 		YESTERDAY,
 		LAST_WEEK,
@@ -61,11 +62,15 @@ public class DutyCommand implements CommandExecutor
 	public static void startDuty(User user)
 	{
 		endDuty(user);
+		
+		DatabaseHandler.updateUser(user, true);
 	}
 	
-	public static void endDuty(User user)
+	public static Time endDuty(User user)
 	{
+		DatabaseHandler.updateUser(user, false);
 		
+		return getDutySumTime(user, dutySumType.LAST_DUTY_ONLY);
 	}
 	
 	public static Time getDutySumTime(User user, dutySumType sumType)
@@ -75,7 +80,7 @@ public class DutyCommand implements CommandExecutor
 	
 	public static Time getLastDutyTime(User user)
 	{
-		return new Time(0);
+		return getDutySumTime(user, dutySumType.LAST_DUTY_ONLY);
 	}
 }
 
@@ -100,14 +105,21 @@ class DatabaseHandler
 	{
 		initDatabase();
 		
-		database.updateRaw("update " 
-								+ TABLE_DUTY 
-							+ " set "
-								+ "TIMESTAMP_END = NOW(), "
-								+ "TIMESTAMP_COMPLETE = SEC_TO_TIME(TIMESTAMP_END - TIMESTAMP_START) "
-							+ "where "
-								+ "UUID='" + user.getUniqueId() + "'"
-								+ " and "
-								+ "TIMESTAMP_COMPLETE is NULL;");
+		if (start)
+		{
+			database.insertIntoDatabase(TABLE_DUTY, "UUID", user.getUniqueId().toString());
+		}
+		else
+		{
+			database.updateRaw("update " 
+									+ TABLE_DUTY 
+								+ " set "
+									+ "TIMESTAMP_END = NOW(), "
+									+ "TIMESTAMP_COMPLETE = SEC_TO_TIME(TIMESTAMP_END - TIMESTAMP_START) "
+								+ "where "
+									+ "UUID='" + user.getUniqueId().toString() + "'"
+									+ " and "
+									+ "TIMESTAMP_COMPLETE is NULL;");
+		}
 	}
 }
