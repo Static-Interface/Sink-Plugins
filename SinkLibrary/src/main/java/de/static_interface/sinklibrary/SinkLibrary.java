@@ -563,4 +563,12 @@ public class SinkLibrary extends JavaPlugin
     {
         return logger;
     }
+
+    public static User getUserByUniqueId(UUID uuid)
+    {
+        for ( User u : getUsers() )
+        {
+            if (u.getUniqueId().equals(uuid)) return u;
+        }
+    }
 }
