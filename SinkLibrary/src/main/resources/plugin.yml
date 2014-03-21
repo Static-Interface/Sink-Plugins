@@ -49,6 +49,6 @@ permissions:
     default: op
     descriptions: Permission required for tracking exceptions
 
-  sinklibrary.script
+  sinklibrary.script:
     default: op
     description: Allows to use groovy scripts.
