@@ -72,8 +72,8 @@ public class ScriptChatListener implements Listener
                 if ( !codeData.containsKey(name) )
                 {
 
-                    String defaultImports = "import import de.static_interface.sinklibrary.*;" + nl +
-                            "import import de.static_interface.sinklibrary.*" + nl +
+                    String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
+                            "import de.static_interface.sinklibrary.*" + nl +
                             "import org.bukkit.*" + nl;
 
                     currentCode = defaultImports + currentCode;
