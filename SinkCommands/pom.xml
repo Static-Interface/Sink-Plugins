@@ -98,15 +98,15 @@
                                 </filter>
                                 <filter>
                                     <artifact>de.static_interface:SinkAFK</artifact>
-                                    <exludes>
-                                        <exclude>**</exclude>
-                                    </exludes>
+                                    <excludes>
+                                    <exclude>**</exclude>
+                                    </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>de.static_interface:SinkLibrary</artifact>
-                                    <exludes>
-                                        <exclude>**</exclude>
-                                    </exludes>
+                                    <excludes>
+                                    <exclude>**</exclude>
+                                    </excludes>
                                 </filter>
                             </filters>
                         </configuration>
