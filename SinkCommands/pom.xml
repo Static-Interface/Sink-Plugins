@@ -62,6 +62,7 @@
         	<groupId>de.static_interface.shadow</groupId>
         	<artifactId>Tameru</artifactId>
         	<version>0.5</version>
+            <scope>system</scope>
             <systemPath>${project.basedir}/../lib/Tameru.jar</systemPath>
         </dependency>
         <dependency>
