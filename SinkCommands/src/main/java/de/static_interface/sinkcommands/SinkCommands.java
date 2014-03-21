@@ -21,7 +21,9 @@ import de.static_interface.sinkcommands.commands.*;
 import de.static_interface.sinkcommands.listener.*;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -86,10 +88,10 @@ public class SinkCommands extends JavaPlugin
     @Override
     public void onDisable()
     {
-        for ( String user : DutyCommands.dutyPlayers.keySet() )
+        for ( User user : DutyCommand.getPlayersInDuty() )
         {
-            SinkLibrary.getUser(user).sendMessage(DutyCommands.PREFIX + ChatColor.DARK_RED + "Du wurdest durch einen Reload gezwungen den Dienstmodus zu verlassen.");
-            DutyCommands.DutyCommand.deactivateDutyMode(user);
+            user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
+            DutyCommand.endDuty(user);
         }
 
         SinkLibrary.getCustomLogger().info("Saving player configurations...");
@@ -105,7 +107,7 @@ public class SinkCommands extends JavaPlugin
     }
 
     /**
-     * Refresh Scoarboard for all players
+     * Refresh Scoreboard for all players
      */
     public static void refreshScoreboard()
     {
@@ -196,9 +198,7 @@ public class SinkCommands extends JavaPlugin
         getCommand("globalmute").setExecutor(new GlobalmuteCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        getCommand("duty").setExecutor(new DutyCommands.DutyCommand());
-        getCommand("dutylist").setExecutor(new DutyCommands.DutyListCommand());
-        getCommand("dutytime").setExecutor(new DutyCommands.DutyTimeCommand());
+        getCommand("duty").setExecutor(new DutyCommand());
         getCommand("lag").setExecutor(new LagCommand());
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
         getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));

@@ -43,16 +43,8 @@ commands:
 
   duty:
     description: Duty commands
-    usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler>"
+    usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler> [Zeitspanne]"
     permission: sinkcommands.duty
-
-  dutylist:
-    description: List on duty users
-    permission: sinkcommands.dutylist
-
-  dutytime:
-    description: Show duty time of players
-    permission: sinkcommands.dutytime
 
   lag:
     description: Shows information about server lag

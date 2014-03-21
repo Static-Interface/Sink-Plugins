@@ -58,5 +58,15 @@
             <artifactId>SinkLibrary</artifactId>
             <version>1.x</version>
         </dependency>
+        <dependency>
+        	<groupId>de.static_interface.shadow</groupId>
+        	<artifactId>Tameru</artifactId>
+        	<version>0.5</version>
+        </dependency>
+        <dependency>
+        	<groupId>de.static-interface</groupId>
+        	<artifactId>SinkAFK</artifactId>
+        	<version>1.x</version>
+        </dependency>
     </dependencies>
 </project>
