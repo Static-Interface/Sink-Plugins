@@ -72,8 +72,8 @@ public class ScriptChatListener implements Listener
                         try
                         {
                             String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
-                            if ( result == null ) result = "Success";
-                            user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                            if ( result != null )
+                                user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
                         }
                         catch ( Exception e )
                         {
