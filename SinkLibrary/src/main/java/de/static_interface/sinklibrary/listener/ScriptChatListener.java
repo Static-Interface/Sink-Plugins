@@ -31,6 +31,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class ScriptChatListener implements Listener
 {
@@ -56,6 +57,7 @@ public class ScriptChatListener implements Listener
 
                 if ( !playerData.containsKey(name) )
                 {
+                    SinkLibrary.getCustomLogger().log(Level.INFO, "Initializing ShellInstance for " + user.getName());
                     shellInstance = new GroovyShell();
                     shellInstance.setVariable("me", user);
                     shellInstance.setVariable("server", Bukkit.getServer());
@@ -77,7 +79,7 @@ public class ScriptChatListener implements Listener
                         }
                         catch ( Exception e )
                         {
-                            sendErrorMessage(user, e.getMessage());
+                            sendErrorMessage(user, e.getMessage().replace(e.getMessage(), ""));
                         }
                         break;
                 }
@@ -87,7 +89,7 @@ public class ScriptChatListener implements Listener
 
     private void sendErrorMessage(User user, String message)
     {
-        user.sendMessage(ChatColor.RED + "Exception: " + message);
+        user.sendMessage(ChatColor.DARK_RED + "Exception: " + ChatColor.RED + message);
     }
 
     @EventHandler(ignoreCancelled = true)
