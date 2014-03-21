@@ -35,7 +35,8 @@ import java.util.logging.Level;
 
 public class ScriptChatListener implements Listener
 {
-    public HashMap<String, GroovyShell> playerData = new HashMap<>();
+    public HashMap<String, GroovyShell> playerData = new HashMap<>(); // PlayerName - Instance
+    public HashMap<String, String> codeData = new HashMap<>(); // PlayerName - Code
 
     Plugin plugin;
 
@@ -47,9 +48,12 @@ public class ScriptChatListener implements Listener
         final User user = SinkLibrary.getUser(event.getPlayer());
         if ( !ScriptCommand.isEnabled(user) ) return;
         event.setCancelled(true);
-
         Bukkit.getScheduler().runTask(plugin, new Runnable()
         {
+            String currentCode = ChatColor.stripColor(event.getMessage());
+            String codeWithPrev = null;
+            String nl = System.getProperty("line.seperator");
+
             public void run()
             {
                 String name = event.getPlayer().getName();
@@ -60,26 +64,44 @@ public class ScriptChatListener implements Listener
                     SinkLibrary.getCustomLogger().log(Level.INFO, "Initializing ShellInstance for " + user.getName());
                     shellInstance = new GroovyShell();
                     shellInstance.setVariable("me", user);
-                    shellInstance.setVariable("server", Bukkit.getServer());
+                    shellInstance.setVariable("plugin", plugin);
                     playerData.put(name, shellInstance);
                 }
                 else shellInstance = playerData.get(event.getPlayer().getName());
+
+                if ( !codeData.containsKey(name) )
+                {
+
+                    String defaultImports = "import import de.static_interface.sinklibrary.*;" + nl +
+                            "import import de.static_interface.sinklibrary.*" + nl +
+                            "import org.bukkit.*" + nl;
+
+                    currentCode = defaultImports + currentCode;
+                    codeData.put(name, currentCode);
+                    codeWithPrev = currentCode;
+                }
+                else
+                {
+                    String prevCode = codeData.get(name);
+                    codeWithPrev = prevCode + nl + currentCode;
+                    codeData.put(name, codeWithPrev);
+                }
 
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
                 switch ( mode )
                 {
                     default:
-                        user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + event.getMessage());
+                        user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + currentCode);
                         try
                         {
-                            String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
+                            String result = String.valueOf(shellInstance.evaluate(codeWithPrev));
                             if ( result != null )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
                         }
                         catch ( Exception e )
                         {
-                            sendErrorMessage(user, e.getMessage().replace(e.getMessage(), ""));
+                            sendErrorMessage(user, e.getMessage());
                         }
                         break;
                 }
@@ -99,6 +121,7 @@ public class ScriptChatListener implements Listener
         ScriptCommand.disable(SinkLibrary.getUser(event.getPlayer()));
         if ( playerData.containsKey(name) )
         {
+            playerData.get(name).getClassLoader().clearCache();
             playerData.remove(name);
         }
     }
