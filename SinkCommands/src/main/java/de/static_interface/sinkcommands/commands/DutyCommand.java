@@ -21,6 +21,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.UUID;
 import java.util.Date;
 import java.util.logging.Level;
 
@@ -88,6 +89,11 @@ public class DutyCommand implements CommandExecutor
 	{
 		return getDutySumTime(user, dutySumType.LAST_DUTY_ONLY);
 	}
+	
+	public static List<User> getPlayersInDuty()
+	{
+		return DatabaseHandler.getPlayersInDuty();
+	}
 }
 
 class DatabaseHandler
@@ -105,6 +111,45 @@ class DatabaseHandler
 										+ "`TIMESTAMP_START` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
 										+ "`TIMESTAMP_END` TIMESTAMP");
 		}
+	}
+	
+	public static List<User> getPlayersInDuty()
+	{
+		List<User> userList = new ArrayList<User>();
+		
+		initDatabase();
+		
+		ResultSet set = database.selectRaw("SELECT "
+									+ "UUID"
+								+ " FROM " 
+									+ TABLE_DUTY 
+								+ " WHERE "
+									+ "`TIMESTAMP_COMPLETE` IS NULL");
+									
+		if (set != null) 
+		{
+			try 
+			{
+				while (set.next())
+				{
+				
+					String uuidString =  set.getString("UUID");
+					UUID uuid = UUID.fromString(uuidString);
+					User user = SinkLibrary.getUserByUniqueId(uuid);
+					
+					if (user != null) 
+					{
+						userList.add();
+					}
+				}
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return userList;
 	}
 	
 	public static Time getSumTime(User user, dutySumType sumType)
