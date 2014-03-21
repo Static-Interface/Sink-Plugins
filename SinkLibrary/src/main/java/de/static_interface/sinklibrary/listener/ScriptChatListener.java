@@ -52,7 +52,7 @@ public class ScriptChatListener implements Listener
         {
             String currentCode = ChatColor.stripColor(event.getMessage());
             String codeWithPrev = null;
-            String nl = System.getProperty("line.seperator");
+            String nl = System.getProperty("line.separator");
 
             public void run()
             {
