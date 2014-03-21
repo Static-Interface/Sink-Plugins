@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -235,7 +234,7 @@ public class SinkLibrary extends JavaPlugin
     {
         Bukkit.getPluginManager().registerEvents(new PlayerConfigurationListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplayNameListener(), this);
-        Bukkit.getPluginManager().registerEvents(new ScriptChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new ScriptChatListener(this), this);
     }
 
     private void registerCommands()
