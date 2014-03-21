@@ -28,6 +28,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
@@ -35,49 +36,59 @@ public class ScriptChatListener implements Listener
 {
     public HashMap<String, GroovyShell> playerData = new HashMap<>();
 
+    Plugin plugin;
+
+    public ScriptChatListener(Plugin plugin) {this.plugin = plugin;}
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void handleChatScript(AsyncPlayerChatEvent event)
+    public void handleChatScript(final AsyncPlayerChatEvent event)
     {
-        User user = SinkLibrary.getUser(event.getPlayer());
-
-        if ( !ScriptCommand.isEnabled(user) ) return;
-        event.setCancelled(true);
-        String name = event.getPlayer().getName();
-        GroovyShell shellInstance;
-
-        if ( !playerData.containsKey(name) )
+        Bukkit.getScheduler().runTask(plugin, new Runnable()
         {
-            shellInstance = new GroovyShell();
-            shellInstance.setVariable("me", user);
-            shellInstance.setVariable("server", Bukkit.getServer());
-            playerData.put(name, shellInstance);
-        }
-        else shellInstance = playerData.get(event.getPlayer().getName());
+            public void run()
+            {
+                User user = SinkLibrary.getUser(event.getPlayer());
 
-        String[] args = event.getMessage().split(" ");
-        if ( args.length < 1 )
-        {
-            sendHelp(user);
-            return;
-        }
+                if ( !ScriptCommand.isEnabled(user) ) return;
+                event.setCancelled(true);
+                String name = event.getPlayer().getName();
+                GroovyShell shellInstance;
 
-        String mode = args[0].toLowerCase();
-        switch ( mode )
-        {
-            default:
-                user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + event.getMessage());
-                try
+                if ( !playerData.containsKey(name) )
                 {
-                    String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
-                    user.sendMessage(event.getMessage());
-                    user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                    shellInstance = new GroovyShell();
+                    shellInstance.setVariable("me", user);
+                    shellInstance.setVariable("server", Bukkit.getServer());
+                    playerData.put(name, shellInstance);
                 }
-                catch ( Exception e )
+                else shellInstance = playerData.get(event.getPlayer().getName());
+
+                String[] args = event.getMessage().split(" ");
+                if ( args.length < 1 )
                 {
-                    sendErrorMessage(user, e.getMessage());
+                    sendHelp(user);
+                    return;
                 }
-                break;
-        }
+
+                String mode = args[0].toLowerCase();
+                switch ( mode )
+                {
+                    default:
+                        user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + event.getMessage());
+                        try
+                        {
+                            String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
+                            if ( result == null ) result = "Success";
+                            user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                        }
+                        catch ( Exception e )
+                        {
+                            sendErrorMessage(user, e.getMessage());
+                        }
+                        break;
+                }
+            }
+        });
     }
 
     private void sendHelp(User user)
