@@ -42,6 +42,7 @@ public class ScriptChatListener implements Listener
         User user = SinkLibrary.getUser(event.getPlayer());
 
         if ( !ScriptCommand.isEnabled(user) ) return;
+        event.setCancelled(true);
         String name = event.getPlayer().getName();
         GroovyShell shellInstance;
 
@@ -50,7 +51,7 @@ public class ScriptChatListener implements Listener
             Binding binding = new Binding();
             binding.setVariable("me", user);
             binding.setVariable("server", Bukkit.getServer());
-            shellInstance = new GroovyShell();
+            shellInstance = new GroovyShell(binding);
             playerData.put(name, shellInstance);
         }
         else shellInstance = playerData.get(event.getPlayer().getName());
