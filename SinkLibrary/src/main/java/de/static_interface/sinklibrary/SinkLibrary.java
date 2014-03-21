@@ -566,9 +566,9 @@ public class SinkLibrary extends JavaPlugin
 
     public static User getUserByUniqueId(UUID uuid)
     {
-        for ( User u : getUsers() )
+        for ( Entry<String, User> u : getUsers().entrySet() )
         {
-            if (u.getUniqueId().equals(uuid)) return u;
+            if (u.getValue().getUniqueId().equals(uuid)) return u;
         }
         
         return null;
