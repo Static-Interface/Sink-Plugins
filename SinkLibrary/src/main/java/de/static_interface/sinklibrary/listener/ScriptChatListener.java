@@ -64,12 +64,6 @@ public class ScriptChatListener implements Listener
                 else shellInstance = playerData.get(event.getPlayer().getName());
 
                 String[] args = event.getMessage().split(" ");
-                if ( args.length < 1 )
-                {
-                    sendHelp(user);
-                    return;
-                }
-
                 String mode = args[0].toLowerCase();
                 switch ( mode )
                 {
@@ -89,11 +83,6 @@ public class ScriptChatListener implements Listener
                 }
             }
         });
-    }
-
-    private void sendHelp(User user)
-    {
-        user.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + "Too few arguments!");
     }
 
     private void sendErrorMessage(User user, String message)
