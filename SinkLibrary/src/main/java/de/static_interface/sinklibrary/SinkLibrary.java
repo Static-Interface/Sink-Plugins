@@ -570,7 +570,7 @@ public class SinkLibrary extends JavaPlugin
     {
         for ( Entry<String, User> u : getUsers().entrySet() )
         {
-            if (u.getValue().getUniqueId().equals(uuid)) return u;
+            if (u.getValue().getUniqueId().equals(uuid)) return u.getValue();
         }
         
         return null;
