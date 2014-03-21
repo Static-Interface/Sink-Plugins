@@ -59,16 +59,16 @@
             <version>1.x</version>
         </dependency>
         <dependency>
-        	<groupId>de.static_interface.shadow</groupId>
-        	<artifactId>Tameru</artifactId>
-        	<version>0.5</version>
+            <groupId>de.static_interface.shadow</groupId>
+            <artifactId>Tameru</artifactId>
+            <version>0.5</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../lib/Tameru.jar</systemPath>
         </dependency>
         <dependency>
-        	<groupId>de.static-interface</groupId>
-        	<artifactId>SinkAFK</artifactId>
-        	<version>1.x</version>
+            <groupId>de.static-interface</groupId>
+            <artifactId>SinkAFK</artifactId>
+            <version>1.x</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../lib/SinkAFK.jar</systemPath>
         </dependency>
@@ -99,13 +99,19 @@
                                 <filter>
                                     <artifact>de.static_interface:SinkAFK</artifact>
                                     <excludes>
-                                    <exclude>**</exclude>
+                                        <exclude>**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>de.static_interface:SinkLibrary</artifact>
                                     <excludes>
-                                    <exclude>**</exclude>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.codehaus.groovy:groovy-all</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

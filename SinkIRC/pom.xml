@@ -94,6 +94,12 @@
                                         <exclude>**</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>org.codehaus.groovy:groovy-all</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                         </configuration>
                     </execution>
