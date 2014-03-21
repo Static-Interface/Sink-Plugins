@@ -21,10 +21,14 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.UUID;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,7 +40,9 @@ import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 
 public class DutyCommand implements CommandExecutor
-{	
+{
+	public static final String PREFIX = ChatColor.DARK_PURPLE+"[SinkDuty] "+ChatColor.RESET;
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments)
 	{
@@ -47,10 +53,85 @@ public class DutyCommand implements CommandExecutor
 		
 		if ( arguments.length == 0 )
 		{
-			
+			sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), dutySumType.ALL).toString()));
+			return true;
 		}
 		
+		if ( arguments.length == 1 )
+		{
+			if ( arguments[0].equalsIgnoreCase("on") )
+			{
+				if ( sender.equals(Bukkit.getConsoleSender()) )
+				{
+					sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
+				}
+				startDuty(SinkLibrary.getUser(sender));
+				sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
+			}
+			if ( arguments[0].equalsIgnoreCase("off") )
+			{
+				if ( sender.equals(Bukkit.getConsoleSender()) )
+				{
+					sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
+					return true;
+				}
+				if ( getPlayersInDuty().contains(SinkLibrary.getUser(sender)) ) 
+				{
+					endDuty(SinkLibrary.getUser(sender));
+					sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Finish"));
+					return true;
+				}
+				else
+				{
+					sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.NotInDuty"));
+					return true;
+				}
+			}
+			User otherUser = SinkLibrary.getUser(arguments[0]);
+			if ( !otherUser.isOnline() )
+			{
+				sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+				return true;
+			}
+			
+			sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.ALL).toString()));
+			return true;
+		}
 		
+		if ( arguments.length == 2 )
+		{
+			User otherUser = SinkLibrary.getUser(arguments[0]);
+			if ( !otherUser.isOnline() )
+			{
+				sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+				return true;
+			}
+			
+			switch ( arguments[1].toLowerCase() )
+			{
+			case "all":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.ALL).toString()));
+				return true;
+			case "today":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.TODAY).toString()));
+				return true;
+			case "yesterday":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.YESTERDAY).toString()));
+				return true;
+			case "last_week":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.LAST_WEEK).toString()));
+				return true;
+			case "last_two_weeks":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.LAST_TWO_WEEKS).toString()));
+				return true;
+			case "last_month":
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.LAST_MONTH).toString()));
+				return true;
+			default:
+				sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, dutySumType.LAST_DUTY_ONLY).toString()));
+				return true;
+			}
+		}
 		return true;
 	}
 	
