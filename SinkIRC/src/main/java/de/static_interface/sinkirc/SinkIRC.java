@@ -106,7 +106,7 @@ public class SinkIRC extends JavaPlugin
         Plugin sinkChat = Bukkit.getPluginManager().getPlugin("SinkChat");
         if ( sinkLibrary == null || sinkChat == null )
         {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, "This plugin requires SinkLibrary and SinkChat");
+            Bukkit.getLogger().log(Level.WARNING, "This plugin requires SinkLibrary and SinkChat");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
