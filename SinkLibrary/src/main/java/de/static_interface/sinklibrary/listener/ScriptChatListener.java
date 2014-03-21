@@ -43,14 +43,14 @@ public class ScriptChatListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void handleChatScript(final AsyncPlayerChatEvent event)
     {
+        final User user = SinkLibrary.getUser(event.getPlayer());
+        if ( !ScriptCommand.isEnabled(user) ) return;
+        event.setCancelled(true);
+
         Bukkit.getScheduler().runTask(plugin, new Runnable()
         {
             public void run()
             {
-                User user = SinkLibrary.getUser(event.getPlayer());
-
-                if ( !ScriptCommand.isEnabled(user) ) return;
-                event.setCancelled(true);
                 String name = event.getPlayer().getName();
                 GroovyShell shellInstance;
 
