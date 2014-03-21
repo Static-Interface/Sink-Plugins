@@ -139,7 +139,7 @@ class DatabaseHandler
 					
 					if (user != null) 
 					{
-						userList.add();
+						userList.add(user);
 					}
 				}
 			} 
