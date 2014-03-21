@@ -76,9 +76,8 @@ public class ScriptChatListener implements Listener
                             "import de.static_interface.sinklibrary.*" + nl +
                             "import org.bukkit.*" + nl;
 
-                    currentCode = defaultImports + currentCode;
                     codeData.put(name, currentCode);
-                    codeWithPrev = currentCode;
+                    codeWithPrev = currentCode + defaultImports;
                 }
                 else
                 {
