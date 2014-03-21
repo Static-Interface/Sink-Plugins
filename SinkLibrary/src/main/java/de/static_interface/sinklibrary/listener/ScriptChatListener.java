@@ -61,20 +61,28 @@ public class ScriptChatListener implements Listener
         switch ( mode )
         {
             default:
-                user.sendMessage(event.getMessage());
-                user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + shellInstance.evaluate(event.getMessage()));
+                try
+                {
+                    String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
+                    user.sendMessage(event.getMessage());
+                    user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                }
+                catch ( Exception e )
+                {
+                    sendErrorMessage(user, e.getMessage());
+                }
                 break;
         }
     }
 
     private void sendHelp(User user)
     {
-        sendErrorMessage(user, "Too few arguments!");
+        user.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + "Too few arguments!");
     }
 
     private void sendErrorMessage(User user, String message)
     {
-        user.sendMessage(ChatColor.RED + "Error: " + message);
+        user.sendMessage(ChatColor.RED + "Exception: " + message);
     }
 
     @EventHandler(ignoreCancelled = true)
