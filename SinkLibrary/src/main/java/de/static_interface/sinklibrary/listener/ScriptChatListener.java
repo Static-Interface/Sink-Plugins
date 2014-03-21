@@ -83,7 +83,6 @@ public class ScriptChatListener implements Listener
                 {
                     String prevCode = codeData.get(name);
                     codeWithPrev = prevCode + nl + currentCode;
-                    codeData.put(name, codeWithPrev);
                 }
 
                 String[] args = event.getMessage().split(" ");
@@ -97,6 +96,7 @@ public class ScriptChatListener implements Listener
                             String result = String.valueOf(shellInstance.evaluate(codeWithPrev));
                             if ( result != null )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                            codeData.put(name, codeWithPrev);
                         }
                         catch ( Exception e )
                         {
