@@ -570,5 +570,7 @@ public class SinkLibrary extends JavaPlugin
         {
             if (u.getUniqueId().equals(uuid)) return u;
         }
+        
+        return null;
     }
 }
