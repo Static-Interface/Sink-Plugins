@@ -20,7 +20,6 @@ package de.static_interface.sinklibrary.listener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.commands.ScriptCommand;
-import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,10 +47,9 @@ public class ScriptChatListener implements Listener
 
         if ( !playerData.containsKey(name) )
         {
-            Binding binding = new Binding();
-            binding.setVariable("me", user);
-            binding.setVariable("server", Bukkit.getServer());
-            shellInstance = new GroovyShell(binding);
+            shellInstance = new GroovyShell();
+            shellInstance.setVariable("me", user);
+            shellInstance.setVariable("server", Bukkit.getServer());
             playerData.put(name, shellInstance);
         }
         else shellInstance = playerData.get(event.getPlayer().getName());
@@ -67,6 +65,7 @@ public class ScriptChatListener implements Listener
         switch ( mode )
         {
             default:
+                user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + event.getMessage());
                 try
                 {
                     String result = String.valueOf(shellInstance.evaluate(event.getMessage()));
