@@ -97,9 +97,9 @@
                                 </filter>
                                 <filter>
                                     <artifact>org.codehaus.groovy:groovy-all</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
                                 </filter>
                                 <filter>
                                     <artifact>Vault:Vault</artifact>
