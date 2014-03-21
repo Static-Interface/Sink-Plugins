@@ -89,6 +89,10 @@ public class ScriptChatListener implements Listener
                 String mode = args[0].toLowerCase();
                 switch ( mode )
                 {
+                    case "clear":
+                        codeData.remove(name);
+                        user.sendMessage(ChatColor.DARK_GREEN + "History cleared");
+                        break;
                     default:
                         user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + currentCode);
                         try
