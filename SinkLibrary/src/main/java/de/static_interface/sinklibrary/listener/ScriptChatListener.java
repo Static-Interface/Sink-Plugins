@@ -145,6 +145,11 @@ public class ScriptChatListener implements Listener
                         break;
 
                     default:
+                        if ( mode.startsWith(".") )
+                        {
+                            user.sendMessage("\"." + mode + "\" is not a valid command");
+                            break;
+                        }
                         user.sendMessage(ChatColor.DARK_GREEN + "[Input] " + ChatColor.WHITE + formatCode(currentLine));
                         break;
                 }
