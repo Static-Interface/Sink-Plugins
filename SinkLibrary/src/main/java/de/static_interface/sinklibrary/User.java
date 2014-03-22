@@ -46,7 +46,7 @@ public class User
      */
     User(String player)
     {
-        if ( player.equals("CONSOLE") )
+        if ( player.equalsIgnoreCase("CONSOLE") )
         {
             sender = Bukkit.getConsoleSender();
             base = null;

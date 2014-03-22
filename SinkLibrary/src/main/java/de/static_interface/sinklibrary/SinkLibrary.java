@@ -402,8 +402,14 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(Player player)
     {
+        User user = users.get(player.getName());
+        if ( user == null )
+        {
+            user = new User(player.getName());
+            users.put(player.getName(), user);
+        }
         //return new User(player.getName());
-        return users.get(player.getName());
+        return user;
     }
 
     /**
@@ -412,8 +418,13 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(String playerName)
     {
-        //return new User(playerName);
-        return users.get(playerName);
+        User user = users.get(playerName);
+        if ( user == null )
+        {
+            user = new User(playerName);
+            users.put(playerName, user);
+        }
+        return user;
     }
 
     /**
@@ -422,8 +433,13 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(CommandSender sender)
     {
-        //return new User(sender.getName());
-        return users.get(sender.getName());
+        User user = users.get(sender.getName());
+        if ( user == null )
+        {
+            user = new User(sender.getName());
+            users.put(sender.getName(), user);
+        }
+        return user;
     }
 
     /**
