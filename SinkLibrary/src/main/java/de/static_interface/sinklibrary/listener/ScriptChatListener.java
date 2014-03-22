@@ -21,16 +21,16 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.commands.ScriptCommand;
 import groovy.lang.GroovyShell;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
+import org.bukkit.util.BlockIterator;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -68,13 +68,16 @@ public class ScriptChatListener implements Listener
                     shellInstance.setVariable("me", user);
                     shellInstance.setVariable("plugin", plugin);
                     shellInstance.setVariable("server", Bukkit.getServer());
-                    shellInstance.setVariable("x", user.getPlayer().getLocation().getX());
-                    shellInstance.setVariable("y", user.getPlayer().getLocation().getY());
-                    shellInstance.setVariable("z", user.getPlayer().getLocation().getZ());
-                    shellInstance.setVariable("at", ScriptChatListener.lookingAtBlock(user.getPlayer(), 100, 10));
                     playerData.put(name, shellInstance);
                 }
                 else shellInstance = playerData.get(event.getPlayer().getName());
+
+                BlockIterator iterator = new BlockIterator(user.getPlayer());
+                shellInstance.setVariable("at", iterator.next());
+                shellInstance.setVariable("x", user.getPlayer().getLocation().getX());
+                shellInstance.setVariable("y", user.getPlayer().getLocation().getY());
+                shellInstance.setVariable("z", user.getPlayer().getLocation().getZ());
+
 
                 boolean codeSet = false;
                 String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
@@ -118,8 +121,6 @@ public class ScriptChatListener implements Listener
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
 
-                user.getPlayer().getAddress().getHostName();
-
                 switch ( mode )
                 {
                     case ".defaultimports":
@@ -160,7 +161,7 @@ public class ScriptChatListener implements Listener
                     default:
                         if ( mode.startsWith(".") )
                         {
-                            user.sendMessage("\"." + mode + "\" is not a valid command");
+                            user.sendMessage('"' + mode + "\" is not a valid command");
                             break;
                         }
                         user.sendMessage(ChatColor.DARK_GREEN + "[Input] " + ChatColor.WHITE + formatCode(currentLine));
@@ -171,57 +172,6 @@ public class ScriptChatListener implements Listener
     }
 
     static final Material[] SEETHRU = new Material[] {Material.TORCH, Material.REDSTONE_WIRE, Material.LADDER, Material.RAILS, Material.SNOW};
-
-    public static Block lookingAtBlock(LivingEntity ent, double maxDist, double precision)
-    {
-        Location loc = ent.getLocation();
-        World world = loc.getWorld();
-        double eyePosX = loc.getX();
-        double eyePosY = loc.getY() + ent.getEyeHeight();
-        double eyePosZ = loc.getZ();
-
-        Vector eyeDir = loc.getDirection();
-        double eyeDirX = eyeDir.getX();
-        double eyeDirY = eyeDir.getY();
-        double eyeDirZ = eyeDir.getZ();
-
-        Block result = null;
-        double precIncr = precision / 10.0;
-        int lastX = 0;
-        int lastY = 0;
-        int lastZ = 0;
-        double dist = 0.0;
-        while ( dist < maxDist )
-        {
-            dist += precision;
-            int x = (int) Math.floor(eyePosX + (eyeDirX * dist));
-            int y = (int) Math.floor(eyePosY + (eyeDirY * dist));
-            int z = (int) Math.floor(eyePosZ + (eyeDirZ * dist));
-            if ( x != lastX || y != lastY || z != lastZ )
-            {
-                result = world.getBlockAt(x, y, z);
-                if ( y == 128 || y == 1 )
-                {
-                    break;
-                }
-                Material type = result.getType();
-                boolean cancel = false;
-                for ( Material material : SEETHRU )
-                {
-                    if ( material == type )
-                    {
-                        cancel = true;
-                    }
-                }
-                if ( cancel ) break;
-                lastX = x;
-                lastY = y;
-                lastZ = z;
-            }
-            precision += precIncr;
-        }
-        return result;
-    }
 
     private String formatCode(String code)
     {
