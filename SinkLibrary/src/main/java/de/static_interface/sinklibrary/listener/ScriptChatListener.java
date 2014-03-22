@@ -70,12 +70,11 @@ public class ScriptChatListener implements Listener
                 else shellInstance = playerData.get(event.getPlayer().getName());
 
                 boolean codeSet = false;
+                String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
+                        "import org.bukkit.*;" + nl;
+
                 if ( !codeData.containsKey(name) )
                 {
-
-                    String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
-                            "import org.bukkit.*;" + nl +
-
                             codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                     codeSet = true;
@@ -90,7 +89,7 @@ public class ScriptChatListener implements Listener
 
                 currentLine = currentLine.trim();
 
-                if ( currentLine.equals(".help") || currentLine.equals(".clear") || currentLine.equals(".execute") || currentLine.equals(".history") )
+                if ( currentLine.equals(".help") || currentLine.equals(".clear") || currentLine.equals(".execute") || currentLine.equals(".history") || currentLine.equals(".defaultimports") )
                 {
                     currentLine = "";
                 }
@@ -110,6 +109,10 @@ public class ScriptChatListener implements Listener
 
                 switch ( mode )
                 {
+                    case ".defaultimports":
+                        codeData.put(name, defaultImports + code);
+                        user.sendMessage(ChatColor.GOLD + "Imported default imports!");
+                        break;
                     case ".help":
                         user.sendMessage(ChatColor.GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
                         break;
