@@ -108,10 +108,9 @@ public class Logger
         {
             fileWriter.write('[' + date + ' ' + level.getName() + "]: " + message + newLine);
         }
-        catch ( IOException e )
+        catch ( IOException ignored )
         {
-            Bukkit.getLogger().log(Level.SEVERE, "Couldn't write to log file: ", e);
-            e.printStackTrace();
+            //Do nothing...
         }
     }
 

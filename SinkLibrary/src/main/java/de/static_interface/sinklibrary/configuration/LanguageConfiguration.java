@@ -97,7 +97,7 @@ public class LanguageConfiguration
             addDefault("SinkChat.Commands.Spy.Enabled", "&aSpy chat has been enabled!");
             addDefault("SinkChat.Commands.Spy.AlreadyEnabled", "&cSpy chat has been already enabled!");
 
-            addDefault("SinkChat.Commands.Spy.Disabled", "&cSpy chat has been disabled!");
+            addDefault("SinkChat.Commands.Spy.Disabled", "&4Spy chat has been disabled!");
             addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has been already disabled!");
 
             addDefault("SinkChat.Channels.Help", "Help");
@@ -137,7 +137,7 @@ public class LanguageConfiguration
             addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n%s");
             addDefault("SinkAntiSpam.ReplaceDomain", "google.com");
             addDefault("SinkAntiSpam.ReplaceIP", "127.0.0.1");
-            
+
             addDefault("SinkDuty.Time", "You have the following duty time: %s");
             addDefault("SinkDuty.Time.Others", "%s has the following duty time: %s");
             addDefault("SinkDuty.Time.Start", "Duty mode started.");

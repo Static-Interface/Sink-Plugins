@@ -79,23 +79,23 @@ public class ScriptChatListener implements Listener
                     codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                 }
-                else
+
+                currentLine = currentLine.trim();
+
+                if ( currentLine.equals("help") || currentLine.equals("clear") || currentLine.equals("execute") || currentLine.equals("viewcode") )
                 {
-                    String prevCode = codeData.get(name);
-                    if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
-                    else if ( currentLine.startsWith("help") ) { code = prevCode; }
-                    else if ( currentLine.startsWith("clear") ) { code = prevCode; }
-                    else if ( currentLine.startsWith("execute") ) { code = prevCode; }
-                    else if ( currentLine.startsWith("viewcode") ) { code = prevCode; }
-                    else code = prevCode + nl + currentLine;
+                    currentLine = "";
                 }
+                String prevCode = codeData.get(name);
+                if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
+                else code = prevCode + nl + currentLine;
 
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
                 switch ( mode )
                 {
                     case "help":
-                        user.sendMessage(ChatColor.DARK_GREEN + "[Help]" + ChatColor.GRAY + "Available Commands: help, execute, viewcode");
+                        user.sendMessage(ChatColor.DARK_GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, viewcode");
 
                     case "clear":
                         codeData.remove(name);
@@ -121,7 +121,7 @@ public class ScriptChatListener implements Listener
                         break;
 
                     default:
-                        user.sendMessage(ChatColor.DARK_GREEN + "[Input]" + currentLine);
+                        user.sendMessage(ChatColor.DARK_GREEN + "[Input] " + ChatColor.WHITE + currentLine);
                         break;
                 }
             }
