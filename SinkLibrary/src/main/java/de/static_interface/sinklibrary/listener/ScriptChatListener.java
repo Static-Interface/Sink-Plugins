@@ -105,7 +105,7 @@ public class ScriptChatListener implements Listener
 
                 currentLine = currentLine.trim();
 
-                if ( currentLine.equals(".help") || currentLine.equals(".clear") || currentLine.equals(".execute") || currentLine.equals(".history") || currentLine.equals(".defaultimports") )
+                if ( currentLine.startsWith(".") ) // command, don't add to code
                 {
                     currentLine = "";
                 }
@@ -151,8 +151,6 @@ public class ScriptChatListener implements Listener
                         break;
 
                     case ".history":
-                        code = code.replace(".history", "");
-                        codeData.put(name, code);
                         user.sendMessage(ChatColor.GOLD + "-------|History|-------");
                         user.sendMessage(ChatColor.WHITE + formatCode(code));
                         user.sendMessage(ChatColor.GOLD + "-----------------------");
@@ -161,8 +159,6 @@ public class ScriptChatListener implements Listener
                     default:
                         if ( mode.startsWith(".") )
                         {
-                            code = code.replace(mode, "");
-                            codeData.put(name, code);
                             user.sendMessage('"' + mode + "\" is not a valid command");
                             break;
                         }
