@@ -161,6 +161,8 @@ public class ScriptChatListener implements Listener
                     default:
                         if ( mode.startsWith(".") )
                         {
+                            code = code.replace(mode, "");
+                            codeData.put(name, code);
                             user.sendMessage('"' + mode + "\" is not a valid command");
                             break;
                         }
