@@ -21,10 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.commands.ScriptCommand;
 import groovy.lang.GroovyShell;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -35,7 +32,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -92,7 +88,7 @@ public class ScriptChatListener implements Listener
 
                 if ( !codeData.containsKey(name) )
                 {
-                            codeData.put(name, currentLine);
+                    codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                     codeSet = true;
                 }
@@ -174,7 +170,7 @@ public class ScriptChatListener implements Listener
         });
     }
 
-    static final int[] SEETHRU = new int[] {50, 55, 65, 66, 78};
+    static final Material[] SEETHRU = new Material[] {Material.TORCH, Material.REDSTONE_WIRE, Material.LADDER, Material.RAILS, Material.SNOW};
 
     public static Block lookingAtBlock(LivingEntity ent, double maxDist, double precision)
     {
@@ -208,11 +204,16 @@ public class ScriptChatListener implements Listener
                 {
                     break;
                 }
-                int typeId = result.getTypeId();
-                if ( typeId > 0 && Arrays.binarySearch(SEETHRU, typeId) < 0 )
+                Material type = result.getType();
+                boolean cancel = false;
+                for ( Material material : SEETHRU )
                 {
-                    break;
+                    if ( material == type )
+                    {
+                        cancel = true;
+                    }
                 }
+                if ( cancel ) break;
                 lastX = x;
                 lastY = y;
                 lastZ = z;
