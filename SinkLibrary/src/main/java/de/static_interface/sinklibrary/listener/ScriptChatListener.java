@@ -23,13 +23,19 @@ import de.static_interface.sinklibrary.commands.ScriptCommand;
 import groovy.lang.GroovyShell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -65,12 +71,23 @@ public class ScriptChatListener implements Listener
                     shellInstance = new GroovyShell();
                     shellInstance.setVariable("me", user);
                     shellInstance.setVariable("plugin", plugin);
+                    shellInstance.setVariable("server", Bukkit.getServer());
+                    shellInstance.setVariable("x", user.getPlayer().getLocation().getX());
+                    shellInstance.setVariable("y", user.getPlayer().getLocation().getY());
+                    shellInstance.setVariable("z", user.getPlayer().getLocation().getZ());
+                    shellInstance.setVariable("at", ScriptChatListener.lookingAtBlock(user.getPlayer(), 100, 10));
                     playerData.put(name, shellInstance);
                 }
                 else shellInstance = playerData.get(event.getPlayer().getName());
 
                 boolean codeSet = false;
                 String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
+                        "import org.bukkit.block.*;" + nl +
+                        "import org.bukkit.entity.*;" + nl +
+                        "import org.bukkit.inventory.*;" + nl +
+                        "import org.bukkit.material.*;" + nl +
+                        "import org.bukkit.potion.*; " + nl +
+                        "import org.bukkit.util.*" + nl +
                         "import org.bukkit.*;" + nl + nl;
 
                 if ( !codeData.containsKey(name) )
@@ -155,6 +172,54 @@ public class ScriptChatListener implements Listener
                 }
             }
         });
+    }
+
+    static final int[] SEETHRU = new int[] {50, 55, 65, 66, 78};
+
+    public static Block lookingAtBlock(LivingEntity ent, double maxDist, double precision)
+    {
+        Location loc = ent.getLocation();
+        World world = loc.getWorld();
+        double eyePosX = loc.getX();
+        double eyePosY = loc.getY() + ent.getEyeHeight();
+        double eyePosZ = loc.getZ();
+
+        Vector eyeDir = loc.getDirection();
+        double eyeDirX = eyeDir.getX();
+        double eyeDirY = eyeDir.getY();
+        double eyeDirZ = eyeDir.getZ();
+
+        Block result = null;
+        double precIncr = precision / 10.0;
+        int lastX = 0;
+        int lastY = 0;
+        int lastZ = 0;
+        double dist = 0.0;
+        while ( dist < maxDist )
+        {
+            dist += precision;
+            int x = (int) Math.floor(eyePosX + (eyeDirX * dist));
+            int y = (int) Math.floor(eyePosY + (eyeDirY * dist));
+            int z = (int) Math.floor(eyePosZ + (eyeDirZ * dist));
+            if ( x != lastX || y != lastY || z != lastZ )
+            {
+                result = world.getBlockAt(x, y, z);
+                if ( y == 128 || y == 1 )
+                {
+                    break;
+                }
+                int typeId = result.getTypeId();
+                if ( typeId > 0 && Arrays.binarySearch(SEETHRU, typeId) < 0 )
+                {
+                    break;
+                }
+                lastX = x;
+                lastY = y;
+                lastZ = z;
+            }
+            precision += precIncr;
+        }
+        return result;
     }
 
     private String formatCode(String code)
