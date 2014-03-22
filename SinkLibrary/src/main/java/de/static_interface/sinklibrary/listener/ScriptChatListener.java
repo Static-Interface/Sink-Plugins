@@ -84,7 +84,7 @@ public class ScriptChatListener implements Listener
 
                 currentLine = currentLine.trim();
 
-                if ( currentLine.equals("help") || currentLine.equals("clear") || currentLine.equals("execute") || currentLine.equals("viewcode") )
+                if ( currentLine.equals("help") || currentLine.equals("clear") || currentLine.equals("execute") || currentLine.equals("history") )
                 {
                     currentLine = "";
                 }
@@ -101,7 +101,7 @@ public class ScriptChatListener implements Listener
                 switch ( mode )
                 {
                     case "help":
-                        user.sendMessage(ChatColor.DARK_GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, viewcode");
+                        user.sendMessage(ChatColor.DARK_GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
 
                     case "clear":
                         codeData.remove(name);
@@ -122,7 +122,9 @@ public class ScriptChatListener implements Listener
                         }
                         break;
 
-                    case "viewcode":
+                    case "history":
+                        code = code.replace("history", "");
+                        codeData.put(name, code);
                         user.sendMessage(ChatColor.DARK_GREEN + code);
                         break;
 
