@@ -50,8 +50,8 @@ public class ScriptChatListener implements Listener
         event.setCancelled(true);
         Bukkit.getScheduler().runTask(plugin, new Runnable()
         {
-            String currentCode = ChatColor.stripColor(event.getMessage());
-            String codeWithPrev = null;
+            String currentLine = ChatColor.stripColor(event.getMessage());
+            String code = "";
             String nl = System.getProperty("line.separator");
 
             public void run()
@@ -76,36 +76,48 @@ public class ScriptChatListener implements Listener
                             "import de.static_interface.sinklibrary.*" + nl +
                             "import org.bukkit.*" + nl;
 
-                    codeData.put(name, currentCode);
-                    codeWithPrev = currentCode + defaultImports;
+                    codeData.put(name, currentLine);
+                    code = currentLine + defaultImports;
                 }
                 else
                 {
                     String prevCode = codeData.get(name);
-                    codeWithPrev = prevCode + nl + currentCode;
+                    if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
+                    else code = prevCode + nl + currentLine;
                 }
 
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
                 switch ( mode )
                 {
+                    case "help":
+                        user.sendMessage(ChatColor.DARK_GREEN + "[Help]" + ChatColor.GRAY + "Available Commands: help, execute, viewcode");
+
                     case "clear":
                         codeData.remove(name);
                         user.sendMessage(ChatColor.DARK_GREEN + "History cleared");
                         break;
-                    default:
-                        user.sendMessage(ChatColor.DARK_GREEN + "Input: " + ChatColor.WHITE + currentCode);
+
+                    case "execute":
                         try
                         {
-                            String result = String.valueOf(shellInstance.evaluate(codeWithPrev));
+                            String result = String.valueOf(shellInstance.evaluate(code));
                             if ( result != null )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
-                            codeData.put(name, codeWithPrev);
+                            codeData.put(name, code);
                         }
                         catch ( Exception e )
                         {
                             sendErrorMessage(user, e.getMessage());
                         }
+                        break;
+
+                    case "viewcode":
+                        user.sendMessage(ChatColor.DARK_GREEN + code);
+                        break;
+
+                    default:
+                        user.sendMessage(ChatColor.DARK_GREEN + "[Input]" + currentLine);
                         break;
                 }
             }
