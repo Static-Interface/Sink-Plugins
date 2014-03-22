@@ -74,8 +74,8 @@ public class ScriptChatListener implements Listener
                 {
 
                     String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
-                            "import de.static_interface.sinklibrary.*" + nl +
-                            "import org.bukkit.*" + nl;
+                            "import de.static_interface.sinklibrary.*;" + nl +
+                            "import org.bukkit.*;" + nl;
 
                     codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
@@ -94,6 +94,7 @@ public class ScriptChatListener implements Listener
                 {
                     if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
                     else code = prevCode + nl + currentLine;
+                    codeData.put(name, code);
                 }
 
                 String[] args = event.getMessage().split(" ");
@@ -102,6 +103,7 @@ public class ScriptChatListener implements Listener
                 {
                     case "help":
                         user.sendMessage(ChatColor.DARK_GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
+                        break;
 
                     case "clear":
                         codeData.remove(name);
