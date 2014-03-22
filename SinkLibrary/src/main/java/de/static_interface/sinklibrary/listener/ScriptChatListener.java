@@ -69,6 +69,7 @@ public class ScriptChatListener implements Listener
                 }
                 else shellInstance = playerData.get(event.getPlayer().getName());
 
+                boolean codeSet = false;
                 if ( !codeData.containsKey(name) )
                 {
 
@@ -78,6 +79,7 @@ public class ScriptChatListener implements Listener
 
                     codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
+                    codeSet = true;
                 }
 
                 currentLine = currentLine.trim();
@@ -87,8 +89,12 @@ public class ScriptChatListener implements Listener
                     currentLine = "";
                 }
                 String prevCode = codeData.get(name);
-                if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
-                else code = prevCode + nl + currentLine;
+
+                if ( !codeSet )
+                {
+                    if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
+                    else code = prevCode + nl + currentLine;
+                }
 
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
