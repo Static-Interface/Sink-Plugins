@@ -482,7 +482,7 @@ public class SinkLibrary extends JavaPlugin
             config.setHasDisplayName(false);
         }
         player.setDisplayName(displayName);
-        player.setPlayerListName(displayName);
+        if ( displayName.length() <= 16 ) player.setPlayerListName(displayName);
     }
 
     /**

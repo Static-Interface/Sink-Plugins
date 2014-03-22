@@ -204,8 +204,6 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public void setDisplayName(String displayName)
     {
-        player.setDisplayName(displayName);
-        player.setCustomName(displayName);
         set("Nick.DisplayName", displayName);
         if ( ChatColor.stripColor(displayName).equals(ChatColor.stripColor(user.getDefaultDisplayName())) )
         {

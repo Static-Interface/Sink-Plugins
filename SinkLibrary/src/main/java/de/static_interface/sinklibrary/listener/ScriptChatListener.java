@@ -74,12 +74,18 @@ public class ScriptChatListener implements Listener
                 {
 
                     String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
-                            "import de.static_interface.sinklibrary.*;" + nl +
                             "import org.bukkit.*;" + nl;
 
                     codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                     codeSet = true;
+                }
+
+                boolean useNl = currentLine.startsWith("<");
+                if ( useNl )
+                {
+                    currentLine = currentLine.replaceFirst("<", "");
+                    nl = "";
                 }
 
                 currentLine = currentLine.trim();
@@ -99,6 +105,9 @@ public class ScriptChatListener implements Listener
 
                 String[] args = event.getMessage().split(" ");
                 String mode = args[0].toLowerCase();
+
+                user.getPlayer().getAddress().getHostName();
+
                 switch ( mode )
                 {
                     case "help":
@@ -107,7 +116,7 @@ public class ScriptChatListener implements Listener
 
                     case "clear":
                         codeData.remove(name);
-                        user.sendMessage(ChatColor.DARK_GREEN + "History cleared");
+                        user.sendMessage(ChatColor.DARK_RED + "History cleared");
                         break;
 
                     case "execute":
@@ -127,7 +136,9 @@ public class ScriptChatListener implements Listener
                     case "history":
                         code = code.replace("history", "");
                         codeData.put(name, code);
-                        user.sendMessage(ChatColor.DARK_GREEN + code);
+                        user.sendMessage(ChatColor.GOLD + "-------|History|-------");
+                        user.sendMessage(ChatColor.WHITE + code);
+                        user.sendMessage(ChatColor.GOLD + "-----------------------");
                         break;
 
                     default:
