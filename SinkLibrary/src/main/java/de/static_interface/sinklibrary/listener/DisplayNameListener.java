@@ -22,7 +22,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class DisplayNameListener implements Listener
@@ -33,15 +32,17 @@ public class DisplayNameListener implements Listener
         SinkLibrary.refreshDisplayName(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
         SinkLibrary.refreshDisplayName(event.getPlayer());
     }
 
+    /*
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
         SinkLibrary.refreshDisplayName(event.getPlayer());
     }
+    */
 }

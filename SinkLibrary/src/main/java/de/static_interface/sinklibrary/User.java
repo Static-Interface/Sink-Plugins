@@ -272,6 +272,9 @@ public class User
         }
     }
 
+    /**
+     * @return UniqueId of User
+     */
     public UUID getUniqueId()
     {
         return base.getUniqueId();

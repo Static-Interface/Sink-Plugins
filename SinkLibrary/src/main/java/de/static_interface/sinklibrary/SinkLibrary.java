@@ -40,10 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
@@ -59,7 +56,7 @@ public class SinkLibrary extends JavaPlugin
     private static String version;
     private static Settings settings;
     private static List<JavaPlugin> registeredPlugins;
-    private static HashMap<String, User> users;
+    private static HashMap<String, User> onlineUsers;
     private static PluginDescriptionFile description;
     private static boolean economyAvailable = true;
     private static boolean permissionsAvailable = true;
@@ -75,7 +72,7 @@ public class SinkLibrary extends JavaPlugin
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
         registeredPlugins = new ArrayList<>();
-        users = new HashMap<>();
+        onlineUsers = new HashMap<>();
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
@@ -402,13 +399,12 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(Player player)
     {
-        User user = users.get(player.getName());
+        User user = onlineUsers.get(player.getName());
         if ( user == null )
         {
-            user = new User(player.getName());
-            users.put(player.getName(), user);
+            loadUser(player.getName());
+            user = onlineUsers.get(player.getName());
         }
-        //return new User(player.getName());
         return user;
     }
 
@@ -418,11 +414,11 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(String playerName)
     {
-        User user = users.get(playerName);
+        User user = onlineUsers.get(playerName);
         if ( user == null )
         {
-            user = new User(playerName);
-            users.put(playerName, user);
+            loadUser(playerName);
+            user = onlineUsers.get(playerName);
         }
         return user;
     }
@@ -433,11 +429,11 @@ public class SinkLibrary extends JavaPlugin
      */
     public static User getUser(CommandSender sender)
     {
-        User user = users.get(sender.getName());
+        User user = onlineUsers.get(sender.getName());
         if ( user == null )
         {
-            user = new User(sender.getName());
-            users.put(sender.getName(), user);
+            loadUser(sender.getName());
+            user = onlineUsers.get(sender.getName());
         }
         return user;
     }
@@ -460,7 +456,8 @@ public class SinkLibrary extends JavaPlugin
     public static void refreshDisplayName(Player player)
     {
         if ( !settings.isDisplayNamesEnabled() ) return;
-        User user = SinkLibrary.getUser(player);
+
+        User user = getUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )
@@ -468,26 +465,23 @@ public class SinkLibrary extends JavaPlugin
             return;
         }
 
-        String nickname = user.getDisplayName();
+        String displayName = user.getDisplayName();
 
-        if ( nickname == null || nickname.equals("null") || nickname.isEmpty() )
+        if ( displayName == null || displayName.equals("null") || displayName.isEmpty() || !config.getHasDisplayName() )
         {
             config.setDisplayName(user.getDefaultDisplayName());
+            player.setDisplayName(user.getDefaultDisplayName());
+            player.setPlayerListName(user.getDefaultDisplayName());
             config.setHasDisplayName(false);
-        }
-        else
-        {
-            nickname = user.getDefaultDisplayName();
+            return;
         }
 
-        assert nickname != null;
-        if ( nickname.equals(user.getDefaultDisplayName()) )
+        if ( displayName.equals(user.getDefaultDisplayName()) )
         {
             config.setHasDisplayName(false);
         }
-
-        player.setDisplayName(nickname);
-        player.setCustomName(nickname);
+        player.setDisplayName(displayName);
+        player.setPlayerListName(displayName);
     }
 
     /**
@@ -505,9 +499,9 @@ public class SinkLibrary extends JavaPlugin
      */
     public static void loadUser(String name)
     {
-        if ( !users.containsKey(name) )
+        if ( !onlineUsers.containsKey(name) )
         {
-            users.put(name, new User(name));
+            onlineUsers.put(name, new User(name));
         }
     }
 
@@ -518,11 +512,7 @@ public class SinkLibrary extends JavaPlugin
      */
     public static void loadUser(Player player)
     {
-        String name = player.getName();
-        if ( !users.containsKey(name) )
-        {
-            users.put(name, new User(name));
-        }
+        loadUser(player.getName());
     }
 
     /**
@@ -537,7 +527,7 @@ public class SinkLibrary extends JavaPlugin
         String name = user.getPlayer().getName();
         if ( name != null && !name.isEmpty() )
         {
-            users.remove(name);
+            onlineUsers.remove(name);
         }
     }
 
@@ -556,24 +546,17 @@ public class SinkLibrary extends JavaPlugin
      *
      * @return Online players as Users
      */
-   /*
     public static Collection<User> getOnlineUsers()
     {
-        users.clear();
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            loadUser(player);
-        }
-        return users.values();
+        return onlineUsers.values();
     }
-    */
 
     /**
      * Get Users HashMap
      */
     public static HashMap<String, User> getUsers()
     {
-        return users;
+        return onlineUsers;
     }
 
     public static Logger getCustomLogger()
@@ -583,11 +566,10 @@ public class SinkLibrary extends JavaPlugin
 
     public static User getUserByUniqueId(UUID uuid)
     {
-        for ( User u : getUsers().values() )
+        for ( User user : getOnlineUsers() )
         {
-            if (u.getUniqueId().equals(uuid)) return u;
+            if ( user.getUniqueId().equals(uuid) ) return user;
         }
-        
         return null;
     }
 }
