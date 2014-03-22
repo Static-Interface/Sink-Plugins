@@ -74,9 +74,9 @@ public class ScriptChatListener implements Listener
                 {
 
                     String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
-                            "import org.bukkit.*;" + nl;
+                            "import org.bukkit.*;" + nl +
 
-                    codeData.put(name, currentLine);
+                            codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                     codeSet = true;
                 }
@@ -90,7 +90,7 @@ public class ScriptChatListener implements Listener
 
                 currentLine = currentLine.trim();
 
-                if ( currentLine.equals("help") || currentLine.equals("clear") || currentLine.equals("execute") || currentLine.equals("history") )
+                if ( currentLine.equals(".help") || currentLine.equals(".clear") || currentLine.equals(".execute") || currentLine.equals(".history") )
                 {
                     currentLine = "";
                 }
@@ -110,20 +110,20 @@ public class ScriptChatListener implements Listener
 
                 switch ( mode )
                 {
-                    case "help":
-                        user.sendMessage(ChatColor.DARK_GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
+                    case ".help":
+                        user.sendMessage(ChatColor.GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
                         break;
 
-                    case "clear":
+                    case ".clear":
                         codeData.remove(name);
                         user.sendMessage(ChatColor.DARK_RED + "History cleared");
                         break;
 
-                    case "execute":
+                    case ".execute":
                         try
                         {
                             String result = String.valueOf(shellInstance.evaluate(code));
-                            if ( result != null )
+                            if ( result != null && !result.isEmpty() && !result.equals("null") )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
                             codeData.put(name, code);
                         }
@@ -133,8 +133,8 @@ public class ScriptChatListener implements Listener
                         }
                         break;
 
-                    case "history":
-                        code = code.replace("history", "");
+                    case ".history":
+                        code = code.replace(".history", "");
                         codeData.put(name, code);
                         user.sendMessage(ChatColor.GOLD + "-------|History|-------");
                         user.sendMessage(ChatColor.WHITE + code);
