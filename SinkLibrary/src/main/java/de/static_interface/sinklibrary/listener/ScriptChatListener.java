@@ -23,7 +23,6 @@ import de.static_interface.sinklibrary.commands.ScriptCommand;
 import groovy.lang.GroovyShell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,6 +31,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockIterator;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -41,8 +44,14 @@ public class ScriptChatListener implements Listener
     public HashMap<String, String> codeData = new HashMap<>(); // PlayerName - Code
 
     Plugin plugin;
+    File scriptFolder;
 
-    public ScriptChatListener(Plugin plugin) {this.plugin = plugin;}
+    public ScriptChatListener(Plugin plugin)
+    {
+        this.plugin = plugin;
+        scriptFolder = new File(SinkLibrary.getCustomDataFolder(), "scripts");
+        if ( !scriptFolder.exists() ) scriptFolder.mkdirs();
+    }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void handleChatScript(final AsyncPlayerChatEvent event)
@@ -80,7 +89,8 @@ public class ScriptChatListener implements Listener
 
 
                 boolean codeSet = false;
-                String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
+                String defaultImports = "" +
+                        "import de.static_interface.sinklibrary.*;" + nl +
                         "import org.bukkit.block.*;" + nl +
                         "import org.bukkit.entity.*;" + nl +
                         "import org.bukkit.inventory.*;" + nl +
@@ -94,6 +104,11 @@ public class ScriptChatListener implements Listener
                     codeData.put(name, currentLine);
                     code = currentLine + defaultImports;
                     codeSet = true;
+                }
+
+                if ( !code.contains(defaultImports) )
+                {
+                    code = defaultImports + code;
                 }
 
                 boolean useNl = currentLine.startsWith("<");
@@ -127,6 +142,7 @@ public class ScriptChatListener implements Listener
                         codeData.put(name, defaultImports + code);
                         user.sendMessage(ChatColor.GOLD + "Imported default imports!");
                         break;
+
                     case ".help":
                         user.sendMessage(ChatColor.GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
                         break;
@@ -134,6 +150,70 @@ public class ScriptChatListener implements Listener
                     case ".clear":
                         codeData.remove(name);
                         user.sendMessage(ChatColor.DARK_RED + "History cleared");
+                        break;
+
+                    case ".load":
+                    {
+                        if ( args.length < 2 )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "Too few arguments! .load <File>");
+                            break;
+                        }
+                        String scriptName = args[1];
+                        File scriptFile = new File(scriptFolder, scriptName + ".groovy");
+                        if ( !scriptFile.exists() )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "File doesn't exists!");
+                            break;
+                        }
+                        try
+                        {
+                            BufferedReader br = new BufferedReader(new FileReader(scriptFile));
+                            StringBuilder sb = new StringBuilder();
+                            String line = br.readLine();
+
+                            while ( line != null )
+                            {
+                                sb.append(line);
+                                sb.append(nl);
+                                line = br.readLine();
+                            }
+                            codeData.put(name, code + sb.toString().replace(defaultImports, ""));
+                        }
+                        catch ( Exception e )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "Exception: " + ChatColor.RED + e.getMessage());
+                            break;
+                        }
+                        break;
+                    }
+
+                    case ".save":
+                        if ( args.length < 2 )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "Too few arguments! .save <File>");
+                            break;
+                        }
+                        String scriptName = args[1];
+                        File scriptFile = new File(scriptFolder, scriptName + ".groovy");
+                        if ( scriptFile.exists() )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "File already exists!");
+                            break;
+                        }
+                        PrintWriter writer;
+                        try
+                        {
+                            writer = new PrintWriter(scriptFile, "UTF-8");
+                        }
+                        catch ( Exception e )
+                        {
+                            user.sendMessage(ChatColor.DARK_RED + "Exception: " + ChatColor.RED + e.getMessage());
+                            break;
+                        }
+                        writer.write(code);
+                        writer.close();
+                        user.sendMessage(ChatColor.DARK_GREEN + "Code saved!");
                         break;
 
                     case ".execute":
@@ -168,8 +248,6 @@ public class ScriptChatListener implements Listener
             }
         });
     }
-
-    static final Material[] SEETHRU = new Material[] {Material.TORCH, Material.REDSTONE_WIRE, Material.LADDER, Material.RAILS, Material.SNOW};
 
     private String formatCode(String code)
     {
