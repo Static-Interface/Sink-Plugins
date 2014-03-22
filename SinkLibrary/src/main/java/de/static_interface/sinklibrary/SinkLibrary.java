@@ -478,6 +478,7 @@ public class SinkLibrary extends JavaPlugin
 
         if ( displayName.equals(user.getDefaultDisplayName()) )
         {
+            config.setDisplayName("");
             config.setHasDisplayName(false);
         }
         player.setDisplayName(displayName);
