@@ -83,6 +83,10 @@ public class ScriptChatListener implements Listener
                 {
                     String prevCode = codeData.get(name);
                     if ( currentLine.startsWith("import") ) code = currentLine + nl + prevCode;
+                    else if ( currentLine.startsWith("help") ) { code = prevCode; }
+                    else if ( currentLine.startsWith("clear") ) { code = prevCode; }
+                    else if ( currentLine.startsWith("execute") ) { code = prevCode; }
+                    else if ( currentLine.startsWith("viewcode") ) { code = prevCode; }
                     else code = prevCode + nl + currentLine;
                 }
 

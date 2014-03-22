@@ -231,8 +231,7 @@ public class PlayerConfiguration extends ConfigurationBase
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     public boolean getHasDisplayName()
     {
-        return true;
-        //return (boolean) get("Nick.HasDisplayName");
+        return (boolean) get("Nick.HasDisplayName");
     }
 
     /**
