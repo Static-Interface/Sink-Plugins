@@ -243,7 +243,7 @@ public class User
         {
             return playerName;
         }
-        if ( !SinkLibrary.getSettings().isDisplayNamesEnabled() )
+        if ( !SinkLibrary.getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName() )
         {
             String prefix = "";
             if ( SinkLibrary.isChatAvailable() )
