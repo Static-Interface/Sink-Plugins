@@ -25,7 +25,7 @@
         <version>1.x</version>
     </parent>
 
-    <artifactId>SinkLibrary</artifactId>
+    <artifactId>sinklibrary</artifactId>
 
     <url>http://dev.bukkit.org/bukkit-plugins/sink-plugins</url>
 
@@ -54,8 +54,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>Vault</groupId>
-            <artifactId>Vault</artifactId>
+            <groupId>net.milkbowl</groupId>
+            <artifactId>vault</artifactId>
             <scope>system</scope>
             <version>1.2.25-b333</version>
             <systemPath>${project.basedir}/../lib/Vault.jar</systemPath>
@@ -108,7 +108,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>Vault:Vault</artifact>
+                                    <artifact>net.milkbowl:vault</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>

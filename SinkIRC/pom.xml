@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>de.static-interface</groupId>
-            <artifactId>SinkLibrary</artifactId>
+            <artifactId>sinklibrary</artifactId>
             <version>1.x</version>
         </dependency>
     </dependencies>
@@ -95,7 +95,19 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>Vault:Vault</artifact>
+                                    <artifact>de.static_interface:sinklibrary</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>net.milkbowl:vault</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.codehaus.groovy:groovy</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>

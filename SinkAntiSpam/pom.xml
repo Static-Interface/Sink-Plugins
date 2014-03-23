@@ -55,7 +55,7 @@
     <dependencies>
         <dependency>
             <groupId>de.static-interface</groupId>
-            <artifactId>SinkLibrary</artifactId>
+            <artifactId>sinklibrary</artifactId>
             <version>1.x</version>
         </dependency>
     </dependencies>
