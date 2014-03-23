@@ -34,18 +34,13 @@ public class SinkIRC extends JavaPlugin
 
     static SinkIRCBot sinkIrcBot;
     static String mainChannel;
-
     @Override
     public void onEnable()
     {
-        if ( !checkDependencies() ) return;
-
-        if ( !SinkLibrary.getSettings().isIRCBotEnabled() )
-        {
-            return;
-        }
+        if ( !checkDependencies() || !SinkLibrary.getSettings().isIRCBotEnabled() || initialized ) return;
 
         sinkIrcBot = new SinkIRCBot(this);
+
         new Thread()
         {
             @Override
@@ -90,14 +85,11 @@ public class SinkIRC extends JavaPlugin
             }
         }.start();
 
-        if ( !initialized )
-        {
-            Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
-            getCommand("irclist").setExecutor(new IrclistCommand());
-            getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
-            SinkLibrary.registerPlugin(this);
-            initialized = true;
-        }
+        Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
+        getCommand("irclist").setExecutor(new IrclistCommand());
+        getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
+        SinkLibrary.registerPlugin(this);
+        initialized = true;
     }
 
     private boolean checkDependencies()
