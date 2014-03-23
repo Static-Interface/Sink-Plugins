@@ -18,7 +18,6 @@
 package de.static_interface.sinkchat.listener;
 
 import de.static_interface.sinkchat.channel.ChannelHandler;
-import de.static_interface.sinkchat.channel.IChannel;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
@@ -31,7 +30,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.TreeMap;
 import java.util.logging.Level;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
@@ -58,17 +56,6 @@ public class ChatListenerHighest implements Listener
             return;
         }
 
-        SinkLibrary.getCustomLogger().debug("Channel Registered Call Chars:");
-        String set = "";
-        TreeMap<String, IChannel> registeredChars = ChannelHandler.getRegisteredCallChars();
-        for ( String callChar : registeredChars.keySet() )
-        {
-            set += String.format("%s" + ':' + registeredChars.get(callChar).getChannelName() + "%n", callChar);
-        }
-        SinkLibrary.getCustomLogger().debug(set);
-
-        SinkLibrary.getCustomLogger().debug("Message Call Char: " + event.getMessage().toCharArray()[0]);
-
         for ( String callChar : ChannelHandler.getRegisteredCallChars().keySet() )
         {
             if ( event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar) )
@@ -77,15 +64,9 @@ public class ChatListenerHighest implements Listener
                 {
                     event.setCancelled(true);
                 }
-                else
-                {
-                    SinkLibrary.getCustomLogger().debug("sendMessage(\"" + event.getPlayer().getName() + "\", \"" + event.getMessage() + "\"); returned false!");
-                }
                 return;
             }
         }
-
-        SinkLibrary.getCustomLogger().debug("Call Char didnt match any registred call chars! Sending as locale message...");
 
         User eventPlayer = SinkLibrary.getUser(event.getPlayer());
 
