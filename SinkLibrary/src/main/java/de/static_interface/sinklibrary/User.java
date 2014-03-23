@@ -286,4 +286,10 @@ public class User
         File file = new File(playersPath, playerName + ".yml");
         return file.exists();
     }
+
+    public void sendDebugMessage(String message)
+    {
+        if ( SinkLibrary.getSettings().isDebugEnabled() )
+            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + ']' + ChatColor.RESET + message);
+    }
 }

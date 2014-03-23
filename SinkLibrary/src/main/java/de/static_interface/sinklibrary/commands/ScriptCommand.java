@@ -179,16 +179,16 @@ public class ScriptCommand implements CommandExecutor
                 if ( !stringStart )
                 {
                     tmp += stringColor;
-                    stringStart = true;
                 }
 
                 tmp += Char;
 
                 if ( stringStart )
                 {
-                    stringStart = false;
                     tmp += codeColor;
                 }
+
+                stringStart = !stringStart;
             }
             else
             {
@@ -284,6 +284,8 @@ public class ScriptCommand implements CommandExecutor
                 String[] args = currentLine.split(" ");
                 String mode = args[0].toLowerCase();
 
+                user.sendDebugMessage(ChatColor.GOLD + "Script mode: " + ChatColor.RED + mode);
+
                 switch ( mode )
                 {
                     case ".defaultimports":
@@ -367,6 +369,7 @@ public class ScriptCommand implements CommandExecutor
                     case ".execute":
                         try
                         {
+                            SinkLibrary.getCustomLogger().logToFile(Level.WARNING, user.getName() + " executed script: " + nl + code);
                             String result = String.valueOf(shellInstance.evaluate(code));
                             if ( result != null && !result.isEmpty() && !result.equals("null") )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
