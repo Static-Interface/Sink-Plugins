@@ -258,8 +258,4 @@ public class PlayerConfiguration extends ConfigurationBase
         set("DutyTime", millis);
     }
 
-    public long getDutyTime()
-    {
-        return Long.valueOf(String.valueOf(get("DutyTime")));
-    }
 }

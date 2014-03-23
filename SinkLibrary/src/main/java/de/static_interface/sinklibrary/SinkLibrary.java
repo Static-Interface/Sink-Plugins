@@ -471,7 +471,8 @@ public class SinkLibrary extends JavaPlugin
         {
             config.setDisplayName(user.getDefaultDisplayName());
             player.setDisplayName(user.getDefaultDisplayName());
-            player.setPlayerListName(user.getDefaultDisplayName());
+            player.setPlayerListName(displayName.substring(0, 16));
+            config.setDisplayName(user.getDefaultDisplayName());
             config.setHasDisplayName(false);
             return;
         }
@@ -482,7 +483,7 @@ public class SinkLibrary extends JavaPlugin
             config.setHasDisplayName(false);
         }
         player.setDisplayName(displayName);
-        if ( displayName.length() <= 16 ) player.setPlayerListName(displayName);
+        player.setPlayerListName(displayName.substring(0, 16));
     }
 
     /**
