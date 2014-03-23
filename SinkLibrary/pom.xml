@@ -25,7 +25,7 @@
         <version>1.x</version>
     </parent>
 
-    <artifactId>sinklibrary</artifactId>
+    <artifactId>Sinklibrary</artifactId>
 
     <url>http://dev.bukkit.org/bukkit-plugins/sink-plugins</url>
 

@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>de.static-interface</groupId>
-            <artifactId>sinklibrary</artifactId>
+            <artifactId>Sinklibrary</artifactId>
             <version>1.x</version>
         </dependency>
     </dependencies>
@@ -95,7 +95,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>de.static_interface:sinklibrary</artifact>
+                                    <artifact>de.static_interface:Sinklibrary</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
@@ -107,7 +107,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>org.codehaus.groovy:groovy</artifact>
+                                    <artifact>org.codehaus.groovy:*</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
