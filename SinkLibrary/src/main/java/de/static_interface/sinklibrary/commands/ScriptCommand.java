@@ -144,8 +144,8 @@ public class ScriptCommand implements CommandExecutor
 
         code = code.replace("if", defaultColor + "if" + codeColor);
         code = code.replace("else", defaultColor + "else" + codeColor);
-        code = code.replace("true", defaultColor + "void" + codeColor);
-        code = code.replace("false", defaultColor + "void" + codeColor);
+        code = code.replace("true", defaultColor + "true" + codeColor);
+        code = code.replace("false", defaultColor + "false" + codeColor);
         code = code.replace("instanceof", defaultColor + "instanceof" + codeColor);
         code = code.replace("for", defaultColor + "for" + codeColor);
         code = code.replace("while", defaultColor + "while" + codeColor);
