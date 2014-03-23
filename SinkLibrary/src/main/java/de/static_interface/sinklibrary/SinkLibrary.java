@@ -238,7 +238,7 @@ public class SinkLibrary extends JavaPlugin
     {
         getCommand("sinkdebug").setExecutor(new SinkDebugCommand());
         getCommand("sinkreload").setExecutor(new SinkReloadCommand());
-        getCommand("script").setExecutor(new ScriptCommand());
+        getCommand("script").setExecutor(new ScriptCommand(this));
     }
 
     /**
