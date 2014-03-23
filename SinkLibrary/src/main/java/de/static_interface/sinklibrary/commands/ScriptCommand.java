@@ -210,12 +210,12 @@ public class ScriptCommand implements CommandExecutor
         {
             String code = "";
             String nl = System.getProperty("line.separator");
-
             public void run()
             {
                 String currentLine = line;
                 String name = user.getName();
                 GroovyShell shellInstance;
+                String[] args = currentLine.split(" ");
 
                 if ( !shellInstances.containsKey(name) )
                 {
@@ -281,7 +281,6 @@ public class ScriptCommand implements CommandExecutor
                     codeInstances.put(name, code);
                 }
 
-                String[] args = currentLine.split(" ");
                 String mode = args[0].toLowerCase();
 
                 user.sendDebugMessage(ChatColor.GOLD + "Script mode: " + ChatColor.RED + mode);

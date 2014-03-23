@@ -290,6 +290,6 @@ public class User
     public void sendDebugMessage(String message)
     {
         if ( SinkLibrary.getSettings().isDebugEnabled() )
-            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + ']' + ChatColor.RESET + message);
+            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
     }
 }
