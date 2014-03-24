@@ -553,14 +553,6 @@ public class SinkLibrary extends JavaPlugin
         return onlineUsers.values();
     }
 
-    /**
-     * Get Users HashMap
-     */
-    public static HashMap<String, User> getUsers()
-    {
-        return onlineUsers;
-    }
-
     public static Logger getCustomLogger()
     {
         return logger;

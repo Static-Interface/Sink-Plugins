@@ -223,19 +223,11 @@ public class ScriptCommand implements CommandExecutor
                     shellInstance = new GroovyShell();
                     shellInstance.setVariable("me", user);
                     shellInstance.setVariable("plugin", plugin);
+                    shellInstance.setVariable("player", user.getPlayer());
                     shellInstance.setVariable("server", Bukkit.getServer());
                     shellInstances.put(name, shellInstance);
                 }
                 else shellInstance = shellInstances.get(name);
-
-                if ( user.isOnline() && !user.isConsole() )
-                {
-                    BlockIterator iterator = new BlockIterator(user.getPlayer());
-                    shellInstance.setVariable("at", iterator.next());
-                    shellInstance.setVariable("x", user.getPlayer().getLocation().getX());
-                    shellInstance.setVariable("y", user.getPlayer().getLocation().getY());
-                    shellInstance.setVariable("z", user.getPlayer().getLocation().getZ());
-                }
 
                 boolean codeSet = false;
                 String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
@@ -270,7 +262,9 @@ public class ScriptCommand implements CommandExecutor
 
                 if ( currentLine.startsWith(".") ) // command, don't add to code
                 {
+                    code = code.replace(currentLine, "");
                     currentLine = "";
+                    codeSet = true;
                 }
                 String prevCode = codeInstances.get(name);
 
@@ -334,6 +328,7 @@ public class ScriptCommand implements CommandExecutor
                             user.sendMessage(ChatColor.DARK_RED + "Exception: " + ChatColor.RED + e.getMessage());
                             break;
                         }
+                        user.sendMessage(ChatColor.DARK_GREEN + "File loaded");
                         break;
                     }
 
@@ -366,6 +361,15 @@ public class ScriptCommand implements CommandExecutor
                         break;
 
                     case ".execute":
+                        if ( user.isOnline() && !user.isConsole() )
+                        {
+                            BlockIterator iterator = new BlockIterator(user.getPlayer());
+                            shellInstance.setVariable("at", iterator.next());
+                            shellInstance.setVariable("x", user.getPlayer().getLocation().getX());
+                            shellInstance.setVariable("y", user.getPlayer().getLocation().getY());
+                            shellInstance.setVariable("z", user.getPlayer().getLocation().getZ());
+                        }
+
                         try
                         {
                             SinkLibrary.getCustomLogger().logToFile(Level.WARNING, user.getName() + " executed script: " + nl + code);

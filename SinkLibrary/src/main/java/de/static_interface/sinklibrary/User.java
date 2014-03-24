@@ -25,10 +25,13 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
@@ -291,5 +294,28 @@ public class User
     {
         if ( SinkLibrary.getSettings().isDebugEnabled() )
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
+    }
+
+    public List<User> getUsersAround(int radius)
+    {
+        double x = getPlayer().getLocation().getX();
+        double y = getPlayer().getLocation().getY();
+        double z = getPlayer().getLocation().getZ();
+
+        List<User> usersInRange = new ArrayList<>();
+
+        for ( User user : SinkLibrary.getOnlineUsers() )
+        {
+            Player p = user.getPlayer();
+            Location loc = p.getLocation();
+            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && Math.abs(z - loc.getZ()) <= radius;
+
+
+            if ( isInRange )
+            {
+                usersInRange.add(user);
+            }
+        }
+        return usersInRange;
     }
 }

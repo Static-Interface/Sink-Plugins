@@ -361,7 +361,7 @@ public class SinkIRCBot extends PircBot
                     sinkIrcBot.sendCleanMessage(source, "There are currently no online players");
                     return;
                 }
-                
+
                 String onlineMessage = "Online Players (" + Bukkit.getOnlinePlayers().length + '/' + Bukkit.getMaxPlayers() + "): ";
 
                 boolean firstPlayer = true;
@@ -379,10 +379,10 @@ public class SinkIRCBot extends PircBot
                         {
                             onlineMessage += ChatColor.RESET + ", ";
                         }
-                        
+
                         onlineMessage += user.getDisplayName();
                     }
-                    
+
                     // standard length: 512 (inclusive headers)
                     if ( onlineMessage.length() > 400 )
                     {
@@ -390,13 +390,13 @@ public class SinkIRCBot extends PircBot
                         onlineMessage = "";
                     }
                 }
-                
+
                 if ( onlineMessage.length() > 0 )
                 {
                     sinkIrcBot.sendCleanMessage(source, onlineMessage);
                 }
             }
-            
+
             if ( command.equals("lag") ) // shows TPS
             {
                 String lagPrefix = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
@@ -404,7 +404,7 @@ public class SinkIRCBot extends PircBot
                 double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
                 DecimalFormat decimalFormat = new DecimalFormat("##.0");
                 String shownTPS = decimalFormat.format(realTPS);
-                
+
                 if ( realTPS >= 18.5 )
                 {
                     shownTPS = ChatColor.GREEN + shownTPS;
@@ -417,7 +417,7 @@ public class SinkIRCBot extends PircBot
                 {
                     shownTPS = ChatColor.RED + shownTPS;
                 }
-                
+
                 sinkIrcBot.sendCleanMessage(source, lagPrefix + "TPS: " + shownTPS);
             }
 
@@ -426,9 +426,10 @@ public class SinkIRCBot extends PircBot
                 if ( !isOp ) throw new UnauthorizedAccessException();
                 sinkIrcBot.sendCleanMessage(source, Colors.BLUE + "Debug Output: ");
                 String values = "";
-                for ( String user : SinkLibrary.getUsers().keySet() )
+                for ( de.static_interface.sinklibrary.User u : SinkLibrary.getOnlineUsers() )
                 {
-                    String tmp = '<' + user + ',' + ChatColor.stripColor(SinkLibrary.getUsers().get(user).getDisplayName()) + '>';
+                    String user = u.getName();
+                    String tmp = '<' + user + ',' + ChatColor.stripColor(u.getDisplayName()) + '>';
                     if ( values.isEmpty() )
                     {
                         values = tmp;
