@@ -251,8 +251,8 @@ public class ScriptCommand implements CommandExecutor
                     code = defaultImports + code;
                 }
 
-                boolean useNl = currentLine.startsWith("<");
-                if ( useNl )
+                boolean useNl = !currentLine.startsWith("<");
+                if ( !useNl )
                 {
                     currentLine = currentLine.replaceFirst("<", "");
                     nl = "";
@@ -264,7 +264,6 @@ public class ScriptCommand implements CommandExecutor
                 {
                     code = code.replace(currentLine, "");
                     currentLine = "";
-                    codeSet = true;
                 }
                 String prevCode = codeInstances.get(name);
 
@@ -375,7 +374,8 @@ public class ScriptCommand implements CommandExecutor
                             SinkLibrary.getCustomLogger().logToFile(Level.WARNING, user.getName() + " executed script: " + nl + code);
                             String result = String.valueOf(shellInstance.evaluate(code));
                             if ( result != null && !result.isEmpty() && !result.equals("null") )
-                                user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + result);
+                                user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + formatCode(result));
+                            else user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.RED + " no output");
                             codeInstances.put(name, code);
                         }
                         catch ( Exception e )
