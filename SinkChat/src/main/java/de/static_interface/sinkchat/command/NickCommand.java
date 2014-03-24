@@ -139,6 +139,8 @@ public class NickCommand implements CommandExecutor
         PlayerConfiguration config = user.getPlayerConfiguration();
         config.setDisplayName(newDisplayName);
         config.setHasDisplayName(true);
+
+        SinkLibrary.refreshDisplayName(user.getPlayer());
         return true;
     }
 }
