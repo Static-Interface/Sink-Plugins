@@ -17,6 +17,9 @@
 
 package de.static_interface.sinklibrary;
 
+import com.mojang.api.http.BasicHttpClient;
+import com.mojang.api.profiles.HttpProfileRepository;
+import com.mojang.api.profiles.ProfileCriteria;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.exceptions.ChatNotAvailableException;
 import de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException;
@@ -32,11 +35,11 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
 public class User
 {
+    private static final String REPO_AGENT = "SinkLibrary bukkit plugin";
     private static Player base;
     private static Economy econ;
     private String playerName;
@@ -278,14 +281,26 @@ public class User
     /**
      * Own implementation of {@link org.bukkit.entity.Player#getUniqueId()}, the diffrence is that this
      * also supports offline players
+     *
      * @return UniqueId of User
      */
-    public UUID getUniqueId()
+    public String getUniqueId()
     {
-        if ( isOnline() ) return base.getUniqueId();
-        else return null;
+        if ( isOnline() ) return base.getUniqueId().toString();
+        else
+        {
+            return getUniqueIdOffline();
+        }
     }
 
+    private String getUniqueIdOffline()
+    {
+        return new HttpProfileRepository(new BasicHttpClient()).findProfilesByCriteria(new ProfileCriteria(playerName, REPO_AGENT))[0].getId();
+    }
+
+    /**
+     * @return true if User joined the server
+     */
     public boolean joinedServer()
     {
         File playersPath = new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players");
@@ -293,6 +308,11 @@ public class User
         return file.exists();
     }
 
+    /**
+     * Sends the message if debugging is enabled in the config
+     *
+     * @param message Message to be displayed
+     */
     public void sendDebugMessage(String message)
     {
         if ( SinkLibrary.getSettings().isDebugEnabled() )
