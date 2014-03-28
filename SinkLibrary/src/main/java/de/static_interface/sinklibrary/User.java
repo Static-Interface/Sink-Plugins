@@ -301,10 +301,10 @@ public class User
 
     /**
      * @param radius Search radius
-     * @param checkZ if true, z range will also be checked
+     * @param checkY if true, y range will also be checked
      * @return List of users around this user
      */
-    public List<User> getUsersAround(int radius, boolean checkZ)
+    public List<User> getUsersAround(int radius, boolean checkY)
     {
         double x = getPlayer().getLocation().getX();
         double y = getPlayer().getLocation().getY();
@@ -316,7 +316,7 @@ public class User
         {
             Player p = user.getPlayer();
             Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && (checkZ || Math.abs(z - loc.getZ()) <= radius);
+            boolean isInRange = Math.abs(x - loc.getX()) <= radius && (checkY || Math.abs(y - loc.getY()) <= radius) && Math.abs(z - loc.getZ()) <= radius;
 
             if ( isInRange )
             {
