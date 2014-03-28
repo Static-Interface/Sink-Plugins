@@ -276,11 +276,14 @@ public class User
     }
 
     /**
+     * Own implementation of {@link org.bukkit.entity.Player#getUniqueId()}, the diffrence is that this
+     * also supports offline players
      * @return UniqueId of User
      */
     public UUID getUniqueId()
     {
-        return base.getUniqueId();
+        if ( isOnline() ) return base.getUniqueId();
+        else return null;
     }
 
     public boolean joinedServer()
@@ -296,7 +299,12 @@ public class User
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
     }
 
-    public List<User> getUsersAround(int radius)
+    /**
+     * @param radius Search radius
+     * @param checkZ if true, z range will also be checked
+     * @return List of users around this user
+     */
+    public List<User> getUsersAround(int radius, boolean checkZ)
     {
         double x = getPlayer().getLocation().getX();
         double y = getPlayer().getLocation().getY();
@@ -308,8 +316,7 @@ public class User
         {
             Player p = user.getPlayer();
             Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && Math.abs(z - loc.getZ()) <= radius;
-
+            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && (checkZ || Math.abs(z - loc.getZ()) <= radius);
 
             if ( isInRange )
             {
