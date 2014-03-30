@@ -162,7 +162,7 @@ public class User
      */
     public String getDefaultDisplayName()
     {
-        if ( isConsole() )
+        if ( isConsole() || !isOnline())
         {
             return playerName;
         }
