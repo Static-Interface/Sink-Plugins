@@ -17,10 +17,12 @@
 
 package de.static_interface.sinkcommands.commands;
 
-import de.static_interface.shadow.tameru.SQLiteDatabase;
+import de.static_interface.shadow.tameru.Configuration;
+import de.static_interface.shadow.tameru.MySQLDatabase;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -177,13 +179,31 @@ public class DutyCommand implements CommandExecutor
 class DatabaseHandler
 {
     private static final String TABLE_DUTY = "duties";
-    private static SQLiteDatabase database = new SQLiteDatabase(SinkLibrary.getCustomDataFolder().getAbsolutePath() + File.separator + "duties.db");
+    private static MySQLDatabase database = connectToDutyDatabase();
+
+    private static MySQLDatabase connectToDutyDatabase()
+    {
+    	Configuration MySQLData = new Configuration(SinkLibrary.getCustomDataFolder().getAbsolutePath()+File.separator+"MySQLConfiguration.cfg");
+    	
+    	//If that file didn't exist yet, create a default configuration.
+    	if ( MySQLData.getString("MYSQL_HOST") == null )
+    	{
+    		MySQLData.putString("MYSQL_HOST", "localhost");
+    		MySQLData.putString("MYSQL_PORT", "3306");
+    		MySQLData.putString("MYSQL_DB", TABLE_DUTY);
+    		MySQLData.putString("MYSQL_USER", "root");
+    		MySQLData.putString("MYSQL_PASS", "");
+    		MySQLData.save();
+    	}
+    	
+    	return new MySQLDatabase(MySQLData.getString("MYSQL_HOST"), MySQLData.getString("MYSQL_PORT") , MySQLData.getString("MYSQL_DB"), MySQLData.getString("MYSQL_USER"), MySQLData.getString("MYSQL_PASS"));
+    }
 
     private static void initDatabase()
     {
         if ( !database.containsTable(TABLE_DUTY) )
         {
-            database.createTable(TABLE_DUTY, "`ID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " + "`UUID` TEXT, " + "`TIMESTAMP_START` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "`TIMESTAMP_END` TIMESTAMP");
+            database.createTable(TABLE_DUTY, "`ID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " + "`UUID` TEXT, " + "`TIMESTAMP_START` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "`TIMESTAMP_END` TIMESTAMP," + "`TIMESTAMP_COMPLETE` TIMESTAMP");
         }
     }
 
