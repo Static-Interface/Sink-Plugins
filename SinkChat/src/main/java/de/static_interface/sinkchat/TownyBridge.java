@@ -29,7 +29,15 @@ import org.bukkit.entity.Player;
 
 public class TownyBridge
 {
-    public static String getFormattedResidentName(Resident resident)
+    /**
+     * Get the formatted name of a resident
+     *
+     * @param resident          Resident whichs name will be formatted
+     * @param includeTownRank   Include Town Ranks when formatting
+     * @param includeNationRank Include Nation Ranks when formatting
+     * @return Formatted name of the resident
+     */
+    public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank)
     {
         User user = SinkLibrary.getUser(resident.getName());
 
@@ -43,12 +51,20 @@ public class TownyBridge
         try
         {
             nationRank = resident.getNationRanks().get(0);
+
+            if ( nationRank.equals("assistant") ) nationRank = "Assistent";
+            if ( nationRank.equals("helper") ) nationRank = "Helfer";
+
+            if ( !includeNationRank ) nationRank = null;
         }
         catch ( Exception ignored ) {nationRank = null; }
 
         try
         {
             townRank = resident.getTownRanks().get(0);
+            if ( townRank.equals("assistant") ) townRank = "Assistent";
+            if ( townRank.equals("vip") ) townRank = "VIP";
+            if ( !includeTownRank) townRank = null;
         }
         catch ( Exception ignored ) {townRank = null; }
 
@@ -62,17 +78,18 @@ public class TownyBridge
         }
         else if ( nationRank != null && !nationRank.isEmpty() )
         {
-            prefixName = ChatColor.GOLD + nationRank + color + resident.getName();
+            prefixName = ChatColor.GOLD + nationRank + ' ' + color + resident.getName();
         }
         else if ( townRank != null && !townRank.isEmpty() )
         {
-            prefixName = ChatColor.GOLD + townRank + color + resident.getName();
+            prefixName = ChatColor.GOLD + townRank + ' ' + color + resident.getName();
         }
 
         prefixName.replaceAll("_", " ");
 
         return prefixName;
     }
+
     /**
      * Get resident by name
      *

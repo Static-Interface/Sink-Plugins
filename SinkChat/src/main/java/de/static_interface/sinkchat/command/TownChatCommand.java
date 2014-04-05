@@ -78,7 +78,7 @@ public class TownChatCommand implements CommandExecutor
 
         msg = msg.trim();
 
-        String prefixName = TownyBridge.getFormattedResidentName(resident);
+        String prefixName = TownyBridge.getFormattedResidentName(resident, true, false);
 
         String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
 
