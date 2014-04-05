@@ -36,13 +36,37 @@ public class TownyBridge
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 
         String prefixName = user.getName();
+
+        String nationRank;
+        String townRank;
+
+        try
+        {
+            nationRank = resident.getNationRanks().get(0);
+        }
+        catch ( Exception ignored ) {nationRank = null; }
+
+        try
+        {
+            townRank = resident.getTownRanks().get(0);
+        }
+        catch ( Exception ignored ) {townRank = null; }
+
         if ( resident.isKing() )
         {
-            prefixName = ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName().replaceAll("_", " ") + ChatColor.GOLD + TownySettings.getKingPostfix(resident);
+            prefixName = ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getKingPostfix(resident);
         }
         else if ( resident.isMayor() )
         {
-            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName().replaceAll("_", " ") + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
+            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
+        }
+        else if ( nationRank != null && !nationRank.isEmpty() )
+        {
+            prefixName = ChatColor.GOLD + nationRank + color + resident.getName();
+        }
+        else if ( townRank != null && !townRank.isEmpty() )
+        {
+            prefixName = ChatColor.GOLD + townRank + color + resident.getName();
         }
 
         prefixName.replaceAll("_", " ");
