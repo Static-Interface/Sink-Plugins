@@ -17,9 +17,11 @@
 
 package de.static_interface.sinkchat.command;
 
+import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
@@ -67,9 +69,11 @@ public class NationChatCommand implements CommandExecutor
         }
 
         Nation nation;
+        Town town;
         try
         {
-            nation = resident.getTown().getNation();
+            town = resident.getTown();
+            nation = town.getNation();
         }
         catch ( NotRegisteredException ignored ) //Shouldn't happen...
         {
@@ -87,7 +91,9 @@ public class NationChatCommand implements CommandExecutor
 
         String prefixName = TownyBridge.getFormattedResidentName(resident, false, true);
 
-        String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
+        String townPrefix = TownyFormatter.getFormattedTownName(town);
+
+        String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + townPrefix + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
 
         ArrayList<Player> sendPlayers = new ArrayList<>();
 
