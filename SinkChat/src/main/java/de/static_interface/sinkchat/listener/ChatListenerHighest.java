@@ -74,9 +74,9 @@ public class ChatListenerHighest implements Listener
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
 
-        String nationPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
+        String townyPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
 
-        String formattedMessage = String.format(event.getFormat(), nationPrefix + user.getDisplayName(), message);
+        String formattedMessage = String.format(event.getFormat(), townyPrefix + user.getDisplayName(), message);
 
         if ( !SinkLibrary.isPermissionsAvailable() )
         {

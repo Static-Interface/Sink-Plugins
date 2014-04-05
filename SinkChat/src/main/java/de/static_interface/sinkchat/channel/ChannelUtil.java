@@ -44,13 +44,11 @@ public class ChannelUtil
         String formattedMessage = message.substring(1);
         User user = SinkLibrary.getUser(player);
 
-        String nationPrefix = TownyBridge.getTownyPrefix(player);
-
-        prefix = nationPrefix + prefix;
+        String townyPrefix = TownyBridge.getTownyPrefix(player);
 
         if ( SinkLibrary.isPermissionsAvailable() )
         {
-            formattedMessage = prefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
+            formattedMessage = prefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + townyPrefix + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
         }
         else
         {
