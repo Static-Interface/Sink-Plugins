@@ -52,10 +52,11 @@ public class DutyCommand implements CommandExecutor
 
         switch (arguments.length)
         {
+        //If no arguments, only send the full duty time of sender
         case 0:
             sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
             return true;
-
+        //If 1 argument, try "on" or "off" to toggle duty mode
         case 1:
         	switch ( arguments[0].toLowerCase() )
         	{
@@ -87,6 +88,7 @@ public class DutyCommand implements CommandExecutor
                     return true;
                 }
             }
+            //If this fails, try to use it as user name and send the sender the full duty time
             default:
             	User otherUser = SinkLibrary.getUser(arguments[0]);
             	if ( !otherUser.isOnline() )
@@ -98,6 +100,7 @@ public class DutyCommand implements CommandExecutor
             	sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
             	return true;
         	}
+        //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
         default:
             User otherUser = SinkLibrary.getUser(arguments[0]);
             if ( !otherUser.isOnline() )
