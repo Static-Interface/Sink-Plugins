@@ -57,7 +57,9 @@ public class DutyCommand implements CommandExecutor
             return true;
 
         case 1:
-            if ( arguments[0].equalsIgnoreCase("on") )
+        	switch ( arguments[0].toLowerCase() )
+        	{
+        	case "on":
             {
                 if ( sender.equals(Bukkit.getConsoleSender()) )
                 {
@@ -66,7 +68,7 @@ public class DutyCommand implements CommandExecutor
                 startDuty(SinkLibrary.getUser(sender));
                 sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
             }
-            if ( arguments[0].equalsIgnoreCase("off") )
+        	case "off":
             {
                 if ( sender.equals(Bukkit.getConsoleSender()) )
                 {
@@ -85,17 +87,19 @@ public class DutyCommand implements CommandExecutor
                     return true;
                 }
             }
-            User otherUser = SinkLibrary.getUser(arguments[0]);
-            if ( !otherUser.isOnline() )
-            {
-                sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
-                return true;
-            }
+            default:
+            	User otherUser = SinkLibrary.getUser(arguments[0]);
+            	if ( !otherUser.isOnline() )
+            	{
+            		sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+            		return true;
+            	}
 
-            sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
-            return true;
+            	sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+            	return true;
+        	}
         default:
-            otherUser = SinkLibrary.getUser(arguments[0]);
+            User otherUser = SinkLibrary.getUser(arguments[0]);
             if ( !otherUser.isOnline() )
             {
                 sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
