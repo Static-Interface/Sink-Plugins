@@ -29,6 +29,19 @@ import org.bukkit.entity.Player;
 
 public class TownyBridge
 {
+    public static String getFormattedTownName(Town town, boolean onlyCapital)
+    {
+        if ( town.isCapital() )
+        {
+            return TownySettings.getCapitalPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getCapitalPostfix(town);
+        }
+        else if ( onlyCapital )
+        {
+            return town.getName().replaceAll("_", " ");
+        }
+        return TownySettings.getTownPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getTownPostfix(town);
+    }
+
     /**
      * Get the formatted name of a resident
      *
@@ -43,7 +56,7 @@ public class TownyBridge
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 
-        String prefixName = user.getName();
+        String prefixName = color + user.getName();
 
         String nationRank;
         String townRank;
@@ -72,13 +85,13 @@ public class TownyBridge
         {
             prefixName = ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getKingPostfix(resident);
         }
-        else if ( resident.isMayor() )
-        {
-            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
-        }
         else if ( nationRank != null && !nationRank.isEmpty() )
         {
             prefixName = ChatColor.GOLD + nationRank + ' ' + color + resident.getName();
+        }
+        else if ( resident.isMayor() )
+        {
+            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
         }
         else if ( townRank != null && !townRank.isEmpty() )
         {
@@ -93,7 +106,7 @@ public class TownyBridge
     /**
      * Get resident by name
      *
-     * @param name Name of the resident
+     * @param name  Name of the resident
      * @return null when resident not found or offline
      */
     public static Resident getResident(String name)
@@ -109,10 +122,10 @@ public class TownyBridge
     }
 
     /**
-     * Get Towny prefix of plaYER
+     * Get Towny prefix of player
      *
      * @param player Player
-     * @return {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
+     * @return       {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
      */
     public static String getTownyPrefix(Player player)
     {
@@ -141,7 +154,7 @@ public class TownyBridge
             {
                 nation = town.getNation();
             }
-            catch ( NotRegisteredException e )
+            catch ( NotRegisteredException ignored )
             {
                 return "";
             }
