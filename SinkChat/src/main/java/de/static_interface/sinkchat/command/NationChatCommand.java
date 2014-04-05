@@ -95,7 +95,7 @@ public class NationChatCommand implements CommandExecutor
             if ( nationResident.isNPC() ) continue;
 
             Player onlineResident = Bukkit.getPlayerExact(nationResident.getName());
-            if ( player == null ) continue;
+            if ( onlineResident == null ) continue;
 
             onlineResident.sendMessage(formattedMessage);
         }

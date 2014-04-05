@@ -87,7 +87,7 @@ public class TownChatCommand implements CommandExecutor
             if ( townResident.isNPC() ) continue;
 
             Player onlineResident = Bukkit.getPlayerExact(townResident.getName());
-            if ( player == null ) continue;
+            if ( onlineResident == null ) continue;
 
             onlineResident.sendMessage(formattedMessage);
         }
