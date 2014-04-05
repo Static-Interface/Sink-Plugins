@@ -69,16 +69,14 @@ public class ChatListenerHighest implements Listener
             }
         }
 
-        User eventPlayer = SinkLibrary.getUser(event.getPlayer());
+        User user = SinkLibrary.getUser(event.getPlayer());
 
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
 
         String nationPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
 
-        String formattedMessage = String.format(event.getFormat(), eventPlayer.getDisplayName(), message);
-
-        formattedMessage = nationPrefix + formattedMessage;
+        String formattedMessage = String.format(event.getFormat(), nationPrefix + user.getDisplayName(), message);
 
         if ( !SinkLibrary.isPermissionsAvailable() )
         {
@@ -101,7 +99,7 @@ public class ChatListenerHighest implements Listener
             boolean spyAll = onlineUser.hasPermission("sinkchat.spy.all");
 
             // User has permission to read spy, check for bypass
-            boolean canSpy = onlineUser.hasPermission("sinkchat.spy") && !eventPlayer.hasPermission("sinkchat.spy.bypass");
+            boolean canSpy = onlineUser.hasPermission("sinkchat.spy") && !user.hasPermission("sinkchat.spy.bypass");
 
             PlayerConfiguration config = onlineUser.getPlayerConfiguration();
 
