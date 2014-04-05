@@ -29,6 +29,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
@@ -82,18 +83,29 @@ public class TownChatCommand implements CommandExecutor
 
         String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
 
+        ArrayList<Player> sendPlayers = new ArrayList<>();
+
         for ( Resident townResident : town.getResidents() )
         {
             if ( townResident.isNPC() ) continue;
-
             Player onlineResident = Bukkit.getPlayerExact(townResident.getName());
             if ( onlineResident == null ) continue;
+            sendPlayers.add(onlineResident);
+        }
 
-            onlineResident.sendMessage(formattedMessage);
+        for ( Player onlinePlayer : Bukkit.getOnlinePlayers() )
+        {
+            if ( !onlinePlayer.hasPermission("sinkchat.townyspy") ) continue;
+            if ( sendPlayers.contains(onlinePlayer) ) continue;
+            sendPlayers.add(onlinePlayer);
+        }
+
+        for ( Player p : sendPlayers )
+        {
+            p.sendMessage(formattedMessage);
         }
 
         SinkLibrary.getCustomLogger().log(Level.INFO, formattedMessage);
-
         return true;
     }
 }

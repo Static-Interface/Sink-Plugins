@@ -50,6 +50,11 @@ permissions:
       sinkchat.color: true
       sinkchat.nick: true
       sinkchat.channel.*: true
+      sinkchat.townyspy: true
+
+  sinkchat.townyspy:
+    description: Allows to read all Town & Nation Messages
+    default: op
 
   sinkchat.spy:
     description: Allows to read local chat
