@@ -17,7 +17,6 @@
 
 package de.static_interface.sinkchat.command;
 
-import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -85,7 +84,7 @@ public class NationChatCommand implements CommandExecutor
 
         msg = msg.trim();
 
-        String prefixName = TownyFormatter.getFormattedResidentName(resident);
+        String prefixName = TownyBridge.getFormattedResidentName(resident);
 
         String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
 

@@ -17,16 +17,38 @@
 
 package de.static_interface.sinkchat;
 
+import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.User;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class TownyBridge
 {
+    public static String getFormattedResidentName(Resident resident)
+    {
+        User user = SinkLibrary.getUser(resident.getName());
+
+        String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
+
+        String prefixName = user.getName();
+        if ( resident.isKing() )
+        {
+            prefixName = ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName().replaceAll("_", " ") + ChatColor.GOLD + TownySettings.getKingPostfix(resident);
+        }
+        else if ( resident.isMayor() )
+        {
+            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName().replaceAll("_", " ") + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
+        }
+
+        prefixName.replaceAll("_", " ");
+
+        return prefixName;
+    }
     /**
      * Get resident by name
      *
