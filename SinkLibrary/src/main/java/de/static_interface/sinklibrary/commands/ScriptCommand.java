@@ -94,7 +94,7 @@ public class ScriptCommand implements CommandExecutor
         enabledUsers.remove(user.getName());
     }
 
-    private static String formatCode(String code)
+    static String formatCode(String code)
     {
         ChatColor defaultColor = ChatColor.DARK_BLUE;
         ChatColor codeColor = ChatColor.RESET;
@@ -199,7 +199,7 @@ public class ScriptCommand implements CommandExecutor
         return tmp;
     }
 
-    private static void sendErrorMessage(User user, String message)
+    static void sendErrorMessage(User user, String message)
     {
         user.sendMessage(ChatColor.DARK_RED + "Exception: " + ChatColor.RED + message);
     }
@@ -208,8 +208,8 @@ public class ScriptCommand implements CommandExecutor
     {
         Bukkit.getScheduler().runTask(plugin, new Runnable()
         {
-            String code = "";
             String nl = System.getProperty("line.separator");
+            String code = "";
             public void run()
             {
                 String currentLine = line;
@@ -230,25 +230,12 @@ public class ScriptCommand implements CommandExecutor
                 else shellInstance = shellInstances.get(name);
 
                 boolean codeSet = false;
-                String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
-                        "import org.bukkit.block.*;" + nl +
-                        "import org.bukkit.entity.*;" + nl +
-                        "import org.bukkit.inventory.*;" + nl +
-                        "import org.bukkit.material.*;" + nl +
-                        "import org.bukkit.potion.*; " + nl +
-                        "import org.bukkit.util.*" + nl +
-                        "import org.bukkit.*;" + nl + nl;
 
                 if ( !codeInstances.containsKey(name) || codeInstances.get(name) == null )
                 {
                     codeInstances.put(name, currentLine);
-                    code = currentLine + defaultImports;
+                    code = currentLine;
                     codeSet = true;
-                }
-
-                if ( !code.contains(defaultImports) )
-                {
-                    code = defaultImports + code;
                 }
 
                 boolean useNl = !currentLine.startsWith("<");
@@ -280,17 +267,13 @@ public class ScriptCommand implements CommandExecutor
 
                 switch ( mode )
                 {
-                    case ".defaultimports":
-                        codeInstances.put(name, defaultImports + code);
-                        user.sendMessage(ChatColor.GOLD + "Imported default imports!");
-                        break;
-
                     case ".help":
                         user.sendMessage(ChatColor.GREEN + "[Help] " + ChatColor.GRAY + "Available Commands: help, execute, history");
                         break;
 
                     case ".clear":
                         codeInstances.remove(name);
+                        updateImports(name, "");
                         user.sendMessage(ChatColor.DARK_RED + "History cleared");
                         break;
 
@@ -301,6 +284,7 @@ public class ScriptCommand implements CommandExecutor
                             user.sendMessage(ChatColor.DARK_RED + "Too few arguments! .load <File>");
                             break;
                         }
+                        updateImports(name, "");
                         String scriptName = args[1];
                         File scriptFile = new File(scriptFolder, scriptName + ".groovy");
                         if ( !scriptFile.exists() )
@@ -320,7 +304,7 @@ public class ScriptCommand implements CommandExecutor
                                 sb.append(nl);
                                 line = br.readLine();
                             }
-                            codeInstances.put(name, code + sb.toString().replace(defaultImports, ""));
+                            codeInstances.put(name, code + sb);
                         }
                         catch ( Exception e )
                         {
@@ -332,6 +316,7 @@ public class ScriptCommand implements CommandExecutor
                     }
 
                     case ".save":
+                        updateImports(name, code);
                         if ( args.length < 2 )
                         {
                             user.sendMessage(ChatColor.DARK_RED + "Too few arguments! .save <File>");
@@ -360,6 +345,8 @@ public class ScriptCommand implements CommandExecutor
                         break;
 
                     case ".execute":
+                        updateImports(name, code);
+
                         if ( user.isOnline() && !user.isConsole() )
                         {
                             BlockIterator iterator = new BlockIterator(user.getPlayer());
@@ -371,7 +358,7 @@ public class ScriptCommand implements CommandExecutor
 
                         try
                         {
-                            SinkLibrary.getCustomLogger().logToFile(Level.WARNING, user.getName() + " executed script: " + nl + code);
+                            SinkLibrary.getCustomLogger().logToFile(Level.INFO, user.getName() + " executed script: " + nl + code);
                             String result = String.valueOf(shellInstance.evaluate(code));
                             if ( result != null && !result.isEmpty() && !result.equals("null") )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + formatCode(result));
@@ -385,12 +372,14 @@ public class ScriptCommand implements CommandExecutor
                         break;
 
                     case ".history":
+                        updateImports(name, code);
                         user.sendMessage(ChatColor.GOLD + "-------|History|-------");
                         user.sendMessage(ChatColor.WHITE + formatCode(code));
                         user.sendMessage(ChatColor.GOLD + "-----------------------");
                         break;
 
                     default:
+                        updateImports(name, code);
                         if ( mode.startsWith(".") )
                         {
                             user.sendMessage('"' + mode + "\" is not a valid command");
@@ -401,5 +390,22 @@ public class ScriptCommand implements CommandExecutor
                 }
             }
         });
+    }
+
+    static void updateImports(String name, String code)
+    {
+        String nl = System.getProperty("line.separator");
+        String defaultImports = "import de.static_interface.sinklibrary.*;" + nl +
+                "import org.bukkit.block.*;" + nl +
+                "import org.bukkit.entity.*;" + nl +
+                "import org.bukkit.inventory.*;" + nl +
+                "import org.bukkit.material.*;" + nl +
+                "import org.bukkit.potion.*; " + nl +
+                "import org.bukkit.util.*" + nl +
+                "import org.bukkit.*;" + nl + nl;
+        if ( !code.contains(defaultImports) )
+        {
+            codeInstances.put(name, defaultImports + code);
+        }
     }
 }
