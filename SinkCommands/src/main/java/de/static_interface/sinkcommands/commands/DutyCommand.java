@@ -50,14 +50,13 @@ public class DutyCommand implements CommandExecutor
             sender.sendMessage(LanguageConfiguration._("Permissions.General"));
         }
 
-        if ( arguments.length == 0 )
+        switch (arguments.length)
         {
+        case 0:
             sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
             return true;
-        }
 
-        if ( arguments.length == 1 )
-        {
+        case 1:
             if ( arguments[0].equalsIgnoreCase("on") )
             {
                 if ( sender.equals(Bukkit.getConsoleSender()) )
@@ -95,11 +94,8 @@ public class DutyCommand implements CommandExecutor
 
             sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
             return true;
-        }
-
-        if ( arguments.length == 2 )
-        {
-            User otherUser = SinkLibrary.getUser(arguments[0]);
+        default:
+            otherUser = SinkLibrary.getUser(arguments[0]);
             if ( !otherUser.isOnline() )
             {
                 sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
@@ -131,7 +127,6 @@ public class DutyCommand implements CommandExecutor
                     return true;
             }
         }
-        return true;
     }
 
     public enum DutySumType
