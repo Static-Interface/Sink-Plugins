@@ -17,11 +17,7 @@
 
 package de.static_interface.sinkchat.listener;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import de.static_interface.sinkchat.SinkChat;
+import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
@@ -78,7 +74,7 @@ public class ChatListenerHighest implements Listener
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
 
-        String nationPrefix = getTownyPrefix(event.getPlayer());
+        String nationPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
 
         String formattedMessage = String.format(event.getFormat(), eventPlayer.getDisplayName(), message);
 
@@ -120,50 +116,5 @@ public class ChatListenerHighest implements Listener
         }
         Bukkit.getConsoleSender().sendMessage(spyPrefix + formattedMessage);
         event.setCancelled(true);
-    }
-
-    public static String getTownyPrefix(Player player)
-    {
-        if ( SinkChat.isTownyAvailable() && SinkLibrary.getSettings().isTownyEnabled() )
-        {
-            Resident res = null;
-            for ( Resident resident : SinkChat.getTowny().getTownyUniverse().getActiveResidents() )
-            {
-                if ( resident.getName().equals(player.getName()) )
-                {
-                    res = resident;
-                    break;
-                }
-            }
-
-            if ( res == null ) return "";
-
-            Town town;
-
-            try
-            {
-                town = res.getTown();
-            }
-            catch ( NotRegisteredException ignored )
-            {
-                return "";
-            }
-
-            if ( town == null ) return "";
-            if ( !town.hasNation() ) return "";
-
-            Nation nation;
-            try
-            {
-                nation = town.getNation();
-            }
-            catch ( NotRegisteredException e )
-            {
-                return "";
-            }
-
-            return ChatColor.GRAY + "[" + ChatColor.stripColor(nation.getTag()) + ChatColor.GRAY + "] ";
-        }
-        return "";
     }
 }

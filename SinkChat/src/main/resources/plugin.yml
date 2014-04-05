@@ -33,6 +33,14 @@ commands:
     aliases: [pc, privatechat]
     permission: sinkchat.privatechannel.use
 
+  nationchat:
+    description: Chat Channel for Towny Nations
+    aliases: tnc
+
+  townchat:
+    description: Chat Channel for Towny Towns
+    aliases: ttc
+
 permissions:
   sinkchat.*:
     description: Gives access to all commands
