@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkchat;
 
+import com.palmergames.bukkit.towny.Towny;
 import de.static_interface.sinkchat.channel.IChannel;
 import de.static_interface.sinkchat.channel.channels.HelpChannel;
 import de.static_interface.sinkchat.channel.channels.ShoutChannel;
@@ -29,6 +30,7 @@ import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
@@ -36,6 +38,7 @@ import java.util.logging.Level;
 public class SinkChat extends JavaPlugin
 {
     private static boolean initialized = false;
+    private static Towny towny;
 
     public void onEnable()
     {
@@ -66,6 +69,16 @@ public class SinkChat extends JavaPlugin
         System.gc();
     }
 
+    public static boolean isTownyAvailable()
+    {
+        return towny != null;
+    }
+
+    public static Towny getTowny()
+    {
+        return towny;
+    }
+
     private boolean checkDependencies()
     {
         if ( Bukkit.getPluginManager().getPlugin("SinkLibrary") == null )
@@ -75,6 +88,16 @@ public class SinkChat extends JavaPlugin
             return false;
         }
 
+        Plugin tmp = Bukkit.getPluginManager().getPlugin("Towny");
+        if ( tmp != null && tmp instanceof Towny )
+        {
+            towny = (Towny) tmp;
+        }
+        else
+        {
+            towny = null;
+            SinkLibrary.getCustomLogger().log(Level.INFO, "Towny not found. Disabling Towny Chat features");
+        }
         return true;
     }
 

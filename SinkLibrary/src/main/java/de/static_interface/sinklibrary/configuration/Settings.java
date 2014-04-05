@@ -141,12 +141,13 @@ public class Settings extends ConfigurationBase
             addDefault("SinkChat.Channels.Help.Prefix", "?");
             addDefault("SinkChat.Channels.Shout.Prefix", "!");
             addDefault("SinkChat.Channels.Trade.Prefix", "$");
-            
+            addDefault("SinkChat.TownyEnabled", false);
+
             addDefault("SinkAFK.Broadcast.AFK", true);
             addDefault("SinkAFK.Broadcast.Back", true);
             addDefault("SinkAFK.Broadcast.IRC.AFK", false);
             addDefault("SinkAFK.Broadcast.IRC.Back", false);
-            
+
             save();
         }
         catch ( IOException e )
@@ -300,25 +301,29 @@ public class Settings extends ConfigurationBase
     {
         return (boolean) get("General.EnableDebug");
     }
-    
+
     public boolean isBroadcastAFKEnabled()
     {
-    	return (boolean) get("SinkAFK.Broadcast.AFK");
+        return (boolean) get("SinkAFK.Broadcast.AFK");
     }
-    
+
     public boolean isBroadcastBackEnabled()
     {
-    	return (boolean) get("SinkAFK.Broadcast.Back");
+        return (boolean) get("SinkAFK.Broadcast.Back");
     }
-    
+
     public boolean isIRCBroadcastAFKEnabled()
     {
-    	return (boolean) get("SinkAFK.Broadcast.IRC.AFK");
+        return (boolean) get("SinkAFK.Broadcast.IRC.AFK");
     }
-    
+
     public boolean isIRCBroadcastBackEnabled()
     {
-    	return (boolean) get("SinkAFK.Broadcast.IRC.Back");
+        return (boolean) get("SinkAFK.Broadcast.IRC.Back");
     }
-    
+
+    public boolean isTownyEnabled()
+    {
+        return (boolean) get("SinkChat.TownyEnabled");
+    }
 }

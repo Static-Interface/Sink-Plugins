@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkchat.channel;
 
+import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import org.bukkit.Bukkit;
@@ -28,7 +29,7 @@ public class ChannelUtil
     public static boolean sendMessage(Player player, String message, IChannel channel, String prefix, String callByChar)
     {
 
-        SinkLibrary.getCustomLogger().debug("sendMessage(\"" + player.getName() + "\", \"" + message + "\", \"" + channel.getChannelName() + "\", \"" + prefix + "\", \'" + callByChar + "\');");
+        //SinkLibrary.getCustomLogger().debug("sendMessage(\"" + player.getName() + "\", \"" + message + "\", \"" + channel.getChannelName() + "\", \"" + prefix + "\", \'" + callByChar + "\');");
 
         if ( channel.contains(player) )
         {
@@ -42,6 +43,10 @@ public class ChannelUtil
 
         String formattedMessage = message.substring(1);
         User user = SinkLibrary.getUser(player);
+
+        String nationPrefix = ChatListenerHighest.getTownyPrefix(player);
+
+        prefix = nationPrefix + prefix;
 
         if ( SinkLibrary.isPermissionsAvailable() )
         {
