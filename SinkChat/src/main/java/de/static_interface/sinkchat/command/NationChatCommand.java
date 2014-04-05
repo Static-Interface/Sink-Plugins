@@ -91,7 +91,7 @@ public class NationChatCommand implements CommandExecutor
 
         String prefixName = TownyBridge.getFormattedResidentName(resident, false, true);
 
-        String townPrefix = ChatColor.BLUE + "(" + TownyFormatter.getFormattedTownName(town) + ") ";
+        String townPrefix = ChatColor.GREEN + "(" + TownyFormatter.getFormattedTownName(town) + ") ";
 
         String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + townPrefix + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
 
