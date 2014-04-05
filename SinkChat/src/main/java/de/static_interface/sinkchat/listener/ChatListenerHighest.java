@@ -76,7 +76,9 @@ public class ChatListenerHighest implements Listener
 
         String townyPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
 
-        String formattedMessage = String.format(event.getFormat(), townyPrefix + user.getDisplayName(), message);
+        String formattedMessage = String.format(event.getFormat(), user.getDisplayName(), message);
+
+        formattedMessage = townyPrefix + formattedMessage;
 
         if ( !SinkLibrary.isPermissionsAvailable() )
         {
