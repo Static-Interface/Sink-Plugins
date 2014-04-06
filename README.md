@@ -1,6 +1,6 @@
 Sink-Plugins
 ==============
-<a href="http://ci.static-interface.de/job/Sink-Plugins/"><img src="http://ci.static-interface.de/job/Sink-Plugins/badge/icon"/></a>
+[![Build Status](http://ci.static-interface.de/job/Sink-Plugins/badge/icon)](http://ci.static-interface.de/job/Sink-Plugins/)
 
 For more information, visit <a href="http://dev.bukkit.org/bukkit-plugins/sink-plugins">the BukkitDev page</a>.
 
