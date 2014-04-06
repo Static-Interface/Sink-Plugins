@@ -86,7 +86,7 @@
         <defaultGoal>clean install</defaultGoal>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <finalName>${artifactId}-v${project.version}</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -149,7 +149,7 @@
                             <type>${project.packaging}</type>
                         </artifactItem>
                     </artifactItems>
-                    <outputDirectory>${project.basedir}/../Sink-Plugins/output</outputDirectory>
+                    <outputDirectory>${project.basedir}/output</outputDirectory>
                 </configuration>
                 <inherited>false</inherited>
             </plugin>
@@ -186,7 +186,7 @@
                             <directory>${basedir}</directory>
                             <includes>
                                 <include>target/**</include>
-                                <include>jars/**</include>
+                                <include>output/**</include>
                             </includes>
                         </fileset>
                     </filesets>
