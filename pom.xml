@@ -51,10 +51,6 @@
 
     <repositories>
         <repository>
-            <id>maven-snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-        </repository>
-        <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
