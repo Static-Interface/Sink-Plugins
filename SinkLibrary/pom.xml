@@ -55,7 +55,7 @@
     <dependencies>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
+            <artifactId>vault</artifactId>
             <version>1.2.26-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -120,7 +120,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>net.milkbowl:vault</artifact>
+                                    <artifact>net.milkbowl.vault:vault</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
