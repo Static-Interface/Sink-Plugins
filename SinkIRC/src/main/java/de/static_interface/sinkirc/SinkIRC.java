@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkirc;
 
+import de.static_interface.sinkirc.commands.IrcKickCommand;
 import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
 import de.static_interface.sinkirc.commands.IrclistCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -34,6 +35,7 @@ public class SinkIRC extends JavaPlugin
 
     static SinkIRCBot sinkIrcBot;
     static String mainChannel;
+
     @Override
     public void onEnable()
     {
@@ -88,6 +90,7 @@ public class SinkIRC extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
         getCommand("irclist").setExecutor(new IrclistCommand());
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
+        getCommand("irckick").setExecutor(new IrcKickCommand(sinkIrcBot));
         SinkLibrary.registerPlugin(this);
         initialized = true;
     }
