@@ -352,7 +352,7 @@ public class SinkIRCBot extends PircBot
                 message = message.replace("null", "").trim();
 
                 target.getPlayer().sendMessage(message);
-                sinkIrcBot.sendCleanMessage(source, "Message was send to \"" + target.getDisplayName() + "\"!");
+                sinkIrcBot.sendCleanMessage(source, "Message was send to \"" + target.getDisplayName() + ChatColor.RESET + "\"!");
                 return;
             }
 
