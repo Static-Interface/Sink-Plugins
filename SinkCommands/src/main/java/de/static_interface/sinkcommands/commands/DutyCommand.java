@@ -50,15 +50,17 @@ public class DutyCommand implements CommandExecutor
             sender.sendMessage(LanguageConfiguration._("Permissions.General"));
         }
 
-        if ( arguments.length == 0 )
+        switch (arguments.length)
         {
+        //If no arguments, only send the full duty time of sender
+        case 0:
             sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
             return true;
-        }
-
-        if ( arguments.length == 1 )
-        {
-            if ( arguments[0].equalsIgnoreCase("on") )
+        //If 1 argument, try "on" or "off" to toggle duty mode
+        case 1:
+        	switch ( arguments[0].toLowerCase() )
+        	{
+        	case "on":
             {
                 if ( sender.equals(Bukkit.getConsoleSender()) )
                 {
@@ -67,7 +69,7 @@ public class DutyCommand implements CommandExecutor
                 startDuty(SinkLibrary.getUser(sender));
                 sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
             }
-            if ( arguments[0].equalsIgnoreCase("off") )
+        	case "off":
             {
                 if ( sender.equals(Bukkit.getConsoleSender()) )
                 {
@@ -86,19 +88,20 @@ public class DutyCommand implements CommandExecutor
                     return true;
                 }
             }
-            User otherUser = SinkLibrary.getUser(arguments[0]);
-            if ( !otherUser.isOnline() )
-            {
-                sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
-                return true;
-            }
+            //If this fails, try to use it as user name and send the sender the full duty time
+            default:
+            	User otherUser = SinkLibrary.getUser(arguments[0]);
+            	if ( !otherUser.isOnline() )
+            	{
+            		sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+            		return true;
+            	}
 
-            sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
-            return true;
-        }
-
-        if ( arguments.length == 2 )
-        {
+            	sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+            	return true;
+        	}
+        //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
+        default:
             User otherUser = SinkLibrary.getUser(arguments[0]);
             if ( !otherUser.isOnline() )
             {
@@ -131,7 +134,6 @@ public class DutyCommand implements CommandExecutor
                     return true;
             }
         }
-        return true;
     }
 
     public enum DutySumType
