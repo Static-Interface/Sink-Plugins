@@ -22,7 +22,7 @@
     <groupId>de.static_interface</groupId>
     <artifactId>Sink-Plugins</artifactId>
     <packaging>pom</packaging>
-    <version>1.x</version>
+    <version>1.9</version>
     <name>Sink Plugins</name>
     <url>http://dev.bukkit.org/bukkit-plugins/sink-plugins</url>
 
@@ -54,6 +54,15 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>local-dependencies</id>
+            <name>Repo for local dependencies</name>
+            <url>file://${project.basedir}/../libs/</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
     </repositories>
 
     <modules>
@@ -74,7 +83,6 @@
     </dependencies>
 
     <properties>
-        <build.number>1.9</build.number>
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -83,7 +91,7 @@
         <defaultGoal>clean install</defaultGoal>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <finalName>${artifactId}-v${build.number}</finalName>
+        <finalName>${artifactId}-v${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -146,7 +154,7 @@
                             <type>${project.packaging}</type>
                         </artifactItem>
                     </artifactItems>
-                    <outputDirectory>../Sink-Plugins/jars</outputDirectory>
+                    <outputDirectory>${project.basedir}/../Sink-Plugins/output</outputDirectory>
                 </configuration>
                 <inherited>false</inherited>
             </plugin>
@@ -166,8 +174,8 @@
                     <filesToInclude>**/src/main/resources/*</filesToInclude>
                     <replacements>
                         <replacement>
-                            <token>$${build.number}</token>
-                            <value>${build.number}</value>
+                            <token>$${project.version}</token>
+                            <value>${project.version}</value>
                         </replacement>
                     </replacements>
                 </configuration>

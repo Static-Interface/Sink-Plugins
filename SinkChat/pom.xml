@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.static_interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>1.x</version>
+        <version>1.9</version>
     </parent>
 
     <artifactId>SinkChat</artifactId>
@@ -56,14 +56,13 @@
         <dependency>
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
-            <version>1.x</version>
+            <version>1.9</version>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
-            <artifactId>towny</artifactId>
-            <scope>system</scope>
+            <artifactId>Towny</artifactId>
+            <scope>provided</scope>
             <version>0.85.0.0</version>
-            <systemPath>${project.basedir}/../lib/Towny.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

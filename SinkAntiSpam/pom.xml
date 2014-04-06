@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.static_interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>1.x</version>
+        <version>1.9</version>
     </parent>
 
     <artifactId>SinkAntiSpam</artifactId>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
-            <version>1.x</version>
+            <version>1.9</version>
         </dependency>
     </dependencies>
 </project>

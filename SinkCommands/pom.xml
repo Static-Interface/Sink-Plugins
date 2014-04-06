@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.static_interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>1.x</version>
+        <version>1.9</version>
     </parent>
 
     <artifactId>SinkCommands</artifactId>
@@ -56,21 +56,20 @@
         <dependency>
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
-            <version>1.x</version>
-        </dependency>
-        <dependency>
-            <groupId>de.static_interface.shadow</groupId>
-            <artifactId>Tameru</artifactId>
-            <version>0.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/Tameru.jar</systemPath>
+            <version>1.9</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.static_interface</groupId>
-            <artifactId>sinkafk</artifactId>
-            <version>1.x</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/SinkAFK.jar</systemPath>
+            <artifactId>Tameru</artifactId>
+            <version>0.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.static_interface</groupId>
+            <artifactId>SinkAFK</artifactId>
+            <version>1.9</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

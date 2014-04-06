@@ -1,5 +1,5 @@
 name: SinkIRC
-version: ${build.number}
+version: ${project.version}
 description: Plugin that links Chat to IRC
 author: Trojaner
 authors: [_ShadowRaven_]

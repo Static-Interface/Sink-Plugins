@@ -1,5 +1,5 @@
 name: SinkCommands
-version: ${build.number}
+version: ${project.version}
 description: General Commands Plugin
 author: Trojaner
 authors: [Diar, _ShadowRaven_, Scary_Block]
