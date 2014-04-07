@@ -19,10 +19,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>de.static-interface</groupId>
+    <groupId>de.static_interface</groupId>
     <artifactId>Sink-Plugins</artifactId>
     <packaging>pom</packaging>
-    <version>1.x</version>
+    <version>1.9</version>
     <name>Sink Plugins</name>
     <url>http://dev.bukkit.org/bukkit-plugins/sink-plugins</url>
 
@@ -51,12 +51,12 @@
 
     <repositories>
         <repository>
-            <id>maven-snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-        </repository>
-        <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>local-dependencies</id>
+            <url>file://${project.basedir}/../libs/</url>
         </repository>
     </repositories>
 
@@ -72,13 +72,12 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.7.2-R0.4-SNAPSHOT</version>
+            <version>1.7.5-R0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>
 
     <properties>
-        <build.number>1.9</build.number>
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -87,7 +86,7 @@
         <defaultGoal>clean install</defaultGoal>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <finalName>${artifactId}-v${build.number}</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -150,7 +149,7 @@
                             <type>${project.packaging}</type>
                         </artifactItem>
                     </artifactItems>
-                    <outputDirectory>../Sink-Plugins/jars</outputDirectory>
+                    <outputDirectory>${project.basedir}/output</outputDirectory>
                 </configuration>
                 <inherited>false</inherited>
             </plugin>
@@ -170,8 +169,8 @@
                     <filesToInclude>**/src/main/resources/*</filesToInclude>
                     <replacements>
                         <replacement>
-                            <token>$${build.number}</token>
-                            <value>${build.number}</value>
+                            <token>$${project.version}</token>
+                            <value>${project.version}</value>
                         </replacement>
                     </replacements>
                 </configuration>
@@ -187,7 +186,7 @@
                             <directory>${basedir}</directory>
                             <includes>
                                 <include>target/**</include>
-                                <include>jars/**</include>
+                                <include>output/**</include>
                             </includes>
                         </fileset>
                     </filesets>

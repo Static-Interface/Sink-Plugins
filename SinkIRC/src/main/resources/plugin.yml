@@ -1,5 +1,5 @@
 name: SinkIRC
-version: ${build.number}
+version: ${project.version}
 description: Plugin that links Chat to IRC
 author: Trojaner
 authors: [_ShadowRaven_]
@@ -17,12 +17,22 @@ commands:
     description: Send a private message to an IRC User
     permission: sinkirc.privatemessage
 
+  irckick:
+    aliases: ikick
+    description: Kick an user from IRC
+    permission: sinkirc.irckick
+
 permissions:
   sinkirc.*:
     description: Gives access to all IRC commands
     children:
       sinkirc.irclist: true
       sinkirc.privatemessage: true
+      sinkirc.irckick: true
+
+  sinkirc.irckick:
+    description: Allows to use the irckick command
+    default: op
 
   sinkirc.irclist:
     description: Shows online users in IRC

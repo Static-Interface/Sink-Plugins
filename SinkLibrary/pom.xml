@@ -20,9 +20,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>de.static-interface</groupId>
+        <groupId>de.static_interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>1.x</version>
+        <version>1.9</version>
     </parent>
 
     <artifactId>SinkLibrary</artifactId>
@@ -54,11 +54,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.milkbowl</groupId>
+            <groupId>net.milkbowl.vault</groupId>
             <artifactId>vault</artifactId>
-            <scope>system</scope>
-            <version>1.2.25-b333</version>
-            <systemPath>${project.basedir}/../lib/Vault.jar</systemPath>
+            <version>1.2.26-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>pircbot</groupId>
@@ -70,11 +69,13 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>2.2.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.2.4</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -95,6 +96,12 @@
                             <minimizeJar>true</minimizeJar>
                             <filters>
                                 <filter>
+                                    <artifact>com.google.code.gson:gson</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
                                     <artifact>pircbot:pircbot</artifact>
                                     <includes>
                                         <include>**</include>
@@ -113,7 +120,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>net.milkbowl:vault</artifact>
+                                    <artifact>net.milkbowl.vault:vault</artifact>
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
