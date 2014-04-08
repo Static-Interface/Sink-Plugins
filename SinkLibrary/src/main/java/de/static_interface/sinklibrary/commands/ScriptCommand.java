@@ -28,10 +28,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockIterator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -78,7 +75,6 @@ public class ScriptCommand implements CommandExecutor
             executeScript(SinkLibrary.getUser(sender), currentLine, plugin);
             return true;
         }
-
         enable(user);
         user.sendMessage(ChatColor.DARK_GREEN + "Enabled Interactive Groovy Console");
         return true;
@@ -221,6 +217,7 @@ public class ScriptCommand implements CommandExecutor
                 {
                     SinkLibrary.getCustomLogger().log(Level.INFO, "Initializing ShellInstance for " + user.getName());
                     shellInstance = new GroovyShell();
+                    //Constant variables, they won't change
                     shellInstance.setVariable("me", user);
                     shellInstance.setVariable("plugin", plugin);
                     shellInstance.setVariable("player", user.getPlayer());
@@ -228,6 +225,10 @@ public class ScriptCommand implements CommandExecutor
                     shellInstances.put(name, shellInstance);
                 }
                 else shellInstance = shellInstances.get(name);
+
+                //Dynamic variables, will always get updated
+                shellInstance.setVariable("players", Bukkit.getOnlinePlayers());
+                shellInstance.setVariable("users", SinkLibrary.getOnlineUsers());
 
                 boolean codeSet = false;
 
@@ -262,7 +263,6 @@ public class ScriptCommand implements CommandExecutor
                 }
 
                 String mode = args[0].toLowerCase();
-
                 user.sendDebugMessage(ChatColor.GOLD + "Script mode: " + ChatColor.RED + mode);
 
                 switch ( mode )
@@ -277,6 +277,18 @@ public class ScriptCommand implements CommandExecutor
                         user.sendMessage(ChatColor.DARK_RED + "History cleared");
                         break;
 
+                    case ".setvariable":
+                        if ( args.length < 3 || !currentLine.contains("=") )
+                        {
+                            sendErrorMessage(user, "Usage: .setvariable name=value");
+                            break;
+                        }
+                        String[] commandArgs = currentLine.split("=");
+                        String variableName = commandArgs[0].split(" ")[1];
+                        Object value = commandArgs[1];
+                        shellInstance.setVariable(variableName, value);
+                        break;
+
                     case ".load":
                     {
                         if ( args.length < 2 )
@@ -286,25 +298,15 @@ public class ScriptCommand implements CommandExecutor
                         }
                         updateImports(name, "");
                         String scriptName = args[1];
-                        File scriptFile = new File(scriptFolder, scriptName + ".groovy");
-                        if ( !scriptFile.exists() )
+
+                        try
+                        {
+                            codeInstances.put(name, code + loadFile(scriptName));
+                        }
+                        catch ( FileNotFoundException ignored )
                         {
                             user.sendMessage(ChatColor.DARK_RED + "File doesn't exists!");
                             break;
-                        }
-                        try
-                        {
-                            BufferedReader br = new BufferedReader(new FileReader(scriptFile));
-                            StringBuilder sb = new StringBuilder();
-                            String line = br.readLine();
-
-                            while ( line != null )
-                            {
-                                sb.append(line);
-                                sb.append(nl);
-                                line = br.readLine();
-                            }
-                            codeInstances.put(name, code + sb);
                         }
                         catch ( Exception e )
                         {
@@ -359,11 +361,15 @@ public class ScriptCommand implements CommandExecutor
                         try
                         {
                             SinkLibrary.getCustomLogger().logToFile(Level.INFO, user.getName() + " executed script: " + nl + code);
+                            if ( args.length >= 1 )
+                            {
+                                code = loadFile(args[1]);
+                            }
                             String result = String.valueOf(shellInstance.evaluate(code));
+
                             if ( result != null && !result.isEmpty() && !result.equals("null") )
                                 user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.GREEN + formatCode(result));
-                            else user.sendMessage(ChatColor.AQUA + "Output: " + ChatColor.RED + " no output");
-                            codeInstances.put(name, code);
+                            else user.sendMessage(ChatColor.GREEN + "Code executed!");
                         }
                         catch ( Exception e )
                         {
@@ -392,6 +398,28 @@ public class ScriptCommand implements CommandExecutor
         });
     }
 
+    static String loadFile(String scriptName) throws IOException, FileNotFoundException
+    {
+        String nl = System.getProperty("line.separator");
+        File scriptFile = new File(scriptFolder, scriptName + ".groovy");
+        if ( !scriptFile.exists() )
+        {
+            throw new FileNotFoundException();
+        }
+        BufferedReader br = new BufferedReader(new FileReader(scriptFile));
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        while ( line != null )
+        {
+            sb.append(line);
+            sb.append(nl);
+            line = br.readLine();
+        }
+        return sb.toString();
+    }
+
+
     static void updateImports(String name, String code)
     {
         String nl = System.getProperty("line.separator");
@@ -403,9 +431,7 @@ public class ScriptCommand implements CommandExecutor
                 "import org.bukkit.potion.*; " + nl +
                 "import org.bukkit.util.*" + nl +
                 "import org.bukkit.*;" + nl + nl;
-        if ( !code.contains(defaultImports) )
-        {
-            codeInstances.put(name, defaultImports + code);
-        }
+        code.replace(defaultImports, "");
+        codeInstances.put(name, defaultImports + code);
     }
 }

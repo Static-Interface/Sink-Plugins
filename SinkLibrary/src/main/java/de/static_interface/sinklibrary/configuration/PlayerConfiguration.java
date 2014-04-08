@@ -23,7 +23,6 @@ import de.static_interface.sinklibrary.User;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,6 @@ public class PlayerConfiguration extends ConfigurationBase
 {
     public static final int REQUIRED_VERSION = 1;
 
-    private Player player;
     private File yamlFile = null;
     private YamlConfiguration yamlConfiguration = null;
     private User user;
@@ -53,10 +51,7 @@ public class PlayerConfiguration extends ConfigurationBase
         {
             throw new RuntimeException("User is Console, cannot create PlayerConfiguration.");
         }
-
         this.user = user;
-        player = user.getPlayer();
-
         load();
     }
 
@@ -239,23 +234,4 @@ public class PlayerConfiguration extends ConfigurationBase
     {
         set("Nick.HasDisplayName", value);
     }
-
-    /**
-     * @return True if exception tracking is enabled, false if not.
-     */
-    public boolean getHasExceptionTrackingEnabled()
-    {
-        return (boolean) get("ExceptionTrackingEnabled");
-    }
-
-    public void setHasExceptionTrackingEnabled(boolean value)
-    {
-        set("ExceptionTrackingEnabled", value);
-    }
-
-    public void setDutyTime(long millis)
-    {
-        set("DutyTime", millis);
-    }
-
 }
