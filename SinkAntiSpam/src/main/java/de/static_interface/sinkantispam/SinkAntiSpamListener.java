@@ -130,15 +130,11 @@ public class SinkAntiSpamListener implements Listener
             return;
         }
 
-        pattern = Pattern.compile(" [a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,3}(/\\S)? ");
+        pattern = Pattern.compile("((w{3}\\.)?([A-Za-z0-9]+\\.)+[A-Za-z]{2,3}/?)\\s");
         matcher = pattern.matcher(message);
         if ( matcher.find() && SinkLibrary.getSettings().isWhitelistedDomainCheckEnabled() )
         {
             String match = matcher.group(0);
-            if ( match.contains("..") )
-            {
-                return;
-            }
             if ( containsBlacklistedWord(match, whiteListDomains) != null )
             {
                 return;
