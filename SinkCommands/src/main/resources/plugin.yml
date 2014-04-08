@@ -107,10 +107,10 @@ commands:
     permission: sinkcommands.countdown
     aliases: cd
 
-  list:
-    description: Lists all users with specified prefix
-    permission: sinkcommands.list
-    aliases: [online, who]
+#  list:
+#    description: Lists all users with specified prefix
+#    permission: sinkcommands.list
+#    aliases: [online, who]
 
 permissions:
   sinkcommands.*:
