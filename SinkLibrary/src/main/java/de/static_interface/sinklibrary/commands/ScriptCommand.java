@@ -248,7 +248,7 @@ public class ScriptCommand implements CommandExecutor
 
                 currentLine = currentLine.trim();
 
-                if ( currentLine.startsWith(".") ) // command, don't add to code
+                if ( currentLine.startsWith(".") && !currentLine.startsWith(".setvariable") ) // command, don't add to code
                 {
                     code = code.replace(currentLine, "");
                     currentLine = "";
