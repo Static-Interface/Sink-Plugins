@@ -278,15 +278,22 @@ public class ScriptCommand implements CommandExecutor
                         break;
 
                     case ".setvariable":
-                        if ( args.length < 3 || !currentLine.contains("=") )
+                        //if ( args.length < 3 || !currentLine.contains("=") )
+                        //{
+                        //    sendErrorMessage(user, "Usage: .setvariable name=value");
+                        //    break;
+                        //}
+                        try
                         {
-                            sendErrorMessage(user, "Usage: .setvariable name=value");
-                            break;
+                            String[] commandArgs = currentLine.split("=");
+                            String variableName = commandArgs[0].split(" ")[1];
+                            Object value = commandArgs[1];
+                            shellInstance.setVariable(variableName, value);
                         }
-                        String[] commandArgs = currentLine.split("=");
-                        String variableName = commandArgs[0].split(" ")[1];
-                        Object value = commandArgs[1];
-                        shellInstance.setVariable(variableName, value);
+                        catch ( Exception e )
+                        {
+                            sendErrorMessage(user, e.getMessage());
+                        }
                         break;
 
                     case ".load":
@@ -361,7 +368,7 @@ public class ScriptCommand implements CommandExecutor
                         try
                         {
                             SinkLibrary.getCustomLogger().logToFile(Level.INFO, user.getName() + " executed script: " + nl + code);
-                            if ( args.length >= 1 )
+                            if ( args.length >= 2 )
                             {
                                 code = loadFile(args[1]);
                             }
