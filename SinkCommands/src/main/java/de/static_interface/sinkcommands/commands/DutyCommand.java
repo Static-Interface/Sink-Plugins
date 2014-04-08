@@ -65,9 +65,11 @@ public class DutyCommand implements CommandExecutor
                 if ( sender.equals(Bukkit.getConsoleSender()) )
                 {
                     sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
+                    return true;
                 }
                 startDuty(SinkLibrary.getUser(sender));
                 sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
+                return true;
             }
         	case "off":
             {
