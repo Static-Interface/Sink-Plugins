@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,27 +15,10 @@
   ~  along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<metadata modelVersion="1.1.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
     <groupId>net.milkbowl.vault</groupId>
     <artifactId>vault</artifactId>
     <version>1.2.26-SNAPSHOT</version>
-    <versioning>
-        <snapshot>
-            <timestamp>20140406.113833</timestamp>
-            <buildNumber>1</buildNumber>
-        </snapshot>
-        <lastUpdated>20140406113833</lastUpdated>
-        <snapshotVersions>
-            <snapshotVersion>
-                <extension>jar</extension>
-                <value>1.2.26-20140406.113833-1</value>
-                <updated>20140406113833</updated>
-            </snapshotVersion>
-            <snapshotVersion>
-                <extension>pom</extension>
-                <value>1.2.26-20140406.113833-1</value>
-                <updated>20140406113833</updated>
-            </snapshotVersion>
-        </snapshotVersions>
-    </versioning>
-</metadata>
+</project>

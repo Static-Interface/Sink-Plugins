@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,13 +15,27 @@
   ~  along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<metadata>
+<metadata modelVersion="1.1.0">
     <groupId>net.milkbowl.vault</groupId>
     <artifactId>vault</artifactId>
+    <version>1.2.26-SNAPSHOT</version>
     <versioning>
-        <versions>
-            <version>1.2.26-SNAPSHOT</version>
-        </versions>
+        <snapshot>
+            <timestamp>20140406.113833</timestamp>
+            <buildNumber>1</buildNumber>
+        </snapshot>
         <lastUpdated>20140406113833</lastUpdated>
+        <snapshotVersions>
+            <snapshotVersion>
+                <extension>jar</extension>
+                <value>1.2.26-20140406.113833-1</value>
+                <updated>20140406113833</updated>
+            </snapshotVersion>
+            <snapshotVersion>
+                <extension>pom</extension>
+                <value>1.2.26-20140406.113833-1</value>
+                <updated>20140406113833</updated>
+            </snapshotVersion>
+        </snapshotVersions>
     </versioning>
 </metadata>

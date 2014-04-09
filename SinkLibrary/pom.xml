@@ -79,6 +79,10 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

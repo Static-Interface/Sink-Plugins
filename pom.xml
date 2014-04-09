@@ -56,7 +56,7 @@
         </repository>
         <repository>
             <id>local-dependencies</id>
-            <url>file:${project.basedir}/../libs/</url>
+            <url>file:${main.basedir}/repo</url>
         </repository>
     </repositories>
 
@@ -80,6 +80,7 @@
     <properties>
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
     <build>
@@ -257,3 +258,4 @@
         </resources>
     </build>
 </project>
+

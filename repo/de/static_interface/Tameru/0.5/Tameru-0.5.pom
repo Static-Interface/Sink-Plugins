@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -20,6 +19,6 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.static_interface</groupId>
-    <artifactId>SinkAFK</artifactId>
-    <version>1.9</version>
+    <artifactId>Tameru</artifactId>
+    <version>0.5</version>
 </project>

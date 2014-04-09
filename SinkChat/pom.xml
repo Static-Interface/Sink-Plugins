@@ -65,4 +65,8 @@
             <version>0.85.0.0</version>
         </dependency>
     </dependencies>
+
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
 </project>
