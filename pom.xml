@@ -217,6 +217,7 @@
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
+                    <outputDirectory>${main.basedir}/jars</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
