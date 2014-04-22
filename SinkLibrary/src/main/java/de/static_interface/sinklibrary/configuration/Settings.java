@@ -19,148 +19,80 @@ package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.Updater;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
 public class Settings extends ConfigurationBase
 {
     public static final int REQUIRED_VERSION = 1;
-    private YamlConfiguration yamlConfiguration = null;
-    private File yamlFile = null;
-    private HashMap<String, Object> defaultValues = null;
 
     public Settings()
     {
-        load();
+        super(new File(SinkLibrary.getCustomDataFolder(), "Settings.yml"));
     }
 
     @Override
-    public YamlConfiguration getYamlConfiguration()
+    public void addDefaults()
     {
-        return yamlConfiguration;
-    }
+        addDefault("Main.ConfigVersion", REQUIRED_VERSION);
 
-    @Override
-    public void load()
-    {
-        defaultValues = new HashMap<>();
-        create();
-    }
+        addDefault("General.DisplayNamesEnabled", true);
+        addDefault("General.EnableLog", true);
+        addDefault("General.EnableDebug", false);
 
-    @Override
-    public HashMap<String, Object> getDefaults()
-    {
-        return defaultValues;
-    }
+        addDefault("Updater.Enabled", true);
+        addDefault("Updater.UpdateType", "default");
 
-    @Override
-    public File getFile()
-    {
-        return yamlFile;
-    }
+        addDefault("SinkIRC.BotEnabled", false);
+        addDefault("SinkIRC.Username", "SinkIRCBot");
+        addDefault("SinkIRC.Server.Address", "irc.example.com");
+        addDefault("SinkIRC.Server.PasswordEnabled", false);
+        addDefault("SinkIRC.Server.Password", "ServerPasswordHere");
+        addDefault("SinkIRC.Server.Port", 6667);
+        addDefault("SinkIRC.Channel", "#ChatBot");
+        addDefault("SinkIRC.Authentification.Enabled", false);
+        addDefault("SinkIRC.Authentification.AuthBot", "NickServ");
+        addDefault("SinkIRC.Authentification.AuthMessage", "indentify NickServPasswordHere");
 
-    @Override
-    public void create()
-    {
-        try
-        {
-            yamlFile = new File(SinkLibrary.getCustomDataFolder(), "Settings.yml");
+        addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
 
-            boolean createNewConfiguration = !exists();
+        List<String> defaultBlackList = new ArrayList<>();
+        defaultBlackList.add("BlacklistedWord");
+        defaultBlackList.add("BlackListedWord2");
+        addDefault("SinkAntiSpam.BlacklistedWordsCheck.Words", defaultBlackList);
 
-            if ( createNewConfiguration )
-            {
-                SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
-            }
+        addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Enabled", true);
 
-            if ( createNewConfiguration && !yamlFile.createNewFile() )
-            {
-                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration: " + yamlFile);
-                return;
-            }
+        List<String> defaultDomainWiteList = new ArrayList<>();
+        defaultDomainWiteList.add("google.com");
+        defaultDomainWiteList.add("youtube.com");
+        defaultDomainWiteList.add("yourhomepagehere.com");
+        addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Domains", defaultDomainWiteList);
 
-            yamlConfiguration = new YamlConfiguration();
-            yamlConfiguration.load(yamlFile);
+        addDefault("SinkAntiSpam.IPCheck.Enabled", true);
 
-            yamlConfiguration.options().header("You can customize the SinkPlugins with this configuration.");
-
-            addDefault("Main.ConfigVersion", REQUIRED_VERSION);
-
-            addDefault("General.DisplayNamesEnabled", true);
-            addDefault("General.EnableLog", true);
-            addDefault("General.EnableDebug", false);
-
-            addDefault("Updater.Enabled", true);
-            addDefault("Updater.UpdateType", "default");
-
-            addDefault("SinkIRC.BotEnabled", false);
-            addDefault("SinkIRC.Username", "SinkIRCBot");
-            addDefault("SinkIRC.Server.Address", "irc.example.com");
-            addDefault("SinkIRC.Server.PasswordEnabled", false);
-            addDefault("SinkIRC.Server.Password", "ServerPasswordHere");
-            addDefault("SinkIRC.Server.Port", 6667);
-            addDefault("SinkIRC.Channel", "#ChatBot");
-            addDefault("SinkIRC.Authentification.Enabled", false);
-            addDefault("SinkIRC.Authentification.AuthBot", "NickServ");
-            addDefault("SinkIRC.Authentification.AuthMessage", "indentify NickServPasswordHere");
-
-            addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
-
-            List<String> defaultBlackList = new ArrayList<>();
-            defaultBlackList.add("BlacklistedWord");
-            defaultBlackList.add("BlackListedWord2");
-            addDefault("SinkAntiSpam.BlacklistedWordsCheck.Words", defaultBlackList);
-
-            addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Enabled", true);
-
-            List<String> defaultDomainWiteList = new ArrayList<>();
-            defaultDomainWiteList.add("google.com");
-            defaultDomainWiteList.add("youtube.com");
-            defaultDomainWiteList.add("yourhomepagehere.com");
-            addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Domains", defaultDomainWiteList);
-
-            addDefault("SinkAntiSpam.IPCheck.Enabled", true);
-
-            List<String> defaultExcludedCommands = new ArrayList<>();
-            defaultExcludedCommands.add("msg");
-            defaultExcludedCommands.add("tell");
-            defaultExcludedCommands.add("m");
-            defaultExcludedCommands.add("whisper");
-            defaultExcludedCommands.add("t");
-            addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
+        List<String> defaultExcludedCommands = new ArrayList<>();
+        defaultExcludedCommands.add("msg");
+        defaultExcludedCommands.add("tell");
+        defaultExcludedCommands.add("m");
+        defaultExcludedCommands.add("whisper");
+        defaultExcludedCommands.add("t");
+        addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
 
 
-            addDefault("SinkChat.LocalChatRange", 50);
-            addDefault("SinkChat.Channels.Help.Prefix", "?");
-            addDefault("SinkChat.Channels.Shout.Prefix", "!");
-            addDefault("SinkChat.Channels.Trade.Prefix", "$");
-            addDefault("SinkChat.TownyEnabled", false);
+        addDefault("SinkChat.LocalChatRange", 50);
+        addDefault("SinkChat.Channels.Help.Prefix", "?");
+        addDefault("SinkChat.Channels.Shout.Prefix", "!");
+        addDefault("SinkChat.Channels.Trade.Prefix", "$");
+        addDefault("SinkChat.TownyEnabled", false);
 
-            addDefault("SinkAFK.Broadcast.AFK", true);
-            addDefault("SinkAFK.Broadcast.Back", true);
-            addDefault("SinkAFK.Broadcast.IRC.AFK", false);
-            addDefault("SinkAFK.Broadcast.IRC.Back", false);
-
-            save();
-        }
-        catch ( IOException e )
-        {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + yamlFile.getName());
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
-        }
-        catch ( InvalidConfigurationException e )
-        {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file detected: " + yamlFile);
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
-            recreate();
-        }
+        addDefault("SinkAFK.Broadcast.AFK", true);
+        addDefault("SinkAFK.Broadcast.Back", true);
+        addDefault("SinkAFK.Broadcast.IRC.AFK", false);
+        addDefault("SinkAFK.Broadcast.IRC.Back", false);
     }
 
     public Updater.UpdateType getUpdateType()

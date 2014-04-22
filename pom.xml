@@ -56,7 +56,7 @@
         </repository>
         <repository>
             <id>local-dependencies</id>
-            <url>file:${main.basedir}/repo</url>
+            <url>file:${project.basedir}/repo</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>

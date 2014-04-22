@@ -77,10 +77,15 @@
             <version>2.2.4</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.2.26-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
+        <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
     <build>

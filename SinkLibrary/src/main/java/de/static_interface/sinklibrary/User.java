@@ -44,7 +44,7 @@ public class User
     private static Economy econ;
     private String playerName;
     private CommandSender sender;
-
+    private PlayerConfiguration config = null;
     /**
      * Get User instance by player's name
      *
@@ -93,7 +93,12 @@ public class User
      */
     public PlayerConfiguration getPlayerConfiguration()
     {
-        return new PlayerConfiguration(this);
+        if ( config == null )
+        {
+            config = new PlayerConfiguration(this);
+            config.load();
+        }
+        return config;
     }
 
     /**

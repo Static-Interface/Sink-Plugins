@@ -17,27 +17,17 @@
 
 package de.static_interface.sinklibrary.configuration;
 
-import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
 
 public class PlayerConfiguration extends ConfigurationBase
 {
     public static final int REQUIRED_VERSION = 1;
 
-    private File yamlFile = null;
-    private YamlConfiguration yamlConfiguration = null;
     private User user;
-
-    HashMap<String, Object> defaultValues = null;
 
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
@@ -47,113 +37,26 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public PlayerConfiguration(User user)
     {
+        super(new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players", user.getName() + ".yml"));
         if ( user.isConsole() )
         {
-            throw new RuntimeException("User is Console, cannot create PlayerConfiguration.");
+            throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
         }
         this.user = user;
-        load();
     }
 
     @Override
-    public YamlConfiguration getYamlConfiguration()
+    public void addDefaults()
     {
-        return yamlConfiguration;
-    }
+        yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
 
-    @Override
-    public void create()
-    {
-        try
-        {
-            File playersPath = new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players");
-            yamlFile = new File(playersPath, user.getName() + ".yml");
-
-            boolean createNewConfiguration = !exists();
-
-            if ( createNewConfiguration )
-            {
-                SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new player configuration: " + yamlFile);
-            }
-
-            Files.createParentDirs(yamlFile);
-
-            if ( createNewConfiguration && !yamlFile.createNewFile() )
-            {
-                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create player configuration: " + yamlFile);
-                return;
-            }
-
-            yamlConfiguration = new YamlConfiguration();
-            yamlConfiguration.load(yamlFile);
-
-            /*
-            if ( !createNewConfiguration )
-            {
-                int version;
-                try
-                {
-                    version = (int) get("ConfigVersion");
-                }
-                catch(NullPointerException e)
-                {
-                    version = 0;
-                }
-                if ( version < REQUIRED_VERSION )
-                {
-                    SinkLibrary.getCustomLogger().log(Level.WARNING, "***************");
-                    SinkLibrary.getCustomLogger().log(Level.WARNING, "Configuration: " + yamlFile + " is too old! Current Version: " + version + ", required Version: " + REQUIRED_VERSION);
-                    recreate();
-                    SinkLibrary.getCustomLogger().log(Level.WARNING, "***************");
-                    return;
-                }
-            }
-            */
-
-            yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
-
-            addDefault("ConfigVersion", REQUIRED_VERSION);
-            addDefault("StatsEnabled", true);
-            addDefault("ExceptionTrackingEnabled", false);
-            addDefault("SpyEnabled", true);
-            addDefault("Nick.HasDisplayName", false);
-            addDefault("Nick.DisplayName", user.getDefaultDisplayName());
-            addDefault("DutyTime", 0);
-
-            save();
-        }
-        catch ( IOException e )
-        {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create player config file: " + yamlFile.getAbsolutePath());
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
-        }
-        catch ( InvalidConfigurationException e )
-        {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "***************");
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file detected: " + yamlFile);
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "***************");
-            recreate();
-        }
-    }
-
-    @Override
-    public void load()
-    {
-        defaultValues = new HashMap<>();
-        create();
-    }
-
-    @Override
-    public HashMap<String, Object> getDefaults()
-    {
-        return defaultValues;
-    }
-
-    @Override
-    public File getFile()
-    {
-        return yamlFile;
+        addDefault("ConfigVersion", REQUIRED_VERSION);
+        addDefault("StatsEnabled", true);
+        addDefault("ExceptionTrackingEnabled", false);
+        addDefault("SpyEnabled", true);
+        addDefault("Nick.HasDisplayName", false);
+        addDefault("Nick.DisplayName", user.getDefaultDisplayName());
+        addDefault("DutyTime", 0);
     }
 
     /**

@@ -79,10 +79,12 @@ public class SinkLibrary extends JavaPlugin
         timer = new CommandsTimer();
 
         // Init language
-        LanguageConfiguration.load();
+        LanguageConfiguration languageConfiguration = new LanguageConfiguration();
+        languageConfiguration.load();
 
         // Init Settings
         settings = new Settings();
+        settings.load();
 
         logger.log(Level.INFO, "Loading...");
         // Check optional dependencies

@@ -17,8 +17,10 @@
 
 package de.static_interface.sinklibrary.configuration;
 
+import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.Util;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -29,12 +31,50 @@ import java.util.logging.Level;
 @SuppressWarnings({"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
 public abstract class ConfigurationBase
 {
-    private static boolean busy;
+    protected static boolean busy = false;
+    protected File yamlFile = null;
+    protected YamlConfiguration yamlConfiguration = null;
+    protected HashMap<String, Object> defaultValues = null;
+
+    public ConfigurationBase(File file)
+    {
+        yamlFile = file;
+    }
 
     /**
      * Create Configuration File
      */
-    public abstract void create();
+    public void create()
+    {
+        try
+        {
+            boolean createNewConfiguration = !exists();
+
+            if ( createNewConfiguration )
+            {
+                SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
+            }
+
+            Files.createParentDirs(yamlFile);
+
+            if ( createNewConfiguration && !yamlFile.createNewFile() )
+            {
+                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create player configuration: " + yamlFile);
+                return;
+            }
+
+            yamlConfiguration = new YamlConfiguration();
+
+            save();
+        }
+        catch ( IOException e )
+        {
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + yamlFile.getName());
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
+        }
+    }
+
+    public abstract void addDefaults();
 
     /**
      * Save config file
@@ -106,7 +146,12 @@ public abstract class ConfigurationBase
     /**
      * Get YAML Configuration
      */
-    public abstract YamlConfiguration getYamlConfiguration();
+    public YamlConfiguration getYamlConfiguration()
+    {
+        return yamlConfiguration;
+    }
+
+    ;
 
     /**
      * @return True if the config file exists
@@ -119,7 +164,27 @@ public abstract class ConfigurationBase
     /**
      * Load Configuration
      */
-    public abstract void load();
+    public void load()
+    {
+        try
+        {
+            yamlConfiguration.load(yamlFile);
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+            return;
+        }
+        catch ( InvalidConfigurationException e )
+        {
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file detected: " + yamlFile);
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
+            recreate();
+            return;
+        }
+        defaultValues = new HashMap<>();
+        addDefaults();
+    }
 
     /**
      * Get default value for path
@@ -160,7 +225,12 @@ public abstract class ConfigurationBase
      *
      * @return Default values
      */
-    public abstract HashMap<String, Object> getDefaults();
+    public HashMap<String, Object> getDefaults()
+    {
+        return defaultValues;
+    }
+
+    ;
 
     /**
      * Backup Configuration.
@@ -185,7 +255,12 @@ public abstract class ConfigurationBase
      *
      * @return configuration file
      */
-    public abstract File getFile();
+    public File getFile()
+    {
+        return yamlFile;
+    }
+
+    ;
 
     /**
      * Recreate configuration
@@ -208,7 +283,7 @@ public abstract class ConfigurationBase
         }
         delete();
         create();
-
+        load();
         busy = false;
     }
 
