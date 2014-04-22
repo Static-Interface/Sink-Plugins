@@ -17,9 +17,6 @@
 
 package de.static_interface.sinklibrary;
 
-import com.mojang.api.http.BasicHttpClient;
-import com.mojang.api.profiles.HttpProfileRepository;
-import com.mojang.api.profiles.ProfileCriteria;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.exceptions.ChatNotAvailableException;
 import de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException;
@@ -28,29 +25,33 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
 public class User
 {
-    private static final String REPO_AGENT = "SinkLibrary bukkit plugin";
-    private static Player base;
-    private static Economy econ;
-    private String playerName;
-    private CommandSender sender;
+    private static Player base = null;
+    private static Economy econ = null;
+    private String playerName = null;
+    private CommandSender sender = null;
     private PlayerConfiguration config = null;
+    private UUID uuid = null;
+
     /**
      * Get User instance by player's name
-     *
+     * <p>
+     * <b>Use {@link #User(java.util.UUID)} for offline players</b>
      * @param player Name of the player
      */
     User(String player)
+    {
+        initUser(player);
+    }
+
+    public void initUser(String player)
     {
         if ( player.equalsIgnoreCase("CONSOLE") )
         {
@@ -64,6 +65,18 @@ public class User
         econ = SinkLibrary.getEconomy();
         playerName = player;
         sender = base;
+        uuid = base.getUniqueId();
+    }
+
+    /**
+     * Get an user by UUID
+     * @param uuid UUID of user
+     */
+    User(UUID uuid)
+    {
+        //Todo
+        this.uuid = uuid;
+        initUser(Bukkit.getOfflinePlayer(uuid).getName());
     }
 
     /**
@@ -284,33 +297,11 @@ public class User
     }
 
     /**
-     * Own implementation of {@link org.bukkit.entity.Player#getUniqueId()}, the diffrence is that this
-     * also supports offline players
-     *
-     * @return UniqueId of User
+     * @return The unique ID of the user
      */
-    public String getUniqueId()
+    public UUID getUniqueId()
     {
-        if ( isOnline() ) return base.getUniqueId().toString();
-        else
-        {
-            return getUniqueIdOffline();
-        }
-    }
-
-    private String getUniqueIdOffline()
-    {
-        return new HttpProfileRepository(new BasicHttpClient()).findProfilesByCriteria(new ProfileCriteria(playerName, REPO_AGENT))[0].getId();
-    }
-
-    /**
-     * @return true if User joined the server
-     */
-    public boolean joinedServer()
-    {
-        File playersPath = new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players");
-        File file = new File(playersPath, playerName + ".yml");
-        return file.exists();
+        return uuid;
     }
 
     /**
@@ -322,32 +313,5 @@ public class User
     {
         if ( SinkLibrary.getSettings().isDebugEnabled() )
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
-    }
-
-    /**
-     * @param radius Search radius
-     * @param checkY if true, y range will also be checked
-     * @return List of users around this user
-     */
-    public List<User> getUsersAround(int radius, boolean checkY)
-    {
-        double x = getPlayer().getLocation().getX();
-        double y = getPlayer().getLocation().getY();
-        double z = getPlayer().getLocation().getZ();
-
-        List<User> usersInRange = new ArrayList<>();
-
-        for ( User user : SinkLibrary.getOnlineUsers() )
-        {
-            Player p = user.getPlayer();
-            Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= radius && (checkY || Math.abs(y - loc.getY()) <= radius) && Math.abs(z - loc.getZ()) <= radius;
-
-            if ( isInRange )
-            {
-                usersInRange.add(user);
-            }
-        }
-        return usersInRange;
     }
 }

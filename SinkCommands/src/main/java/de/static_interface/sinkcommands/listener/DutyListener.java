@@ -18,9 +18,6 @@
 package de.static_interface.sinkcommands.listener;
 
 
-import de.static_interface.sinkcommands.commands.DutyCommand;
-import de.static_interface.sinklibrary.SinkLibrary;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,6 +28,6 @@ public class DutyListener implements Listener
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-    	DutyCommand.endDuty(SinkLibrary.getUser(event.getPlayer()));
+        //Todo: DutyCommand.endDuty(SinkLibrary.getUser(event.getPlayer()));
     }
 }
