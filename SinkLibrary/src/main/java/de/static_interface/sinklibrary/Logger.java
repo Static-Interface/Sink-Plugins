@@ -74,7 +74,7 @@ public class Logger
         boolean enabled;
         try
         {
-            enabled = SinkLibrary.getSettings().isLogEnabled();
+            enabled = SinkLibrary.initialized && SinkLibrary.getSettings().isLogEnabled();
         }
         catch ( Exception ignored )
         {
@@ -131,6 +131,8 @@ public class Logger
 
     public void debug(String message)
     {
+        if ( !SinkLibrary.initialized ) return;
+
         if ( SinkLibrary.getSettings().isDebugEnabled() )
         {
             log(Level.INFO, "[DEBUG] " + message);

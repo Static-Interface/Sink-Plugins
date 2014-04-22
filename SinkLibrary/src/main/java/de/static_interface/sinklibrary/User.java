@@ -44,6 +44,7 @@ public class User
      * Get User instance by player's name
      * <p>
      * <b>Use {@link #User(java.util.UUID)} for offline players</b>
+     *
      * @param player Name of the player
      */
     User(String player)
@@ -70,6 +71,7 @@ public class User
 
     /**
      * Get an user by UUID
+     *
      * @param uuid UUID of user
      */
     User(UUID uuid)
@@ -87,6 +89,39 @@ public class User
      */
     public int getMoney()
     {
+        validateEconomy();
+
+        EconomyResponse response = econ.bankBalance(base.getName());
+        return (int) response.balance;
+    }
+
+    /**
+     * Allows to add or substract money from user.
+     *
+     * @param amount Amount to be added / substracted. May be negative for substracting
+     * @return true if successful
+     */
+    public boolean addBalance(double amount)
+    {
+        validateEconomy();
+        EconomyResponse response;
+        if ( amount < 0 )
+        {
+            response = econ.withdrawPlayer(getName(), -amount);
+        }
+        else if ( amount > 0 )
+        {
+            response = econ.withdrawPlayer(getName(), amount);
+        }
+        else
+        {
+            return true;
+        }
+        return response.transactionSuccess();
+    }
+
+    private void validateEconomy()
+    {
         if ( isConsole() )
         {
             throw new NullPointerException("User is console, cannot get Player instance!");
@@ -96,9 +131,6 @@ public class User
         {
             throw new EconomyNotAvailableException();
         }
-
-        EconomyResponse response = econ.bankBalance(base.getName());
-        return (int) response.balance;
     }
 
     /**
@@ -180,7 +212,7 @@ public class User
      */
     public String getDefaultDisplayName()
     {
-        if ( isConsole() || !isOnline())
+        if ( isConsole() || !isOnline() )
         {
             return playerName;
         }

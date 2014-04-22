@@ -21,6 +21,7 @@ import de.static_interface.sinkirc.commands.IrcKickCommand;
 import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
 import de.static_interface.sinkirc.commands.IrclistCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -104,6 +105,11 @@ public class SinkIRC extends JavaPlugin
             Bukkit.getLogger().log(Level.WARNING, "This plugin requires SinkLibrary and SinkChat");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
+        }
+
+        if ( !SinkLibrary.initialized )
+        {
+            throw new NotInitializedException("SinkLibrary is not initialized!");
         }
         return true;
     }

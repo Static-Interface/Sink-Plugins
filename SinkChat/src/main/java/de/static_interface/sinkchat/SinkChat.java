@@ -26,6 +26,7 @@ import de.static_interface.sinkchat.command.*;
 import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -94,6 +95,11 @@ public class SinkChat extends JavaPlugin
         {
             towny = null;
             SinkLibrary.getCustomLogger().log(Level.INFO, "Towny not found. Disabling Towny Chat features");
+        }
+
+        if ( !SinkLibrary.initialized )
+        {
+            throw new NotInitializedException("SinkLibrary is not initialized!");
         }
         return true;
     }

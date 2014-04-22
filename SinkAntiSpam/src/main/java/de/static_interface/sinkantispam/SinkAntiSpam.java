@@ -20,6 +20,7 @@ package de.static_interface.sinkantispam;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -76,6 +77,11 @@ public class SinkAntiSpam extends JavaPlugin
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
+        }
+
+        if ( !SinkLibrary.initialized )
+        {
+            throw new NotInitializedException("SinkLibrary is not initialized!");
         }
         return true;
     }

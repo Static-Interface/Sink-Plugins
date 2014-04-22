@@ -39,6 +39,7 @@ public abstract class ConfigurationBase
     public ConfigurationBase(File file)
     {
         yamlFile = file;
+        if ( !exists() ) create();
     }
 
     /**
@@ -62,8 +63,6 @@ public abstract class ConfigurationBase
                 SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create player configuration: " + yamlFile);
                 return;
             }
-
-            yamlConfiguration = new YamlConfiguration();
 
             save();
         }
@@ -168,6 +167,7 @@ public abstract class ConfigurationBase
     {
         try
         {
+            yamlConfiguration = new YamlConfiguration();
             yamlConfiguration.load(yamlFile);
         }
         catch ( IOException e )

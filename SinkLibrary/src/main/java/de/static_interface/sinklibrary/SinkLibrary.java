@@ -61,7 +61,8 @@ public class SinkLibrary extends JavaPlugin
     private static boolean economyAvailable = true;
     private static boolean permissionsAvailable = true;
     private static boolean chatAvailable = true;
-    private static boolean initialized = false;
+
+    public static boolean initialized = false;
 
     static Logger logger;
 
