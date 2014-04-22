@@ -65,6 +65,7 @@ public class User
         base = BukkitUtil.getPlayer(player);
         econ = SinkLibrary.getEconomy();
         playerName = player;
+        if ( base == null ) return;
         sender = base;
         uuid = base.getUniqueId();
     }
