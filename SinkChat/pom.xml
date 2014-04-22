@@ -56,17 +56,19 @@
         <dependency>
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
+            <scope>provided</scope>
             <version>1.9</version>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
             <artifactId>Towny</artifactId>
-            <scope>provided</scope>
+            <scope>system</scope>
             <version>0.85.0.0</version>
+            <systemPath>${main.basedir}/libs/Towny-0.85.0.0.jar</systemPath>
         </dependency>
     </dependencies>
 
     <properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
+        <main.basedir>${project.basedir}/../</main.basedir>
     </properties>
 </project>

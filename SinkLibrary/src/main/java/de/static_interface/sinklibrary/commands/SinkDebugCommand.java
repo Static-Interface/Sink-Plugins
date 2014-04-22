@@ -97,7 +97,7 @@ public class SinkDebugCommand implements CommandExecutor
             {
                 try
                 {
-                    LanguageConfiguration.backup();
+                    LanguageConfiguration.getInstance().backup();
                     sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
                 }
                 catch ( Exception e )

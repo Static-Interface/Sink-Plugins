@@ -37,8 +37,8 @@ public class SinkReloadCommand implements CommandExecutor
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         String name;
-        LanguageConfiguration.reload();
-        name = LanguageConfiguration.getFile().getName();
+        LanguageConfiguration.getInstance().reload();
+        name = LanguageConfiguration.getInstance().getFile().getName();
 
         sender.sendMessage(PREFIX + "Reloaded " + name);
 

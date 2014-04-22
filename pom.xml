@@ -54,18 +54,6 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>local-dependencies</id>
-            <url>file:${project.basedir}/repo</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
     </repositories>
 
     <modules>
@@ -192,7 +180,12 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${basedir}</directory>
+                            <directory>${main.basedir}</directory>
+                            <includes>
+                                <include>target/**</include>
+                                <include>output/**</include>
+                            </includes>
+                            <directory>${project.basedir}</directory>
                             <includes>
                                 <include>target/**</include>
                                 <include>output/**</include>
