@@ -27,8 +27,7 @@ public class PlayerConfiguration extends ConfigurationBase
 {
     public static final int REQUIRED_VERSION = 1;
 
-    private User user;
-
+    private User user = null;
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
      * Should be accessed via {@link de.static_interface.sinklibrary.User#getPlayerConfiguration()}
@@ -37,11 +36,25 @@ public class PlayerConfiguration extends ConfigurationBase
      */
     public PlayerConfiguration(User user)
     {
-        super(new File(SinkLibrary.getCustomDataFolder() + File.separator + "Players", user.getName() + ".yml"));
+        super(new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
         if ( user.isConsole() )
         {
             throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
         }
+
+        //Convert to UUID
+        File oldFile = new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getName() + ".yml");
+        File uniqueFile = getFile();
+
+        if ( oldFile.exists() )
+        {
+            oldFile.renameTo(uniqueFile);
+        }
+        else if ( !oldFile.exists() && !uniqueFile.exists() )
+        {
+            create();
+        }
+
         this.user = user;
     }
 
@@ -51,12 +64,12 @@ public class PlayerConfiguration extends ConfigurationBase
         yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
 
         addDefault("ConfigVersion", REQUIRED_VERSION);
+        addDefault("LastKnownName", user.getName());
         addDefault("StatsEnabled", true);
         addDefault("ExceptionTrackingEnabled", false);
         addDefault("SpyEnabled", true);
         addDefault("Nick.HasDisplayName", false);
         addDefault("Nick.DisplayName", user.getDefaultDisplayName());
-        addDefault("DutyTime", 0);
     }
 
     /**

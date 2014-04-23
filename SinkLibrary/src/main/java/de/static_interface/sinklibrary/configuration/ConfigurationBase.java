@@ -36,10 +36,27 @@ public abstract class ConfigurationBase
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
 
+    /**
+     * Create a new configuration
+     *
+     * @param file Configurations YAML file (will be created if doesn't exsists)
+     */
     public ConfigurationBase(File file)
     {
         yamlFile = file;
         if ( !exists() ) create();
+    }
+
+    /**
+     * Inits a new configuration
+     *
+     * @param file   Configurations YAML file (will be created if doesn't exsists)
+     * @param create If true, file will be created if it doesnt exists
+     */
+    public ConfigurationBase(File file, boolean create)
+    {
+        yamlFile = file;
+        if ( create && !exists() ) create();
     }
 
     /**
@@ -150,8 +167,6 @@ public abstract class ConfigurationBase
         return yamlConfiguration;
     }
 
-    ;
-
     /**
      * @return True if the config file exists
      */
@@ -230,8 +245,6 @@ public abstract class ConfigurationBase
         return defaultValues;
     }
 
-    ;
-
     /**
      * Backup Configuration.
      *
@@ -259,8 +272,6 @@ public abstract class ConfigurationBase
     {
         return yamlFile;
     }
-
-    ;
 
     /**
      * Recreate configuration
