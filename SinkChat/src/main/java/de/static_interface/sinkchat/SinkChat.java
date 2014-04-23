@@ -117,7 +117,10 @@ public class SinkChat extends JavaPlugin
         getCommand("enablespy").setExecutor(new SpyCommands.EnableSpyCommand());
         getCommand("disablespy").setExecutor(new SpyCommands.DisablSpyCommand());
         getCommand("privatechannel").setExecutor(new PrivateChannelCommand());
-        getCommand("nationchat").setExecutor(new NationChatCommand());
-        getCommand("townchat").setExecutor(new TownChatCommand());
+        if ( towny != null )
+        {
+            getCommand("nationchat").setExecutor(new NationChatCommand());
+            getCommand("townchat").setExecutor(new TownChatCommand());
+        }
     }
 }
