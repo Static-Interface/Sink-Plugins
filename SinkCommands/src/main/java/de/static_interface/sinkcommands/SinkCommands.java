@@ -203,7 +203,7 @@ public class SinkCommands extends JavaPlugin
         getCommand("globalmute").setExecutor(new GlobalmuteCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        getCommand("duty").setExecutor(new DutyCommand());
+        //getCommand("duty").setExecutor(new DutyCommand());
         getCommand("lag").setExecutor(new LagCommand());
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
         getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));
