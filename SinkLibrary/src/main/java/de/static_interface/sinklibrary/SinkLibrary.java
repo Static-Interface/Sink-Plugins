@@ -39,7 +39,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -175,7 +174,7 @@ public class SinkLibrary extends JavaPlugin
         {
             logger.getFileWriter().close();
         }
-        catch ( IOException ignored ) { }
+        catch ( Exception ignored ) { }
         System.gc();
     }
 
@@ -486,7 +485,7 @@ public class SinkLibrary extends JavaPlugin
             config.setHasDisplayName(false);
         }
         player.setDisplayName(displayName);
-        player.setPlayerListName(displayName.substring(0, 16));
+        player.setPlayerListName(displayName.substring(0, 15));
     }
 
     /**

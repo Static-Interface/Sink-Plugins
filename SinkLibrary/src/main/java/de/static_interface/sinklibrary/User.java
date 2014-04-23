@@ -88,7 +88,7 @@ public class User
      * @return Money of player
      * @throws de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException if economy is not available.
      */
-    public int getMoney()
+    public double getMoney()
     {
         validateEconomy();
 
@@ -104,20 +104,28 @@ public class User
      */
     public boolean addBalance(double amount)
     {
+        if ( getName().isEmpty() ) return false;
+
+        double roundedAmount = (int) Math.round(amount * 100) / (double) 100;
+
         validateEconomy();
         EconomyResponse response;
-        if ( amount < 0 )
+        if ( roundedAmount > 0 )
         {
-            response = econ.withdrawPlayer(getName(), -amount);
+            SinkLibrary.getCustomLogger().debug("econ.withDrawPlayer(" + getName() + ", " + -roundedAmount + ");");
+            response = econ.withdrawPlayer(getName(), -roundedAmount);
         }
-        else if ( amount > 0 )
+        else if ( roundedAmount < 0 )
         {
-            response = econ.depositPlayer(getName(), amount);
+            SinkLibrary.getCustomLogger().debug("econ.depositPlayer(" + getName() + ", " + roundedAmount + ");");
+            response = econ.depositPlayer(getName(), roundedAmount);
         }
         else
         {
             return true;
         }
+        boolean result = response.transactionSuccess();
+        SinkLibrary.getCustomLogger().debug("result = " + result);
         return response.transactionSuccess();
     }
 
