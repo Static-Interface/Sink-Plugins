@@ -112,7 +112,7 @@ public class User
         }
         else if ( amount > 0 )
         {
-            response = econ.withdrawPlayer(getName(), amount);
+            response = econ.depositPlayer(getName(), amount);
         }
         else
         {

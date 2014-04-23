@@ -28,7 +28,7 @@ import java.util.Set;
 import static de.static_interface.sinklibrary.Constants.TICK;
 
 
-public class CommandsTimer implements Runnable
+public class TPSTimer implements Runnable
 {
     private final transient Set<String> onlineUsers = new HashSet<>();
     private transient long lastPoll = System.nanoTime();
@@ -36,7 +36,7 @@ public class CommandsTimer implements Runnable
     private int skip1 = 0;
     private int skip2 = 0;
 
-    CommandsTimer()
+    TPSTimer()
     {
         history.add(TICK);
     }
