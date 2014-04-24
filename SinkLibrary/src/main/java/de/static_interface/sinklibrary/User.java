@@ -107,7 +107,6 @@ public class User
         if ( getName().isEmpty() ) return false;
 
         double roundedAmount = (int) Math.round(amount * 100) / (double) 100;
-
         validateEconomy();
         EconomyResponse response;
         if ( roundedAmount > 0 )
@@ -140,6 +139,9 @@ public class User
         {
             throw new EconomyNotAvailableException();
         }
+
+        assert econ != null;
+        assert base != null;
     }
 
     /**

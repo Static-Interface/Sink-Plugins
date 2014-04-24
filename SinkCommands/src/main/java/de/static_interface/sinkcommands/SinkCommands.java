@@ -137,6 +137,7 @@ public class SinkCommands extends JavaPlugin
      *
      * @param player Refresh scoreboard for this player
      */
+    @SuppressWarnings("deprecation")
     public static void refreshScoreboard(Player player, int players)
     {
         User user = SinkLibrary.getUser(player);
@@ -163,7 +164,7 @@ public class SinkCommands extends JavaPlugin
         if ( SinkLibrary.isEconomyAvailable() )
         {
             Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
-            money.setScore(user.getMoney());
+            money.setScore(new Double(user.getMoney()).intValue());
         }
 
         Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
