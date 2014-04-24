@@ -63,6 +63,7 @@ public class SinkLibrary extends JavaPlugin
     private static boolean chatAvailable = true;
 
     public static boolean initialized = false;
+    public static boolean sinkChatAvailable;
 
     static Logger logger;
 
@@ -157,7 +158,6 @@ public class SinkLibrary extends JavaPlugin
             loadUser(p.getName());
         }
 
-        boolean sinkChatAvailable = false;
         for ( Plugin plugin : registeredPlugins )
         {
             if ( plugin.getName().equalsIgnoreCase("SinkChat") )

@@ -27,6 +27,7 @@ public class IRCLinkListener implements Listener
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
+        if ( SinkLibrary.sinkChatAvailable ) return;
         String msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
         SinkLibrary.sendIRCMessage(msg);
     }
