@@ -92,6 +92,15 @@ public class User
     {
         validateEconomy();
 
+        if ( base == null )
+        {
+            base = Bukkit.getPlayerExact(playerName);
+        }
+        if ( base == null )
+        {
+            throw new NullPointerException();
+        }
+
         EconomyResponse response = econ.bankBalance(base.getName());
         return (int) response.balance;
     }
