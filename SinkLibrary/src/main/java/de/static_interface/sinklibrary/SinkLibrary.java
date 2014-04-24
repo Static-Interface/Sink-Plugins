@@ -25,6 +25,7 @@ import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.events.IRCSendMessageEvent;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
+import de.static_interface.sinklibrary.listener.IRCLinkListener;
 import de.static_interface.sinklibrary.listener.PlayerConfigurationListener;
 import de.static_interface.sinklibrary.listener.ScriptChatListener;
 import net.milkbowl.vault.chat.Chat;
@@ -154,6 +155,20 @@ public class SinkLibrary extends JavaPlugin
         {
             refreshDisplayName(p);
             loadUser(p.getName());
+        }
+
+        boolean sinkChatAvailable = false;
+        for ( Plugin plugin : registeredPlugins )
+        {
+            if ( plugin.getName().equals("SinkChat") )
+            {
+                sinkChatAvailable = true;
+                break;
+            }
+        }
+        if ( !sinkChatAvailable )
+        {
+            Bukkit.getPluginManager().registerEvents(new IRCLinkListener(), this);
         }
     }
 
