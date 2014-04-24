@@ -99,10 +99,9 @@ public class SinkIRC extends JavaPlugin
     private boolean checkDependencies()
     {
         Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
-        Plugin sinkChat = Bukkit.getPluginManager().getPlugin("SinkChat");
-        if ( sinkLibrary == null || sinkChat == null )
+        if ( sinkLibrary == null )
         {
-            Bukkit.getLogger().log(Level.WARNING, "This plugin requires SinkLibrary and SinkChat");
+            Bukkit.getLogger().log(Level.WARNING, "This plugin requires SinkLibrary");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
