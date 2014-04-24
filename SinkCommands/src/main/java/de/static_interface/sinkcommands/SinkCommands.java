@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
- *
+ *  
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +21,6 @@ import de.static_interface.sinkcommands.commands.*;
 import de.static_interface.sinkcommands.listener.*;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
@@ -93,11 +92,11 @@ public class SinkCommands extends JavaPlugin
     @Override
     public void onDisable()
     {
-        for ( User user : DutyCommand.getPlayersInDuty() )
-        {
-            user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
-            DutyCommand.endDuty(user);
-        }
+        //for ( User user : DutyCommand.getPlayersInDuty() )
+        //{
+        //    user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
+        //    DutyCommand.endDuty(user);
+        //}
 
         SinkLibrary.getCustomLogger().info("Saving player configurations...");
 
