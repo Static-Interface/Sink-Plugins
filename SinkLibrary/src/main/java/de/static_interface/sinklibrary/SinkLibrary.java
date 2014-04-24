@@ -160,14 +160,16 @@ public class SinkLibrary extends JavaPlugin
         boolean sinkChatAvailable = false;
         for ( Plugin plugin : registeredPlugins )
         {
-            if ( plugin.getName().equals("SinkChat") )
+            if ( plugin.getName().equalsIgnoreCase("SinkChat") )
             {
                 sinkChatAvailable = true;
+                SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
                 break;
             }
         }
         if ( !sinkChatAvailable )
         {
+            SinkLibrary.getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
             Bukkit.getPluginManager().registerEvents(new IRCLinkListener(), this);
         }
     }
