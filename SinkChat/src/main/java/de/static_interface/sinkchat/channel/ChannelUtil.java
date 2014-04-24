@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkchat.channel;
 
+import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
@@ -44,7 +45,12 @@ public class ChannelUtil
         String formattedMessage = message.substring(1);
         User user = SinkLibrary.getUser(player);
 
-        String townyPrefix = TownyBridge.getTownyPrefix(player);
+
+        String townyPrefix = "";
+        if ( SinkChat.isTownyAvailable() )
+        {
+            townyPrefix = TownyBridge.getTownyPrefix(player);
+        }
 
         if ( SinkLibrary.isPermissionsAvailable() )
         {

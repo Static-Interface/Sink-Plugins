@@ -123,44 +123,41 @@ public class TownyBridge
 
     /**
      * Get Towny prefix of player
-     *
+     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it will throw exceptions
+     * when towny is not present</b></p>
      * @param player Player
      * @return       {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
      */
     public static String getTownyPrefix(Player player)
     {
-        if ( SinkChat.isTownyAvailable() && SinkLibrary.getSettings().isTownyEnabled() )
+        Resident res = getResident(player.getName());
+
+        if ( res == null ) return "";
+
+        Town town;
+
+        try
         {
-            Resident res = getResident(player.getName());
-
-            if ( res == null ) return "";
-
-            Town town;
-
-            try
-            {
-                town = res.getTown();
-            }
-            catch ( NotRegisteredException ignored )
-            {
-                return "";
-            }
-
-            if ( town == null ) return "";
-            if ( !town.hasNation() ) return "";
-
-            Nation nation;
-            try
-            {
-                nation = town.getNation();
-            }
-            catch ( NotRegisteredException ignored )
-            {
-                return "";
-            }
-
-            return ChatColor.GRAY + "[" + ChatColor.stripColor(nation.getTag()) + ChatColor.GRAY + "] ";
+            town = res.getTown();
         }
-        return "";
+        catch ( NotRegisteredException ignored )
+        {
+            return "";
+        }
+
+        if ( town == null ) return "";
+        if ( !town.hasNation() ) return "";
+
+        Nation nation;
+        try
+        {
+            nation = town.getNation();
+        }
+        catch ( NotRegisteredException ignored )
+        {
+            return "";
+        }
+
+        return ChatColor.GRAY + "[" + ChatColor.stripColor(nation.getTag()) + ChatColor.GRAY + "] ";
     }
 }

@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkchat.listener;
 
+import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -74,7 +75,11 @@ public class ChatListenerHighest implements Listener
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
 
-        String townyPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
+        String townyPrefix = "";
+        if ( SinkChat.isTownyAvailable() )
+        {
+            townyPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
+        }
 
         String formattedMessage = String.format(event.getFormat(), user.getDisplayName(), message);
 
