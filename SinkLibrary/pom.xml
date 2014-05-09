@@ -78,6 +78,12 @@
             <scope>system</scope>
             <systemPath>${main.basedir}/libs/Vault-1.2.26-SNAPSHOT.jar/</systemPath>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
