@@ -335,7 +335,7 @@ public class SinkIRCBot extends PircBot
                     return;
                 }
                 de.static_interface.sinklibrary.User target;
-                target = SinkLibrary.loadUser(args[0]);
+                target = SinkLibrary.getUser(args[0]);
                 if ( !target.isOnline() )
                 {
                     sinkIrcBot.sendCleanMessage(source, LanguageConfiguration._("General.NotOnline").replace("%c", args[1]));
@@ -369,7 +369,7 @@ public class SinkIRCBot extends PircBot
                 boolean firstPlayer = true;
                 for ( Player player : Bukkit.getOnlinePlayers() )
                 {
-                    de.static_interface.sinklibrary.User user = SinkLibrary.loadUser(player);
+                    de.static_interface.sinklibrary.User user = SinkLibrary.getUser(player);
                     if ( firstPlayer )
                     {
                         onlineMessage += user.getDisplayName();

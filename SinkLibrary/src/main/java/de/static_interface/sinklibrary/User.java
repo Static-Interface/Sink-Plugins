@@ -48,7 +48,6 @@ public class User
      *
      * @param sender Sender
      */
-    @Deprecated
     User(CommandSender sender)
     {
         initUser(sender.getName());

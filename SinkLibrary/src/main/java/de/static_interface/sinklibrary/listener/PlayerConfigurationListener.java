@@ -31,7 +31,9 @@ public class PlayerConfigurationListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        User user = SinkLibrary.loadUser(event.getPlayer());
+        SinkLibrary.loadUser(event.getPlayer().getUniqueId());
+
+        User user = SinkLibrary.getUser(event.getPlayer());
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )
@@ -43,6 +45,6 @@ public class PlayerConfigurationListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        SinkLibrary.unloadUser(event.getPlayer());
+        SinkLibrary.unloadUser(event.getPlayer().getUniqueId());
     }
 }

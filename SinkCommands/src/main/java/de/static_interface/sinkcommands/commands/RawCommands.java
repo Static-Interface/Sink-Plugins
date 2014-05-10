@@ -51,7 +51,7 @@ public class RawCommands
             {
                 return false;
             }
-            User target = SinkLibrary.loadUser(args[0]);
+            User target = SinkLibrary.getUser(args[0]);
 
             if ( !target.isOnline() )
             {

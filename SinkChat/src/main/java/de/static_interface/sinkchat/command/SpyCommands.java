@@ -37,7 +37,7 @@ public class SpyCommands
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
         {
-            User user = SinkLibrary.loadUser(sender);
+            User user = SinkLibrary.getUser(sender);
 
             if ( user.isConsole() )
             {
@@ -65,7 +65,7 @@ public class SpyCommands
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
         {
-            User user = SinkLibrary.loadUser(sender);
+            User user = SinkLibrary.getUser(sender);
             if ( user.isConsole() )
             {
                 sender.sendMessage(_("General.ConsoleNotAvailable"));

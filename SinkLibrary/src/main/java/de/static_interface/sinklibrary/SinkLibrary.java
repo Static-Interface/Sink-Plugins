@@ -155,7 +155,7 @@ public class SinkLibrary extends JavaPlugin
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
             refreshDisplayName(p);
-            loadUser(p.getUniqueId());
+            getUser(p.getUniqueId());
         }
 
         for ( Plugin plugin : Bukkit.getPluginManager().getPlugins() )
@@ -180,7 +180,7 @@ public class SinkLibrary extends JavaPlugin
         SinkLibrary.getCustomLogger().info("Saving players...");
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
-            User user = SinkLibrary.loadUser(p);
+            User user = SinkLibrary.getUser(p);
             if ( user.getPlayerConfiguration().exists() )
             {
                 user.getPlayerConfiguration().save();
@@ -416,34 +416,33 @@ public class SinkLibrary extends JavaPlugin
      * @param player Player
      * @return User instance of player
      */
-    public static User loadUser(Player player)
+    public static User getUser(Player player)
     {
-        return loadUser(player.getUniqueId());
+        return getUser(player.getUniqueId());
     }
 
     /**
      * @param playerName Name of Player
      * @return User instance
-     * @deprecated use {@link #loadUser(java.util.UUID)} instead
+     * @deprecated use {@link #getUser(java.util.UUID)} instead
      */
     @Deprecated
-    public static User loadUser(String playerName)
+    public static User getUser(String playerName)
     {
         UUID uuid = BukkitUtil.getUUIDByName(playerName);
 
-        return loadUser(uuid);
+        return getUser(uuid);
     }
 
-    public static User loadUser(UUID uuid)
+    public static User getUser(UUID uuid)
     {
-        Player player = Bukkit.getPlayer(uuid);
-        if ( player == null || !player.isOnline() ) return new User(uuid);
         User user = onlineUsers.get(uuid);
-        if ( user == null || (user.getPlayer() != null && !user.getPlayer().getUniqueId().equals(uuid)) )
+
+        if ( user == null || !user.isOnline() )
         {
-            user = new User(player.getUniqueId());
-            onlineUsers.put(player.getUniqueId(), user);
+            user = new User(uuid);
         }
+
         return user;
     }
 
@@ -451,12 +450,12 @@ public class SinkLibrary extends JavaPlugin
      * @param sender Command Sender
      * @return User instance
      */
-    public static User loadUser(CommandSender sender)
+    public static User getUser(CommandSender sender)
     {
         if ( !(sender instanceof Player) ) return new User(sender);
 
         Player player = (Player) sender;
-        return loadUser(player.getUniqueId());
+        return getUser(player.getUniqueId());
     }
 
     /**
@@ -478,7 +477,7 @@ public class SinkLibrary extends JavaPlugin
     {
         if ( !settings.isDisplayNamesEnabled() ) return;
 
-        User user = loadUser(player);
+        User user = getUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )
@@ -518,13 +517,29 @@ public class SinkLibrary extends JavaPlugin
     /**
      * Unload an User
      * Do not call this, its handled internally
-     * @param player Player which needs to be unloaded
+     *
+     * @param uuid UUID of the user who needs to be loaded
      */
-    public static void unloadUser(Player player)
+    public static void loadUser(UUID uuid)
     {
-        User user = loadUser(player);
+        User user = onlineUsers.get(uuid);
+        if ( user == null || !user.getPlayer().getUniqueId().equals(uuid) )
+        {
+            user = new User(uuid);
+            onlineUsers.put(uuid, user);
+        }
+    }
+
+    /**
+     * Unload an User
+     * Do not call this, its handled internally
+     *
+     * @param uuid UUID of the User who needs to be unloaded
+     */
+    public static void unloadUser(UUID uuid)
+    {
+        User user = getUser(uuid);
         user.getPlayerConfiguration().save();
-        UUID uuid = user.getPlayer().getUniqueId();
         if ( uuid != null )
         {
             onlineUsers.remove(uuid);

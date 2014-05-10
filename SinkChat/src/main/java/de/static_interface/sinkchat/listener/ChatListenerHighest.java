@@ -70,7 +70,7 @@ public class ChatListenerHighest implements Listener
             }
         }
 
-        User user = SinkLibrary.loadUser(event.getPlayer());
+        User user = SinkLibrary.getUser(event.getPlayer());
 
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
@@ -100,7 +100,7 @@ public class ChatListenerHighest implements Listener
             Location loc = p.getLocation();
             boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
 
-            User onlineUser = SinkLibrary.loadUser(p);
+            User onlineUser = SinkLibrary.getUser(p);
 
             // User has permission to read all spy chat
             boolean spyAll = onlineUser.hasPermission("sinkchat.spy.all");

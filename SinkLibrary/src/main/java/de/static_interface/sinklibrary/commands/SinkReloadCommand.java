@@ -49,7 +49,7 @@ public class SinkReloadCommand implements CommandExecutor
         sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
-            User user = SinkLibrary.loadUser(p);
+            User user = SinkLibrary.getUser(p);
             user.getPlayerConfiguration().reload();
         }
 

@@ -46,7 +46,7 @@ public class NickCommand implements CommandExecutor
             return true;
         }
 
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
         String newDisplayName;
 
         if ( args.length < 1 )
@@ -74,7 +74,7 @@ public class NickCommand implements CommandExecutor
 
             if ( setDisplayName(target, newDisplayName, sender) )
             {
-                user = SinkLibrary.loadUser(target);
+                user = SinkLibrary.getUser(target);
                 sender.sendMessage(PREFIX + String.format(_("SinkChat.Commands.Nick.OtherChanged"), playerName, user.getDisplayName()));
             }
             return true;
@@ -96,7 +96,7 @@ public class NickCommand implements CommandExecutor
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean setDisplayName(Player target, String newDisplayName, CommandSender sender)
     {
-        User user = SinkLibrary.loadUser(target);
+        User user = SinkLibrary.getUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if ( !NICKNAME_PATTERN.matcher(cleanDisplayName).matches() )
         {

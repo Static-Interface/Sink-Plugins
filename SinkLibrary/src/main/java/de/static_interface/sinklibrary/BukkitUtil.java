@@ -73,7 +73,7 @@ public class BukkitUtil
      */
     public static String getSenderName(CommandSender sender)
     {
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }
 
@@ -117,7 +117,7 @@ public class BukkitUtil
     {
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
-            User user = SinkLibrary.loadUser(p);
+            User user = SinkLibrary.getUser(p);
             if ( !user.hasPermission(permission) )
             {
                 continue;

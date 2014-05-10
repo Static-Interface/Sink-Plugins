@@ -37,7 +37,7 @@ public class IrcKickCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
 
         if ( args.length < 1 )
         {

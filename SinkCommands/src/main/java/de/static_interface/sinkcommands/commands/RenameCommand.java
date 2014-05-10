@@ -37,7 +37,7 @@ public class RenameCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
         if ( user.isConsole() )
         {
             sender.sendMessage(PREFIX + "Dieser Befehl ist nur Ingame ausführbar.");

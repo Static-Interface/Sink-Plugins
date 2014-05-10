@@ -57,7 +57,7 @@ public class ScriptCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
         if ( isEnabled(user) )
         {
             disable(user);
@@ -72,7 +72,7 @@ public class ScriptCommand implements CommandExecutor
             {
                 currentLine += arg + ' ';
             }
-            executeScript(SinkLibrary.loadUser(sender), currentLine, plugin);
+            executeScript(SinkLibrary.getUser(sender), currentLine, plugin);
             return true;
         }
         enable(user);

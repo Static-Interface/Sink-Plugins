@@ -52,7 +52,7 @@ public class TownyBridge
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank)
     {
-        User user = SinkLibrary.loadUser(resident.getName()); // TODO: GET UUID FROM NAME
+        User user = SinkLibrary.getUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 

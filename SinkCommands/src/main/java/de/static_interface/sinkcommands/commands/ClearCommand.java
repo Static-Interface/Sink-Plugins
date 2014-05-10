@@ -41,7 +41,7 @@ public class ClearCommand implements CommandExecutor
         List<String> args = Arrays.asList(argsArr);
 
         Player player;
-        User user = SinkLibrary.loadUser(sender);
+        User user = SinkLibrary.getUser(sender);
 
         boolean clearInvetory = false;
         boolean clearEffects = false;

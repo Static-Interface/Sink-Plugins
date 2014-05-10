@@ -53,7 +53,7 @@ public class DutyCommand implements CommandExecutor
         {
             //If no arguments, only send the full duty time of sender
             case 0:
-                sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.loadUser(sender), DutySumType.ALL).toString()));
+                sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
                 return true;
             //If 1 argument, try "on" or "off" to toggle duty mode
             case 1:
@@ -66,7 +66,7 @@ public class DutyCommand implements CommandExecutor
                             sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
                             return true;
                         }
-                        startDuty(SinkLibrary.loadUser(sender));
+                        startDuty(SinkLibrary.getUser(sender));
                         sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
                         return true;
                     }
@@ -77,9 +77,9 @@ public class DutyCommand implements CommandExecutor
                             sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
                             return true;
                         }
-                        if ( getPlayersInDuty().contains(SinkLibrary.loadUser(sender)) )
+                        if ( getPlayersInDuty().contains(SinkLibrary.getUser(sender)) )
                         {
-                            endDuty(SinkLibrary.loadUser(sender));
+                            endDuty(SinkLibrary.getUser(sender));
                             sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Finish"));
                             return true;
                         }
@@ -91,7 +91,7 @@ public class DutyCommand implements CommandExecutor
                     }
                     //If this fails, try to use it as user name and send the sender the full duty time
                     default:
-                        User otherUser = SinkLibrary.loadUser(arguments[0]);
+                        User otherUser = SinkLibrary.getUser(arguments[0]);
                         if ( !otherUser.isOnline() )
                         {
                             sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
@@ -103,7 +103,7 @@ public class DutyCommand implements CommandExecutor
                 }
                 //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
             default:
-                User otherUser = SinkLibrary.loadUser(arguments[0]);
+                User otherUser = SinkLibrary.getUser(arguments[0]);
                 if ( !otherUser.isOnline() )
                 {
                     sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));

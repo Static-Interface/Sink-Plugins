@@ -53,7 +53,7 @@ public class IRCListener implements Listener
             return;
         }
         String message = event.getJoinMessage();
-        User user = SinkLibrary.loadUser(event.getPlayer());
+        User user = SinkLibrary.getUser(event.getPlayer());
         if ( message == null || message.isEmpty() )
         {
             message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " betrat das Spiel";
@@ -69,7 +69,7 @@ public class IRCListener implements Listener
             return;
         }
         String message = event.getQuitMessage();
-        User user = SinkLibrary.loadUser(event.getPlayer());
+        User user = SinkLibrary.getUser(event.getPlayer());
         if ( message == null || message.isEmpty() )
         {
             message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " verliess das Spiel";
@@ -86,7 +86,7 @@ public class IRCListener implements Listener
         }
         String reason = ": " + event.getReason();
         if ( event.getReason().isEmpty() ) reason = "!";
-        User user = SinkLibrary.loadUser(event.getPlayer());
+        User user = SinkLibrary.getUser(event.getPlayer());
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), user.getDisplayName() + ChatColor.RESET + " has been kicked" + reason);
     }
 

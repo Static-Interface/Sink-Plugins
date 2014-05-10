@@ -91,7 +91,7 @@ public class SinkAntiSpamListener implements Listener
 
         message = ChatColor.stripColor(message);
 
-        User user = SinkLibrary.loadUser(player);
+        User user = SinkLibrary.getUser(player);
 
         if ( user.hasPermission("sinkcommands.bypass") )
         {
