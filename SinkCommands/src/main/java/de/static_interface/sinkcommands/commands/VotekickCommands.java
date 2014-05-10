@@ -37,18 +37,18 @@ public class VotekickCommands
 {
     public static final String PREFIX = ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + "[VoteKick] " + ChatColor.RESET;
 
-    private static double votesYes = 0;
-    private static double votesNo = 0;
-    private static boolean voteStarted;
-    private static Player targetPlayer;
+    static double votesYes = 0;
+    static double votesNo = 0;
+    static boolean voteStarted;
+    static Player targetPlayer;
 
-    private static String target;
+    static String target;
 
-    public static List<CommandSender> votedPlayers = new ArrayList<>();
+    static List<CommandSender> votedPlayers = new ArrayList<>();
 
     public static class VotekickCommand implements CommandExecutor
     {
-        private Plugin plugin;
+        Plugin plugin;
 
         public VotekickCommand(Plugin plugin)
         {
@@ -291,7 +291,7 @@ public class VotekickCommands
     }
 
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    private static void sendStatus(CommandSender sender)
+    static void sendStatus(CommandSender sender)
     {
         if ( !VotekickCommands.voteStarted )
         {
@@ -304,7 +304,7 @@ public class VotekickCommands
     }
 
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    private static boolean vote(CommandSender sender, boolean yes, Plugin plugin)
+    static boolean vote(CommandSender sender, boolean yes, Plugin plugin)
     {
         if ( !VotekickCommands.voteStarted )
         {

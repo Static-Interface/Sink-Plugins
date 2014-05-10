@@ -44,7 +44,7 @@ public class CommandsverCommand implements CommandExecutor
         String authors = Util.formatPlayerListToString(authorsList);
         sender.sendMessage(PREFIX + plugin.getDescription().getName() + " by " + authors);
         sender.sendMessage(PREFIX + "Version: " + plugin.getDescription().getVersion());
-        sender.sendMessage(PREFIX + "Copyright © 2013 Adventuria");
+        sender.sendMessage(PREFIX + "Copyright © 2013 - 2014 Adventuria / static-interface.de");
         return true;
     }
 }

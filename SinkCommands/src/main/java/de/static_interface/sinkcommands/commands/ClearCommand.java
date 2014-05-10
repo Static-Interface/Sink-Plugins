@@ -46,32 +46,38 @@ public class ClearCommand implements CommandExecutor
         boolean clearInvetory = false;
         boolean clearEffects = false;
         boolean clearArmor = false;
+        int i = 0;
         if ( args.contains("-i") || args.contains("-inventory") )
         {
             clearInvetory = true;
+            i++;
         }
         if ( args.contains("-e") || args.contains("-effects") )
         {
             clearEffects = true;
+            i++;
         }
         if ( args.contains("-ar") || args.contains("-armor") )
         {
             clearArmor = true;
+            i++;
         }
         if ( args.contains("-a") || args.contains("-all") )
         {
             clearInvetory = true;
             clearEffects = true;
             clearArmor = true;
+            i = 3;
         }
         if ( !clearInvetory && !clearEffects && !clearArmor )
         {
             clearInvetory = true;
+            i = 1;
         }
 
         if ( argsArr.length >= 1 )
         {
-            String name = argsArr[0];
+            String name = argsArr[i];
             if ( !user.hasPermission("sinkcommands.clear.others") )
             {
                 sender.sendMessage(PREFIX + "Du hast nicht genügend Rechte um das Inventar von anderen Spielern zu leeren!");
@@ -134,7 +140,7 @@ public class ClearCommand implements CommandExecutor
         {
             sender.sendMessage(PREFIX + player.getDisplayName() + " wurde gecleart.");
         }
-        player.sendMessage(PREFIX + "Du wurdest gecleart.");
+        player.sendMessage(PREFIX + ChatColor.RED + "Du wurdest gecleart.");
         return true;
     }
 
