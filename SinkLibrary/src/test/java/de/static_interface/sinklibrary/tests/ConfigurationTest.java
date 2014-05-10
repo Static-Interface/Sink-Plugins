@@ -38,6 +38,7 @@ public class ConfigurationTest
         for ( String s : defaultTestValues.keySet() )
         {
             assertEquals(defaultTestValues.get(s), config.get(s));
+            assertEquals(defaultTestValues.get(s), config.getDefaults().get(s));
         }
     }
 }
