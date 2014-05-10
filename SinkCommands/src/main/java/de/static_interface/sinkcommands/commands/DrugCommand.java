@@ -39,7 +39,7 @@ public class DrugCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        User user = SinkLibrary.getUser(sender);
+        User user = SinkLibrary.loadUser(sender);
         if ( user.isConsole() )
         {
             sender.sendMessage("Dieser Befehl kann nur von einem Spieler genutzt werden.");

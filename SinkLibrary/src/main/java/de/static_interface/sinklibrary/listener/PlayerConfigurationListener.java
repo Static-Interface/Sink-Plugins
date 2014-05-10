@@ -31,8 +31,7 @@ public class PlayerConfigurationListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        SinkLibrary.loadUser(event.getPlayer());
-        User user = SinkLibrary.getUser(event.getPlayer());
+        User user = SinkLibrary.loadUser(event.getPlayer());
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )

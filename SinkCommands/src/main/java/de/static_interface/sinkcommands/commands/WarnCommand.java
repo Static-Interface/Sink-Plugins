@@ -70,7 +70,7 @@ public class WarnCommand implements CommandExecutor
         }
 
         target.sendMessage(PREFIX + ChatColor.RED + "Du wurdest von " + BukkitUtil.getSenderName(sender) + ChatColor.RED + " verwarnt. Grund: " + reason);
-        BukkitUtil.broadcast(PREFIX + SinkLibrary.getUser(target).getDisplayName() + ChatColor.GRAY + " wurde von " + BukkitUtil.getSenderName(sender) + ChatColor.GRAY + " verwarnt. Grund: " + reason, "sinkcommands.warn.message", true);
+        BukkitUtil.broadcast(PREFIX + SinkLibrary.loadUser(target).getDisplayName() + ChatColor.GRAY + " wurde von " + BukkitUtil.getSenderName(sender) + ChatColor.GRAY + " verwarnt. Grund: " + reason, "sinkcommands.warn.message", true);
         return true;
     }
 }

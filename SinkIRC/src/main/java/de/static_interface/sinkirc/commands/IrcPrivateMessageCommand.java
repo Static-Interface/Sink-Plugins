@@ -45,7 +45,7 @@ public class IrcPrivateMessageCommand implements CommandExecutor
             return true;
         }
 
-        String message = ChatColor.GRAY + SinkLibrary.getUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
+        String message = ChatColor.GRAY + SinkLibrary.loadUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
 

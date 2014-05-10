@@ -40,18 +40,18 @@ public class ScriptChatListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void handleChatScript(final AsyncPlayerChatEvent event)
     {
-        final User user = SinkLibrary.getUser(event.getPlayer());
+        final User user = SinkLibrary.loadUser(event.getPlayer());
         if ( !ScriptCommand.isEnabled(user) ) return;
         event.setCancelled(true);
         String currentLine = ChatColor.stripColor(event.getMessage());
-        ScriptCommand.executeScript(SinkLibrary.getUser(event.getPlayer()), currentLine, plugin);
+        ScriptCommand.executeScript(SinkLibrary.loadUser(event.getPlayer()), currentLine, plugin);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         String name = event.getPlayer().getName();
-        ScriptCommand.disable(SinkLibrary.getUser(event.getPlayer()));
+        ScriptCommand.disable(SinkLibrary.loadUser(event.getPlayer()));
         if ( ScriptCommand.shellInstances.containsKey(name) )
         {
             ScriptCommand.shellInstances.get(name).getClassLoader().clearCache();

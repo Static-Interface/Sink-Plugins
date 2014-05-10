@@ -81,7 +81,7 @@ public class PrivateChannelCommand implements CommandExecutor
                 for ( Player player : privateChannel.getPlayers() )
                 {
                     if ( player == null ) continue;
-                    String name = SinkLibrary.getUser(player).getDisplayName();
+                    String name = SinkLibrary.loadUser(player).getDisplayName();
                     if ( players.isEmpty() )
                     {
                         players = name;
@@ -172,7 +172,7 @@ public class PrivateChannelCommand implements CommandExecutor
                         return true;
                     }
 
-                    User user = SinkLibrary.getUser(player);
+                    User user = SinkLibrary.loadUser(player);
                     if ( privateChannel.contains(user.getPlayer()) )
                     {
                         sender.sendMessage(String.format(_("SinkChat.Channels.Private.HasInvitedToChat.ErrorAlreadyInChat"), user.getDisplayName()));

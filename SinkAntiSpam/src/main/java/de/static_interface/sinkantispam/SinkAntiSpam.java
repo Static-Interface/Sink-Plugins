@@ -61,7 +61,7 @@ public class SinkAntiSpam extends JavaPlugin
     {
         String message = prefix + String.format(_("SinkAntiSpam.Warn"), player.getDisplayName(), reason);
         String permission = "sinkantispam.message";
-        User user = SinkLibrary.getUser(player);
+        User user = SinkLibrary.loadUser(player);
         if ( !user.hasPermission(permission) )
         {
             player.sendMessage(message);

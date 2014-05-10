@@ -93,14 +93,14 @@ public class VotekickCommands
                 return true;
             }
             boolean voteable = true;
-            User user = SinkLibrary.getUser(sender);
+            User user = SinkLibrary.loadUser(sender);
             if ( !user.hasPermission("sinkcommands.votekick.staff") )
             {
                 int i = 0;
                 Player[] onlinePlayers = Bukkit.getOnlinePlayers();
                 for ( Player p : onlinePlayers )
                 {
-                    User onlinePlayer = SinkLibrary.getUser(p);
+                    User onlinePlayer = SinkLibrary.loadUser(p);
                     if ( !onlinePlayer.hasPermission("sinkcommands.votekick.staff") )
                     {
                         i++;
@@ -120,7 +120,7 @@ public class VotekickCommands
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
-            User targetUser = SinkLibrary.getUser(targetPlayer);
+            User targetUser = SinkLibrary.loadUser(targetPlayer);
             target = targetUser.getDisplayName();
             if ( targetPlayer.equals(sender) )
             {

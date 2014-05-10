@@ -38,7 +38,7 @@ public class MilkCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        User user = SinkLibrary.getUser(sender);
+        User user = SinkLibrary.loadUser(sender);
         if ( !user.hasPermission("sinkcommands.milk.all") )
         {
             sender.sendMessage(_("Permissions.General"));

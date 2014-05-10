@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BukkitUtil
 {
@@ -59,6 +60,11 @@ public class BukkitUtil
         }
     }
 
+    public static UUID getUUIDByName(String name)
+    {
+        return Bukkit.getOfflinePlayer(name).getUniqueId();
+    }
+
     /**
      * @param sender Command Sender
      * @return If {@link org.bukkit.command.CommandSender CommandSnder} is instance of {@link org.bukkit.command.ConsoleCommandSender ConsoleCommandSender},
@@ -67,7 +73,7 @@ public class BukkitUtil
      */
     public static String getSenderName(CommandSender sender)
     {
-        User user = SinkLibrary.getUser(sender);
+        User user = SinkLibrary.loadUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }
 
@@ -111,7 +117,7 @@ public class BukkitUtil
     {
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            User user = SinkLibrary.loadUser(p);
             if ( !user.hasPermission(permission) )
             {
                 continue;

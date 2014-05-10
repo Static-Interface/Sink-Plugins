@@ -89,7 +89,7 @@ public class SinkAntiSpamListener implements Listener
             throw new IllegalArgumentException("Event muss be an instance of AsyncPlayerChatEvent or PlayerCommandPreprocessEvent!");
         }
 
-        User user = SinkLibrary.getUser(player);
+        User user = SinkLibrary.loadUser(player);
 
         if ( user.hasPermission("sinkcommands.bypass") )
         {

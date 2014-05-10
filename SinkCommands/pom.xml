@@ -96,7 +96,7 @@
                             <minimizeJar>true</minimizeJar>
                             <filters>
                                 <filter>
-                                    <artifact>de.static_interface.shadow:Tameru</artifact>
+                                    <artifact>de.static_interface.shadow:Tameru:*</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

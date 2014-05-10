@@ -25,6 +25,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,11 +46,12 @@ public class User
      * <p>
      * <b>Use {@link #User(java.util.UUID)} for offline players</b>
      *
-     * @param player Name of the player
+     * @param sender Sender
      */
-    User(String player)
+    @Deprecated
+    User(CommandSender sender)
     {
-        initUser(player);
+        initUser(sender.getName());
     }
 
     public void initUser(String player)
@@ -77,7 +79,6 @@ public class User
      */
     User(UUID uuid)
     {
-        //Todo
         this.uuid = uuid;
         initUser(Bukkit.getOfflinePlayer(uuid).getName());
     }
@@ -92,16 +93,19 @@ public class User
     {
         validateEconomy();
 
-        if ( base == null )
+        OfflinePlayer player = base;
+
+        String target = playerName;
+        if ( target == null || target.isEmpty() )
         {
-            base = Bukkit.getPlayerExact(playerName);
-        }
-        if ( base == null )
-        {
-            throw new NullPointerException();
+            if ( player == null )
+            {
+                player = Bukkit.getOfflinePlayer(uuid);
+            }
+            target = player.getName();
         }
 
-        EconomyResponse response = econ.bankBalance(base.getName());
+        EconomyResponse response = econ.bankBalance(target); // Does this work when the player is offline?...
         return (int) response.balance;
     }
 
@@ -241,13 +245,13 @@ public class User
             if ( SinkLibrary.isChatAvailable() )
             {
                 String playerPrefix = getPrefix();
-                return playerPrefix + base.getName() + ChatColor.RESET;
+                return playerPrefix + playerName + ChatColor.RESET;
             }
         }
         catch ( Exception ignored ) {}
 
         String prefix = base.isOp() ? ChatColor.RED.toString() : ChatColor.WHITE.toString();
-        return prefix + base.getName() + ChatColor.RESET;
+        return prefix + playerName + ChatColor.RESET;
     }
 
     /**

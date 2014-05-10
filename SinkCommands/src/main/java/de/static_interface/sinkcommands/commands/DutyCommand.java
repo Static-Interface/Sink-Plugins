@@ -22,7 +22,6 @@ import de.static_interface.shadow.tameru.MySQLDatabase;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,91 +49,91 @@ public class DutyCommand implements CommandExecutor
             sender.sendMessage(LanguageConfiguration._("Permissions.General"));
         }
 
-        switch (arguments.length)
+        switch ( arguments.length )
         {
-        //If no arguments, only send the full duty time of sender
-        case 0:
-            sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
-            return true;
-        //If 1 argument, try "on" or "off" to toggle duty mode
-        case 1:
-        	switch ( arguments[0].toLowerCase() )
-        	{
-        	case "on":
-            {
-                if ( sender.equals(Bukkit.getConsoleSender()) )
-                {
-                    sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
-                    return true;
-                }
-                startDuty(SinkLibrary.getUser(sender));
-                sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
+            //If no arguments, only send the full duty time of sender
+            case 0:
+                sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time"), getDutySumTime(SinkLibrary.loadUser(sender), DutySumType.ALL).toString()));
                 return true;
-            }
-        	case "off":
-            {
-                if ( sender.equals(Bukkit.getConsoleSender()) )
+            //If 1 argument, try "on" or "off" to toggle duty mode
+            case 1:
+                switch ( arguments[0].toLowerCase() )
                 {
-                    sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
-                    return true;
+                    case "on":
+                    {
+                        if ( sender.equals(Bukkit.getConsoleSender()) )
+                        {
+                            sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
+                            return true;
+                        }
+                        startDuty(SinkLibrary.loadUser(sender));
+                        sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Start"));
+                        return true;
+                    }
+                    case "off":
+                    {
+                        if ( sender.equals(Bukkit.getConsoleSender()) )
+                        {
+                            sender.sendMessage(LanguageConfiguration._("General.ConsoleNotAvailable"));
+                            return true;
+                        }
+                        if ( getPlayersInDuty().contains(SinkLibrary.loadUser(sender)) )
+                        {
+                            endDuty(SinkLibrary.loadUser(sender));
+                            sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Finish"));
+                            return true;
+                        }
+                        else
+                        {
+                            sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.NotInDuty"));
+                            return true;
+                        }
+                    }
+                    //If this fails, try to use it as user name and send the sender the full duty time
+                    default:
+                        User otherUser = SinkLibrary.loadUser(arguments[0]);
+                        if ( !otherUser.isOnline() )
+                        {
+                            sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+                            return true;
+                        }
+
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+                        return true;
                 }
-                if ( getPlayersInDuty().contains(SinkLibrary.getUser(sender)) )
-                {
-                    endDuty(SinkLibrary.getUser(sender));
-                    sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.Finish"));
-                    return true;
-                }
-                else
-                {
-                    sender.sendMessage(LanguageConfiguration._("SinkDuty.Time.NotInDuty"));
-                    return true;
-                }
-            }
-            //If this fails, try to use it as user name and send the sender the full duty time
+                //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
             default:
-            	User otherUser = SinkLibrary.getUser(arguments[0]);
-            	if ( !otherUser.isOnline() )
-            	{
-            		sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
-            		return true;
-            	}
+                User otherUser = SinkLibrary.loadUser(arguments[0]);
+                if ( !otherUser.isOnline() )
+                {
+                    sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
+                    return true;
+                }
 
-            	sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
-            	return true;
-        	}
-        //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
-        default:
-            User otherUser = SinkLibrary.getUser(arguments[0]);
-            if ( !otherUser.isOnline() )
-            {
-                sender.sendMessage(String.format(LanguageConfiguration._("General.NotOnline"), arguments[0]));
-                return true;
-            }
-
-            switch ( arguments[1].toLowerCase() )
-            {
-                case "all":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
-                    return true;
-                case "today":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.TODAY).toString()));
-                    return true;
-                case "yesterday":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.YESTERDAY).toString()));
-                    return true;
-                case "last_week":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_WEEK).toString()));
-                    return true;
-                case "last_two_weeks":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_TWO_WEEKS).toString()));
-                    return true;
-                case "last_month":
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_MONTH).toString()));
-                    return true;
-                default:
-                    sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_DUTY_ONLY).toString()));
-                    return true;
-            }
+                switch ( arguments[1].toLowerCase() )
+                {
+                    case "all":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+                        return true;
+                    case "today":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.TODAY).toString()));
+                        return true;
+                    case "yesterday":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.YESTERDAY).toString()));
+                        return true;
+                    case "last_week":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_WEEK).toString()));
+                        return true;
+                    case "last_two_weeks":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_TWO_WEEKS).toString()));
+                        return true;
+                    case "last_month":
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_MONTH).toString()));
+                        return true;
+                    default:
+                        sender.sendMessage(String.format(LanguageConfiguration._("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_DUTY_ONLY).toString()));
+                        return true;
+                }
         }
     }
 
@@ -187,20 +186,20 @@ class DatabaseHandler
 
     private static MySQLDatabase connectToDutyDatabase()
     {
-    	Configuration MySQLData = new Configuration(SinkLibrary.getCustomDataFolder().getAbsolutePath()+File.separator+"MySQLConfiguration.cfg");
-    	
-    	//If that file didn't exist yet, create a default configuration.
-    	if ( MySQLData.getString("MYSQL_HOST") == null )
-    	{
-    		MySQLData.putString("MYSQL_HOST", "localhost");
-    		MySQLData.putString("MYSQL_PORT", "3306");
-    		MySQLData.putString("MYSQL_DB", TABLE_DUTY);
-    		MySQLData.putString("MYSQL_USER", "root");
-    		MySQLData.putString("MYSQL_PASS", "");
-    		MySQLData.save();
-    	}
-    	
-    	return new MySQLDatabase(MySQLData.getString("MYSQL_HOST"), MySQLData.getString("MYSQL_PORT") , MySQLData.getString("MYSQL_DB"), MySQLData.getString("MYSQL_USER"), MySQLData.getString("MYSQL_PASS"));
+        Configuration MySQLData = new Configuration(SinkLibrary.getCustomDataFolder().getAbsolutePath() + File.separator + "MySQLConfiguration.cfg");
+
+        //If that file didn't exist yet, create a default configuration.
+        if ( MySQLData.getString("MYSQL_HOST") == null )
+        {
+            MySQLData.putString("MYSQL_HOST", "localhost");
+            MySQLData.putString("MYSQL_PORT", "3306");
+            MySQLData.putString("MYSQL_DB", TABLE_DUTY);
+            MySQLData.putString("MYSQL_USER", "root");
+            MySQLData.putString("MYSQL_PASS", "");
+            MySQLData.save();
+        }
+
+        return new MySQLDatabase(MySQLData.getString("MYSQL_HOST"), MySQLData.getString("MYSQL_PORT"), MySQLData.getString("MYSQL_DB"), MySQLData.getString("MYSQL_USER"), MySQLData.getString("MYSQL_PASS"));
     }
 
     private static void initDatabase()

@@ -52,7 +52,7 @@ public class TownyBridge
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank)
     {
-        User user = SinkLibrary.getUser(resident.getName());
+        User user = SinkLibrary.loadUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 
@@ -77,7 +77,7 @@ public class TownyBridge
             townRank = resident.getTownRanks().get(0);
             if ( townRank.equals("assistant") ) townRank = "Assistent";
             if ( townRank.equals("vip") ) townRank = "VIP";
-            if ( !includeTownRank) townRank = null;
+            if ( !includeTownRank ) townRank = null;
         }
         catch ( Exception ignored ) {townRank = null; }
 
@@ -106,7 +106,7 @@ public class TownyBridge
     /**
      * Get resident by name
      *
-     * @param name  Name of the resident
+     * @param name Name of the resident
      * @return null when resident not found or offline
      */
     public static Resident getResident(String name)
@@ -125,8 +125,9 @@ public class TownyBridge
      * Get Towny prefix of player
      * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it will throw exceptions
      * when towny is not present</b></p>
+     *
      * @param player Player
-     * @return       {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
+     * @return {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
      */
     public static String getTownyPrefix(Player player)
     {

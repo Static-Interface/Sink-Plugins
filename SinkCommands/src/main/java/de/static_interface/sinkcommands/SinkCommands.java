@@ -102,7 +102,7 @@ public class SinkCommands extends JavaPlugin
 
         for ( Player p : Bukkit.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            User user = SinkLibrary.loadUser(p);
             PlayerConfiguration config = user.getPlayerConfiguration();
             config.save();
         }
@@ -139,7 +139,7 @@ public class SinkCommands extends JavaPlugin
     @SuppressWarnings("deprecation")
     public static void refreshScoreboard(Player player, int players)
     {
-        User user = SinkLibrary.getUser(player);
+        User user = SinkLibrary.loadUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )

@@ -89,9 +89,9 @@ public class PrivateChannel extends IPrivateChannel
         String group = "";
         if ( SinkLibrary.isChatAvailable() )
         {
-            group = '[' + SinkLibrary.getUser(player).getPrimaryGroup() + ChatColor.GRAY + "] ";
+            group = '[' + SinkLibrary.loadUser(player).getPrimaryGroup() + ChatColor.GRAY + "] ";
         }
-        message = ChatColor.GRAY + "[" + ChatColor.translateAlternateColorCodes('&', channelName) + ChatColor.GRAY + "] " + ChatColor.GRAY + group + SinkLibrary.getUser(player).getDisplayName() + ChatColor.GRAY + ": " + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', message);
+        message = ChatColor.GRAY + "[" + ChatColor.translateAlternateColorCodes('&', channelName) + ChatColor.GRAY + "] " + ChatColor.GRAY + group + SinkLibrary.loadUser(player).getDisplayName() + ChatColor.GRAY + ": " + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', message);
         for ( Player p : participants )
         {
             p.sendMessage(message);
