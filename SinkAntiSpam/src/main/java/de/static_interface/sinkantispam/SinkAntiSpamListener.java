@@ -86,8 +86,10 @@ public class SinkAntiSpamListener implements Listener
         }
         else
         {
-            throw new IllegalArgumentException("Event muss be an instance of AsyncPlayerChatEvent or PlayerCommandPreprocessEvent!");
+            throw new IllegalArgumentException("Event needs to be an instance of AsyncPlayerChatEvent or PlayerCommandPreprocessEvent!");
         }
+
+        message = ChatColor.stripColor(message);
 
         User user = SinkLibrary.loadUser(player);
 
