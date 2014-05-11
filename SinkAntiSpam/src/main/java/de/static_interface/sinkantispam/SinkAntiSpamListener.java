@@ -133,7 +133,7 @@ public class SinkAntiSpamListener implements Listener
         }
 
         pattern = Pattern.compile("((w{3}\\.)?([A-Za-z0-9]+\\.)+[A-Za-z]{2,3}/?)\\s");
-        matcher = pattern.matcher(message);
+        matcher = pattern.matcher(message.replaceAll("www.", ""));
         if ( matcher.find() && SinkLibrary.getSettings().isWhitelistedDomainCheckEnabled() )
         {
             String match = matcher.group(0);
