@@ -146,15 +146,15 @@ public abstract class ConfigurationBase
             Object value = getYamlConfiguration().get(path);
             if ( !path.equals("General.EnableDebug") && !path.equals("General.EnableLog") )
                 SinkLibrary.getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
-            if ( value == null || value == "" )
+            if ( value == null )
             {
-                throw new NullPointerException("Path returned null!");
+                throw new NullPointerException("Path " + path + " returned null!");
             }
             return value;
         }
         catch ( Exception e )
         {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, getFile() + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage() + " Using default value.");
+            SinkLibrary.getCustomLogger().log(Level.WARNING, getFile() + ": Couldn't load value from path: " + path + ". Error: " + e.getMessage() + " Using default value.");
             return getDefault(path);
         }
     }
