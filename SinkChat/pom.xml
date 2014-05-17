@@ -57,7 +57,7 @@
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
             <scope>provided</scope>
-            <version>1.9</version>
+            <version>1.9.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>

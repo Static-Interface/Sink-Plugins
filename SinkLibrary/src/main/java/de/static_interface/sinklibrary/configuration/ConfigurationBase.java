@@ -31,38 +31,35 @@ import java.util.logging.Level;
 @SuppressWarnings({"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
 public abstract class ConfigurationBase
 {
-    protected static boolean busy = false;
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
 
     /**
      * Create a new configuration
-     *
      * @param file Configurations YAML file (will be created if doesn't exsists)
      */
     public ConfigurationBase(File file)
     {
         yamlFile = file;
-        if ( !exists() ) create();
     }
 
     /**
      * Inits a new configuration
      *
      * @param file   Configurations YAML file (will be created if doesn't exsists)
-     * @param create If true, file will be created if it doesnt exists
+     * @param init If true, the config file will be created if it doesnt exists
      */
-    public ConfigurationBase(File file, boolean create)
+    public ConfigurationBase(File file, boolean init)
     {
         yamlFile = file;
-        if ( create && !exists() ) create();
+        if ( init ) init();
     }
 
     /**
-     * Create Configuration File
+     * Inits the configuration
      */
-    public void create()
+    public void init()
     {
         try
         {
@@ -73,23 +70,52 @@ public abstract class ConfigurationBase
                 SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
             }
 
-            Files.createParentDirs(yamlFile);
-
-            if ( createNewConfiguration && !yamlFile.createNewFile() )
+            if ( yamlFile != null )
             {
-                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create player configuration: " + yamlFile);
-                return;
+                Files.createParentDirs(yamlFile);
+
+                if ( createNewConfiguration && !yamlFile.createNewFile() )
+                {
+                    SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration: " + yamlFile);
+                }
             }
+
+            defaultValues = new HashMap<>();
+
+            yamlConfiguration = new YamlConfiguration();
+
+            if ( yamlFile != null ) yamlConfiguration.load(yamlFile);
+
+            addDefaults();
 
             save();
         }
-        catch ( IOException e )
+        catch ( InvalidConfigurationException e )
+        {
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file: " + yamlFile);
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
+            recreate();
+        }
+        catch ( Exception e )
         {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + yamlFile.getName());
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
     }
 
+    /**
+     * Create Configuration File
+     * @deprecated use {@link #init()} instead
+     */
+    @Deprecated
+    public void create()
+    {
+        init();
+    }
+
+    /**
+     * Add default values to the configuration using {@link #addDefault(String, Object)}
+     */
     public abstract void addDefaults();
 
     /**
@@ -124,10 +150,14 @@ public abstract class ConfigurationBase
     {
         try
         {
+            if ( getFile() == null || getYamlConfiguration() == null )
+            {
+                addDefault(path, value);
+            }
             getYamlConfiguration().set(path, value);
             save();
         }
-        catch ( RuntimeException e )
+        catch ( Exception e )
         {
             SinkLibrary.getCustomLogger().log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
         }
@@ -141,6 +171,10 @@ public abstract class ConfigurationBase
      */
     public Object get(String path)
     {
+        if ( getYamlConfiguration() == null || getFile() == null )
+        {
+            return getDefault(path);
+        }
         try
         {
             Object value = getYamlConfiguration().get(path);
@@ -181,28 +215,12 @@ public abstract class ConfigurationBase
 
     /**
      * Load Configuration
+     * @deprecated use {@link #init()} instead
      */
+    @Deprecated
     public void load()
     {
-        try
-        {
-            yamlConfiguration = new YamlConfiguration();
-            yamlConfiguration.load(yamlFile);
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-            return;
-        }
-        catch ( InvalidConfigurationException e )
-        {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file detected: " + yamlFile);
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
-            recreate();
-            return;
-        }
-        defaultValues = new HashMap<>();
-        addDefaults();
+        init();
     }
 
     /**
@@ -229,7 +247,7 @@ public abstract class ConfigurationBase
     {
         assert getDefaults() != null;
 
-        if ( !getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
+        if ( exists() && getYamlConfiguration() != null && !getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
         {
             getYamlConfiguration().set(path, value);
             save();
@@ -278,10 +296,6 @@ public abstract class ConfigurationBase
      */
     public void recreate()
     {
-        if ( busy ) return;
-
-        busy = true;
-
         SinkLibrary.getCustomLogger().log(Level.WARNING, "Recreating Configuration: " + getFile());
         try
         {
@@ -293,9 +307,7 @@ public abstract class ConfigurationBase
             return;
         }
         delete();
-        create();
-        load();
-        busy = false;
+        init();
     }
 
     /**
@@ -304,6 +316,6 @@ public abstract class ConfigurationBase
     public void reload()
     {
         if ( !exists() ) return;
-        load();
+        init();
     }
 }

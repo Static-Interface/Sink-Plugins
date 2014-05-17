@@ -109,12 +109,14 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkAntiSpam.ReplaceDomain", "google.com");
         addDefault("SinkAntiSpam.ReplaceIP", "127.0.0.1");
 
+        /*
         addDefault("SinkDuty.Time", "You have the following duty time: %s");
         addDefault("SinkDuty.Time.Others", "%s has the following duty time: %s");
         addDefault("SinkDuty.Time.Start", "Duty mode started.");
         addDefault("SinkDuty.Time.Finish", "Duty mode finished.");
         addDefault("SinkDuty.Time.NotInDuty", "You are not in duty mode !");
         addDefault("SinkDuty.Reload.ForceLeave", "You have been forced to leave duty mode because of a reload.");
+        */
     }
 
     /**
