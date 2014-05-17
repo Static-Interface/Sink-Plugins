@@ -4,6 +4,7 @@ Version 1.9.5
 * Optimized Code
 * Fixed Spy
 * Fixed many more bugs...
+* Rewrote Configurations
 * Temporarly disable coloured nicknames
 * Devs: added an ingame groovy console (/script)
 * Prepare for 1.8
