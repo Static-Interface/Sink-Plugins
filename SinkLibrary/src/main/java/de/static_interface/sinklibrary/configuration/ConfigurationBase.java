@@ -164,6 +164,10 @@ public abstract class ConfigurationBase
      */
     public YamlConfiguration getYamlConfiguration()
     {
+        if ( yamlConfiguration == null )
+        {
+            throw new NullPointerException("yamlConfiguration is null! Did you forgot to call load()?");
+        }
         return yamlConfiguration;
     }
 
@@ -172,7 +176,7 @@ public abstract class ConfigurationBase
      */
     public boolean exists()
     {
-        return getFile().exists();
+        return getFile() != null && getFile().exists();
     }
 
     /**
@@ -216,17 +220,15 @@ public abstract class ConfigurationBase
     }
 
     /**
-     * Add a default value
-     *
+     * Add a default value, it will be used when the config is beeing generated or loading
+     * values fails
      * @param path  Path to value
      * @param value Value of path
      */
     public void addDefault(String path, Object value)
     {
-        if ( getDefaults() == null )
-        {
-            throw new RuntimeException("defaultValues are null! Couldn't add " + value + " to path: " + path);
-        }
+        assert getDefaults() != null;
+
         if ( !getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
         {
             getYamlConfiguration().set(path, value);
@@ -237,7 +239,6 @@ public abstract class ConfigurationBase
 
     /**
      * Get Defaults
-     *
      * @return Default values
      */
     public HashMap<String, Object> getDefaults()
@@ -247,7 +248,6 @@ public abstract class ConfigurationBase
 
     /**
      * Backup Configuration.
-     *
      * @throws IOException if backup fails
      */
     public void backup() throws IOException
