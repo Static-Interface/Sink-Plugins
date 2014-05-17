@@ -7,7 +7,7 @@ Version 1.9.5
 * Rewrote Configurations
 * Temporarly disable coloured nicknames
 * Devs: added an ingame groovy console (/script)
-* Prepare for 1.8
+* Prepare for 1.8 (support for UUIDs)
 * Many internal code changes, added more APIs
 
 Version 1.9
