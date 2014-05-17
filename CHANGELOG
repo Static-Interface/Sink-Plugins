@@ -1,8 +1,5 @@
-Version 1.9
-* Plugins causing less lag
+Version 1.9.5
 * SinkChat now supports Towny
-* Added SinkAntiSpam
-* Locale Chat Range is now configurable
 * Fixed lag problems
 * Optimized Code
 * Fixed Spy
@@ -11,6 +8,16 @@ Version 1.9
 * Devs: added an ingame groovy console (/script)
 * Prepare for 1.8
 * Many internal code changes, added more APIs
+
+Version 1.9
+* Plugins causing less lag
+* Added SinkAntiSpam
+* Locale Chat Range is now configurable
+* Configurations doesn't recreate themself so often now
+* Optimized Code
+* Fixed "NewbieSpy"
+* Fixed that Nicknames changes
+* Fixed many more bugs...
 
 Version 1.8.6
 * Changed the way how DisplayNames are handled
