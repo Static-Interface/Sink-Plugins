@@ -39,7 +39,7 @@ public class Settings extends ConfigurationBase
     {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
 
-        addDefault("General.DisplayNamesEnabled", true);
+        addDefault("General.DisplayNamesEnabled", false);
         addDefault("General.EnableLog", true);
         addDefault("General.EnableDebug", false);
 
@@ -117,7 +117,8 @@ public class Settings extends ConfigurationBase
 
     public boolean isDisplayNamesEnabled()
     {
-        return (boolean) get("General.DisplayNamesEnabled");
+        //return (boolean) get("General.DisplayNamesEnabled"); //TODO: Fix this
+        return false;
     }
 
     public List<String> getBlackListedWords()
