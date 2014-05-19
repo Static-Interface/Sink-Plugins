@@ -17,7 +17,6 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.commands.ScriptCommand;
 import de.static_interface.sinklibrary.commands.SinkDebugCommand;
 import de.static_interface.sinklibrary.commands.SinkReloadCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
@@ -27,7 +26,6 @@ import de.static_interface.sinklibrary.events.IRCSendMessageEvent;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IRCLinkListener;
 import de.static_interface.sinklibrary.listener.PlayerConfigurationListener;
-import de.static_interface.sinklibrary.listener.ScriptChatListener;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -82,11 +80,11 @@ public class SinkLibrary extends JavaPlugin
 
         // Init language
         LanguageConfiguration languageConfiguration = new LanguageConfiguration();
-        languageConfiguration.load();
+        languageConfiguration.init();
 
         // Init Settings
         settings = new Settings();
-        settings.load();
+        settings.init();
 
         logger.log(Level.INFO, "Loading...");
         // Check optional dependencies
@@ -250,14 +248,12 @@ public class SinkLibrary extends JavaPlugin
     {
         Bukkit.getPluginManager().registerEvents(new PlayerConfigurationListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplayNameListener(), this);
-        Bukkit.getPluginManager().registerEvents(new ScriptChatListener(this), this);
     }
 
     private void registerCommands()
     {
         getCommand("sinkdebug").setExecutor(new SinkDebugCommand());
         getCommand("sinkreload").setExecutor(new SinkReloadCommand());
-        getCommand("script").setExecutor(new ScriptCommand(this));
     }
 
     /**

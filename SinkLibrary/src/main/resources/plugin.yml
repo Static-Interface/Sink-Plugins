@@ -18,11 +18,6 @@ commands:
     permission: sinklibrary.reload
     aliases: sreload
 
-  script:
-    description: Allows to execute groovy scripts
-    permission: sinklibrary.script
-    aliases: [exec, execute]
-
 permissions:
   sinklibrary.*:
     default: op
