@@ -102,30 +102,6 @@
                                     </includes>
                                 </filter>
                                 <filter>
-                                    <artifact>org.bukkit:bukkit</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>de.static_interface:SinkLibrary</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>net.milkbowl:vault</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.codehaus.groovy:*</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
                                     <artifact>de.static_interface.shadow:sinkafk</artifact>
                                     <excludes>
                                         <exclude>**</exclude>

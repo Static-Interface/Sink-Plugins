@@ -70,6 +70,7 @@
             <artifactId>bukkit</artifactId>
             <version>1.7.9-R0.2-SNAPSHOT</version>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -93,20 +94,6 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
