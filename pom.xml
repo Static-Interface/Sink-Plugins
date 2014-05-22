@@ -56,6 +56,14 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>staging</name>
+            <url>file://${main.basedir}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
+
     <modules>
         <module>SinkAntiSpam</module>
         <module>SinkChat</module>
@@ -78,6 +86,7 @@
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.basedir}</main.basedir>
+        <github.global.server>github</github.global.server>
     </properties>
 
     <build>
@@ -86,6 +95,30 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.9</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <outputDirectory>${main.basedir}/mvn-repo</outputDirectory>
+                    <branch>refs/heads/mvn-repo</branch>
+                    <includes><include>**/*</include></includes>
+                    <repositoryName>Sink-Plugins</repositoryName>
+                    <repositoryOwner>de.static_interface</repositoryOwner>
+                    <merge>true</merge>
+                </configuration>
+                <executions>
+                    <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
