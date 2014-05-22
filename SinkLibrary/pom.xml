@@ -52,17 +52,18 @@
         <url>http://ci.static-interface.de/</url>
     </ciManagement>
 
+    <repositories>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>pircbot</groupId>
             <artifactId>pircbot</artifactId>
             <version>1.5.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>2.2.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -74,9 +75,8 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.2.26-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${main.basedir}/libs/Vault-1.2.26-SNAPSHOT.jar/</systemPath>
+            <version>1.3.02</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -105,14 +105,6 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>net.milkbowl.vault:vault</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
