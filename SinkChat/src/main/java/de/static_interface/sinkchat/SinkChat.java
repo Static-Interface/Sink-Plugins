@@ -18,16 +18,17 @@
 package de.static_interface.sinkchat;
 
 import com.palmergames.bukkit.towny.Towny;
-import de.static_interface.sinkchat.channel.IChannel;
-import de.static_interface.sinkchat.channel.channels.HelpChannel;
-import de.static_interface.sinkchat.channel.channels.ShoutChannel;
-import de.static_interface.sinkchat.channel.channels.TradeChannel;
+import de.static_interface.sinkchat.channel.Channel;
+import de.static_interface.sinkchat.channel.ChannelHandler;
+import de.static_interface.sinkchat.channel.ChannelValues;
 import de.static_interface.sinkchat.command.*;
 import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,20 +46,34 @@ public class SinkChat extends JavaPlugin
             return;
         }
 
-        IChannel fc = new HelpChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Help.Prefix"));
-        IChannel sc = new ShoutChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Shout.Prefix"));
-        IChannel hc = new TradeChannel((String) SinkLibrary.getSettings().get("SinkChat.Channels.Trade.Prefix"));
-
-        sc.registerChannel();
-        hc.registerChannel();
-        fc.registerChannel();
-
         if ( !initialized )
         {
             registerEvents();
             registerCommands();
+            registerChannels();
             SinkLibrary.registerPlugin(this);
             initialized = true;
+        }
+    }
+
+    private void registerChannels()
+    {
+        ChannelConfigurations config = new ChannelConfigurations();
+        YamlConfiguration yamlConfig = config.getYamlConfiguration();
+        ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
+        for (String key : section.getKeys(false))
+        {
+            String pathPrefix = "Channels." + key + ".";
+
+            String callChar = (String) config.get(pathPrefix + ChannelValues.CALLCHAR);
+            boolean enabled = (boolean) config.get(pathPrefix + ChannelValues.ENABLED);
+            String permission = (String) config.get(pathPrefix + ChannelValues.PERMISSION);
+            String prefix = (String) config.get(pathPrefix + ChannelValues.PREFIX);
+            boolean sendToIRC = (boolean) config.get(pathPrefix + ChannelValues.SEND_TO_IRC);
+            int range = (int) config.get(pathPrefix + ChannelValues.RANGE);
+
+            Channel channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
+            ChannelHandler.registerChannel(channel);
         }
     }
 
@@ -116,7 +131,6 @@ public class SinkChat extends JavaPlugin
         getCommand("channel").setExecutor(new ChannelCommand());
         getCommand("enablespy").setExecutor(new SpyCommands.EnableSpyCommand());
         getCommand("disablespy").setExecutor(new SpyCommands.DisablSpyCommand());
-        getCommand("privatechannel").setExecutor(new PrivateChannelCommand());
         if ( towny != null )
         {
             getCommand("nationchat").setExecutor(new NationChatCommand());

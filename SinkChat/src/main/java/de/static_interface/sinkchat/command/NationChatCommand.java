@@ -51,19 +51,19 @@ public class NationChatCommand implements CommandExecutor
 
         if ( !resident.hasTown() )
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du bist in keiner Town!");
+            player.sendMessage(_("SinkChat.Towny.NotInTown"));
             return true;
         }
 
         if ( !resident.hasNation() )
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du bzw. deine Town ist in keiner Nation!");
+            player.sendMessage(_("SinkChat.Towny.NotInNation"));
             return true;
         }
 
         if ( args.length < 1 )
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du musst eine Nachricht eingeben!");
+            player.sendMessage(_("SinkChat.Towny.NoArguments"));
             return true;
         }
 
@@ -76,7 +76,6 @@ public class NationChatCommand implements CommandExecutor
         }
         catch ( NotRegisteredException ignored ) //Shouldn't happen...
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du bist in keiner Town / Nation!");
             return true;
         }
 

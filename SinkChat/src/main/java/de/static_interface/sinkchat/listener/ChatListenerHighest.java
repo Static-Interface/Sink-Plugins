@@ -19,14 +19,12 @@ package de.static_interface.sinkchat.listener;
 
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
+import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -53,24 +51,25 @@ public class ChatListenerHighest implements Listener
 
     private void onChat(AsyncPlayerChatEvent event)
     {
+        User user = SinkLibrary.getUser(event.getPlayer());
+
         if ( event.isCancelled() )
         {
             return;
         }
 
-        for ( String callChar : ChannelHandler.getRegisteredCallChars().keySet() )
+        for ( String callChar : ChannelHandler.getRegisteredChannels().keySet() )
         {
             if ( event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar) )
             {
-                if ( ChannelHandler.getRegisteredChannel(callChar).sendMessage(event.getPlayer(), event.getMessage()) )
+                if ( ChannelHandler.getRegisteredChannel(callChar).sendMessage(user, event.getMessage()) )
                 {
                     event.setCancelled(true);
+                    return;
                 }
-                return;
+                break;
             }
         }
-
-        User user = SinkLibrary.getUser(event.getPlayer());
 
         String message = event.getMessage();
         int range = SinkLibrary.getSettings().getLocalChatRange();
@@ -90,36 +89,9 @@ public class ChatListenerHighest implements Listener
             formattedMessage = ChatColor.GRAY + _("SinkChat.Prefix.Chat.Local") + ChatColor.RESET + ' ' + formattedMessage;
         }
 
-        String spyPrefix = ChatColor.GRAY + _("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
-        double x = event.getPlayer().getLocation().getX();
-        double y = event.getPlayer().getLocation().getY();
-        double z = event.getPlayer().getLocation().getZ();
+        Util.sendMessage(user, formattedMessage, range);
 
-        for ( Player p : Bukkit.getOnlinePlayers() )
-        {
-            Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
-
-            User onlineUser = SinkLibrary.getUser(p);
-
-            // User has permission to read all spy chat
-            boolean spyAll = onlineUser.hasPermission("sinkchat.spy.all");
-
-            // User has permission to read spy, check for bypass
-            boolean canSpy = onlineUser.hasPermission("sinkchat.spy") && !user.hasPermission("sinkchat.spy.bypass");
-
-            PlayerConfiguration config = onlineUser.getPlayerConfiguration();
-
-            if ( isInRange )
-            {
-                p.sendMessage(formattedMessage);
-            }
-            else if ( (spyAll || canSpy) && config.isSpyEnabled() )
-            {
-                p.sendMessage(spyPrefix + formattedMessage);
-            }
-        }
-        Bukkit.getConsoleSender().sendMessage(spyPrefix + formattedMessage);
+        Bukkit.getConsoleSender().sendMessage(Util.getSpyPrefix() + formattedMessage);
         event.setCancelled(true);
     }
 }

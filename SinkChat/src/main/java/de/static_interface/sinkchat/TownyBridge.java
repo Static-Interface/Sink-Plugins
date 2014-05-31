@@ -98,7 +98,7 @@ public class TownyBridge
             prefixName = ChatColor.GOLD + townRank + ' ' + color + resident.getName();
         }
 
-        prefixName.replaceAll("_", " ");
+        prefixName = prefixName.replaceAll("_", " ");
 
         return prefixName;
     }

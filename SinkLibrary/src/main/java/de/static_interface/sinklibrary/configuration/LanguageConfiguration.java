@@ -71,6 +71,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Commands.Spy.Disabled", "&4Spy chat has been disabled!");
         addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has been already disabled!");
 
+        /*
         addDefault("SinkChat.Channels.Help", "Help");
         addDefault("SinkChat.Channels.Shout", "Shout");
         addDefault("SinkChat.Channels.Trade", "Trade");
@@ -91,12 +92,16 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Channels.Private.Renamed", "&bChannel renamed to: %s");
         addDefault("SinkChat.Channels.Private.Users", "Users in channel \"%s\":");
         addDefault("SinkChat.Channels.Private.Channels", "&bAvailable channels: %s");
+        */
 
         addDefault("SinkChat.Prefix.Channel", "&a[Channel]");
         addDefault("SinkChat.Prefix.Nick", "&2[Nick]");
         addDefault("SinkChat.Prefix.Spy", "&7[Spy]");
         addDefault("SinkChat.Prefix.Local", "&7[Local]");
-
+        addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
+        addDefault("SinkChat.Towny.NotInTown", "&4Error:&c You are not a resident of any town");
+        addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
+        addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");
         addDefault("Permissions.General", "&4You don't have permissions to do that.");
         addDefault("Permissions.SinkChat.Channel", "&4You may not use the %s channel.");
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");

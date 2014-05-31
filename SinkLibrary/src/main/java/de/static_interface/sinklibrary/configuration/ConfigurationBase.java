@@ -57,6 +57,11 @@ public abstract class ConfigurationBase
     }
 
     /**
+     * Called when the config is generated, you can add e.g. values which won't be regenerated if you delete them
+     */
+    public void onCreate() { }
+
+    /**
      * Inits the configuration
      */
     public void init()
@@ -88,6 +93,11 @@ public abstract class ConfigurationBase
 
             addDefaults();
 
+            if(createNewConfiguration)
+            {
+                onCreate();
+            }
+
             save();
         }
         catch ( InvalidConfigurationException e )
@@ -98,7 +108,7 @@ public abstract class ConfigurationBase
         }
         catch ( Exception e )
         {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + yamlFile.getName());
+            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + getFile().getName());
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
     }
@@ -189,7 +199,22 @@ public abstract class ConfigurationBase
         catch ( Exception e )
         {
             SinkLibrary.getCustomLogger().log(Level.WARNING, getFile() + ": Couldn't load value from path: " + path + ". Error: " + e.getMessage() + " Using default value.");
-            return getDefault(path);
+            Object value = getDefault(path);
+            if (value == null)
+                throw new NullPointerException();
+            return value;
+        }
+    }
+
+    public Object get(String path, Object defaultValue)
+    {
+        try
+        {
+            return get(path);
+        }
+        catch(NullPointerException e)
+        {
+            return defaultValue;
         }
     }
 
@@ -246,6 +271,7 @@ public abstract class ConfigurationBase
     public void addDefault(String path, Object value)
     {
         assert getDefaults() != null;
+        assert getYamlConfiguration() != null;
 
         if ( exists() && getYamlConfiguration() != null && !getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
         {

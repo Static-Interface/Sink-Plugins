@@ -17,82 +17,24 @@
 
 package de.static_interface.sinkchat.channel;
 
-import java.util.Collection;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 public class ChannelHandler
 {
+    private static HashMap<String, Channel> registeredChannels = new HashMap<>();
 
-    private static String registeredChannelNames = "";
-
-    private static TreeMap<String, IChannel> registeredChannelsMap = new TreeMap<>();
-    private static TreeMap<String, IChannel> callChars = new TreeMap<>();
-
-    /**
-     * @param channel  Instance of Channel to be registered.
-     * @param name     Name of given instance to be registered.
-     * @param callChar Char you use to call the channel in game.
-     */
-    public static void registerChannel(IChannel channel, String name, String callChar)
+    public static void registerChannel(Channel channel)
     {
-        if ( registeredChannelsMap.containsValue(name) )
-        {
-            return;
-        }
-
-        registeredChannelsMap.put(name, channel);
-        callChars.put(callChar, channel);
-        registeredChannelNames = registeredChannelNames + name + ' ';
+        registeredChannels.put(channel.getCallChar(), channel);
     }
 
-    /**
-     * @param callChar Char you use to call the channel in game.
-     * @return Returns the instance of Channel with the given name.
-     */
-
-    public static IChannel getRegisteredChannel(String callChar)
+    public static HashMap<String, Channel> getRegisteredChannels()
     {
-        return callChars.get(callChar);
+        return registeredChannels;
     }
 
-    /**
-     * @param name Name of the channel
-     * @return IChannel instance
-     */
-    public static IChannel getChannelByName(String name)
+    public static Channel getRegisteredChannel(String callChar)
     {
-        for ( String channel : registeredChannelsMap.keySet() )
-        {
-            if ( channel.equalsIgnoreCase(name) ) return registeredChannelsMap.get(channel);
-        }
-        return null;
+        return registeredChannels.get(callChar);
     }
-
-    /**
-     * @return Returns regiteredChannelNames, a String containing the names of all registered instances.
-     */
-
-    public static String getChannelNames()
-    {
-        return registeredChannelNames;
-    }
-
-    /**
-     * @return Returns a collection containing all registered channels.
-     */
-
-    public static Collection<IChannel> getRegisteredChannels()
-    {
-        return registeredChannelsMap.values();
-    }
-
-    /**
-     * @return Returns the registered callChars.
-     */
-
-    public static TreeMap<String, IChannel> getRegisteredCallChars()
-    {
-        return callChars;
-    }
-
 }

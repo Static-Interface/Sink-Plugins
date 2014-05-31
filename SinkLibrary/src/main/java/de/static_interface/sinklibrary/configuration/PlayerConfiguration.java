@@ -52,7 +52,7 @@ public class PlayerConfiguration extends ConfigurationBase
         }
         else if ( !oldFile.exists() && !uniqueFile.exists() )
         {
-            create();
+            init();
         }
 
         this.user = user;

@@ -17,10 +17,6 @@
 
 package de.static_interface.sinkchat.command;
 
-import de.static_interface.sinkchat.channel.ChannelHandler;
-import de.static_interface.sinkchat.channel.IChannel;
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,6 +33,7 @@ public class ChannelCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
+        /*
         User user = SinkLibrary.getUser(sender);
         if ( user.isConsole() )
         {
@@ -137,6 +134,8 @@ public class ChannelCommand implements CommandExecutor
                 sendHelp(player);
                 return true;
         }
+        */
+        return false;
     }
 
     private static void sendHelp(Player player)

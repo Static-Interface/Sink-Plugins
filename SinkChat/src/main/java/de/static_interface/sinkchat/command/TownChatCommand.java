@@ -50,13 +50,13 @@ public class TownChatCommand implements CommandExecutor
 
         if ( !resident.hasTown() )
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du bist in keiner Town!");
+            player.sendMessage(_("SinkChat.Towny.NotInTown"));
             return true;
         }
 
         if ( args.length < 1 )
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du musst eine Nachricht eingeben!");
+            player.sendMessage(_("SinkChat.Towny.NoArguments"));
             return true;
         }
 
@@ -67,7 +67,6 @@ public class TownChatCommand implements CommandExecutor
         }
         catch ( NotRegisteredException ignored ) //Shouldn't happen...
         {
-            player.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Du bist in keiner Town!");
             return true;
         }
 
