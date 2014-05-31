@@ -48,7 +48,7 @@ public class Channel
         this.callChar = callChar;
         this.enabled = enabled;
         this.permission = permission;
-        this.prefix = prefix;
+        this.prefix =  ChatColor.translateAlternateColorCodes('&', prefix);
         this.sendToIRC = sendToIRC;
         this.range = range;
     }
@@ -75,7 +75,7 @@ public class Channel
 
     public String getPrefix()
     {
-        return ChatColor.translateAlternateColorCodes('&', prefix);
+        return prefix;
     }
 
     public boolean sendToIRC()
@@ -110,7 +110,6 @@ public class Channel
         }
 
         String formattedMessage = message.substring(1);
-        formattedMessage = getPrefix() + formattedMessage;
 
         String townyPrefix = "";
         if ( SinkChat.isTownyAvailable() )
@@ -120,11 +119,11 @@ public class Channel
 
         if ( SinkLibrary.isPermissionsAvailable() )
         {
-            formattedMessage = prefix + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
+            formattedMessage = getPrefix() + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
         }
         else
         {
-            formattedMessage = prefix + townyPrefix + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
+            formattedMessage = getPrefix() + townyPrefix + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
         }
 
         if (range <= 0)
@@ -141,6 +140,7 @@ public class Channel
         {
             Util.sendMessage(user, formattedMessage, getRange());
         }
+
         Bukkit.getConsoleSender().sendMessage(formattedMessage);
         if (sendToIRC()) SinkLibrary.sendIRCMessage(formattedMessage);
         return true;

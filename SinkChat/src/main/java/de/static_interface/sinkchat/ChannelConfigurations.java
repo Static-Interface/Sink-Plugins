@@ -37,7 +37,7 @@ public class ChannelConfigurations extends ConfigurationBase
         set("Channels.Help." + ChannelValues.CALLCHAR, "?");
         set("Channels.Help." + ChannelValues.ENABLED, true);
         set("Channels.Help." + ChannelValues.PERMISSION, "sinkchat.channel.help");
-        set("Channels.Help." + ChannelValues.PREFIX, "&7[&6Help&7]&f ");
+        set("Channels.Help." + ChannelValues.PREFIX, "&7[&2Help&7]&f ");
         set("Channels.Help." + ChannelValues.SEND_TO_IRC, true);
         set("Channels.Help." + ChannelValues.RANGE, 0);
 
@@ -45,7 +45,7 @@ public class ChannelConfigurations extends ConfigurationBase
         set("Channels.Shout." + ChannelValues.CALLCHAR, "!");
         set("Channels.Shout." + ChannelValues.ENABLED, true);
         set("Channels.Shout." + ChannelValues.PERMISSION, "sinkchat.channel.shout");
-        set("Channels.Shout." + ChannelValues.PREFIX, "&7[&6Shout&7]&f ");
+        set("Channels.Shout." + ChannelValues.PREFIX, "&7[Shout]&f ");
         set("Channels.Shout." + ChannelValues.SEND_TO_IRC, true);
         set("Channels.Shout." + ChannelValues.RANGE, 0);
 
@@ -61,6 +61,6 @@ public class ChannelConfigurations extends ConfigurationBase
     @Override
     public void addDefaults()
     {
-
+        //Not required
     }
 }
