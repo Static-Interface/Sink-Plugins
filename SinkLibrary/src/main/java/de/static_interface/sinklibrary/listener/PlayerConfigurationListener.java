@@ -38,7 +38,7 @@ public class PlayerConfigurationListener implements Listener
 
         if ( !config.exists() )
         {
-            config.create();
+            config.init();
         }
     }
 

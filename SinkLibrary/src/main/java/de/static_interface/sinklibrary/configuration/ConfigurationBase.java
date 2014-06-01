@@ -198,10 +198,7 @@ public abstract class ConfigurationBase
         }
         catch ( Exception e )
         {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, getFile() + ": Couldn't load value from path: " + path + ". Error: " + e.getMessage() + " Using default value.");
             Object value = getDefault(path);
-            if (value == null)
-                throw new NullPointerException();
             return value;
         }
     }

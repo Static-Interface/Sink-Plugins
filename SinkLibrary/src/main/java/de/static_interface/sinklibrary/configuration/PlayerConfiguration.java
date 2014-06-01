@@ -50,12 +50,9 @@ public class PlayerConfiguration extends ConfigurationBase
         {
             oldFile.renameTo(uniqueFile);
         }
-        else if ( !oldFile.exists() && !uniqueFile.exists() )
-        {
-            init();
-        }
 
         this.user = user;
+        init();
     }
 
     @Override

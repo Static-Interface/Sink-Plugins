@@ -164,7 +164,6 @@ public class User
         if ( config == null )
         {
             config = new PlayerConfiguration(this);
-            config.load();
         }
         return config;
     }

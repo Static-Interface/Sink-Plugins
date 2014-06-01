@@ -1,3 +1,8 @@
+Version 1.9.8
+* Rewrote SinkChat's channel system
+* Channels are now based on configs, see ChatChannels.yml
+* Configurations have been improved
+
 Version 1.9.7
 * Reduce SinkLibrary size
 

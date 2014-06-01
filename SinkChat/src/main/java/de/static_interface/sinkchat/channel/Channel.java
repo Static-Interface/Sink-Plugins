@@ -88,12 +88,19 @@ public class Channel
         return range;
     }
 
-    String enabledPath = "Channels." + getName() + ".Enabled";
     public boolean enabledForPlayer(UUID uuid)
     {
+        String enabledPath = "Channels." + getName() + ".Enabled";
         User user = SinkLibrary.getUser(uuid);
         PlayerConfiguration config = user.getPlayerConfiguration();
-        return (boolean) config.get(enabledPath, true);
+        try
+        {
+            return (boolean) config.get(enabledPath, true);
+        }
+        catch(NullPointerException ignored)
+        {
+            return true;
+        }
     }
 
     public boolean sendMessage(User user, String message)
