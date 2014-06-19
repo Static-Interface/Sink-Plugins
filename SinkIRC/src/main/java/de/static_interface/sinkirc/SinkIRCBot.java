@@ -80,6 +80,8 @@ public class SinkIRCBot extends PircBot
 
     public void sendCleanMessage(String target, String message)
     {
+    	//Something went terribly wrong when this happens.
+    	if ( target.equals("#adventuriabot") && (message == null) ) return;
         SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
         sendMessage(target, message);
