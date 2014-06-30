@@ -101,7 +101,7 @@ public class IRCListener implements Listener
         User user = SinkLibrary.getUser(event.getEntity());
         if ( message == null || message.isEmpty() )
         {
-            message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " ist gestorben.";
+            message = user.getDisplayName() + ChatColor.RESET + ChatColor.WHITE + " ist gestorben.";
         }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(),  message);
     }
