@@ -360,13 +360,13 @@ public class SinkIRCBot extends PircBot
 
             if ( command.equals("list") ) //List Players
             {
-                if ( Bukkit.getOnlinePlayers().length == 0 )
+                if ( BukkitUtil.getOnlinePlayersCount() == 0 )
                 {
                     sinkIrcBot.sendCleanMessage(source, "There are currently no online players");
                     return;
                 }
 
-                String onlineMessage = "Online Players (" + Bukkit.getOnlinePlayers().length + '/' + Bukkit.getMaxPlayers() + "): ";
+                String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayersCount() + '/' + Bukkit.getMaxPlayers() + "): ";
 
                 boolean firstPlayer = true;
                 for ( Player player : Bukkit.getOnlinePlayers() )

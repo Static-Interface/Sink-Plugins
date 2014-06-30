@@ -22,12 +22,32 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 public class BukkitUtil
 {
+
+    /** Since Bukkit 1.7.9 R0.3, the type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
+     *  plugins will possibly break when using the "size()" method on older versions
+     *
+     * @return the current count of online players
+     */
+    public static int getOnlinePlayersCount()
+    {
+        int playersOnline = 0;
+        try {
+            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+                playersOnline = ((Collection<?>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)).size();
+            else
+                playersOnline = ((Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)).length;
+        }
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored ){} // can never happen
+        return playersOnline;
+    }
     /**
      * Get online Player by name.
      *

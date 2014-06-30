@@ -19,6 +19,7 @@ package de.static_interface.sinkcommands;
 
 import de.static_interface.sinkcommands.commands.*;
 import de.static_interface.sinkcommands.listener.*;
+import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
@@ -174,7 +175,7 @@ public class SinkCommands extends JavaPlugin
         }
         else
         {
-            onlinePlayers.setScore(Bukkit.getOnlinePlayers().length);
+            onlinePlayers.setScore(BukkitUtil.getOnlinePlayersCount());
         }
 
         Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));

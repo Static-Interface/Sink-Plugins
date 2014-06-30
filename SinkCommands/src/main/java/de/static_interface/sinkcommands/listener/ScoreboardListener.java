@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands.listener;
 
 import de.static_interface.sinkcommands.SinkCommands;
-import org.bukkit.Bukkit;
+import de.static_interface.sinklibrary.BukkitUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,13 +31,13 @@ public class ScoreboardListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        SinkCommands.refreshScoreboard(Bukkit.getOnlinePlayers().length + 1);
+        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayersCount() + 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        SinkCommands.refreshScoreboard(Bukkit.getOnlinePlayers().length - 1);
+        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayersCount() - 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
