@@ -37,7 +37,7 @@ public abstract class ConfigurationBase
 
     /**
      * Create a new configuration
-     * @param file Configurations YAML file (will be created if doesn't exsists)
+     * @param file Configurations YAML file (will be created if doesn't exist)
      */
     public ConfigurationBase(File file)
     {
@@ -47,8 +47,8 @@ public abstract class ConfigurationBase
     /**
      * Inits a new configuration
      *
-     * @param file   Configurations YAML file (will be created if doesn't exsists)
-     * @param init If true, the config file will be created if it doesnt exists
+     * @param file   Configurations YAML file (will be created if doesn't exist)
+     * @param init If true, the config file will be created if it doesn't exists
      */
     public ConfigurationBase(File file, boolean init)
     {
