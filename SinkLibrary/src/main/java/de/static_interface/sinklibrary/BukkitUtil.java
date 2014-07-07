@@ -64,7 +64,7 @@ public class BukkitUtil
             if ( player.getName().toLowerCase().contains(name.toLowerCase()) ) matchedPlayers.add(player);
         }
 
-        Player exactPlayer = BukkitUtil.getPlayer(name);
+        Player exactPlayer = Bukkit.getPlayerExact(name);
         if ( matchedPlayers.toArray().length > 1 && exactPlayer != null )
         {
             return exactPlayer;
