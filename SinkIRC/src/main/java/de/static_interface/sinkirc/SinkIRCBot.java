@@ -81,7 +81,7 @@ public class SinkIRCBot extends PircBot
     public void sendCleanMessage(String target, String message)
     {
     	//Something went terribly wrong when this happens.
-    	if ( message == null ) return;
+        //if ( message == null ) return;
         SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
         sendMessage(target, message);
@@ -360,16 +360,16 @@ public class SinkIRCBot extends PircBot
 
             if ( command.equals("list") ) //List Players
             {
-                if ( BukkitUtil.getOnlinePlayersCount() == 0 )
+                if ( BukkitUtil.getOnlinePlayers().size() == 0 )
                 {
                     sinkIrcBot.sendCleanMessage(source, "There are currently no online players");
                     return;
                 }
 
-                String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayersCount() + '/' + Bukkit.getMaxPlayers() + "): ";
+                String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
                 boolean firstPlayer = true;
-                for ( Player player : Bukkit.getOnlinePlayers() )
+                for ( Player player : BukkitUtil.getOnlinePlayers() )
                 {
                     de.static_interface.sinklibrary.User user = SinkLibrary.getUser(player);
                     if ( firstPlayer )

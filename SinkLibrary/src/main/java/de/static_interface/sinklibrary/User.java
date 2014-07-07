@@ -286,7 +286,7 @@ public class User
         {
             return true;
         }
-        base = Bukkit.getPlayerExact(playerName);
+        base = BukkitUtil.getPlayer(playerName);
         if ( base != null )
         {
             if ( base.isOnline() )

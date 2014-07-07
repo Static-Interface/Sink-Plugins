@@ -17,10 +17,10 @@
 
 package de.static_interface.sinkchat;
 
+import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class Util
         double y = user.getPlayer().getLocation().getY();
         double z = user.getPlayer().getLocation().getZ();
 
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             Location loc = p.getLocation();
             boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;

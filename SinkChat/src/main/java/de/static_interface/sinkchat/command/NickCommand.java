@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -115,7 +114,7 @@ public class NickCommand implements CommandExecutor
             newDisplayName = user.getDefaultDisplayName();
         }
 
-        for ( Player onlinePlayer : Bukkit.getOnlinePlayers() )
+        for ( Player onlinePlayer : BukkitUtil.getOnlinePlayers() )
         {
             if ( target.equals(onlinePlayer) )
             {

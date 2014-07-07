@@ -21,8 +21,8 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinkchat.TownyBridge;
+import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -87,12 +87,12 @@ public class TownChatCommand implements CommandExecutor
         for ( Resident townResident : town.getResidents() )
         {
             if ( townResident.isNPC() ) continue;
-            Player onlineResident = Bukkit.getPlayerExact(townResident.getName());
+            Player onlineResident = BukkitUtil.getPlayer(townResident.getName());
             if ( onlineResident == null ) continue;
             sendPlayers.add(onlineResident);
         }
 
-        for ( Player onlinePlayer : Bukkit.getOnlinePlayers() )
+        for ( Player onlinePlayer : BukkitUtil.getOnlinePlayers() )
         {
             if ( !onlinePlayer.hasPermission("sinkchat.townyspy") ) continue;
             if ( sendPlayers.contains(onlinePlayer) ) continue;

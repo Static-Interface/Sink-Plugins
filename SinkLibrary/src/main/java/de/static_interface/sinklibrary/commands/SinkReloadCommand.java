@@ -17,10 +17,10 @@
 
 package de.static_interface.sinklibrary.commands;
 
+import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -47,7 +47,7 @@ public class SinkReloadCommand implements CommandExecutor
         sender.sendMessage(PREFIX + "Reloaded " + name);
 
         sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             User user = SinkLibrary.getUser(p);
             user.getPlayerConfiguration().reload();

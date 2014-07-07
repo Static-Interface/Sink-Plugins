@@ -20,7 +20,6 @@ package de.static_interface.sinkcommands.commands;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -48,7 +47,7 @@ public class MilkCommand implements CommandExecutor
         {
             String s = "";
             int i = 0;
-            for ( Player p : Bukkit.getOnlinePlayers() )
+            for ( Player p : BukkitUtil.getOnlinePlayers() )
             {
                 if ( p.hasPotionEffect(PotionEffectType.INVISIBILITY) )
                 {

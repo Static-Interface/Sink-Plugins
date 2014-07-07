@@ -113,7 +113,7 @@ public class SinkLibrary extends JavaPlugin
                 permissionsAvailable = false;
             }
 
-            for ( Player p : Bukkit.getOnlinePlayers() )
+            for ( Player p : BukkitUtil.getOnlinePlayers() )
             {
                 refreshDisplayName(p);
             }
@@ -150,7 +150,7 @@ public class SinkLibrary extends JavaPlugin
         update();
 
         // Init players (reload etc)
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             refreshDisplayName(p);
             getUser(p.getUniqueId());
@@ -176,7 +176,7 @@ public class SinkLibrary extends JavaPlugin
     {
         SinkLibrary.getCustomLogger().log(Level.INFO, "Disabling...");
         SinkLibrary.getCustomLogger().info("Saving players...");
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             User user = SinkLibrary.getUser(p);
             if ( user.getPlayerConfiguration().exists() )

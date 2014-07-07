@@ -20,6 +20,7 @@ package de.static_interface.sinkchat.channel;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
+import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
@@ -135,7 +136,7 @@ public class Channel
 
         if (range <= 0)
         {
-            for ( Player target : Bukkit.getOnlinePlayers() )
+            for ( Player target : BukkitUtil.getOnlinePlayers() )
             {
                 if ( (enabledForPlayer(target.getUniqueId())) && target.hasPermission(getPermission()) )
                 {

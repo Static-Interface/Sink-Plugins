@@ -62,7 +62,7 @@ public class TPSTimer implements Runnable
         }
         lastPoll = startTime;
         int count = 0;
-        for ( Player player : Bukkit.getOnlinePlayers() )
+        for ( Player player : BukkitUtil.getOnlinePlayers() )
         {
             count++;
             if ( skip1 > 0 )

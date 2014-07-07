@@ -31,13 +31,13 @@ public class ScoreboardListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayersCount() + 1);
+        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayers().size() + 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayersCount() - 1);
+        SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayers().size() - 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

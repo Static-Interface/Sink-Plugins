@@ -101,7 +101,7 @@ public class SinkCommands extends JavaPlugin
 
         SinkLibrary.getCustomLogger().info("Saving player configurations...");
 
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             User user = SinkLibrary.getUser(p);
             PlayerConfiguration config = user.getPlayerConfiguration();
@@ -126,7 +126,7 @@ public class SinkCommands extends JavaPlugin
      */
     public static void refreshScoreboard(int players)
     {
-        for ( Player p : Bukkit.getOnlinePlayers() )
+        for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
             refreshScoreboard(p, players);
         }
@@ -175,7 +175,7 @@ public class SinkCommands extends JavaPlugin
         }
         else
         {
-            onlinePlayers.setScore(BukkitUtil.getOnlinePlayersCount());
+            onlinePlayers.setScore(BukkitUtil.getOnlinePlayers().size());
         }
 
         Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
