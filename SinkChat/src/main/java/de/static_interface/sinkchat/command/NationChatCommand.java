@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class NationChatCommand implements CommandExecutor
 {
@@ -42,7 +42,7 @@ public class NationChatCommand implements CommandExecutor
     {
         if ( !(sender instanceof Player) )
         {
-            sender.sendMessage(_("General.ConsoleNotAvailable"));
+            sender.sendMessage(m("General.ConsoleNotAvailable"));
             return true;
         }
 
@@ -51,19 +51,19 @@ public class NationChatCommand implements CommandExecutor
 
         if ( !resident.hasTown() )
         {
-            player.sendMessage(_("SinkChat.Towny.NotInTown"));
+            player.sendMessage(m("SinkChat.Towny.NotInTown"));
             return true;
         }
 
         if ( !resident.hasNation() )
         {
-            player.sendMessage(_("SinkChat.Towny.NotInNation"));
+            player.sendMessage(m("SinkChat.Towny.NotInNation"));
             return true;
         }
 
         if ( args.length < 1 )
         {
-            player.sendMessage(_("SinkChat.Towny.NoArguments"));
+            player.sendMessage(m("SinkChat.Towny.NoArguments"));
             return true;
         }
 

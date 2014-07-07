@@ -26,11 +26,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class SpyCommands
 {
-    public static final String PREFIX = _("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
+    public static final String PREFIX = m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
 
     public static class EnableSpyCommand implements CommandExecutor
     {
@@ -41,7 +41,7 @@ public class SpyCommands
 
             if ( user.isConsole() )
             {
-                sender.sendMessage(_("General.ConsoleNotAvailable"));
+                sender.sendMessage(m("General.ConsoleNotAvailable"));
                 return true;
             }
             Player player = user.getPlayer();
@@ -50,12 +50,12 @@ public class SpyCommands
 
             if ( config.isSpyEnabled() )
             {
-                player.sendMessage(PREFIX + _("SinkChat.Commands.Spy.AlreadyEnabled"));
+                player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyEnabled"));
                 return true;
             }
 
             config.setSpyEnabled(true);
-            sender.sendMessage(PREFIX + _("SinkChat.Commands.Spy.Enabled"));
+            sender.sendMessage(PREFIX + m("SinkChat.Commands.Spy.Enabled"));
             return true;
         }
     }
@@ -68,7 +68,7 @@ public class SpyCommands
             User user = SinkLibrary.getUser(sender);
             if ( user.isConsole() )
             {
-                sender.sendMessage(_("General.ConsoleNotAvailable"));
+                sender.sendMessage(m("General.ConsoleNotAvailable"));
                 return true;
             }
             Player player = user.getPlayer();
@@ -77,12 +77,12 @@ public class SpyCommands
 
             if ( !config.isSpyEnabled() )
             {
-                player.sendMessage(PREFIX + _("SinkChat.Commands.Spy.AlreadyDisabled"));
+                player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyDisabled"));
                 return true;
             }
 
             config.setSpyEnabled(false);
-            player.sendMessage(PREFIX + _("SinkChat.Commands.Spy.Disabled"));
+            player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.Disabled"));
             return true;
         }
     }

@@ -340,7 +340,7 @@ public class SinkIRCBot extends PircBot
                 target = SinkLibrary.getUser(args[0]);
                 if ( !target.isOnline() )
                 {
-                    sinkIrcBot.sendCleanMessage(source, LanguageConfiguration._("General.NotOnline").replace("%s", args[0]));
+                    sinkIrcBot.sendCleanMessage(source, LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
                     return;
                 }
 

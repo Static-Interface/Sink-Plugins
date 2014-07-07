@@ -33,7 +33,7 @@ public class IrcPrivateMessageCommand implements CommandExecutor
     {
         if ( args.length < 2 )
         {
-            sender.sendMessage(LanguageConfiguration._("General.CommandMisused.Arguments.TooFew"));
+            sender.sendMessage(LanguageConfiguration.m("General.CommandMisused.Arguments.TooFew"));
             return true;
         }
 
@@ -41,7 +41,7 @@ public class IrcPrivateMessageCommand implements CommandExecutor
 
         if ( target == null )
         {
-            sender.sendMessage(LanguageConfiguration._("General.NotOnline").replace("%s", args[0]));
+            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
             return true;
         }
 

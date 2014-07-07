@@ -32,7 +32,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class ChatListenerHighest implements Listener
 {
@@ -86,7 +86,7 @@ public class ChatListenerHighest implements Listener
 
         if ( !SinkLibrary.isPermissionsAvailable() )
         {
-            formattedMessage = ChatColor.GRAY + _("SinkChat.Prefix.Chat.Local") + ChatColor.RESET + ' ' + formattedMessage;
+            formattedMessage = ChatColor.GRAY + m("SinkChat.Prefix.Chat.Local") + ChatColor.RESET + ' ' + formattedMessage;
         }
 
         Util.sendMessage(user, formattedMessage, range);

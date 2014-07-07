@@ -24,11 +24,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class ChannelCommand implements CommandExecutor
 {
-    public static final String PREFIX = _("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
+    public static final String PREFIX = m("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -140,7 +140,7 @@ public class ChannelCommand implements CommandExecutor
 
     private static void sendHelp(Player player)
     {
-        player.sendMessage(PREFIX + _("SinkChat.Commands.Channel.Help"));
+        player.sendMessage(PREFIX + m("SinkChat.Commands.Channel.Help"));
         player.sendMessage(PREFIX + COMMAND_PREFIX + "ch join <channel>");
         player.sendMessage(PREFIX + COMMAND_PREFIX + "ch leave <channel>");
         player.sendMessage(PREFIX + COMMAND_PREFIX + "ch list");

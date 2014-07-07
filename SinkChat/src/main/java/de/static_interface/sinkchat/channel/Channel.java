@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class Channel
 {
@@ -108,7 +108,7 @@ public class Channel
     {
         if(!isEnabled())
         {
-            user.sendMessage(_("SinkChat.DisabledChannel"));
+            user.sendMessage(m("SinkChat.DisabledChannel"));
             return true;
         }
 

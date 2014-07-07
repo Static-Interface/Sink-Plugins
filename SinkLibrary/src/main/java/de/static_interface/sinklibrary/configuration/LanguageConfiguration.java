@@ -130,7 +130,7 @@ public class LanguageConfiguration extends ConfigurationBase
      * @param path Path to language variable
      * @return Language String
      */
-    public static String _(String path)
+    public static String m(String path)
     {
         return ChatColor.translateAlternateColorCodes('&', (String) getInstance().get(path));
     }

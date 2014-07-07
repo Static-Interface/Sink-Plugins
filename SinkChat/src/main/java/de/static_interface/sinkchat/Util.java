@@ -25,7 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class Util
 {
@@ -62,6 +62,6 @@ public class Util
 
     public static String getSpyPrefix()
     {
-        return ChatColor.GRAY + _("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
+        return ChatColor.GRAY + m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
     }
 }

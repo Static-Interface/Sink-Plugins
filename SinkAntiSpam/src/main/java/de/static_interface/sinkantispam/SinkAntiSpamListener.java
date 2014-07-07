@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class SinkAntiSpamListener implements Listener
 {
@@ -103,7 +103,7 @@ public class SinkAntiSpamListener implements Listener
         {
             word = word.trim();
             message = message.replace(word, ChatColor.BLUE.toString() + ChatColor.BOLD.toString() + ChatColor.UNDERLINE.toString() + word + ChatColor.RESET.toString());
-            SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.BlacklistedWord"), message));
+            SinkAntiSpam.warnPlayer(player, String.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message));
             if ( event instanceof AsyncPlayerChatEvent )
             {
                 ((AsyncPlayerChatEvent) event).setCancelled(true);
@@ -120,14 +120,14 @@ public class SinkAntiSpamListener implements Listener
         if ( matcher.find() && SinkLibrary.getSettings().isIPCheckEnabled() )
         {
             String match = matcher.group(0);
-            SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.IP"), match));//"Fremdwerbung für folgende IP: " + match + " !");
+            SinkAntiSpam.warnPlayer(player, String.format(m("SinkAntiSpam.Reasons.IP"), match));//"Fremdwerbung für folgende IP: " + match + " !");
             if ( event instanceof AsyncPlayerChatEvent )
             {
-                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceIP") + ' '));
+                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match, ' ' + m("SinkAntiSpam.ReplaceIP") + ' '));
             }
             else
             {
-                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceIP") + ' '));
+                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + m("SinkAntiSpam.ReplaceIP") + ' '));
             }
             return;
         }
@@ -141,14 +141,14 @@ public class SinkAntiSpamListener implements Listener
             {
                 return;
             }
-            SinkAntiSpam.warnPlayer(player, String.format(_("SinkAntiSpam.Reasons.Domain"), match.trim()));
+            SinkAntiSpam.warnPlayer(player, String.format(m("SinkAntiSpam.Reasons.Domain"), match.trim()));
             if ( event instanceof AsyncPlayerChatEvent )
             {
-                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match.trim(), ' ' + _("SinkAntiSpam.ReplaceDomain") + ' '));
+                ((AsyncPlayerChatEvent) event).setMessage(message.replace(match.trim(), ' ' + m("SinkAntiSpam.ReplaceDomain") + ' '));
             }
             else
             {
-                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + _("SinkAntiSpam.ReplaceDomain") + ' '));
+                ((PlayerCommandPreprocessEvent) event).setMessage(message.replace(match, ' ' + m("SinkAntiSpam.ReplaceDomain") + ' '));
             }
         }
     }

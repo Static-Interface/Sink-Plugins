@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class DutyCommand implements CommandExecutor
 {
@@ -47,14 +47,14 @@ public class DutyCommand implements CommandExecutor
     {
         if ( !sender.hasPermission("sinkcommands.duty") )
         {
-            sender.sendMessage(_("Permissions.General"));
+            sender.sendMessage(m("Permissions.General"));
         }
 
         switch ( arguments.length )
         {
             //If no arguments, only send the full duty time of sender
             case 0:
-                sender.sendMessage(String.format(_("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
+                sender.sendMessage(String.format(m("SinkDuty.Time"), getDutySumTime(SinkLibrary.getUser(sender), DutySumType.ALL).toString()));
                 return true;
             //If 1 argument, try "on" or "off" to toggle duty mode
             case 1:
@@ -64,29 +64,29 @@ public class DutyCommand implements CommandExecutor
                     {
                         if ( sender.equals(Bukkit.getConsoleSender()) )
                         {
-                            sender.sendMessage(_("General.ConsoleNotAvailable"));
+                            sender.sendMessage(m("General.ConsoleNotAvailable"));
                             return true;
                         }
                         startDuty(SinkLibrary.getUser(sender));
-                        sender.sendMessage(_("SinkDuty.Time.Start"));
+                        sender.sendMessage(m("SinkDuty.Time.Start"));
                         return true;
                     }
                     case "off":
                     {
                         if ( sender.equals(Bukkit.getConsoleSender()) )
                         {
-                            sender.sendMessage(_("General.ConsoleNotAvailable"));
+                            sender.sendMessage(m("General.ConsoleNotAvailable"));
                             return true;
                         }
                         if ( getPlayersInDuty().contains(SinkLibrary.getUser(sender)) )
                         {
                             endDuty(SinkLibrary.getUser(sender));
-                            sender.sendMessage(_("SinkDuty.Time.Finish"));
+                            sender.sendMessage(m("SinkDuty.Time.Finish"));
                             return true;
                         }
                         else
                         {
-                            sender.sendMessage(_("SinkDuty.Time.NotInDuty"));
+                            sender.sendMessage(m("SinkDuty.Time.NotInDuty"));
                             return true;
                         }
                     }
@@ -95,11 +95,11 @@ public class DutyCommand implements CommandExecutor
                         User otherUser = SinkLibrary.getUser(arguments[0]);
                         if ( !otherUser.isOnline() )
                         {
-                            sender.sendMessage(String.format(_("General.NotOnline"), arguments[0]));
+                            sender.sendMessage(String.format(m("General.NotOnline"), arguments[0]));
                             return true;
                         }
 
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
                         return true;
                 }
                 //If there is more than 1 argument, the first argument is a user name, the second one is a time span.
@@ -107,32 +107,32 @@ public class DutyCommand implements CommandExecutor
                 User otherUser = SinkLibrary.getUser(arguments[0]);
                 if ( !otherUser.isOnline() )
                 {
-                    sender.sendMessage(String.format(_("General.NotOnline"), arguments[0]));
+                    sender.sendMessage(String.format(m("General.NotOnline"), arguments[0]));
                     return true;
                 }
 
                 switch ( arguments[1].toLowerCase() )
                 {
                     case "all":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.ALL).toString()));
                         return true;
                     case "today":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.TODAY).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.TODAY).toString()));
                         return true;
                     case "yesterday":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.YESTERDAY).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.YESTERDAY).toString()));
                         return true;
                     case "last_week":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_WEEK).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_WEEK).toString()));
                         return true;
                     case "last_two_weeks":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_TWO_WEEKS).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_TWO_WEEKS).toString()));
                         return true;
                     case "last_month":
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_MONTH).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_MONTH).toString()));
                         return true;
                     default:
-                        sender.sendMessage(String.format(_("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_DUTY_ONLY).toString()));
+                        sender.sendMessage(String.format(m("SinkDuty.Time.Others"), arguments[0], getDutySumTime(otherUser, DutySumType.LAST_DUTY_ONLY).toString()));
                         return true;
                 }
         }

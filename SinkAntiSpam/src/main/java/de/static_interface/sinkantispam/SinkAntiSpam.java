@@ -28,7 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class SinkAntiSpam extends JavaPlugin
 {
@@ -49,7 +49,7 @@ public class SinkAntiSpam extends JavaPlugin
             initialized = true;
         }
 
-        prefix = _("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
+        prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
     }
 
     public void onDisable()
@@ -59,7 +59,7 @@ public class SinkAntiSpam extends JavaPlugin
 
     public static void warnPlayer(Player player, String reason)
     {
-        String message = prefix + String.format(_("SinkAntiSpam.Warn"), player.getDisplayName(), reason);
+        String message = prefix + String.format(m("SinkAntiSpam.Warn"), player.getDisplayName(), reason);
         String permission = "sinkantispam.message";
         User user = SinkLibrary.getUser(player);
         if ( !user.hasPermission(permission) )

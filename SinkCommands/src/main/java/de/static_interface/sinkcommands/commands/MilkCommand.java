@@ -27,7 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration._;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class MilkCommand implements CommandExecutor
 {
@@ -40,7 +40,7 @@ public class MilkCommand implements CommandExecutor
         User user = SinkLibrary.getUser(sender);
         if ( !user.hasPermission("sinkcommands.milk.all") )
         {
-            sender.sendMessage(_("Permissions.General"));
+            sender.sendMessage(m("Permissions.General"));
             return true;
         }
         if ( args.length == 0 ) //Remove all
@@ -84,7 +84,7 @@ public class MilkCommand implements CommandExecutor
         {
             if ( !user.getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others") )
             {
-                sender.sendMessage(_("Permissions.General"));
+                sender.sendMessage(m("Permissions.General"));
                 return true;
             }
         }
