@@ -38,6 +38,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -123,7 +124,8 @@ public class SinkLibrary extends JavaPlugin
         {
             try
             {
-                getCustomDataFolder().mkdirs();
+                boolean success = getCustomDataFolder().mkdirs();
+                if (!success) throw new IOException("Couldn't create directories!");
             }
             catch ( Exception e )
             {
@@ -156,16 +158,11 @@ public class SinkLibrary extends JavaPlugin
             getUser(p.getUniqueId());
         }
 
-        for ( Plugin plugin : Bukkit.getPluginManager().getPlugins() )
+        if ( Bukkit.getPluginManager().getPlugin("SinkChat") != null)
         {
-            if ( plugin.getName().equalsIgnoreCase("SinkChat") )
-            {
-                sinkChatAvailable = true;
-                SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
-                break;
-            }
+            SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
         }
-        if ( !sinkChatAvailable )
+        else
         {
             SinkLibrary.getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
             Bukkit.getPluginManager().registerEvents(new IRCLinkListener(), this);
@@ -485,10 +482,10 @@ public class SinkLibrary extends JavaPlugin
 
         if ( displayName == null || displayName.equals("null") || displayName.isEmpty() || !config.getHasDisplayName() )
         {
-            config.setDisplayName(user.getDefaultDisplayName());
-            player.setDisplayName(user.getDefaultDisplayName());
-            player.setPlayerListName(displayName.substring(0, 16));
-            config.setDisplayName(user.getDefaultDisplayName());
+            displayName = user.getDefaultDisplayName();
+            config.setDisplayName(displayName);
+            player.setDisplayName(displayName.substring(0, 15));
+            config.setDisplayName(displayName);
             config.setHasDisplayName(false);
             return;
         }

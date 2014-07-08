@@ -28,7 +28,7 @@ import java.util.*;
 public class BukkitUtil
 {
     /** Since Bukkit 1.7.9 R0.3, the return type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
-     *  plugins will possibly break when using this method on older versions
+     *  plugins will possibly break when using this method on older bukkit versions
      *
      * @return the current online players
      */
@@ -36,7 +36,7 @@ public class BukkitUtil
     {
         List<Player> tmp = new ArrayList<>();
         try {
-            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
             {
                 tmp = (List<Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null);
             }
