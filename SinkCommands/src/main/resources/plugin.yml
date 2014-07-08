@@ -41,11 +41,6 @@ commands:
     permission: sinkcommands.newbiechat
     aliases: nc
 
-#  duty:
-#    description: Duty commands
-#    usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler> [Zeitspanne]"
-#    permission: sinkcommands.duty
-
   lag:
     description: Shows information about server lag
     permission: sinkcommands.lag
