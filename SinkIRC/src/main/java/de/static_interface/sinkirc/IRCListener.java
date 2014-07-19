@@ -56,7 +56,7 @@ public class IRCListener implements Listener
         User user = SinkLibrary.getUser(event.getPlayer());
         if ( message == null || message.isEmpty() )
         {
-            message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " betrat das Spiel";
+            return;
         }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), message);
     }
@@ -72,7 +72,7 @@ public class IRCListener implements Listener
         User user = SinkLibrary.getUser(event.getPlayer());
         if ( message == null || message.isEmpty() )
         {
-            message = user.getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " verliess das Spiel";
+            return;
         }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(), message);
     }
@@ -98,16 +98,15 @@ public class IRCListener implements Listener
             return;
         }
         String message = event.getDeathMessage();
-        User user = SinkLibrary.getUser(event.getEntity());
         if ( message == null || message.isEmpty() )
         {
-            message = user.getDisplayName() + ChatColor.RESET + ChatColor.WHITE + " ist gestorben.";
+            return;
         }
         sinkIrcBot.sendCleanMessage(SinkIRC.getMainChannel(),  message);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onIRCMessage(IRCSendMessageEvent event)
+    public void onIRCSendMessage(IRCSendMessageEvent event)
     {
         if ( SinkIRCBot.isDisabled() )
         {
@@ -194,7 +193,7 @@ public class IRCListener implements Listener
 
         if ( (message.toLowerCase().contains("hello") || message.toLowerCase().contains("hi") ||
                 message.toLowerCase().contains("huhu") || message.toLowerCase().contains("hallo") ||
-                message.toLowerCase().contains("moin") || message.toLowerCase().contains("morgen")) && (message.toLowerCase().contains(sinkIrcBot.getName() + ' ') || message.toLowerCase().contains(' ' + sinkIrcBot.getName() + ' ')) )
+                message.toLowerCase().contains("moin") || message.toLowerCase().contains("morgen")) && (message.toLowerCase().contains(sinkIrcBot.getName() + ' ') || message.toLowerCase().contains(sinkIrcBot.getName()) || message.toLowerCase().contains(' ' + sinkIrcBot.getName() + ' ')) )
         {
             sinkIrcBot.sendMessage(channel, "Hallo, " + sender);
             return;

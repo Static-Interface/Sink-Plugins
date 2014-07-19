@@ -156,4 +156,9 @@ public class Util
         }
         return true;
     }
+
+    public static boolean isStringEmptyOrNull(String s)
+    {
+        return s == null || s.trim().length() == 0;
+    }
 }
