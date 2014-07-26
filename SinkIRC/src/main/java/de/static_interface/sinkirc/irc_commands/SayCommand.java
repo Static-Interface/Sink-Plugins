@@ -29,6 +29,7 @@ public class SayCommand extends IrcCommand
     public SayCommand(Plugin plugin)
     {
         super(plugin);
+        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "say <text>");
     }
 
     @Override
@@ -37,8 +38,7 @@ public class SayCommand extends IrcCommand
         IrcCommandSender sender = (IrcCommandSender) cs;
         if ( args.length < 1 )
         {
-            sender.sendMessage("Usage: " + IrcUtil.getCommandPrefix() + "say <text>");
-            return true;
+            return false;
         }
 
         String source;

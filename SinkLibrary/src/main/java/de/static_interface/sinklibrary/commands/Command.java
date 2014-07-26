@@ -31,8 +31,9 @@ import java.lang.reflect.Method;
 public abstract class Command implements CommandExecutor
 {
     protected CommandSender sender;
-    protected Exception exception = null;
     protected Plugin plugin;
+    private String usage = null;
+
     public Command(Plugin plugin)
     {
         this.plugin = plugin;
@@ -47,41 +48,45 @@ public abstract class Command implements CommandExecutor
     public boolean isPlayerOnly() { return false; };
     public boolean isIrcOnly() { return false; }
 
-    boolean success = true;
     public boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
     {
-        try
+        if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
+
+        if ( !(sender instanceof IrcCommandSender) && isIrcOnly() )
         {
-            if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
+            return false;
+        }
 
-            if ( !(sender instanceof IrcCommandSender) && isIrcOnly() )
-            {
-                return false;
-            }
+        else if ( !(sender instanceof Player) && isPlayerOnly() )
+        {
+            return false;
+        }
 
-            else if ( !(sender instanceof Player) && isPlayerOnly() )
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run()
             {
-                return false;
-            }
-            Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                @Override
-                public void run()
+                Exception exception = null;
+                boolean success = false;
+                try
                 {
                     success = onExecute(sender, label, args);
                 }
-            });
-        }
-        catch(Exception e)
-        {
-            exception = e;
-        }
-        onPostExecute(sender, label, args);
-        return success;
+                catch(Exception e)
+                {
+                    exception = e;
+                }
+
+                onPostExecute(sender, label, args, exception, success);
+            }
+        });
+
+        return true;
     }
 
     public abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
-    protected void onPostExecute(CommandSender sender, String label, String[] args)
+    protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception,  boolean success)
     {
         if (exception instanceof UnauthorizedAccessException)
         {
@@ -89,11 +94,16 @@ public abstract class Command implements CommandExecutor
             return;
         }
 
-        if (exception != null) exception.printStackTrace();;
+        if (exception != null) exception.printStackTrace();
 
-        if (success && exception != null)
+        if (exception != null)
         {
             sender.sendMessage(exception.getMessage());
+        }
+
+        if (!success && getUsage() != null)
+        {
+            sender.sendMessage(getUsage());
         }
     }
 
@@ -122,5 +132,15 @@ public abstract class Command implements CommandExecutor
         {
             throw new AssertionError(e);
         }
+    }
+
+    public void setUsage(String usage)
+    {
+        this.usage = usage;
+    }
+
+    public String getUsage()
+    {
+        return usage;
     }
 }

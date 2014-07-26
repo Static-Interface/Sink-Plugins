@@ -41,12 +41,11 @@ public class SinkDebugCommand extends Command
 
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
-        String option;
         if ( args.length < 1 )
         {
-            option = "";
+            return false;
         }
-        else option = args[0];
+        String option = args[0];
 
         switch ( option.toLowerCase() )
         {

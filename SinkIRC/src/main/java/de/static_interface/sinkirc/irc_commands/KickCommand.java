@@ -32,6 +32,7 @@ public class KickCommand extends IrcCommand
     public KickCommand(Plugin plugin)
     {
         super(plugin);
+        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "kick <player> <reason>");
     }
 
     @Override
@@ -50,8 +51,7 @@ public class KickCommand extends IrcCommand
         }
         catch ( Exception ignored )
         {
-            sender.sendMessage("Usage: " + IrcUtil.getCommandPrefix() + "kick <player> <reason>");
-            return true;
+            return false;
         }
         final Player targetPlayer = BukkitUtil.getPlayer(targetPlayerName);
         if ( targetPlayer == null )

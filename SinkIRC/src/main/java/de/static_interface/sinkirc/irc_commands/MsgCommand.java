@@ -30,6 +30,7 @@ public class MsgCommand extends IrcCommand
     public MsgCommand(Plugin plugin)
     {
         super(plugin);
+        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "privmsg <target> <msg>");
     }
 
     @Override
@@ -38,8 +39,7 @@ public class MsgCommand extends IrcCommand
         IrcCommandSender sender = (IrcCommandSender) cs;
         if ( args.length < 2 )
         {
-            sender.sendMessage("Usage: " + IrcUtil.getCommandPrefix() + "privmsg <target> <msg>");
-            return true;
+            return false;
         }
         de.static_interface.sinklibrary.User target;
         target = SinkLibrary.getUser(args[0]);
