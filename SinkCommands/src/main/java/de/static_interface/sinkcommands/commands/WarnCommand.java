@@ -19,25 +19,32 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
-import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
-
-public class WarnCommand implements CommandExecutor
+public class WarnCommand extends Command
 {
     public static final String PREFIX = ChatColor.RED + "[Warn] " + ChatColor.RESET;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public WarnCommand(Plugin plugin)
     {
+        super(plugin);
+    }
+
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args)
+    {
+        if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
+
         if ( args.length < 1 )
         {
             sender.sendMessage(PREFIX + ChatColor.RED + "Zu wenige Argumente!");
-            sender.sendMessage(PREFIX + ChatColor.RED + "Benutzung: " + COMMAND_PREFIX + "warn [Spieler] (Grund)");
+            sender.sendMessage(PREFIX + ChatColor.RED + "Benutzung: " + getCommandPrefix() + "warn [Spieler] (Grund)");
             return false;
         }
         Player target = (BukkitUtil.getPlayer(args[0]));

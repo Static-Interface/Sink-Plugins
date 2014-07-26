@@ -18,27 +18,25 @@
 package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.commands.Command;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CountdownCommand implements CommandExecutor
+public class CountdownCommand extends Command
 {
-    Plugin plugin;
     static long secondsLeft;
-
-    public CountdownCommand(Plugin plugin)
-    {
-        this.plugin = plugin;
-    }
 
     public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RED + "CountDown" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
 
+    public CountdownCommand(Plugin plugin)
+    {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onExecute(CommandSender sender, String label, String[] args)
     {
         if ( args.length < 2 )
         {

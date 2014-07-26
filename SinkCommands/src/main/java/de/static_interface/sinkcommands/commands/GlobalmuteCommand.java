@@ -19,17 +19,22 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.commands.Command;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
-public class GlobalmuteCommand implements CommandExecutor
+public class GlobalmuteCommand extends Command
 {
     public static final String PREFIX = ChatColor.DARK_RED + "[GlobalMute] " + ChatColor.RESET;
 
+    public GlobalmuteCommand(Plugin plugin)
+    {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onExecute(CommandSender sender, String label, String[] args)
     {
         SinkCommands.globalmuteEnabled = !SinkCommands.globalmuteEnabled;
 

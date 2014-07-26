@@ -22,19 +22,22 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class SinkReloadCommand implements CommandExecutor
+public class SinkReloadCommand extends Command
 {
     private static String pluginName = SinkLibrary.getPluginName();
     public static final String PREFIX = ChatColor.DARK_GREEN + "[" + pluginName + "] " + ChatColor.RESET;
 
+    public SinkReloadCommand(Plugin plugin)
+    {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onExecute(CommandSender sender, String label, String[] args)
     {
         String name;
         LanguageConfiguration.getInstance().reload();

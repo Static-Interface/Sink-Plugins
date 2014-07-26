@@ -102,6 +102,7 @@ public class SinkIRC extends JavaPlugin
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
         getCommand("irckick").setExecutor(new IrcKickCommand());
 
+        SinkLibrary.registerCommand("help", new HelpCommand(this), false);
         SinkLibrary.registerCommand("exec", new ExecCommand(this), false);
         SinkLibrary.registerCommand("say", new SayCommand(this), false);
         SinkLibrary.registerCommand("kick", new KickCommand(this), false);

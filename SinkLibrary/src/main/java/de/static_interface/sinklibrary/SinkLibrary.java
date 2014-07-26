@@ -68,8 +68,13 @@ public class SinkLibrary extends JavaPlugin
     public static boolean sinkChatAvailable;
 
     static Logger logger;
+    private static HashMap<String, Command> commandsWithAliases;
     private static HashMap<String, Command> commands;
 
+    public static HashMap<String, Command> getCommands()
+    {
+        return commands;
+    }
 
     public void onEnable()
     {
@@ -83,6 +88,8 @@ public class SinkLibrary extends JavaPlugin
         logger = new Logger();
         timer = new TPSTimer();
         commands = new HashMap<>();
+        commandsWithAliases = new HashMap<>();
+
         // Init language
         LanguageConfiguration languageConfiguration = new LanguageConfiguration();
         languageConfiguration.init();
@@ -259,7 +266,7 @@ public class SinkLibrary extends JavaPlugin
     private void registerCommands()
     {
         registerCommand("sdebug", new SinkDebugCommand(this));
-        getCommand("sinkreload").setExecutor(new SinkReloadCommand());
+        registerCommand("sinkreload", new SinkReloadCommand(this));
     }
 
     /**
@@ -610,6 +617,7 @@ public class SinkLibrary extends JavaPlugin
     public static void registerCommand(String name, Command command, boolean registerToBukkit)
     {
         if (getCustomCommand(name) != null) throw new IllegalArgumentException("Command is already registered");
+        commandsWithAliases.put(name, command);
         commands.put(name, command);
 
         if(!registerToBukkit) return;
@@ -623,7 +631,7 @@ public class SinkLibrary extends JavaPlugin
                 for(String alias: cmd.getAliases()) // Register alias commands
                 {
                     if ( alias.equals(name) ) continue;
-                    commands.put(alias, command);
+                    commandsWithAliases.put(alias, command);
                 }
             }
         }
@@ -637,7 +645,7 @@ public class SinkLibrary extends JavaPlugin
     {
         try
         {
-            return commands.get(name);
+            return commandsWithAliases.get(name);
         }
         catch(Exception ignored) { return null; }
     }

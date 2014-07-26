@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -95,6 +96,7 @@ public class BukkitUtil
      */
     public static String getSenderName(CommandSender sender)
     {
+        if (sender instanceof IrcCommandSender) return sender.getName() + ChatColor.RESET;
         User user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }

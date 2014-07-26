@@ -21,17 +21,22 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.Util;
+import de.static_interface.sinklibrary.commands.Command;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 public class RawCommands
 {
-    public static class RawCommand implements CommandExecutor
+    public static class RawCommand extends Command
     {
+        public RawCommand(Plugin plugin)
+        {
+            super(plugin);
+        }
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+        public boolean onExecute(CommandSender sender, String label, String[] args)
         {
             if ( args.length < 1 )
             {
@@ -42,10 +47,15 @@ public class RawCommands
         }
     }
 
-    public static class RawUserCommand implements CommandExecutor
+    public static class RawUserCommand extends Command
     {
+        public RawUserCommand(Plugin plugin)
+        {
+            super(plugin);
+        }
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+        public boolean onExecute(CommandSender sender, String label, String[] args)
         {
             if ( args.length < 1 )
             {

@@ -197,18 +197,10 @@ public class SinkCommands extends JavaPlugin
 
     private void registerCommands()
     {
-        getCommand("commandsver").setExecutor(new CommandsverCommand(this));
         getCommand("drug").setExecutor(new DrugCommand());
         getCommand("milk").setExecutor(new MilkCommand());
-        getCommand("warn").setExecutor(new WarnCommand());
-        getCommand("globalmute").setExecutor(new GlobalmuteCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        //getCommand("duty").setExecutor(new DutyCommand());
-
-        //getCommand("lag").setExecutor(new LagCommand());
-        SinkLibrary.registerCommand("lag", new LagCommand(this));
-
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
         getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));
         getCommand("voteno").setExecutor(new VotekickCommands.VotenoCommand(this));
@@ -219,8 +211,13 @@ public class SinkCommands extends JavaPlugin
         getCommand("clear").setExecutor(new ClearCommand());
         getCommand("enablestats").setExecutor(new StatsCommands.EnableStatsCommand());
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
-        getCommand("raw").setExecutor(new RawCommands.RawCommand());
-        getCommand("rawuser").setExecutor(new RawCommands.RawUserCommand());
-        getCommand("countdown").setExecutor(new CountdownCommand(this));
+
+        SinkLibrary.registerCommand("commandsver", new CommandsverCommand(this));
+        SinkLibrary.registerCommand("countdown", new CountdownCommand(this));
+        SinkLibrary.registerCommand("globalmute", new GlobalmuteCommand(this));
+        SinkLibrary.registerCommand("lag", new LagCommand(this));
+        SinkLibrary.registerCommand("raw", new RawCommands.RawCommand(this));
+        SinkLibrary.registerCommand("rawuser", new RawCommands.RawUserCommand(this));
+        SinkLibrary.registerCommand("warn", new WarnCommand(this));
     }
 }
