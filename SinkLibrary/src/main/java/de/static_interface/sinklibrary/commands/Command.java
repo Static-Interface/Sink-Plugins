@@ -48,7 +48,7 @@ public abstract class Command implements CommandExecutor
     public boolean isPlayerOnly() { return false; };
     public boolean isIrcOnly() { return false; }
 
-    public boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
+    protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
     {
         if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
 
@@ -84,7 +84,7 @@ public abstract class Command implements CommandExecutor
         return true;
     }
 
-    public abstract boolean onExecute(CommandSender sender, String label, String[] args);
+    protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
     protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception,  boolean success)
     {
@@ -107,7 +107,7 @@ public abstract class Command implements CommandExecutor
         }
     }
 
-    public String getCommandPrefix()
+    protected String getCommandPrefix()
     {
         if(sender instanceof IrcCommandSender)
         {
@@ -116,7 +116,7 @@ public abstract class Command implements CommandExecutor
         return "/";
     }
 
-    public String getIrcCommandPrefix()
+    protected String getIrcCommandPrefix()
     {
         try
         {

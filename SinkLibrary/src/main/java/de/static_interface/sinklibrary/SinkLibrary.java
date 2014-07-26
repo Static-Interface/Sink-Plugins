@@ -618,25 +618,26 @@ public class SinkLibrary extends JavaPlugin
     {
         //if (getCustomCommand(name) != null) throw new IllegalArgumentException("Command is already registered");
 
-        if(!registerToBukkit) return;
-
-        try
+        if(registerToBukkit)
         {
-            PluginCommand cmd = Bukkit.getPluginCommand(name);
-            if (cmd != null)
+            try
             {
-                cmd.setExecutor(command);
-                for(String alias: cmd.getAliases()) // Register alias commands
+                PluginCommand cmd = Bukkit.getPluginCommand(name);
+                if ( cmd != null )
                 {
-                    if ( alias.equals(name) ) continue;
-                    commandsWithAliases.put(alias, command);
+                    cmd.setExecutor(command);
+                    for ( String alias : cmd.getAliases() ) // Register alias commands
+                    {
+                        if ( alias.equals(name) ) continue;
+                        commandsWithAliases.put(alias, command);
+                    }
+                    command.setUsage(cmd.getUsage());
                 }
-                command.setUsage(cmd.getUsage());
             }
-        }
-        catch(NullPointerException ignored)
-        {
-            // do nothing because command may be an irc command which is not registered in the plugin.yml
+            catch ( NullPointerException ignored )
+            {
+                // do nothing because command may be an irc command which is not registered in the plugin.yml
+            }
         }
 
         commandsWithAliases.put(name, command);
