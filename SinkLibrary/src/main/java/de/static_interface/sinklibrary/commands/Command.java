@@ -17,8 +17,10 @@
 
 package de.static_interface.sinklibrary.commands;
 
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,7 +73,6 @@ public abstract class Command implements CommandExecutor
         }
         catch(Exception e)
         {
-            e.printStackTrace();
             exception = e;
         }
         onPostExecute(sender, label, args);
@@ -82,6 +83,14 @@ public abstract class Command implements CommandExecutor
 
     protected void onPostExecute(CommandSender sender, String label, String[] args)
     {
+        if (exception instanceof UnauthorizedAccessException)
+        {
+            sender.sendMessage(ChatColor.DARK_RED + "You don't have access to this command.");
+            return;
+        }
+
+        if (exception != null) exception.printStackTrace();;
+
         if (success && exception != null)
         {
             sender.sendMessage(exception.getMessage());

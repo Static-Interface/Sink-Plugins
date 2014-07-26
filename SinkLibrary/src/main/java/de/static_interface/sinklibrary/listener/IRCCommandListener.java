@@ -51,6 +51,7 @@ public class IrcCommandListener implements Listener
 
     private boolean executeCommand(User user, String command, String source, String label, String[] args)
     {
+        //Todo add events
         IrcCommandSender sender = new IrcCommandSender(user, source);
         Command cmd = SinkLibrary.getCustomCommand(command);
         if (cmd == null || cmd.isPlayerOnly()) return false;

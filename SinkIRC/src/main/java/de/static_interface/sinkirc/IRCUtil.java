@@ -32,7 +32,7 @@ public class IrcUtil
     private static String commandPrefix = "~";
     public static boolean isOp(User user)
     {
-        return SinkIRC.getMainChannel().isOp(user) && user.isVerified();
+        return SinkIRC.getMainChannel().isOp(user);
     }
 
     public static void setOp(User user, boolean value)
@@ -147,7 +147,28 @@ public class IrcUtil
     public static void handleCommand(String command, String[] args, String source, User user, String label)
     {
         SinkLibrary.getCustomLogger().debug("handleCommand: " + label);
+        if(IrcUtil.isOp(user))
+        {
+            label = ChatColor.translateAlternateColorCodes('&', label);
+        }
+        else
+        {
+            label = ChatColor.stripColor(label);
+        }
         IrcCommandEvent event = new IrcCommandEvent(source, user, command, label, args, SinkIRC.getIRCBot());
         Bukkit.getPluginManager().callEvent(event);
+    }
+
+    public static String getFormattedName(User user)
+    {
+        if(isOp(user))
+        {
+            return ChatColor.DARK_RED + user.getNick() + ChatColor.RESET;
+        }
+        else
+        {
+            return ChatColor.DARK_AQUA + user.getNick() + ChatColor.RESET;
+        }
+
     }
 }

@@ -35,22 +35,21 @@ public class IrclistCommand implements CommandExecutor
         String message = "";
         for ( User user : SinkIRC.getMainChannel().getUsers() )
         {
-            String name = user.getNick();
-            if ( name.equals(SinkIRC.getIRCBot().getNick()) )
+            String formattedNick = user.getNick();
+            if ( formattedNick.equals(SinkIRC.getIRCBot().getNick()) )
             {
                 continue;
             }
-            if ( IrcUtil.isOp(user) )
-            {
-                name = ChatColor.RED + name + ChatColor.RESET;
-            }
+
+            formattedNick = IrcUtil.getFormattedName(user);
+
             if ( message.isEmpty() )
             {
-                message = name;
+                message = formattedNick;
             }
             else
             {
-                message = message + ", " + name;
+                message = message + ", " + formattedNick;
             }
         }
         if ( SinkIRC.getMainChannel().getUsers().size() <= 1 )

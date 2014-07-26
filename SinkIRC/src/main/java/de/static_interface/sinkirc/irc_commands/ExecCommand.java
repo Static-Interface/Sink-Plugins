@@ -34,7 +34,7 @@ public class ExecCommand extends IrcCommand
     public boolean onExecute(CommandSender cs, String label, String[] args)
     {
         IrcCommandSender sender = (IrcCommandSender) cs;
-        if ( !sender.isOp() ) throw new UnauthorizedAccessException();
+        if ( !sender.isOp()) throw new UnauthorizedAccessException();
         String commandWithArgs = "";
         int i = 0;
         for ( String arg : args )

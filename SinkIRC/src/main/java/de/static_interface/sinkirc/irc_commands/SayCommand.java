@@ -53,14 +53,7 @@ public class SayCommand extends IrcCommand
         }
 
         String messageWithPrefix;
-        if ( IrcUtil.isOp(sender.getUser()) )
-        {
-            messageWithPrefix = IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + ChatColor.DARK_AQUA + sender.getName() + ChatColor.GRAY + ": " + ChatColor.WHITE + label.replaceFirst("say", "");
-        }
-        else
-        {
-            messageWithPrefix = IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + ChatColor.DARK_AQUA + sender + ChatColor.GRAY + ": " + ChatColor.WHITE + ChatColor.stripColor(label.replaceFirst("say", ""));
-        }
+        messageWithPrefix = IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + IrcUtil.getFormattedName(sender.getUser()) + ChatColor.GRAY + ": " + ChatColor.WHITE + label.replaceFirst("say", "");
 
         BukkitUtil.broadcastMessage(messageWithPrefix);
         return true;
