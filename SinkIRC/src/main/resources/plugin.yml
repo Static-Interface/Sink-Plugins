@@ -9,11 +9,12 @@ soft-depend: [SinkLibrary]
 
 commands:
   irclist:
+    aliases: ilist
     description: Shows online Users in IRC
     permission: sinkirc.irclist
 
   ircprivatemessage:
-    aliases: ircmsg
+    aliases: [ircmsg,imsg]
     description: Send a private message to an IRC User
     permission: sinkirc.privatemessage
 

@@ -17,20 +17,23 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.commands.Command;
 import de.static_interface.sinklibrary.commands.SinkDebugCommand;
 import de.static_interface.sinklibrary.commands.SinkReloadCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
-import de.static_interface.sinklibrary.events.IRCSendMessageEvent;
+import de.static_interface.sinklibrary.events.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
-import de.static_interface.sinklibrary.listener.IRCLinkListener;
+import de.static_interface.sinklibrary.listener.IrcCommandListener;
+import de.static_interface.sinklibrary.listener.IrcLinkListener;
 import de.static_interface.sinklibrary.listener.PlayerConfigurationListener;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -65,6 +68,7 @@ public class SinkLibrary extends JavaPlugin
     public static boolean sinkChatAvailable;
 
     static Logger logger;
+    private static HashMap<String, Command> commands;
 
 
     public void onEnable()
@@ -78,7 +82,7 @@ public class SinkLibrary extends JavaPlugin
         dataFolder = getDataFolder();
         logger = new Logger();
         timer = new TPSTimer();
-
+        commands = new HashMap<>();
         // Init language
         LanguageConfiguration languageConfiguration = new LanguageConfiguration();
         languageConfiguration.init();
@@ -158,14 +162,19 @@ public class SinkLibrary extends JavaPlugin
             getUser(p.getUniqueId());
         }
 
-        if ( Bukkit.getPluginManager().getPlugin("SinkChat") != null)
+        if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null)
         {
-            SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
-        }
-        else
-        {
-            SinkLibrary.getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
-            Bukkit.getPluginManager().registerEvents(new IRCLinkListener(), this);
+            Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
+
+            if ( Bukkit.getPluginManager().getPlugin("SinkChat") != null )
+            {
+                SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
+            }
+            else
+            {
+                SinkLibrary.getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
+                Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
+            }
         }
     }
 
@@ -249,7 +258,7 @@ public class SinkLibrary extends JavaPlugin
 
     private void registerCommands()
     {
-        getCommand("sinkdebug").setExecutor(new SinkDebugCommand());
+        registerCommand("sdebug", new SinkDebugCommand(this));
         getCommand("sinkreload").setExecutor(new SinkReloadCommand());
     }
 
@@ -343,11 +352,31 @@ public class SinkLibrary extends JavaPlugin
     }
 
     /**
-     * Send Message to IRC via SinkIRC Plugin.
+     * Send Message to IRC via SinkIRC Plugin to the default channel.
+     *
+     * @param message Message to send
+     * @deprecated use {@link #sendIrcMessage(String)} instead
+     */
+    @Deprecated
+    public static boolean sendIRCMessage(String message)
+    {
+        return sendIrcMessage(message);
+    }
+
+    /**
+     * Send Message to IRC via SinkIRC Plugin to the default channel.
      *
      * @param message Message to send
      */
-    public static boolean sendIRCMessage(String message)
+    public static boolean sendIrcMessage(String message) { return sendIrcMessage(message, null); }
+
+    /**
+     * Send Message to IRC via SinkIRC Plugin.
+     *
+     * @param message Message to send
+     * @param target Target user/channel, use null for default channel
+     */
+    public static  boolean sendIrcMessage(String message, String target)
     {
         boolean ircAvailable = false;
         for ( Plugin plugin : registeredPlugins )
@@ -360,7 +389,7 @@ public class SinkLibrary extends JavaPlugin
         }
         if ( !ircAvailable ) return false;
         SinkLibrary.getCustomLogger().debug("Firing new IRCSendMessageEvent(\"" + message + "\")");
-        IRCSendMessageEvent event = new IRCSendMessageEvent(message);
+        IrcSendMessageEvent event = new IrcSendMessageEvent(message, target);
         Bukkit.getPluginManager().callEvent(event);
         return true;
     }
@@ -571,5 +600,45 @@ public class SinkLibrary extends JavaPlugin
             if ( user.getUniqueId().equals(uuid) ) return user;
         }
         return null;
+    }
+
+    public static void registerCommand(String name, Command command)
+    {
+        registerCommand(name, command, true);
+    }
+
+    public static void registerCommand(String name, Command command, boolean registerToBukkit)
+    {
+        if (getCustomCommand(name) != null) throw new IllegalArgumentException("Command is already registered");
+        commands.put(name, command);
+
+        if(!registerToBukkit) return;
+
+        try
+        {
+            PluginCommand cmd = Bukkit.getPluginCommand(name);
+            if (cmd != null)
+            {
+                cmd.setExecutor(command);
+                for(String alias: cmd.getAliases()) // Register alias commands
+                {
+                    if ( alias.equals(name) ) continue;
+                    commands.put(alias, command);
+                }
+            }
+        }
+        catch(NullPointerException ignored)
+        {
+            // do nothing because command may be an irc command which is not registered in the plugin.yml
+        }
+    }
+
+    public static Command getCustomCommand(String name)
+    {
+        try
+        {
+            return commands.get(name);
+        }
+        catch(Exception ignored) { return null; }
     }
 }

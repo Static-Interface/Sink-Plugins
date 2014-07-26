@@ -17,43 +17,28 @@
 
 package de.static_interface.sinklibrary.events;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.pircbotx.PircBotX;
+import org.pircbotx.snapshot.UserChannelDaoSnapshot;
+import org.pircbotx.snapshot.UserSnapshot;
 
-public class IRCQuitEvent extends Event implements Cancellable
+public class IrcQuitEvent extends IrcEventBase
 {
-    private static final HandlerList handlers = new HandlerList();
-    private final String sourceNick;
-    private final String sourceLogin;
-    private final String sourceHostname;
+    private final UserSnapshot user;
     private final String reason;
+    private final UserChannelDaoSnapshot daoSnapshot;
+    private final PircBotX bot;
 
-    private boolean cancelled = false;
-
-    public IRCQuitEvent(String sourceNick, String sourceLogin, String sourceHostname, String reason)
+    public IrcQuitEvent(UserSnapshot user, String reason, UserChannelDaoSnapshot daoSnapshot, PircBotX bot)
     {
-        this.sourceNick = sourceNick;
-        this.sourceLogin = sourceLogin;
-        this.sourceHostname = sourceHostname;
+        this.user = user;
         this.reason = reason;
+        this.daoSnapshot = daoSnapshot;
+        this.bot = bot;
     }
 
-    public String getSourceNick()
+    public UserSnapshot getUser()
     {
-        return sourceNick;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getSourceLogin()
-    {
-        return sourceLogin;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getSourceHostname()
-    {
-        return sourceHostname;
+        return user;
     }
 
     public String getReason()
@@ -61,27 +46,14 @@ public class IRCQuitEvent extends Event implements Cancellable
         return reason;
     }
 
-    @Override
-    public boolean isCancelled()
+    public UserChannelDaoSnapshot getDaoSnapshot()
     {
-        return cancelled;
+        return daoSnapshot;
     }
 
     @Override
-    public void setCancelled(boolean value)
+    public PircBotX getBot()
     {
-        cancelled = value;
-    }
-
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
+        return bot;
     }
 }

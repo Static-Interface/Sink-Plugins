@@ -24,21 +24,21 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when sending IRC Messages
  */
-public class IRCSendMessageEvent extends Event implements Cancellable
+public class IrcSendMessageEvent extends Event implements Cancellable
 {
-    private static final HandlerList handlers = new HandlerList();
-
     private String message;
-    private boolean cancelled = false;
+    private String target;
+    private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled;
 
     /**
-     * Don't fire this event by yourself, use {@link de.static_interface.sinklibrary.SinkLibrary#sendIRCMessage(String)} instead!
-     *
+     * Don't fire this event by yourself, use {@link de.static_interface.sinklibrary.SinkLibrary#sendIrcMessage(String)} instead!
      * @param message Message to send
      */
-    public IRCSendMessageEvent(String message)
+    public IrcSendMessageEvent(String message, String target)
     {
         this.message = message;
+        this.target = target;
     }
 
     public String getMessage()
@@ -50,6 +50,10 @@ public class IRCSendMessageEvent extends Event implements Cancellable
     {
         this.message = message;
     }
+
+    public String getTarget() { return target; }
+
+    public void setTarget(String target) { this.target = target; }
 
     @Override
     public boolean isCancelled()

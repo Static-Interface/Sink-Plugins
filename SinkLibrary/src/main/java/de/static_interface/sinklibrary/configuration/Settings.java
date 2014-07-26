@@ -46,7 +46,6 @@ public class Settings extends ConfigurationBase
         addDefault("Updater.Enabled", true);
         addDefault("Updater.UpdateType", "default");
 
-        addDefault("SinkIRC.BotEnabled", false);
         addDefault("SinkIRC.Username", "SinkIRCBot");
         addDefault("SinkIRC.Server.Address", "irc.example.com");
         addDefault("SinkIRC.Server.PasswordEnabled", false);
@@ -55,7 +54,7 @@ public class Settings extends ConfigurationBase
         addDefault("SinkIRC.Channel", "#ChatBot");
         addDefault("SinkIRC.Authentification.Enabled", false);
         addDefault("SinkIRC.Authentification.AuthBot", "NickServ");
-        addDefault("SinkIRC.Authentification.AuthMessage", "indentify NickServPasswordHere");
+        addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere");
 
         addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
 
@@ -172,11 +171,6 @@ public class Settings extends ConfigurationBase
     public int getLocalChatRange()
     {
         return (int) get("SinkChat.LocalChatRange");
-    }
-
-    public boolean isIRCBotEnabled()
-    {
-        return (boolean) get("SinkIRC.BotEnabled");
     }
 
     public String getIRCBotUsername()

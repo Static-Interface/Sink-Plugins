@@ -17,88 +17,50 @@
 
 package de.static_interface.sinklibrary.events;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 
-public class IRCKickEvent extends Event implements Cancellable
+public class IrcKickEvent extends IrcEventBase
 {
-    private static final HandlerList handlers = new HandlerList();
-    private final String channel;
-    private final String kickerNick;
-    private final String kickerLogin;
-    private final String kickerHostname;
-    private final String recipientNick;
+    private final User user;
+    private final User recipient;
+    private final Channel channel;
     private final String reason;
+    private final PircBotX bot;
 
-    private boolean cancelled = false;
-
-    public IRCKickEvent(String channel, String kickerNick, String kickerLogin, String kickerHostname, String recipientNick, String reason)
+    public IrcKickEvent(User user, User recipient, Channel channel, String reason, PircBotX bot)
     {
+        this.user = user;
+        this.recipient = recipient;
         this.channel = channel;
-        this.kickerNick = kickerNick;
-        this.kickerLogin = kickerLogin;
-        this.kickerHostname = kickerHostname;
-        this.recipientNick = recipientNick;
         this.reason = reason;
+        this.bot = bot;
     }
 
-    public String getChannel()
+    public User getUser()
+    {
+        return user;
+    }
+
+    public User getRecipient()
+    {
+        return recipient;
+    }
+
+    public Channel getChannel()
     {
         return channel;
     }
 
-    public String getKickerNick()
-    {
-        return kickerNick;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getKickerLogin()
-    {
-        return kickerLogin;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getKickerHostname()
-    {
-        return kickerHostname;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getRecipientNick()
-    {
-        return recipientNick;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
     public String getReason()
     {
         return reason;
     }
 
     @Override
-    public boolean isCancelled()
+    public PircBotX getBot()
     {
-        return cancelled;
+        return bot;
     }
-
-    @Override
-    public void setCancelled(boolean value)
-    {
-        cancelled = value;
-    }
-
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-
 }

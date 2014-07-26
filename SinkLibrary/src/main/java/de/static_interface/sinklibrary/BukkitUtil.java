@@ -115,7 +115,7 @@ public class BukkitUtil
         }
         Bukkit.getConsoleSender().sendMessage(message);
         if ( !sendIRC ) return;
-        SinkLibrary.sendIRCMessage(message);
+        SinkLibrary.sendIrcMessage(message);
     }
 
     /**
@@ -149,7 +149,7 @@ public class BukkitUtil
         Bukkit.getConsoleSender().sendMessage(message);
         if ( sendIRC )
         {
-            SinkLibrary.sendIRCMessage(message);
+            SinkLibrary.sendIrcMessage(message);
         }
     }
 }

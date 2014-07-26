@@ -114,7 +114,7 @@ public class SinkChat extends JavaPlugin
 
         if ( !SinkLibrary.initialized )
         {
-            throw new NotInitializedException("SinkLibrary is not initialized!");
+            throw new NotInitializedException();
         }
         return true;
     }

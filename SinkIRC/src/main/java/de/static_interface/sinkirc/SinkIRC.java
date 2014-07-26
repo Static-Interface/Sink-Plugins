@@ -20,12 +20,16 @@ package de.static_interface.sinkirc;
 import de.static_interface.sinkirc.commands.IrcKickCommand;
 import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
 import de.static_interface.sinkirc.commands.IrclistCommand;
+import de.static_interface.sinkirc.irc_commands.*;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jibble.pircbot.IrcException;
+import org.pircbotx.Channel;
+import org.pircbotx.Configuration;
+import org.pircbotx.PircBotX;
+import org.pircbotx.exception.IrcException;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -34,64 +38,75 @@ public class SinkIRC extends JavaPlugin
 {
     private static boolean initialized = false;
 
-    static SinkIRCBot sinkIrcBot;
+    static PircBotX ircBot;
     static String mainChannel;
 
     @Override
     public void onEnable()
     {
-        if ( !checkDependencies() || !SinkLibrary.getSettings().isIRCBotEnabled() || initialized ) return;
+        if ( !checkDependencies() || initialized ) return;
 
-        sinkIrcBot = new SinkIRCBot(this);
-
-        new Thread()
+        new Thread( new Runnable()
         {
             @Override
             public void run()
             {
-                mainChannel = SinkLibrary.getSettings().getIRCChannel();
-                String host = SinkLibrary.getSettings().getIRCAddress();
-                int port = SinkLibrary.getSettings().getIRCPort();
-                boolean usingPassword = SinkLibrary.getSettings().isIRCPasswordEnabled();
-
                 try
                 {
-                    if ( usingPassword )
+                    mainChannel = SinkLibrary.getSettings().getIRCChannel();
+
+                    Configuration.Builder configBuilder = new Configuration.Builder()
+                            .setName(SinkLibrary.getSettings().getIRCBotUsername())
+                            .setLogin("SinkIRC")
+                            .setAutoNickChange(true)
+                            .setAutoReconnect(true)
+                            .setServer(SinkLibrary.getSettings().getIRCAddress(), SinkLibrary.getSettings().getIRCPort())
+                            .addListener(new PircBotXLinkListener())
+                            .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
+
+                    if(SinkLibrary.getSettings().isIRCPasswordEnabled())
                     {
-                        String password = SinkLibrary.getSettings().getIRCPassword();
-                        sinkIrcBot.connect(host, port, password);
+                        configBuilder = configBuilder.setServerPassword(SinkLibrary.getSettings().getIRCPassword());
                     }
-                    else
+                    if(!SinkLibrary.getSettings().isIRCAuthentificationEnabled())
                     {
-                        sinkIrcBot.connect(host, port);
+                        configBuilder = configBuilder.addAutoJoinChannel(mainChannel);
                     }
 
-                    if ( SinkLibrary.getSettings().isIRCAuthentificationEnabled() )
+                    ircBot = new PircBotX(configBuilder.buildConfiguration());
+                    ircBot.startBot();
+                    if(SinkLibrary.getSettings().isIRCAuthentificationEnabled())
                     {
-                        String authBot = SinkLibrary.getSettings().getIRCAuthBot();
-                        String authMessage = SinkLibrary.getSettings().getIRCAuthMessage();
-                        sinkIrcBot.sendMessage(authBot, authMessage);
-                        SinkLibrary.getCustomLogger().debug("Thread sleep for 3000ms");
-                        Thread.sleep(3000);
+                        ircBot.sendIRC().message(SinkLibrary.getSettings().getIRCAuthBot(), SinkLibrary.getSettings().getIRCAuthMessage());
+                        try
+                        {
+                            Thread.sleep(1000); //Todo
+                        }
+                        catch ( InterruptedException e )
+                        {
+                            e.printStackTrace();
+                        }
+                        ircBot.sendIRC().joinChannel(SinkLibrary.getSettings().getIRCChannel());
                     }
-                    sinkIrcBot.joinChannel(mainChannel);
                 }
                 catch ( IOException | IrcException e )
                 {
-                    SinkLibrary.getCustomLogger().severe("An Exception occurred while trying to connect to " + host + ':');
-                    SinkLibrary.getCustomLogger().severe(e.getMessage());
-                }
-                catch ( InterruptedException ignored )
-                {
-                    sinkIrcBot.joinChannel(mainChannel);
+                    e.printStackTrace();
                 }
             }
-        }.start();
+        }).start();
 
-        Bukkit.getPluginManager().registerEvents(new IRCListener(sinkIrcBot), this);
+        Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
+
         getCommand("irclist").setExecutor(new IrclistCommand());
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
-        getCommand("irckick").setExecutor(new IrcKickCommand(sinkIrcBot));
+        getCommand("irckick").setExecutor(new IrcKickCommand());
+
+        SinkLibrary.registerCommand("exec", new ExecCommand(this), false);
+        SinkLibrary.registerCommand("say", new SayCommand(this), false);
+        SinkLibrary.registerCommand("kick", new KickCommand(this), false);
+        SinkLibrary.registerCommand("msg", new MsgCommand(this), false);
+        SinkLibrary.registerCommand("list", new ListCommand(this), false);
         SinkLibrary.registerPlugin(this);
         initialized = true;
     }
@@ -108,7 +123,7 @@ public class SinkIRC extends JavaPlugin
 
         if ( !SinkLibrary.initialized )
         {
-            throw new NotInitializedException("SinkLibrary is not initialized!");
+            throw new NotInitializedException();
         }
         return true;
     }
@@ -116,17 +131,18 @@ public class SinkIRC extends JavaPlugin
     @Override
     public void onDisable()
     {
-        sinkIrcBot.quitServer("Plugin is reloading or server is shutting down...");
+        if ( ircBot != null) ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
+        ircBot = null;
         System.gc();
     }
 
-    public static SinkIRCBot getIRCBot()
+    public static PircBotX getIRCBot()
     {
-        return sinkIrcBot;
+        return ircBot;
     }
 
-    public static String getMainChannel()
+    public static Channel getMainChannel()
     {
-        return mainChannel;
+        return IrcUtil.getChannel(mainChannel);
     }
 }

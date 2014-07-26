@@ -17,23 +17,17 @@
 
 package de.static_interface.sinkirc.commands;
 
+import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
-import de.static_interface.sinkirc.SinkIRCBot;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.pircbotx.Channel;
 
 public class IrcKickCommand implements CommandExecutor
 {
-    SinkIRCBot ircBot;
-
-    public IrcKickCommand(SinkIRCBot ircBot)
-    {
-        this.ircBot = ircBot;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
@@ -57,7 +51,8 @@ public class IrcKickCommand implements CommandExecutor
             }
         }
 
-        ircBot.kick(SinkIRC.getMainChannel(), target, reason);
+        Channel channel = SinkIRC.getIRCBot().getUserBot().getChannels().first();
+        channel.send().kick(IrcUtil.getUser(channel, target), reason);
 
         return true;
     }

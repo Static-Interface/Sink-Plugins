@@ -85,7 +85,7 @@ public class SinkCommands extends JavaPlugin
 
         if ( !SinkLibrary.initialized )
         {
-            throw new NotInitializedException("SinkLibrary is not initialized!");
+            throw new NotInitializedException();
         }
         return true;
     }
@@ -205,7 +205,10 @@ public class SinkCommands extends JavaPlugin
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
         //getCommand("duty").setExecutor(new DutyCommand());
-        getCommand("lag").setExecutor(new LagCommand());
+
+        //getCommand("lag").setExecutor(new LagCommand());
+        SinkLibrary.registerCommand("lag", new LagCommand(this));
+
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
         getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));
         getCommand("voteno").setExecutor(new VotekickCommands.VotenoCommand(this));

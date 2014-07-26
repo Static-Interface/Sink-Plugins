@@ -18,19 +18,24 @@
 package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.commands.Command;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 import java.text.DecimalFormat;
 
-public class LagCommand implements CommandExecutor
+public class LagCommand extends Command
 {
     public static final String PREFIX = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
 
+    public LagCommand(Plugin plugin)
+    {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onExecute(CommandSender sender, String label, String[] args)
     {
         double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
         DecimalFormat decimalFormat = new DecimalFormat("##.0");

@@ -23,26 +23,31 @@ import de.static_interface.sinklibrary.Util;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
-public class SinkDebugCommand implements CommandExecutor
+public class SinkDebugCommand extends Command
 {
     public static final String PREFIX = ChatColor.BLUE + "[Debug] " + ChatColor.RESET;
 
-    @SuppressWarnings("OverlyBroadCatchBlock")
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    String cmd = getCommandPrefix() + "sdebug";
+
+    public SinkDebugCommand(Plugin plugin)
     {
+        super(plugin);
+    }
+
+    public boolean onExecute(CommandSender sender, String label, String[] args)
+    {
+        String option;
         if ( args.length < 1 )
         {
-            return false;
+            option = "";
         }
-        String cmd = command.getLabel();
-        String option = args[0];
+        else option = args[0];
+
         switch ( option.toLowerCase() )
         {
             case "getplayervalue":
@@ -108,9 +113,29 @@ public class SinkDebugCommand implements CommandExecutor
                 break;
             }
 
+            case "isop":
+            {
+                boolean isOp = sender.isOp();
+                sender.sendMessage(option + ": " + isOp);
+                break;
+            }
+
+            case "testop":
+            {
+                boolean isOp = sender.isOp();
+                if (isOp)
+                {
+                    sender.sendMessage(option + ": setting value: " + false);
+                    sender.setOp(false);
+                    sender.sendMessage(option + ": restoring value: " + true);
+                    sender.setOp(true);
+                    break;
+                }
+            }
+
             default:
             {
-                sender.sendMessage(PREFIX + "Unknown option! Valid options are: getplayervalue, setplayervalue, backuplanguage");
+                sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, backuplanguage, isop, testop");
             }
         }
         return true;

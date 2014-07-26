@@ -17,78 +17,43 @@
 
 package de.static_interface.sinklibrary.events;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 
-public class IRCReceiveMessageEvent extends Event implements Cancellable
+public class IrcReceiveMessageEvent extends IrcEventBase
 {
-    private static final HandlerList handlers = new HandlerList();
-    private final String sender;
-    private final String login;
-    private final String hostname;
-    private final String channel;
+    private final User user;
+    private final Channel channel;
     private final String message;
+    private final PircBotX bot;
 
-    private boolean cancelled = false;
-
-    public IRCReceiveMessageEvent(String channel, String sender, String login, String hostname, String message)
+    public IrcReceiveMessageEvent(User user, Channel channel, String message, PircBotX bot)
     {
+        this.user = user;
         this.channel = channel;
-        this.sender = sender;
-        this.login = login;
-        this.hostname = hostname;
         this.message = message;
+        this.bot = bot;
     }
 
-    public String getChannel()
+    public User getUser()
+    {
+        return user;
+    }
+
+    public Channel getChannel()
     {
         return channel;
-    }
-
-    public String getSender()
-    {
-        return sender;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getLogin()
-    {
-        return login;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getHostname()
-    {
-        return hostname;
-    }
-
-    @Override
-    public boolean isCancelled()
-    {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean value)
-    {
-        cancelled = value;
-    }
-
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
     }
 
     public String getMessage()
     {
         return message;
+    }
+
+    @Override
+    public PircBotX getBot()
+    {
+        return bot;
     }
 }

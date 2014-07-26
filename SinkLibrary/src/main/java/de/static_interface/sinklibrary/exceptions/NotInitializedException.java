@@ -23,4 +23,9 @@ public class NotInitializedException extends RuntimeException
     {
         super(s);
     }
+
+    public NotInitializedException()
+    {
+        super("SinkLibrary is not initialized!");
+    }
 }

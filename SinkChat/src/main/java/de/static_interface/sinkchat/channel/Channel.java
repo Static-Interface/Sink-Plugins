@@ -150,7 +150,7 @@ public class Channel
         }
 
         Bukkit.getConsoleSender().sendMessage(formattedMessage);
-        if (sendToIRC()) SinkLibrary.sendIRCMessage(formattedMessage);
+        if (sendToIRC()) SinkLibrary.sendIrcMessage(formattedMessage);
         return true;
     }
 }

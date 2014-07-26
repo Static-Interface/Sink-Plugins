@@ -17,39 +17,22 @@
 
 package de.static_interface.sinklibrary.events;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 
-public class IRCNickChangeEvent extends Event implements Cancellable
+public class IrcNickChangeEvent extends IrcEventBase
 {
-    private static final HandlerList handlers = new HandlerList();
-
     private final String oldNick;
-    private final String login;
-    private final String hostname;
     private final String newNick;
+    private final User user;
+    private final PircBotX bot;
 
-    private boolean cancelled = false;
-
-    public IRCNickChangeEvent(String oldNick, String login, String hostname, String newNick)
+    public IrcNickChangeEvent(String oldNick, String newNick, User user, PircBotX bot)
     {
         this.oldNick = oldNick;
-        this.login = login;
-        this.hostname = hostname;
         this.newNick = newNick;
-    }
-
-    @Override
-    public boolean isCancelled()
-    {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean value)
-    {
-        cancelled = value;
+        this.user = user;
+        this.bot = bot;
     }
 
     public String getOldNick()
@@ -62,27 +45,14 @@ public class IRCNickChangeEvent extends Event implements Cancellable
         return newNick;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getLogin()
+    public User getUser()
     {
-        return login;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getHostname()
-    {
-        return hostname;
+        return user;
     }
 
     @Override
-    public HandlerList getHandlers()
+    public PircBotX getBot()
     {
-        return handlers;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
+        return bot;
     }
 }

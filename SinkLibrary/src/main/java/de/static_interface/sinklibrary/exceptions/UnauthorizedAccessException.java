@@ -15,7 +15,7 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkirc;
+package de.static_interface.sinklibrary.exceptions;
 
 public class UnauthorizedAccessException extends RuntimeException
 {

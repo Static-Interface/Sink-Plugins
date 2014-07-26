@@ -17,14 +17,13 @@
 
 package de.static_interface.sinkirc.commands;
 
-import de.static_interface.sinkirc.SinkIRC;
+import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.jibble.pircbot.User;
 
 public class IrcPrivateMessageCommand implements CommandExecutor
 {
@@ -37,22 +36,20 @@ public class IrcPrivateMessageCommand implements CommandExecutor
             return true;
         }
 
-        User target = SinkIRC.getIRCBot().getUser(args[0]);
-
-        if ( target == null )
-        {
-            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
-            return true;
-        }
+        String target = args[0];
 
         String message = ChatColor.GRAY + SinkLibrary.getUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
 
-        SinkIRC.getIRCBot().sendCleanMessage(target.getNick(), message);
-
-        sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
-
+        if (!IrcUtil.sendMessage(message, target))
+        {
+            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
+        }
+        else
+        {
+            sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
+        }
         return true;
     }
 }

@@ -22,13 +22,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class IRCLinkListener implements Listener
+public class IrcLinkListener implements Listener
 {
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
         if ( SinkLibrary.sinkChatAvailable ) return;
         String msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-        SinkLibrary.sendIRCMessage(msg);
+        SinkLibrary.sendIrcMessage(msg);
     }
 }

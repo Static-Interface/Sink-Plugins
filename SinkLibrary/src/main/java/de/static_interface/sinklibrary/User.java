@@ -161,11 +161,23 @@ public class User
      */
     public PlayerConfiguration getPlayerConfiguration()
     {
+        if (!isPlayer())
+        {
+            throw new IllegalStateException("User is not a player");
+        }
         if ( config == null )
         {
             config = new PlayerConfiguration(this);
         }
         return config;
+    }
+
+    /**
+     * @return CommandSender
+     */
+    public CommandSender getSender()
+    {
+        return sender;
     }
 
     /**
@@ -345,7 +357,7 @@ public class User
     {
         if ( isOnline() )
         {
-            if ( isConsole() ) sender.sendMessage(message);
+            if ( !isPlayer() ) sender.sendMessage(message);
             else base.sendMessage(message);
         }
     }
@@ -367,5 +379,10 @@ public class User
     {
         if ( SinkLibrary.getSettings().isDebugEnabled() )
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
+    }
+
+    public boolean isPlayer()
+    {
+        return Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
     }
 }
