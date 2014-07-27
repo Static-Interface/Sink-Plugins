@@ -389,6 +389,6 @@ public class SinkUser
 
     public boolean isPlayer()
     {
-        return Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
+        return base != null || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
     }
 }

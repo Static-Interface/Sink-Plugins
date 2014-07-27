@@ -67,7 +67,7 @@ public class SinkLibrary extends JavaPlugin
     public static boolean sinkChatAvailable;
     public static boolean ircAvailable = false;
     static Logger logger;
-    private static HashMap<String, Command> commandsWithAliases;
+    private static HashMap<String, Command> commandAliases;
     private static HashMap<String, Command> commands;
 
     public static HashMap<String, Command> getCommands()
@@ -87,7 +87,7 @@ public class SinkLibrary extends JavaPlugin
         logger = new Logger();
         timer = new TpsTimer();
         commands = new HashMap<>();
-        commandsWithAliases = new HashMap<>();
+        commandAliases = new HashMap<>();
 
         // Init language
         LanguageConfiguration languageConfiguration = new LanguageConfiguration();
@@ -616,7 +616,7 @@ public class SinkLibrary extends JavaPlugin
                     {
                         alias = alias.toLowerCase();
                         if ( alias.equals(name) ) continue;
-                        commandsWithAliases.put(alias, command);
+                        commandAliases.put(alias, command);
                     }
                     command.setUsage(cmd.getUsage());
                 }
@@ -627,7 +627,7 @@ public class SinkLibrary extends JavaPlugin
             }
         }
 
-        commandsWithAliases.put(name, command);
+        commandAliases.put(name, command);
         commands.put(name, command);
     }
 
@@ -637,7 +637,7 @@ public class SinkLibrary extends JavaPlugin
         cmd = commands.get(name.toLowerCase());
         if (cmd == null)
         {
-            cmd = commandsWithAliases.get(name.toLowerCase());
+            cmd = commandAliases.get(name.toLowerCase());
         }
         return cmd;
     }

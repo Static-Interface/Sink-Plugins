@@ -89,15 +89,12 @@ public class IrcCommandSender implements CommandSender
     @Override
     public boolean isPermissionSet(String s)
     {
-        //Permission perm = new Permission(s);
-        //return perm.getDefault().getValue(isOp());
         return true;
     }
 
     @Override
     public boolean isPermissionSet(Permission perm)
     {
-        //return perm.getDefault().getValue(isOp());
         return true;
     }
 
@@ -117,31 +114,31 @@ public class IrcCommandSender implements CommandSender
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b)
     {
-        throw new NotImplementedException("This is not available to IRC Users");
+        return null;
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin)
     {
-        throw new NotImplementedException("This is not available to IRC Users");
+        return null;
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i)
     {
-        throw new NotImplementedException("This is not available to IRC Users");
+        return null;
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, int i)
     {
-        throw new NotImplementedException("This is not available to IRC Users");
+        return null;
     }
 
     @Override
     public void removeAttachment(PermissionAttachment permissionAttachment)
     {
-        throw new NotImplementedException("This is not available to IRC Users");
+        // do nothing
     }
 
     @Override

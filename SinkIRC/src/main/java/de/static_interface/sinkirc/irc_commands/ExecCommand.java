@@ -35,7 +35,7 @@ public class ExecCommand extends IrcCommand
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
+    public boolean onExecute(final CommandSender sender, String label, String[] args)
     {
         String commandWithArgs = "";
         int i = 0;
@@ -62,7 +62,7 @@ public class ExecCommand extends IrcCommand
             @Override
             public void run()
             {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommandWithArgs);
+                Bukkit.dispatchCommand(sender, finalCommandWithArgs);
             }
         });
 
