@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkirc.irc_commands;
 
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -35,8 +36,11 @@ public class ExecCommand extends IrcCommand
     }
 
     @Override
-    public boolean onExecute(final CommandSender sender, String label, String[] args)
+    public boolean onExecute(final CommandSender cs, String label, String[] args)
     {
+        final IrcCommandSender sender = (IrcCommandSender) cs;
+        boolean defaultUseNotice = sender.getUseNotice();
+        sender.setUseNotice(true);
         String commandWithArgs = "";
         int i = 0;
         for ( String arg : args )
@@ -65,8 +69,7 @@ public class ExecCommand extends IrcCommand
                 Bukkit.dispatchCommand(sender, finalCommandWithArgs);
             }
         });
-
-        sender.sendMessage("Executed command: \"" + commandWithArgs + '"');
+        sender.setUseNotice(defaultUseNotice);
         return true;
     }
 }

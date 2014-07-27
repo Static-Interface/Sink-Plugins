@@ -26,6 +26,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import java.lang.reflect.Method;
@@ -35,12 +36,25 @@ public class IrcCommandSender implements CommandSender
 {
     User base;
     String source;
+    boolean useNotice = false;
+
     public IrcCommandSender(User base, String source)
     {
         if (base == null) throw new IllegalArgumentException("base may not be null");
         if (source == null) throw new IllegalArgumentException("source may not be null");
         this.base = base;
         this.source = source;
+        this.useNotice = false;
+    }
+
+    public void setUseNotice(boolean value)
+    {
+        this.useNotice = value;
+    }
+
+    public boolean getUseNotice()
+    {
+        return useNotice;
     }
 
     public String getSource()
@@ -53,9 +67,31 @@ public class IrcCommandSender implements CommandSender
         return base;
     }
 
+    private void sendNotice(String msg)
+    {
+        try
+        {
+            PircBotX bot;
+            Class<?> c = Class.forName("de.static_interface.sinkirc.SinkIRC");
+            Method method = c.getMethod("getIrcBot");
+            method.setAccessible(true);
+            bot = (PircBotX) method.invoke(null);
+            bot.sendIRC().notice(base.getNick(), msg);
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void sendMessage(String msg)
     {
+        if(useNotice)
+        {
+            sendNotice(msg);
+            return;
+        }
         SinkLibrary.sendIrcMessage(base.getNick() + ": " + msg, source);
     }
 
@@ -65,6 +101,12 @@ public class IrcCommandSender implements CommandSender
         boolean first = true;
         for(String msg : msgs)
         {
+            if(useNotice)
+            {
+                sendNotice(msg);
+                continue;
+            }
+
             if (first)
             {
                 msg = base.getNick() + ": " + msg;
