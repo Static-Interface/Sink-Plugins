@@ -633,10 +633,12 @@ public class SinkLibrary extends JavaPlugin
 
     public static Command getCustomCommand(String name)
     {
-        try
+        Command cmd;
+        cmd = commands.get(name.toLowerCase());
+        if (cmd == null)
         {
-            return commandsWithAliases.get(name.toLowerCase());
+            cmd = commandsWithAliases.get(name.toLowerCase());
         }
-        catch(Exception ignored) { return null; }
+        return cmd;
     }
 }
