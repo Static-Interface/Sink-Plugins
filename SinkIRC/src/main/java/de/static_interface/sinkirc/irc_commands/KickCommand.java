@@ -18,9 +18,7 @@
 package de.static_interface.sinkirc.irc_commands;
 
 import de.static_interface.sinkirc.IrcUtil;
-import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.BukkitUtil;
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -36,14 +34,14 @@ public class KickCommand extends IrcCommand
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
+    public boolean isIrcOpOnly()
     {
-        IrcCommandSender sender  = (IrcCommandSender) cs;
+        return true;
+    }
 
-        if ( !sender.isOp() )
-        {
-            throw new UnauthorizedAccessException();
-        }
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args)
+    {
         String targetPlayerName;
         try
         {

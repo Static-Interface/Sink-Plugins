@@ -32,6 +32,7 @@ import java.util.List;
 
 public class ClearCommand implements CommandExecutor
 {
+    //Todo: convert to command
 
     public static final String PREFIX = ChatColor.RED + "[Clear] " + ChatColor.RESET;
 

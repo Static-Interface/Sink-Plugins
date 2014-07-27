@@ -50,12 +50,13 @@ public class SinkUser
      */
     SinkUser(CommandSender sender)
     {
+        this.sender = sender;
         initUser(sender.getName());
     }
 
     public void initUser(String player)
     {
-        if ( player.equalsIgnoreCase("CONSOLE") )
+        if ( player.equalsIgnoreCase("console") )
         {
             sender = Bukkit.getConsoleSender();
             base = null;
@@ -66,8 +67,13 @@ public class SinkUser
         base = BukkitUtil.getPlayer(player);
         econ = SinkLibrary.getEconomy();
         playerName = player;
-        if ( base == null ) return;
-        sender = base;
+        if ( base == null )
+        {
+            uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
+            return;
+        }
+        if(sender == null)
+            sender = base;
         uuid = base.getUniqueId();
     }
 

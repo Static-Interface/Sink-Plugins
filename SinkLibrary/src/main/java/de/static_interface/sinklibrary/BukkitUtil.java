@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -97,6 +98,7 @@ public class BukkitUtil
     public static String getSenderName(CommandSender sender)
     {
         if (sender instanceof IrcCommandSender) return sender.getName() + ChatColor.RESET;
+        if(sender instanceof ConsoleCommandSender) return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
         SinkUser user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }

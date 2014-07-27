@@ -17,8 +17,6 @@
 
 package de.static_interface.sinkirc.irc_commands;
 
-import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -31,10 +29,14 @@ public class ExecCommand extends IrcCommand
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
+    public boolean isIrcOpOnly()
     {
-        IrcCommandSender sender = (IrcCommandSender) cs;
-        if ( !sender.isOp()) throw new UnauthorizedAccessException();
+        return true;
+    }
+
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args)
+    {
         String commandWithArgs = "";
         int i = 0;
         for ( String arg : args )

@@ -22,8 +22,6 @@ import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.Util;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -41,10 +39,14 @@ public class SinkDebugCommand extends Command
         super(plugin);
     }
 
+    @Override
+    public boolean isIrcOpOnly()
+    {
+        return true;
+    }
+
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
-        if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
-
         if ( args.length < 1 )
         {
             return false;

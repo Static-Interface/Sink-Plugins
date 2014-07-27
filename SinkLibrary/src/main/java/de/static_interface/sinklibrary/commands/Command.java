@@ -47,10 +47,13 @@ public abstract class Command implements CommandExecutor
 
     public boolean isPlayerOnly() { return false; };
     public boolean isIrcOnly() { return false; }
+    public boolean isIrcOpOnly() { return false; }
 
     protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
     {
         if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
+
+        if( isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
 
         if ( !(sender instanceof IrcCommandSender) && isIrcOnly() )
         {

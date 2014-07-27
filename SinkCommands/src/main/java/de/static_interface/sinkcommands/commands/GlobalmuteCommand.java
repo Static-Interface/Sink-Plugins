@@ -34,6 +34,12 @@ public class GlobalmuteCommand extends Command
     }
 
     @Override
+    public boolean isIrcOpOnly()
+    {
+        return true;
+    }
+
+    @Override
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
         SinkCommands.globalmuteEnabled = !SinkCommands.globalmuteEnabled;

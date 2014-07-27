@@ -31,8 +31,8 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 public class MilkCommand implements CommandExecutor
 {
-
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
+    //Todo: convert to command
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)

@@ -20,8 +20,6 @@ package de.static_interface.sinkcommands.commands;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.commands.Command;
-import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,10 +35,14 @@ public class WarnCommand extends Command
     }
 
     @Override
+    public boolean isIrcOpOnly()
+    {
+        return true;
+    }
+
+    @Override
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
-        if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
-
         if ( args.length < 1 )
         {
             sender.sendMessage(PREFIX + ChatColor.RED + "Zu wenige Argumente!");
