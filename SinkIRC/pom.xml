@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.static_interface</groupId>
         <artifactId>Sink-Plugins</artifactId>
-        <version>1.9.8-SNAPSHOT</version>
+        <version>1.9.8.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>SinkIRC</artifactId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>de.static_interface</groupId>
             <artifactId>SinkLibrary</artifactId>
-            <version>1.9.8-SNAPSHOT</version>
+            <version>1.9.8.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
