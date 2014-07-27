@@ -19,7 +19,7 @@ package de.static_interface.sinkcommands.listener;
 
 import de.static_interface.sinkcommands.commands.DrugCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -36,7 +36,7 @@ public class DrugDeadListener implements Listener
     {
         if ( event.getEntity().equals(DrugCommand.killedByDrugs) && event.getEntityType() == EntityType.PLAYER )
         {
-            User user = SinkLibrary.getUser(event.getEntity());
+            SinkUser user = SinkLibrary.getUser(event.getEntity());
             event.setDeathMessage(ChatColor.RED + user.getDisplayName() + ChatColor.RESET + " nahm zu viele Drogen und ist gestorben.");
             DrugCommand.killedByDrugs.removePotionEffect(PotionEffectType.BLINDNESS);
             DrugCommand.killedByDrugs.removePotionEffect(PotionEffectType.CONFUSION);

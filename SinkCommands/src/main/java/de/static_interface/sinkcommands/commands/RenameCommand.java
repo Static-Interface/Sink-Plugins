@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,7 +37,7 @@ public class RenameCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        User user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getUser(sender);
         if ( user.isConsole() )
         {
             sender.sendMessage(PREFIX + "Dieser Befehl ist nur Ingame ausführbar.");

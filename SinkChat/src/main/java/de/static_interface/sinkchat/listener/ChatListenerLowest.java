@@ -18,7 +18,7 @@
 package de.static_interface.sinkchat.listener;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,7 +34,7 @@ public class ChatListenerLowest implements Listener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
-        User user = SinkLibrary.getUser(event.getPlayer());
+        SinkUser user = SinkLibrary.getUser(event.getPlayer());
 
         String groupPrefix = SinkLibrary.isPermissionsAvailable() ? ChatColor.RESET.toString() + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.RESET + ChatColor.GRAY + "] " : "";
 
@@ -49,7 +49,7 @@ public class ChatListenerLowest implements Listener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
-        User user = SinkLibrary.getUser(event.getPlayer());
+        SinkUser user = SinkLibrary.getUser(event.getPlayer());
         if ( user.hasPermission("sinkchat.color") )
         {
             event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));

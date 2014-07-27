@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.commands;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.Util;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
@@ -62,7 +62,7 @@ public class SinkDebugCommand extends Command
                 }
                 String player = args[1];
                 String path = args[2];
-                User user = SinkLibrary.getUser(player);
+                SinkUser user = SinkLibrary.getUser(player);
                 PlayerConfiguration config = user.getPlayerConfiguration();
                 sender.sendMessage(PREFIX + "Output: " + config.getYamlConfiguration().getString(path));
                 break;
@@ -79,7 +79,7 @@ public class SinkDebugCommand extends Command
                 String path = args[2];
                 Object value = replaceValue(args[3]);
 
-                User user = SinkLibrary.getUser(player);
+                SinkUser user = SinkLibrary.getUser(player);
                 PlayerConfiguration config = user.getPlayerConfiguration();
                 config.set(path, value);
                 sender.sendMessage(PREFIX + "Done");
@@ -95,7 +95,7 @@ public class SinkDebugCommand extends Command
                 }
                 String player = args[1];
                 String permission = args[2];
-                User user = SinkLibrary.getUser(player);
+                SinkUser user = SinkLibrary.getUser(player);
                 sender.sendMessage(PREFIX + "Output: " + user.hasPermission(permission));
                 break;
 

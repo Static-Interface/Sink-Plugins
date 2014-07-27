@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.irc.IrcCommandSender;
@@ -56,7 +56,7 @@ public class SinkReloadCommand extends Command
         sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
         for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getUser(p);
             user.getPlayerConfiguration().reload();
         }
 

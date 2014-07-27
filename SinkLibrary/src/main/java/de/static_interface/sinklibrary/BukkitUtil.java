@@ -97,7 +97,7 @@ public class BukkitUtil
     public static String getSenderName(CommandSender sender)
     {
         if (sender instanceof IrcCommandSender) return sender.getName() + ChatColor.RESET;
-        User user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }
 
@@ -141,7 +141,7 @@ public class BukkitUtil
     {
         for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getUser(p);
             if ( !user.hasPermission(permission) )
             {
                 continue;

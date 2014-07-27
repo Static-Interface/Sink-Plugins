@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 
 import java.io.File;
@@ -27,14 +27,14 @@ public class PlayerConfiguration extends ConfigurationBase
 {
     public static final int REQUIRED_VERSION = 1;
 
-    private User user = null;
+    private SinkUser user = null;
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
-     * Should be accessed via {@link de.static_interface.sinklibrary.User#getPlayerConfiguration()}
+     * Should be accessed via {@link de.static_interface.sinklibrary.SinkUser#getPlayerConfiguration()}
      *
      * @param user User
      */
-    public PlayerConfiguration(User user)
+    public PlayerConfiguration(SinkUser user)
     {
         super(new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
         if ( user.isConsole() )

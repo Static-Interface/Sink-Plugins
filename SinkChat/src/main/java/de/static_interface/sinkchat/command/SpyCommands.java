@@ -18,7 +18,7 @@
 package de.static_interface.sinkchat.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,7 +37,7 @@ public class SpyCommands
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
         {
-            User user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getUser(sender);
 
             if ( user.isConsole() )
             {
@@ -65,7 +65,7 @@ public class SpyCommands
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
         {
-            User user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getUser(sender);
             if ( user.isConsole() )
             {
                 sender.sendMessage(m("General.ConsoleNotAvailable"));

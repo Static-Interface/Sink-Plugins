@@ -20,7 +20,7 @@ package de.static_interface.sinkirc.commands;
 import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,7 +31,7 @@ public class IrcKickCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        User user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getUser(sender);
 
         if ( args.length < 1 )
         {

@@ -19,7 +19,7 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -93,13 +93,13 @@ public class VotekickCommands
                 return true;
             }
             boolean voteable = true;
-            User user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getUser(sender);
             if ( !user.hasPermission("sinkcommands.votekick.staff") )
             {
                 int i = 0;
                 for ( Player p : BukkitUtil.getOnlinePlayers() )
                 {
-                    User onlinePlayer = SinkLibrary.getUser(p);
+                    SinkUser onlinePlayer = SinkLibrary.getUser(p);
                     if ( !onlinePlayer.hasPermission("sinkcommands.votekick.staff") )
                     {
                         i++;
@@ -119,7 +119,7 @@ public class VotekickCommands
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
-            User targetUser = SinkLibrary.getUser(targetPlayer);
+            SinkUser targetUser = SinkLibrary.getUser(targetPlayer);
             target = targetUser.getDisplayName();
             if ( targetPlayer.equals(sender) )
             {

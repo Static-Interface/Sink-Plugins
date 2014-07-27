@@ -19,6 +19,7 @@ package de.static_interface.sinkirc.irc_commands;
 
 import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
@@ -41,7 +42,7 @@ public class MsgCommand extends IrcCommand
         {
             return false;
         }
-        de.static_interface.sinklibrary.User target;
+        SinkUser target;
         target = SinkLibrary.getUser(args[0]);
         if ( !target.isOnline() )
         {

@@ -57,7 +57,7 @@ public class SinkLibrary extends JavaPlugin
     private static String version;
     private static Settings settings;
     private static List<JavaPlugin> registeredPlugins;
-    private static HashMap<UUID, User> onlineUsers;
+    private static HashMap<UUID, SinkUser> onlineUsers;
     private static PluginDescriptionFile description;
     private static boolean economyAvailable = true;
     private static boolean permissionsAvailable = true;
@@ -191,7 +191,7 @@ public class SinkLibrary extends JavaPlugin
         SinkLibrary.getCustomLogger().info("Saving players...");
         for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getUser(p);
             if ( user.getPlayerConfiguration().exists() )
             {
                 user.getPlayerConfiguration().save();
@@ -437,7 +437,7 @@ public class SinkLibrary extends JavaPlugin
      * @param player Player
      * @return User instance of player
      */
-    public static User getUser(Player player)
+    public static SinkUser getUser(Player player)
     {
         return getUser(player.getUniqueId());
     }
@@ -448,20 +448,20 @@ public class SinkLibrary extends JavaPlugin
      * @deprecated use {@link #getUser(java.util.UUID)} instead
      */
     @Deprecated
-    public static User getUser(String playerName)
+    public static SinkUser getUser(String playerName)
     {
         UUID uuid = BukkitUtil.getUUIDByName(playerName);
 
         return getUser(uuid);
     }
 
-    public static User getUser(UUID uuid)
+    public static SinkUser getUser(UUID uuid)
     {
-        User user = onlineUsers.get(uuid);
+        SinkUser user = onlineUsers.get(uuid);
 
         if ( user == null || !user.isOnline() )
         {
-            user = new User(uuid);
+            user = new SinkUser(uuid);
         }
 
         return user;
@@ -471,9 +471,9 @@ public class SinkLibrary extends JavaPlugin
      * @param sender Command Sender
      * @return User instance
      */
-    public static User getUser(CommandSender sender)
+    public static SinkUser getUser(CommandSender sender)
     {
-        if ( !(sender instanceof Player) ) return new User(sender);
+        if ( !(sender instanceof Player) ) return new SinkUser(sender);
 
         Player player = (Player) sender;
         return getUser(player.getUniqueId());
@@ -498,7 +498,7 @@ public class SinkLibrary extends JavaPlugin
     {
         if ( !settings.isDisplayNamesEnabled() ) return;
 
-        User user = getUser(player);
+        SinkUser user = getUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )
@@ -543,10 +543,10 @@ public class SinkLibrary extends JavaPlugin
      */
     public static void loadUser(UUID uuid)
     {
-        User user = onlineUsers.get(uuid);
+        SinkUser user = onlineUsers.get(uuid);
         if ( user == null || !user.getPlayer().getUniqueId().equals(uuid) )
         {
-            user = new User(uuid);
+            user = new SinkUser(uuid);
             onlineUsers.put(uuid, user);
         }
     }
@@ -559,7 +559,7 @@ public class SinkLibrary extends JavaPlugin
      */
     public static void unloadUser(UUID uuid)
     {
-        User user = getUser(uuid);
+        SinkUser user = getUser(uuid);
         user.getPlayerConfiguration().save();
         if ( uuid != null )
         {
@@ -582,7 +582,7 @@ public class SinkLibrary extends JavaPlugin
      *
      * @return Online players as Users
      */
-    public static Collection<User> getOnlineUsers()
+    public static Collection<SinkUser> getOnlineUsers()
     {
         return onlineUsers.values();
     }
@@ -592,9 +592,9 @@ public class SinkLibrary extends JavaPlugin
         return logger;
     }
 
-    public static User getUserByUniqueId(UUID uuid)
+    public static SinkUser getUserByUniqueId(UUID uuid)
     {
-        for ( User user : getOnlineUsers() )
+        for ( SinkUser user : getOnlineUsers() )
         {
             if ( user.getUniqueId().equals(uuid) ) return user;
         }

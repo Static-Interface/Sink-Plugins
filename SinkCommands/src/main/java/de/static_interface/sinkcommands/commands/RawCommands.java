@@ -19,7 +19,7 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.Util;
 import de.static_interface.sinklibrary.commands.Command;
 import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
@@ -67,7 +67,7 @@ public class RawCommands
             {
                 return false;
             }
-            User target = SinkLibrary.getUser(args[0]);
+            SinkUser target = SinkLibrary.getUser(args[0]);
 
             if ( !target.isOnline() )
             {

@@ -19,7 +19,7 @@ package de.static_interface.sinkantispam;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -61,7 +61,7 @@ public class SinkAntiSpam extends JavaPlugin
     {
         String message = prefix + String.format(m("SinkAntiSpam.Warn"), player.getDisplayName(), reason);
         String permission = "sinkantispam.message";
-        User user = SinkLibrary.getUser(player);
+        SinkUser user = SinkLibrary.getUser(player);
         if ( !user.hasPermission(permission) )
         {
             player.sendMessage(message);

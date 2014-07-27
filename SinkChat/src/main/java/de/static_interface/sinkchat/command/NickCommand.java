@@ -19,7 +19,7 @@ package de.static_interface.sinkchat.command;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -45,7 +45,7 @@ public class NickCommand implements CommandExecutor
             return true;
         }
 
-        User user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getUser(sender);
         String newDisplayName;
 
         if ( args.length < 1 )
@@ -95,7 +95,7 @@ public class NickCommand implements CommandExecutor
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean setDisplayName(Player target, String newDisplayName, CommandSender sender)
     {
-        User user = SinkLibrary.getUser(target);
+        SinkUser user = SinkLibrary.getUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if ( !NICKNAME_PATTERN.matcher(cleanDisplayName).matches() )
         {

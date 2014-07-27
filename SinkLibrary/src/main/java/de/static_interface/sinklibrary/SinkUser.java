@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
-public class User
+public class SinkUser
 {
     private static Player base = null;
     private static Economy econ = null;
@@ -44,11 +44,11 @@ public class User
     /**
      * Get User instance by player's name
      * <p>
-     * <b>Use {@link #User(java.util.UUID)} for offline players</b>
+     * <b>Use {@link #SinkUser(java.util.UUID)} for offline players</b>
      *
      * @param sender Sender
      */
-    User(CommandSender sender)
+    SinkUser(CommandSender sender)
     {
         initUser(sender.getName());
     }
@@ -76,7 +76,7 @@ public class User
      *
      * @param uuid UUID of user
      */
-    User(UUID uuid)
+    SinkUser(UUID uuid)
     {
         this.uuid = uuid;
         initUser(Bukkit.getOfflinePlayer(uuid).getName());

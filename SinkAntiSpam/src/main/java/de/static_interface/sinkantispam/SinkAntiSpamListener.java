@@ -19,7 +19,7 @@ package de.static_interface.sinkantispam;
 
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -91,7 +91,7 @@ public class SinkAntiSpamListener implements Listener
 
         message = ChatColor.stripColor(message);
 
-        User user = SinkLibrary.getUser(player);
+        SinkUser user = SinkLibrary.getUser(player);
 
         if ( user.hasPermission("sinkcommands.bypass") )
         {

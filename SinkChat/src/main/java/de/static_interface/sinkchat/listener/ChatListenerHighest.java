@@ -22,7 +22,7 @@ import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -51,7 +51,7 @@ public class ChatListenerHighest implements Listener
 
     private void onChat(AsyncPlayerChatEvent event)
     {
-        User user = SinkLibrary.getUser(event.getPlayer());
+        SinkUser user = SinkLibrary.getUser(event.getPlayer());
 
         if ( event.isCancelled() )
         {

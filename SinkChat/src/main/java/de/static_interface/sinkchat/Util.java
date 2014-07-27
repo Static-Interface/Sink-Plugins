@@ -19,7 +19,7 @@ package de.static_interface.sinkchat;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 public class Util
 {
-    public static void sendMessage(User user, String message, int range)
+    public static void sendMessage(SinkUser user, String message, int range)
     {
 
         double x = user.getPlayer().getLocation().getX();
@@ -41,7 +41,7 @@ public class Util
             Location loc = p.getLocation();
             boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
 
-            User onlineUser = SinkLibrary.getUser(p);
+            SinkUser onlineUser = SinkLibrary.getUser(p);
 
             // Check for spy
             boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")

@@ -23,7 +23,7 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -52,7 +52,7 @@ public class TownyBridge
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank)
     {
-        User user = SinkLibrary.getUser(resident.getName()); // TODO: GET UUID FROM NAME
+        SinkUser user = SinkLibrary.getUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 

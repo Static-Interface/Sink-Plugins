@@ -21,7 +21,7 @@ import de.static_interface.sinkcommands.commands.*;
 import de.static_interface.sinkcommands.listener.*;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
@@ -103,7 +103,7 @@ public class SinkCommands extends JavaPlugin
 
         for ( Player p : BukkitUtil.getOnlinePlayers() )
         {
-            User user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getUser(p);
             PlayerConfiguration config = user.getPlayerConfiguration();
             config.save();
         }
@@ -140,7 +140,7 @@ public class SinkCommands extends JavaPlugin
     @SuppressWarnings("deprecation")
     public static void refreshScoreboard(Player player, int players)
     {
-        User user = SinkLibrary.getUser(player);
+        SinkUser user = SinkLibrary.getUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
         if ( !config.exists() )

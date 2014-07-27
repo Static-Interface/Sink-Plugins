@@ -22,7 +22,7 @@ import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.User;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -92,7 +92,7 @@ public class Channel
     public boolean enabledForPlayer(UUID uuid)
     {
         String enabledPath = "Channels." + getName() + ".Enabled";
-        User user = SinkLibrary.getUser(uuid);
+        SinkUser user = SinkLibrary.getUser(uuid);
         PlayerConfiguration config = user.getPlayerConfiguration();
         try
         {
@@ -104,7 +104,7 @@ public class Channel
         }
     }
 
-    public boolean sendMessage(User user, String message)
+    public boolean sendMessage(SinkUser user, String message)
     {
         if(!isEnabled())
         {
