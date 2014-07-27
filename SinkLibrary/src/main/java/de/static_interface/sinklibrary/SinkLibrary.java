@@ -49,7 +49,7 @@ public class SinkLibrary extends JavaPlugin
 {
 
     public static List<String> tmpBannedPlayers;
-    private static TPSTimer timer;
+    private static TpsTimer timer;
     private static Economy econ;
     private static Permission perm;
     private static Chat chat;
@@ -85,7 +85,7 @@ public class SinkLibrary extends JavaPlugin
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
-        timer = new TPSTimer();
+        timer = new TpsTimer();
         commands = new HashMap<>();
         commandsWithAliases = new HashMap<>();
 
@@ -306,7 +306,7 @@ public class SinkLibrary extends JavaPlugin
      *
      * @return SinkTimer
      */
-    public static TPSTimer getSinkTimer()
+    public static TpsTimer getSinkTimer()
     {
         return timer;
     }

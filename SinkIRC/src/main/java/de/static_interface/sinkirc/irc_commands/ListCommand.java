@@ -26,6 +26,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListCommand extends IrcCommand
 {
     public ListCommand(Plugin plugin)
@@ -42,6 +45,7 @@ public class ListCommand extends IrcCommand
             return true;
         }
 
+        List<String> out = new ArrayList<>();
         String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
@@ -66,15 +70,17 @@ public class ListCommand extends IrcCommand
             // standard length: 512 (inclusive headers)
             if ( onlineMessage.length() > 400 )
             {
-                sender.sendMessage(onlineMessage);
+                out.add(onlineMessage);
                 onlineMessage = "";
             }
         }
 
         if ( onlineMessage.length() > 0 )
         {
-            sender.sendMessage(onlineMessage);
+            out.add(onlineMessage);
         }
+
+        sender.sendMessage(out.toArray(new String[out.size()]));
 
         return true;
     }

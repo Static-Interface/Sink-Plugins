@@ -31,7 +31,7 @@ public class MsgCommand extends IrcCommand
     public MsgCommand(Plugin plugin)
     {
         super(plugin);
-        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "privmsg <target> <msg>");
+        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "msg <target> <msg>");
     }
 
     @Override
