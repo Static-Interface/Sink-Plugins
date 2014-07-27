@@ -18,48 +18,46 @@
 package de.static_interface.sinkirc.irc_commands;
 
 import de.static_interface.sinkirc.IrcUtil;
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.irc.IrcCommandSender;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class MsgCommand extends IrcCommand
+public class SetCommand extends Command
 {
-    public MsgCommand(Plugin plugin)
+    public SetCommand(Plugin plugin)
     {
         super(plugin);
-        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "privmsg <target> <msg>");
+        setUsage("Wrong usage! Usage: " + getCommandPrefix() + "set <option> <value>");
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
+    protected boolean onExecute(CommandSender cs, String label, String[] args)
     {
         IrcCommandSender sender = (IrcCommandSender) cs;
-        if ( args.length < 2 )
+        if ( !sender.isOp()) throw new UnauthorizedAccessException();
+
+        if(args.length < 2)
         {
             return false;
         }
-        de.static_interface.sinklibrary.User target;
-        target = SinkLibrary.getUser(args[0]);
-        if ( !target.isOnline() )
+
+        switch(args[0].toLowerCase())
         {
-            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
-            return true;
+            case "cmdprefix":
+            {
+                IrcUtil.setCommandPrefix(args[1]);
+                sender.sendMessage("Commandprefix has been changed to: " + args[1]);
+                break;
+            }
+
+            default:
+            {
+                sender.sendMessage("Unknown option! Valid options: cmdprefix");
+                break;
+            }
         }
-
-        String message = ChatColor.YELLOW + "[IRC] [PRIVMSG] " + ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW + ": " + ChatColor.WHITE;
-
-        for ( int x = 1; x < args.length; x++ )
-        {
-            message += ' ' + args[x];
-        }
-
-        message = message.replace("null", "").trim();
-
-        target.getPlayer().sendMessage(message);
-        sender.sendMessage("Message was send to \"" + target.getDisplayName() + ChatColor.RESET + "\"!");
         return true;
     }
 }

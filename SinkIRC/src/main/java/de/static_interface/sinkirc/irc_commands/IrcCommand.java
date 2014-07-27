@@ -19,7 +19,9 @@ package de.static_interface.sinkirc.irc_commands;
 
 import de.static_interface.sinkirc.IrcListener;
 import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.irc.IrcCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public abstract class IrcCommand extends Command
@@ -41,6 +43,15 @@ public abstract class IrcCommand extends Command
     public boolean isPlayerOnly()
     {
         return false;
+    }
+
+    public boolean isIrcOpOnly() { return false; }
+
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args)
+    {
+        if( isIrcOpOnly() && !sender.isOp()) throw new UnauthorizedAccessException();
+        return onExecute(sender, label, args);
     }
 
     public boolean isQueryCommand()

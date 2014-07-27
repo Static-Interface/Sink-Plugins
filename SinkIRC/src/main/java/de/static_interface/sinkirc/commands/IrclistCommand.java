@@ -36,7 +36,7 @@ public class IrclistCommand implements CommandExecutor
         for ( User user : SinkIRC.getMainChannel().getUsers() )
         {
             String formattedNick = user.getNick();
-            if ( formattedNick.equals(SinkIRC.getIRCBot().getNick()) )
+            if ( formattedNick.equals(SinkIRC.getIrcBot().getNick()) )
             {
                 continue;
             }

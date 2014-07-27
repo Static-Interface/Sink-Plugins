@@ -51,7 +51,7 @@ public class IrcKickCommand implements CommandExecutor
             }
         }
 
-        Channel channel = SinkIRC.getIRCBot().getUserBot().getChannels().first();
+        Channel channel = SinkIRC.getIrcBot().getUserBot().getChannels().first();
         channel.send().kick(IrcUtil.getUser(channel, target), reason);
 
         return true;

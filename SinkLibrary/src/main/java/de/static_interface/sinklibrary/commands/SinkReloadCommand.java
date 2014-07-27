@@ -21,6 +21,8 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,6 +41,8 @@ public class SinkReloadCommand extends Command
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
+        if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
+
         String name;
         LanguageConfiguration.getInstance().reload();
         name = LanguageConfiguration.getInstance().getFile().getName();

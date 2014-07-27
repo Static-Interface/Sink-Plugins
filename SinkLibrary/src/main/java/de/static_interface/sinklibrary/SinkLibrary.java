@@ -35,7 +35,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -66,7 +65,7 @@ public class SinkLibrary extends JavaPlugin
 
     public static boolean initialized = false;
     public static boolean sinkChatAvailable;
-
+    public static boolean ircAvailable = false;
     static Logger logger;
     private static HashMap<String, Command> commandsWithAliases;
     private static HashMap<String, Command> commands;
@@ -171,6 +170,7 @@ public class SinkLibrary extends JavaPlugin
 
         if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null)
         {
+            ircAvailable = true;
             Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
 
             if ( Bukkit.getPluginManager().getPlugin("SinkChat") != null )
@@ -382,23 +382,15 @@ public class SinkLibrary extends JavaPlugin
      *
      * @param message Message to send
      * @param target Target user/channel, use null for default channel
+     * @return true if successfully sended, false if event got cancelled or irc is not available
      */
-    public static  boolean sendIrcMessage(String message, String target)
+    public static boolean sendIrcMessage(String message, String target)
     {
-        boolean ircAvailable = false;
-        for ( Plugin plugin : registeredPlugins )
-        {
-            if ( plugin.getName().equals("SinkIRC") )
-            {
-                ircAvailable = true;
-                break;
-            }
-        }
         if ( !ircAvailable ) return false;
         SinkLibrary.getCustomLogger().debug("Firing new IRCSendMessageEvent(\"" + message + "\")");
         IrcSendMessageEvent event = new IrcSendMessageEvent(message, target);
         Bukkit.getPluginManager().callEvent(event);
-        return true;
+        return event.isCancelled();
     }
 
     /**
@@ -611,14 +603,8 @@ public class SinkLibrary extends JavaPlugin
 
     public static void registerCommand(String name, Command command)
     {
-        registerCommand(name, command, true);
-    }
-
-    public static void registerCommand(String name, Command command, boolean registerToBukkit)
-    {
-        //if (getCustomCommand(name) != null) throw new IllegalArgumentException("Command is already registered");
-
-        if(registerToBukkit)
+        name = name.toLowerCase();
+        if(!command.isIrcOnly())
         {
             try
             {
@@ -628,6 +614,7 @@ public class SinkLibrary extends JavaPlugin
                     cmd.setExecutor(command);
                     for ( String alias : cmd.getAliases() ) // Register alias commands
                     {
+                        alias = alias.toLowerCase();
                         if ( alias.equals(name) ) continue;
                         commandsWithAliases.put(alias, command);
                     }
@@ -648,7 +635,7 @@ public class SinkLibrary extends JavaPlugin
     {
         try
         {
-            return commandsWithAliases.get(name);
+            return commandsWithAliases.get(name.toLowerCase());
         }
         catch(Exception ignored) { return null; }
     }

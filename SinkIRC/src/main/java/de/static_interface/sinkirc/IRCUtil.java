@@ -53,6 +53,7 @@ public class IrcUtil
 
     public static void setCommandPrefix(String commandPrefix)
     {
+        //Todo: make configurable
         IrcUtil.commandPrefix = commandPrefix;
     }
 
@@ -105,7 +106,7 @@ public class IrcUtil
 
     public static Channel getChannel(String name)
     {
-        for(Channel channel : SinkIRC.getIRCBot().getUserBot().getChannels())
+        for(Channel channel : SinkIRC.getIrcBot().getUserBot().getChannels())
         {
             if(channel.getName().equalsIgnoreCase(name)) return channel;
         }
@@ -115,12 +116,12 @@ public class IrcUtil
 
     public static boolean sendMessage(String target, String message)
     {
-        SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
+        //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
 
         try
         {
-            SinkIRC.getIRCBot().sendIRC().message(target, message);
+            SinkIRC.getIrcBot().sendIRC().message(target, message);
             return true;
         }
         catch(Exception e)
@@ -131,7 +132,7 @@ public class IrcUtil
 
     public static boolean sendMessage(Channel target, String message)
     {
-        SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
+        //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
         try
         {
@@ -155,7 +156,7 @@ public class IrcUtil
         {
             label = ChatColor.stripColor(label);
         }
-        IrcCommandEvent event = new IrcCommandEvent(source, user, command, label, args, SinkIRC.getIRCBot());
+        IrcCommandEvent event = new IrcCommandEvent(source, user, command, label, args, SinkIRC.getIrcBot());
         Bukkit.getPluginManager().callEvent(event);
     }
 

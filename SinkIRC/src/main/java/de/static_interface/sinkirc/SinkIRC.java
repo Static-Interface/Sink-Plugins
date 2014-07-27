@@ -102,12 +102,14 @@ public class SinkIRC extends JavaPlugin
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
         getCommand("irckick").setExecutor(new IrcKickCommand());
 
-        SinkLibrary.registerCommand("help", new HelpCommand(this), false);
-        SinkLibrary.registerCommand("exec", new ExecCommand(this), false);
-        SinkLibrary.registerCommand("say", new SayCommand(this), false);
-        SinkLibrary.registerCommand("kick", new KickCommand(this), false);
-        SinkLibrary.registerCommand("msg", new MsgCommand(this), false);
-        SinkLibrary.registerCommand("list", new ListCommand(this), false);
+        SinkLibrary.registerCommand("help", new HelpCommand(this));
+        SinkLibrary.registerCommand("exec", new ExecCommand(this));
+        SinkLibrary.registerCommand("say", new SayCommand(this));
+        SinkLibrary.registerCommand("kick", new KickCommand(this));
+        SinkLibrary.registerCommand("msg", new MsgCommand(this));
+        SinkLibrary.registerCommand("list", new ListCommand(this));
+        SinkLibrary.registerCommand("set", new SetCommand(this));
+
         SinkLibrary.registerPlugin(this);
         initialized = true;
     }
@@ -137,7 +139,7 @@ public class SinkIRC extends JavaPlugin
         System.gc();
     }
 
-    public static PircBotX getIRCBot()
+    public static PircBotX getIrcBot()
     {
         return ircBot;
     }

@@ -22,6 +22,8 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.User;
 import de.static_interface.sinklibrary.Util;
 import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.exceptions.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -38,6 +40,8 @@ public class RawCommands
         @Override
         public boolean onExecute(CommandSender sender, String label, String[] args)
         {
+            if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
+
             if ( args.length < 1 )
             {
                 return false;
@@ -57,6 +61,8 @@ public class RawCommands
         @Override
         public boolean onExecute(CommandSender sender, String label, String[] args)
         {
+            if (sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
+
             if ( args.length < 1 )
             {
                 return false;
