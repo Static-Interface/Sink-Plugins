@@ -40,7 +40,7 @@ public class IrcCommandListener implements Listener
         String[] args = event.getArgs();
 
         SinkLibrary.getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
-                            + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
+                + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
 
         if (!executeCommand(user, command, source, label, args))
         {

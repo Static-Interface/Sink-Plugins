@@ -17,7 +17,6 @@
 
 package de.static_interface.sinklibrary;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -28,7 +27,7 @@ import java.util.Set;
 import static de.static_interface.sinklibrary.Constants.TICK;
 
 
-public class TPSTimer implements Runnable
+public class TpsTimer implements Runnable
 {
     private final transient Set<String> onlineUsers = new HashSet<>();
     private transient long lastPoll = System.nanoTime();
@@ -36,7 +35,7 @@ public class TPSTimer implements Runnable
     private int skip1 = 0;
     private int skip2 = 0;
 
-    TPSTimer()
+    TpsTimer()
     {
         history.add(TICK);
     }

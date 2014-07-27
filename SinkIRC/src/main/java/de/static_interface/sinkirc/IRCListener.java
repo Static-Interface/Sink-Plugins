@@ -19,6 +19,7 @@ package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.events.*;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -67,7 +68,7 @@ public class IrcListener implements Listener
     {
         String reason = ": " + event.getReason();
         if ( event.getReason().isEmpty() ) reason = "!";
-        de.static_interface.sinklibrary.User user = SinkLibrary.getUser(event.getPlayer());
+        SinkUser user = SinkLibrary.getUser(event.getPlayer());
         IrcUtil.sendMessage(SinkIRC.getMainChannel(), user.getDisplayName() + ChatColor.RESET + " has been kicked" + reason);
     }
 
@@ -155,7 +156,7 @@ public class IrcListener implements Listener
     public void onIrcReceiveMessage(IrcReceiveMessageEvent event)
     {
         SinkLibrary.getCustomLogger().debug("onIrcReceiveMessage: user: " + event.getUser().getNick() + ", channel: "
-                                                + event.getChannel().getName() + ", message: " + event.getMessage());
+                + event.getChannel().getName() + ", message: " + event.getMessage());
         String label = event.getMessage();
         Channel channel = event.getChannel();
 
