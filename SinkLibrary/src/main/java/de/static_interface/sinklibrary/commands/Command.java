@@ -48,7 +48,7 @@ public abstract class Command implements CommandExecutor
     public boolean isPlayerOnly() { return false; };
     public boolean isIrcOnly() { return false; }
     public boolean isIrcOpOnly() { return false; }
-
+    public boolean useNotices() { return false; }
     protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
     {
         if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
@@ -63,6 +63,12 @@ public abstract class Command implements CommandExecutor
         else if ( !(sender instanceof Player) && isPlayerOnly() )
         {
             return false;
+        }
+        boolean defaultNotices = false;
+        if(useNotices() && sender instanceof IrcCommandSender)
+        {
+            defaultNotices = ((IrcCommandSender)sender).getUseNotice();
+            ((IrcCommandSender)sender).setUseNotice(true);
         }
 
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
@@ -83,6 +89,11 @@ public abstract class Command implements CommandExecutor
                 onPostExecute(sender, label, args, exception, success);
             }
         });
+
+        if(useNotices() && sender instanceof IrcCommandSender)
+        {
+            ((IrcCommandSender)sender).setUseNotice(defaultNotices);
+        }
 
         return true;
     }

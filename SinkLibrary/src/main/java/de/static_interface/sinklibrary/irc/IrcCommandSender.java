@@ -36,7 +36,7 @@ public class IrcCommandSender implements CommandSender
 {
     User base;
     String source;
-    boolean useNotice = false;
+    volatile boolean useNotice = false;
 
     public IrcCommandSender(User base, String source)
     {
@@ -47,12 +47,12 @@ public class IrcCommandSender implements CommandSender
         this.useNotice = false;
     }
 
-    public void setUseNotice(boolean value)
+    public synchronized void setUseNotice(boolean value)
     {
         this.useNotice = value;
     }
 
-    public boolean getUseNotice()
+    public synchronized boolean getUseNotice()
     {
         return useNotice;
     }
@@ -85,7 +85,7 @@ public class IrcCommandSender implements CommandSender
     }
 
     @Override
-    public void sendMessage(String msg)
+    public synchronized void sendMessage(String msg)
     {
         if(useNotice)
         {
@@ -96,7 +96,7 @@ public class IrcCommandSender implements CommandSender
     }
 
     @Override
-    public void sendMessage(String[] msgs)
+    public synchronized void sendMessage(String[] msgs)
     {
         boolean first = true;
         for(String msg : msgs)

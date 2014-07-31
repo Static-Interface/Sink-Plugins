@@ -40,13 +40,13 @@ public class SinkIRC extends JavaPlugin
 
     static PircBotX ircBot;
     static String mainChannel;
-
+    Thread ircThread;
     @Override
     public void onEnable()
     {
         if ( !checkDependencies() || initialized ) return;
 
-        new Thread( new Runnable()
+        ircThread = new Thread( new Runnable()
         {
             @Override
             public void run()
@@ -94,7 +94,8 @@ public class SinkIRC extends JavaPlugin
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+        ircThread.start();
 
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
@@ -135,6 +136,8 @@ public class SinkIRC extends JavaPlugin
     public void onDisable()
     {
         if ( ircBot != null) ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
+        if(!ircThread.isInterrupted()) ircThread.interrupt();
+        ircThread = null;
         ircBot = null;
         System.gc();
     }

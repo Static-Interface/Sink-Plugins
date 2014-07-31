@@ -36,11 +36,15 @@ public class ExecCommand extends IrcCommand
     }
 
     @Override
+    public boolean useNotices()
+    {
+        return true;
+    }
+
+    @Override
     public boolean onExecute(final CommandSender cs, String label, String[] args)
     {
         final IrcCommandSender sender = (IrcCommandSender) cs;
-        boolean defaultUseNotice = sender.getUseNotice();
-        sender.setUseNotice(true);
         String commandWithArgs = "";
         int i = 0;
         for ( String arg : args )
@@ -69,7 +73,6 @@ public class ExecCommand extends IrcCommand
                 Bukkit.dispatchCommand(sender, finalCommandWithArgs);
             }
         });
-        sender.setUseNotice(defaultUseNotice);
         return true;
     }
 }

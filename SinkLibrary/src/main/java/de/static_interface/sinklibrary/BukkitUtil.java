@@ -97,7 +97,11 @@ public class BukkitUtil
      */
     public static String getSenderName(CommandSender sender)
     {
-        if (sender instanceof IrcCommandSender) return sender.getName() + ChatColor.RESET;
+        if (sender instanceof IrcCommandSender)
+        {
+            ChatColor prefix = sender.isOp() ? ChatColor.DARK_RED : ChatColor.DARK_AQUA;
+            return prefix + sender.getName() + ChatColor.RESET;
+        }
         if(sender instanceof ConsoleCommandSender) return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
         SinkUser user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
