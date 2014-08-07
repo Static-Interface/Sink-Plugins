@@ -107,7 +107,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");
 
         addDefault("SinkAntiSpam.Prefix", "&4[SinkAntiSpam]");
-        addDefault("SinkAntiSpam.Warn", "&l&n%s&r has been warned by %s: %s (%s/%s)");
+        addDefault("SinkAntiSpam.Warn", "%s&4 has been warned by %s: %s (%s/%s)");
         addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: %s");
         addDefault("SinkAntiSpam.Reasons.IP", "&cTried to write IP: &9&l&n%s");
         addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n%s");

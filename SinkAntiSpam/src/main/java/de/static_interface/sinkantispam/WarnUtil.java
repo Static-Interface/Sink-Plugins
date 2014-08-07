@@ -54,7 +54,7 @@ public class WarnUtil
             return;
         }
 
-        String message = prefix + String.format(m("SinkAntiSpam.Warn"), player.getDisplayName(),
+        String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getUser(player).getDisplayName(),
                 warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
         SinkUser user = SinkLibrary.getUser(player);
         String perm;

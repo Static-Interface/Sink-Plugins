@@ -49,7 +49,7 @@ public class WarnCommand extends Command
         if ( args.length < 2 )
         {
             sender.sendMessage(PREFIX + m("General.CommandMisused.Arguments.TooFew"));
-            sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Player] (Reason)");
+            sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Spieler] (Grund)");
             return false;
         }
         Player target = (BukkitUtil.getPlayer(args[0]));
@@ -58,7 +58,7 @@ public class WarnCommand extends Command
             sender.sendMessage(PREFIX + String.format(m("General.NotOnline"), args[0]));
             return true;
         }
-        if ( target.getDisplayName().equals(BukkitUtil.getSenderName(sender)) )
+        if ( target.getName().equals(sender.getName()))
         {
             sender.sendMessage(PREFIX + m("SinkAntiSpam.WarnSelf"));
             return true;
