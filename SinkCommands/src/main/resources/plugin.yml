@@ -102,6 +102,10 @@ commands:
     permission: sinkcommands.countdown
     aliases: cd
 
+  gup:
+    description: Go up!
+    permission: sinkcommands.gup
+
 #  list:
 #    description: Lists all users with specified prefix
 #    permission: sinkcommands.list
@@ -110,6 +114,7 @@ commands:
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
+    default: op
     children:
       sinkcommands.drug: true
       sinkcommands.milk.*: true
@@ -130,10 +135,14 @@ permissions:
       sinkcommands.stats: true
       sinkcommands.countdown: true
       sinkcommands.list: true
+      sinkcommands.gup: true
 
   sinkcommands.drug:
     description: Allows to take drugs
     default: true
+
+  sinkcommands.gup:
+    default: op
 
   sinkcommands.milk.*:
     description: Allows to use all milk commands

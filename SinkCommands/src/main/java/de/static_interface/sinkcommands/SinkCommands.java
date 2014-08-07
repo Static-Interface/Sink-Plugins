@@ -219,5 +219,6 @@ public class SinkCommands extends JavaPlugin
         SinkLibrary.registerCommand("raw", new RawCommands.RawCommand(this));
         SinkLibrary.registerCommand("rawuser", new RawCommands.RawUserCommand(this));
         SinkLibrary.registerCommand("warn", new WarnCommand(this));
+        SinkLibrary.registerCommand("gup", new GupCommand(this));
     }
 }
