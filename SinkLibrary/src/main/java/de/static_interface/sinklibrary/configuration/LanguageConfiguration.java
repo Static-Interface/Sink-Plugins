@@ -107,12 +107,15 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");
 
         addDefault("SinkAntiSpam.Prefix", "&4[SinkAntiSpam]");
-        addDefault("SinkAntiSpam.Warn", "&l&n%s&r has been automatically warned: %s");
-        addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: &9&l&n%s");
+        addDefault("SinkAntiSpam.Warn", "&l&n%s&r has been warned by %s: %s (%s/%s)");
+        addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: %s");
         addDefault("SinkAntiSpam.Reasons.IP", "&cTried to write IP: &9&l&n%s");
         addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n%s");
         addDefault("SinkAntiSpam.ReplaceDomain", "google.com");
         addDefault("SinkAntiSpam.ReplaceIP", "127.0.0.1");
+        addDefault("SinkAntiSpam.WarnSelf", "&4You can't warn yourself!");
+        addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned for 5 minutes"); // Todo: make time configurable
+        addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
 
         /*
         addDefault("SinkDuty.Time", "You have the following duty time: %s");

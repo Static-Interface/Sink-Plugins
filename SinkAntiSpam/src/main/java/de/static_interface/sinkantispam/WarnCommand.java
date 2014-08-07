@@ -15,8 +15,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkcommands.commands;
+package de.static_interface.sinkantispam;
 
+import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.commands.Command;
@@ -24,6 +25,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class WarnCommand extends Command
 {
@@ -43,27 +46,22 @@ public class WarnCommand extends Command
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args)
     {
-        if ( args.length < 1 )
+        if ( args.length < 2 )
         {
-            sender.sendMessage(PREFIX + ChatColor.RED + "Zu wenige Argumente!");
-            sender.sendMessage(PREFIX + ChatColor.RED + "Benutzung: " + getCommandPrefix() + "warn [Spieler] (Grund)");
+            sender.sendMessage(PREFIX + m("General.CommandMisused.Arguments.TooFew"));
+            sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Player] (Reason)");
             return false;
         }
         Player target = (BukkitUtil.getPlayer(args[0]));
         if ( target == null )
         {
-            sender.sendMessage(PREFIX + args[0] + " ist nicht online!");
+            sender.sendMessage(PREFIX + String.format(m("General.NotOnline"), args[0]));
             return true;
         }
         if ( target.getDisplayName().equals(BukkitUtil.getSenderName(sender)) )
         {
-            sender.sendMessage(PREFIX + "Du kannst dich nicht selbst verwarnen!");
+            sender.sendMessage(PREFIX + m("SinkAntiSpam.WarnSelf"));
             return true;
-        }
-        if ( args.length == 1 )
-        {
-            sender.sendMessage(PREFIX + "Du musst einen Grund angeben!");
-            return false;
         }
 
         String reason = "";
@@ -78,8 +76,7 @@ public class WarnCommand extends Command
             reason = reason + ' ' + args[i];
         }
 
-        target.sendMessage(PREFIX + ChatColor.RED + "Du wurdest von " + BukkitUtil.getSenderName(sender) + ChatColor.RED + " verwarnt. Grund: " + reason);
-        BukkitUtil.broadcast(PREFIX + SinkLibrary.getUser(target).getDisplayName() + ChatColor.GRAY + " wurde von " + BukkitUtil.getSenderName(sender) + ChatColor.GRAY + " verwarnt. Grund: " + reason, "sinkcommands.warn.message", true);
+        WarnUtil.warnPlayer(target, new Warning(reason, SinkLibrary.getUser(sender).getDisplayName(), true));
         return true;
     }
 }

@@ -10,13 +10,18 @@ permissions:
  sinkantispam.*:
    description: Gives access to all SinkAntiSpam commands
    children:
-     sinkantispam.message: true
+     sinkantispam.autowarnmessage: true
+     sinkantispam.warnmessage: true
      sinkantispam.bypass: true
 
  sinkantispam.bypass:
     description: Allows to bypass SinkAntiSpam
     default: op
 
- sinkantispam.message:
+ sinkantispam.warnmessage:
     description: Allows to receive messages
+    default: true
+
+ sinkantispam.autowarnmessage:
+    description: Allows to receive auto warn messages which may contains ip, domains, blacklisted words etc
     default: op

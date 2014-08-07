@@ -17,25 +17,16 @@
 
 package de.static_interface.sinkantispam;
 
-import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 public class SinkAntiSpam extends JavaPlugin
 {
-    public static String prefix;
-
     private static boolean initialized = false;
-
     public void onEnable()
     {
         if ( !checkDependencies() )
@@ -49,26 +40,15 @@ public class SinkAntiSpam extends JavaPlugin
             initialized = true;
         }
 
-        prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
+
+
+        SinkLibrary.registerCommand("warn", new WarnCommand(this));
     }
 
     public void onDisable()
     {
         System.gc();
     }
-
-    public static void warnPlayer(Player player, String reason)
-    {
-        String message = prefix + String.format(m("SinkAntiSpam.Warn"), player.getDisplayName(), reason);
-        String permission = "sinkantispam.message";
-        SinkUser user = SinkLibrary.getUser(player);
-        if ( !user.hasPermission(permission) )
-        {
-            player.sendMessage(message);
-        }
-        BukkitUtil.broadcast(message, permission, false);
-    }
-
 
     private boolean checkDependencies()
     {
