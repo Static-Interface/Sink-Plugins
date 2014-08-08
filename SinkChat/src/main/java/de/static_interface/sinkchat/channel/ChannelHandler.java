@@ -43,7 +43,7 @@ public class ChannelHandler
     {
     	for ( Channel channel : registeredChannels.values() )
     	{
-    		if ( channel.getName().equals(channelname) || channel.getPrefix().equals(channelname) ) return channel;
+    		if ( channel.getName().equalsIgnoreCase(channelname) || channel.getPrefix().equalsIgnoreCase(channelname) ) return channel;
     	}
     	return null;
     }

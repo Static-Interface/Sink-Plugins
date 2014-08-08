@@ -23,6 +23,7 @@ import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -62,6 +63,10 @@ public class ChatListenerHighest implements Listener
         {
             if ( event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar) )
             {
+            	if ( (ChannelHandler.getRegisteredChannel(callChar)).enabledForPlayer(event.getPlayer().getUniqueId()) )
+            	{
+            		break;
+            	}
                 if ( ChannelHandler.getRegisteredChannel(callChar).sendMessage(user, event.getMessage()) )
                 {
                     event.setCancelled(true);
@@ -86,7 +91,7 @@ public class ChatListenerHighest implements Listener
 
         if ( !SinkLibrary.isPermissionsAvailable() )
         {
-            formattedMessage = ChatColor.GRAY + m("SinkChat.Prefix.Chat.Local") + ChatColor.RESET + ' ' + formattedMessage;
+            formattedMessage = ChatColor.GRAY + m("SinkChat.Prefix.Local") + ChatColor.RESET + ' ' + formattedMessage;
         }
 
         Util.sendMessage(user, formattedMessage, range);
