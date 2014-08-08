@@ -38,7 +38,7 @@ public class LanguageConfiguration extends ConfigurationBase
         if ( instance == null )
         {
             instance = new LanguageConfiguration();
-            instance.load();
+            instance.init();
         }
         return instance;
     }
