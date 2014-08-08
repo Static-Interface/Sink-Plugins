@@ -58,7 +58,20 @@ public class Channel
         return name;
     }
 
+    /**
+     * Returns the callChar
+     * @deprecated use {@link #getCallCode()} instead.  
+     */
+    @deprecated
     public String getCallChar()
+    {
+        return getCallCode();
+    }
+
+    /**
+     * Returns the callCode.
+     */
+    public String getCallCode()
     {
         return callCode;
     }
