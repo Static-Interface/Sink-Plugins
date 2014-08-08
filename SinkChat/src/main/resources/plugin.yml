@@ -90,6 +90,7 @@ permissions:
     children:
        sinkchat.channel.use: true
        sinkchat.channel.list: true
+       sinkchat.channel.admin: false
 
   sinkchat.channel.use:
     description: Allows to use /ch commands
