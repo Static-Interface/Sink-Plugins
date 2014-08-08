@@ -19,13 +19,17 @@ package de.static_interface.sinkchat.channel;
 
 import java.util.HashMap;
 
+import de.static_interface.sinkchat.ChannelConfigurations;
+import de.static_interface.sinkchat.SinkChat;
+
 public class ChannelHandler
 {
     private static HashMap<String, Channel> registeredChannels = new HashMap<>();
 
     public static void registerChannel(Channel channel)
     {
-        registeredChannels.put(channel.getCallChar(), channel);
+        registeredChannels.put(channel.getCallCode(), channel);
+        saveChannel(channel);
     }
 
     /**
@@ -56,11 +60,33 @@ public class ChannelHandler
         return registeredChannels.get(callCode);
     }
 
+    private static void deleteChannel(Channel channel)
+    {
+    	ChannelConfigurations config = SinkChat.getChannelConfigs();
+    	config.set("Channels."+channel.getName(), null);
+    }
+
+    private static void saveChannel(Channel channel)
+    {
+    	String pathPrefix = "Channels." + channel.getName() + ".";
+    	ChannelConfigurations config = SinkChat.getChannelConfigs();
+
+    	config.set(pathPrefix + ChannelValues.DEFAULT, true);
+    	config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());
+    	config.set(pathPrefix + ChannelValues.ENABLED, channel.enabled);
+    	config.set(pathPrefix + ChannelValues.PERMISSION, channel.getPermission());
+    	config.set(pathPrefix + ChannelValues.PREFIX, channel.getPrefix());
+    	config.set(pathPrefix + ChannelValues.SEND_TO_IRC, channel.sendToIRC);
+    	config.set(pathPrefix + ChannelValues.RANGE, channel.getRange());;
+    }
+
     /**
      * Removes a channel by it's call code.
      */
     public static void removeRegisteredChannel(String callCode)
     {
+    	Channel channel = registeredChannels.get(callCode);
     	registeredChannels.remove(callCode);
+    	deleteChannel(channel);
     }
 }

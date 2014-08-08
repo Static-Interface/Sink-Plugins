@@ -26,7 +26,6 @@ import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.commands.Command;
-import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class ChannelCommand extends Command
@@ -37,6 +36,9 @@ public class ChannelCommand extends Command
 	}
 
 	public static final String PREFIX = m("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
+
+	private static final String enabled = "SinkChat.Commands.Channel.Enabled",
+								disabled = "SinKChat.Commands.Channel.Disabled";
 
 	@Override
 	public boolean onExecute(CommandSender sender, String label, String[] args)
@@ -77,7 +79,7 @@ public class ChannelCommand extends Command
 					}
 					if ( channel.enabledForPlayer(user.getUniqueId()) )
 					{
-						user.sendMessage(m("SinkChat.AlreadyEnabled"));
+						user.sendMessage(PREFIX + m("SinkChat.AlreadyEnabled"));
 						return true;
 					}
 					else
@@ -139,7 +141,7 @@ public class ChannelCommand extends Command
 
 				for ( Channel c : ChannelHandler.getRegisteredChannels().values() )
 				{
-					channels = channels + String.format("%s %s: %s – enabled=%s%n", PREFIX, c.getName(), c.getCallChar(), c.enabledForPlayer(user.getUniqueId()));
+					channels = channels + String.format("%s %s: %s – %s%n", PREFIX, c.getName(), c.getCallCode(),  ( c.enabledForPlayer(user.getUniqueId()) ? m(enabled) : m(disabled) ) );
 				}
 
 				user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.List"), channels));
@@ -157,7 +159,7 @@ public class ChannelCommand extends Command
 					if ( c.enabledForPlayer(user.getUniqueId()) ) enabledChannels = enabledChannels + c.getName() + " ";
 				}
 
-				user.sendMessage(PREFIX + " " + enabledChannels);
+				user.sendMessage(PREFIX + ( enabledChannels.length() > 0 ? enabledChannels : m("SinkChat.NoChannelJoined") ));
 				return true;
 			case "add":
 				if ( !user.hasPermission("sinkchat.channel.admin") && !user.hasPermission("sinkchat.channel.*") )
@@ -178,7 +180,7 @@ public class ChannelCommand extends Command
 				callCode = args[2];
 				enabled = ( args[3].equalsIgnoreCase("true") ? true : false );
 				permission = args[4];
-				prefix = args[5];
+				prefix = args[5]+" ";
 				sendToIRC = ( args[6].equalsIgnoreCase("true") ? true : false );
 				range = ( isValidNumber(args[7]) ? Integer.parseInt(args[7]) : 0 );
 				Channel newChannel = new Channel(name, callCode, enabled, permission, prefix, sendToIRC, range);

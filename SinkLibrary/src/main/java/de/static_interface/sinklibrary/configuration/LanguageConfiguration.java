@@ -61,6 +61,8 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Commands.Channel.PlayerLeaves", "You left the %s channel.");
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
         addDefault("SinkChat.Commands.Channel.ChannelUnknown", "%s is an unknown channel.");
+        addDefault("SinkChat.Commands.Channel.Enabled", "&aenabled");
+        addDefault("SinKChat.Commands.Channel.Disabled", "&cdisabled");
         addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel %s already exists.");
         addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel %s was successfully created.");
         addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel %s was successfully deleted.");
@@ -105,6 +107,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.AlreadyDisabled", "&4This channel has already been disabled.");
         addDefault("SinkChat.EnabledChannel", "&4This channel has been enabled.");
         addDefault("SinkChat.AlreadyEnabled", "&4This channel has already been enabled.");
+        addDefault("SinkChat.NoChannelJoined", "&4You don't take part in any channels.");
         addDefault("SinkChat.Towny.NotInTown", "&4Error:&c You are not a resident of any town");
         addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
         addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");

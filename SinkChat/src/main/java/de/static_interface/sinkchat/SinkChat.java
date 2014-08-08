@@ -40,6 +40,7 @@ public class SinkChat extends JavaPlugin
 {
     private static boolean initialized = false;
     private static Towny towny;
+    private static ChannelConfigurations channelconfigs = null;
 
     public void onEnable()
     {
@@ -60,24 +61,30 @@ public class SinkChat extends JavaPlugin
 
     private void registerChannels()
     {
-        ChannelConfigurations config = new ChannelConfigurations();
-        YamlConfiguration yamlConfig = config.getYamlConfiguration();
+        channelconfigs = new ChannelConfigurations();
+        YamlConfiguration yamlConfig = channelconfigs.getYamlConfiguration();
         ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
+        Channel channel = null;
         for (String key : section.getKeys(false))
         {
             String pathPrefix = "Channels." + key + ".";
 
-            String callChar = (String) config.get(pathPrefix + ChannelValues.CALLCHAR);
-            boolean enabled = (boolean) config.get(pathPrefix + ChannelValues.ENABLED);
-            String permission = (String) config.get(pathPrefix + ChannelValues.PERMISSION);
-            String prefix = (String) config.get(pathPrefix + ChannelValues.PREFIX);
-            boolean sendToIRC = (boolean) config.get(pathPrefix + ChannelValues.SEND_TO_IRC);
-            int range = (int) config.get(pathPrefix + ChannelValues.RANGE);
+            String callChar = (String) channelconfigs.get(pathPrefix + ChannelValues.CALLCHAR);
+            boolean enabled = (boolean) channelconfigs.get(pathPrefix + ChannelValues.ENABLED);
+            String permission = (String) channelconfigs.get(pathPrefix + ChannelValues.PERMISSION);
+            String prefix = (String) channelconfigs.get(pathPrefix + ChannelValues.PREFIX);
+            boolean sendToIRC = (boolean) channelconfigs.get(pathPrefix + ChannelValues.SEND_TO_IRC);
+            int range = (int) channelconfigs.get(pathPrefix + ChannelValues.RANGE);
 
-            Channel channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
+            channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
             ChannelHandler.registerChannel(channel);
         }
     }
+
+    public static ChannelConfigurations getChannelConfigs()
+	{
+		return channelconfigs;
+	}
 
     public void onDisable()
     {
