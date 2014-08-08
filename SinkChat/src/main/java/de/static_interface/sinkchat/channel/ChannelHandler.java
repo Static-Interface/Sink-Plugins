@@ -33,8 +33,13 @@ public class ChannelHandler
         return registeredChannels;
     }
 
-    public static Channel getRegisteredChannel(String callChar)
+    public static Channel getRegisteredChannel(String callKey)
     {
-        return registeredChannels.get(callChar);
+        return registeredChannels.get(callKey);
+    }
+
+    public static void removeRegisteredChannel(String callKey)
+    {
+    	registeredChannels.remove(callKey);
     }
 }
