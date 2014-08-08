@@ -99,6 +99,9 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Prefix.Spy", "&7[Spy]");
         addDefault("SinkChat.Prefix.Local", "&7[Local]");
         addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
+        addDefault("SinkChat.DisabledChannel.AlreadyDisabled", "&4This channel has already been disabled.");
+        addDefault("SinkChat.EnabledChannel", "&4This channel has been enabled.");
+        addDefault("SinkChat.EnabledChannel.AlreadyEnabled", "&4This channel has already been enabled.");
         addDefault("SinkChat.Towny.NotInTown", "&4Error:&c You are not a resident of any town");
         addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
         addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");
