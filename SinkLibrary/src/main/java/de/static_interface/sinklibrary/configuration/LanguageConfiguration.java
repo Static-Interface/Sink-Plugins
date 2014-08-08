@@ -89,7 +89,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Channels.Private.WrongUsage", "&cWrong Usage!");
         addDefault("SinkChat.Channels.Private.Created", "&2Created successfully channel: \"%s\"!");
         addDefault("SinkChat.Channels.Private.IdentifierUsed", "&cIdentifier is already used!");
-        addDefault("SinkChat.Channels.Private.AlreadyExstis", "&6Channel already exists! Use a diffrent identifier.");
+        addDefault("SinkChat.Channels.Private.AlreadyExstis", "&6Channel already exists! Use a different identifier.");
         addDefault("SinkChat.Channels.Private.Renamed", "&bChannel renamed to: %s");
         addDefault("SinkChat.Channels.Private.Users", "Users in channel \"%s\":");
         addDefault("SinkChat.Channels.Private.Channels", "&bAvailable channels: %s");
