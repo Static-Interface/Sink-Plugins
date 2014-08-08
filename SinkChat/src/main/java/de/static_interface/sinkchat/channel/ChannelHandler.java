@@ -28,18 +28,39 @@ public class ChannelHandler
         registeredChannels.put(channel.getCallChar(), channel);
     }
 
+    /**
+     * @return All registered channels. HashMap<String, Channel> where String is the call code, Channel is the channel instance.
+     */
     public static HashMap<String, Channel> getRegisteredChannels()
     {
         return registeredChannels;
     }
 
-    public static Channel getRegisteredChannel(String callKey)
+    /**
+     * Returns a channel using a given name or null, if the channel can't be found.
+     */
+    public static Channel getChannelByName(String channelname)
     {
-        return registeredChannels.get(callKey);
+    	for ( Channel channel : registeredChannels.values() )
+    	{
+    		if ( channel.getName().equals(channelname) || channel.getPrefix().equals(channelname) ) return channel;
+    	}
+    	return null;
     }
 
-    public static void removeRegisteredChannel(String callKey)
+    /**
+     * Gets a registered channel by it's call code.
+     */
+    public static Channel getRegisteredChannel(String callCode)
     {
-    	registeredChannels.remove(callKey);
+        return registeredChannels.get(callCode);
+    }
+
+    /**
+     * Removes a channel by it's call code.
+     */
+    public static void removeRegisteredChannel(String callCode)
+    {
+    	registeredChannels.remove(callCode);
     }
 }

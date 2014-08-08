@@ -62,15 +62,17 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
         addDefault("SinkChat.Commands.Channel.ChannelUnknown", "%s is an unknown channel.");
         addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel %s already exists.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel %s was successfully created.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel %s was successfully deleted.");
         addDefault("SinkChat.Commands.Channel.List", "These channels are available: %s");
         addDefault("SinkChat.Commands.Channel.Part", "You have the following channels enabled:");
         addDefault("SinkChat.Commands.Channel.Help", "These commands are available:");
 
         addDefault("SinkChat.Commands.Spy.Enabled", "&aSpy chat has been enabled!");
-        addDefault("SinkChat.Commands.Spy.AlreadyEnabled", "&cSpy chat has been already enabled!");
+        addDefault("SinkChat.Commands.Spy.AlreadyEnabled", "&cSpy chat has already been enabled!");
 
         addDefault("SinkChat.Commands.Spy.Disabled", "&4Spy chat has been disabled!");
-        addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has been already disabled!");
+        addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has already been disabled!");
 
         /*
         addDefault("SinkChat.Channels.Help", "Help");

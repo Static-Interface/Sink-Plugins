@@ -18,132 +18,230 @@
 package de.static_interface.sinkchat.command;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import de.static_interface.sinkchat.channel.Channel;
+import de.static_interface.sinkchat.channel.ChannelHandler;
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.commands.Command;
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-public class ChannelCommand implements CommandExecutor
+public class ChannelCommand extends Command
 {
-    public static final String PREFIX = m("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
+	public ChannelCommand(Plugin plugin)
+	{
+		super(plugin);
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+	public static final String PREFIX = m("SinkChat.Prefix.Channel") + ' ' + ChatColor.RESET;
+
+	@Override
+	public boolean onExecute(CommandSender sender, String label, String[] args)
+	{
+		if ( args.length < 1 )
+		{
+			sendHelp(label, SinkLibrary.getUser(sender));
+			return true;
+		}
+		else
+		{
+			SinkUser user = SinkLibrary.getUser(sender);
+			switch ( args[0].toLowerCase() )
+			{
+			case "join":
+				if ( args.length < 2 )
+				{
+			        sender.sendMessage(PREFIX + COMMAND_PREFIX + label+" join <channel>");
+					return true;
+				}
+				if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				else
+				{
+					Channel channel = ChannelHandler.getRegisteredChannel(args[1]);
+					if ( !user.hasPermission(channel.getPermission()) )
+					{
+						user.sendMessage(String.format(m("Permissions.SinkChat.Channel"), channel.getName()));
+						return true;
+					}
+					if ( channel.enabledForPlayer(user.getUniqueId()) )
+					{
+						user.sendMessage(m("SinkChat.EnabledChannel.AlreadyEnabled"));
+						return true;
+					}
+					else
+					{
+						channel.setEnabledForPlayer(user.getUniqueId(), true);
+						return true;
+					}
+				}
+			case "part":
+				if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				if ( args.length < 2 )
+				{
+			        sender.sendMessage(PREFIX + COMMAND_PREFIX + label+" part <channel>");
+					return true;
+				}
+			case "leave":
+				if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				if ( args.length < 2 )
+				{
+			        sender.sendMessage(PREFIX + COMMAND_PREFIX + label+" leave <channel>");
+					return true;
+				}
+
+				Channel channel = ChannelHandler.getRegisteredChannel(args[1]);
+				if ( !channel.enabledForPlayer(user.getUniqueId()) )
+				{
+					user.sendMessage(m("SinkChat.DisabledChannel.AlreadyDisabled"));
+					return true;
+				}
+				else
+				{
+					channel.setEnabledForPlayer(user.getUniqueId(), false);
+					return true;
+				}
+			case "list":
+				if ( !user.hasPermission("sinkchat.channel.list") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				String channels = "";
+
+				for ( Channel c : ChannelHandler.getRegisteredChannels().values() )
+				{
+					channels = channels.concat(String.format("%s %s: %s – enabled=%s%n", PREFIX, c.getName(), c.getCallChar(), c.enabledForPlayer(user.getUniqueId())));
+				}
+
+				user.sendMessage(channels);
+				return true;
+			case "participating":
+				if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				String enabledChannels = "";
+
+				for ( Channel c : ChannelHandler.getRegisteredChannels().values() )
+				{
+					if ( c.enabledForPlayer(user.getUniqueId()) ) enabledChannels = enabledChannels.concat(c.getName().concat(" "));
+				}
+
+				user.sendMessage(PREFIX.concat(" ").concat(enabledChannels));
+				return true;
+			case "add":
+				if ( !user.hasPermission("sinkchat.channel.admin") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				String name, callCode, prefix, permission;
+				boolean enabled, sendToIRC;
+				int range;
+				if ( args.length < 8 )
+				{
+					user.sendMessage(PREFIX + COMMAND_PREFIX + label + " add <channelname> <callcode> <enabled(true / false)> <permission>, <prefix> <sendToIrc(true / false)> <range (or 0 if no range)>");
+					return true;
+				}
+
+				name = args[1];
+				callCode = args[2];
+				enabled = ( args[3].equalsIgnoreCase("true") ? true : false );
+				permission = args[4];
+				prefix = args[5];
+				sendToIRC = ( args[6].equalsIgnoreCase("true") ? true : false );
+				range = ( isValidNumber(args[7]) ? Integer.parseInt(args[7]) : 0 );
+				Channel newChannel = new Channel(name, callCode, enabled, permission, prefix, sendToIRC, range);
+				if ( ChannelHandler.getRegisteredChannel(callCode) != null )
+				{
+					user.sendMessage(String.format(m("SinkChat.Commands.Channel.ChannelAlreadyExists"), name));
+					return true;
+				}
+				else
+				{
+					user.sendMessage(String.format(m("SinkChat.Commands.Channel.SuccessfullyCreated"), name));
+					ChannelHandler.registerChannel(newChannel);
+				}
+				return true;
+			case "remove":
+			case "delete":
+				if ( !user.hasPermission("sinkchat.channel.admin") && !user.hasPermission("sinkchat.channel.*") )
+				{
+					user.sendMessage(m("Permissions.General"));
+					return true;
+				}
+				if ( args.length < 2 )
+				{
+					user.sendMessage(String.format(m("SinkChat.Commands.Channel.NoChannelGiven")));
+					return true;
+				}
+
+				if ( ChannelHandler.getChannelByName(args[1]) == null )
+				{
+					user.sendMessage(String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
+					return true;
+				}
+				else
+				{
+					ChannelHandler.removeRegisteredChannel(args[1]);
+					user.sendMessage(String.format(m("SinkChat.Commands.Channel.SuccessfullyDeleted"), args[1]));
+					return true;
+				}
+			}
+		}
+    	return false;
+	}
+
+	@Override
+	public boolean isPlayerOnly()
+	{
+		return true;
+	}
+
+	private static boolean isValidNumber(String string)
+	{
+		boolean validNumber = true;
+
+		for ( char c : string.toCharArray() )
+		{
+			validNumber = ( Character.isDigit(c)  && validNumber );
+			if ( !validNumber ) return validNumber;
+		}
+		return validNumber;
+	}
+
+    private static void sendHelp(String label, SinkUser user)
     {
-        /*
-        User user = SinkLibrary.getUser(sender);
-        if ( user.isConsole() )
+    	if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
+		{
+			user.sendMessage(m("Permissions.General"));
+			return;
+		}
+        user.sendMessage(PREFIX + m("SinkChat.Commands.Channel.Help"));
+        user.sendMessage(PREFIX + COMMAND_PREFIX + label+" join <channel>");
+        user.sendMessage(PREFIX + COMMAND_PREFIX + label+" part <channel>");
+        user.sendMessage(PREFIX + COMMAND_PREFIX + label+" list");
+        user.sendMessage(PREFIX + COMMAND_PREFIX + label+" participating");
+        if ( user.hasPermission("sinkchat.channel.admin") )
         {
-            sender.sendMessage(_("General.ConsoleNotAvailable"));
-            return true;
+        	user.sendMessage(PREFIX + COMMAND_PREFIX + label + "delete <channel>");
+        	user.sendMessage(PREFIX + COMMAND_PREFIX + label + "add <channel>");
         }
-
-        Player player = user.getPlayer();
-
-        if ( args.length == 0 )
-        {
-            sendHelp(player);
-            return true;
-        }
-
-        String message;
-
-        switch ( args[0] )
-        {
-            case "join":
-                if ( args.length < 2 )
-                {
-                    player.sendMessage(PREFIX + _("SinkChat.Commands.Channel.NoChannelGiven"));
-                    return true;
-                }
-
-                try
-                {
-                    IChannel channel = ChannelHandler.getChannelByName(args[1]);
-                    if ( !user.hasPermission(channel.getPermission()) )
-                    {
-                        player.sendMessage(_("Permissions.General"));
-                    }
-                    channel.removeExceptedPlayer(player);
-                }
-                catch ( NullPointerException ignored )
-                {
-                    message = PREFIX + String.format(_("SinkChat.Commands.Channel.ChannelUnknown"), args[1]);
-                    player.sendMessage(message);
-                    return true;
-                }
-
-                message = PREFIX + String.format(_("SinkChat.Commands.Channel.PlayerJoins"), args[1]);
-                ChatColor.translateAlternateColorCodes('&', message);
-                player.sendMessage(message);
-                return true;
-
-            case "leave":
-
-                if ( args.length < 2 )
-                {
-                    player.sendMessage(PREFIX + _("SinkChat.Commands.Channel.NoChannelGiven"));
-                    return true;
-                }
-
-                try
-                {
-                    IChannel channel = ChannelHandler.getChannelByName(args[1]);
-                    if ( !user.hasPermission(channel.getPermission()) )
-                    {
-                        player.sendMessage(_("Permissions.General"));
-                    }
-                    channel.addExceptedPlayer(player);
-                }
-                catch ( NullPointerException ignored )
-                {
-                    message = PREFIX + String.format(_("SinkChat.Commands.Channel.ChannelUnknown"), args[1]);
-                    player.sendMessage(message);
-                    return true;
-                }
-
-                message = PREFIX + String.format(_("SinkChat.Commands.Channel.PlayerLeaves"), args[1]);
-                player.sendMessage(message);
-
-
-                return true;
-            case "list":
-            {
-                message = PREFIX + String.format(_("SinkChat.Commands.Channel.List"), ChannelHandler.getChannelNames());
-                player.sendMessage(message);
-                return true;
-            }
-            case "participating":
-                player.sendMessage(PREFIX + _("SinkChat.Commands.Channel.Part"));
-                for ( IChannel target : ChannelHandler.getRegisteredChannels() )
-                {
-                    if ( target.contains(player) )
-                    {
-                        continue;
-                    }
-
-                    player.sendMessage(PREFIX + target.getChannelName());
-
-                }
-                return true;
-
-            default:
-                sendHelp(player);
-                return true;
-        }
-        */
-        return false;
-    }
-
-    private static void sendHelp(Player player)
-    {
-        player.sendMessage(PREFIX + m("SinkChat.Commands.Channel.Help"));
-        player.sendMessage(PREFIX + COMMAND_PREFIX + "ch join <channel>");
-        player.sendMessage(PREFIX + COMMAND_PREFIX + "ch leave <channel>");
-        player.sendMessage(PREFIX + COMMAND_PREFIX + "ch list");
-        player.sendMessage(PREFIX + COMMAND_PREFIX + "ch participating");
     }
 }

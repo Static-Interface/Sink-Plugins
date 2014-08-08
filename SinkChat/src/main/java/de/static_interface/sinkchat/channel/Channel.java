@@ -35,18 +35,17 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 public class Channel
 {
     String name;
-    String callChar;
+    String callCode;
     boolean enabled;
     String permission;
     String prefix;
     boolean sendToIRC;
     int range;
 
-    public Channel(String name, String callChar, boolean enabled, String permission, String prefix,
-            boolean sendToIRC, int range)
+    public Channel(String name, String callCode, boolean enabled, String permission, String prefix, boolean sendToIRC, int range)
     {
         this.name = name;
-        this.callChar = callChar;
+        this.callCode = callCode;
         this.enabled = enabled;
         this.permission = permission;
         this.prefix =  ChatColor.translateAlternateColorCodes('&', prefix);
@@ -61,7 +60,7 @@ public class Channel
 
     public String getCallChar()
     {
-        return callChar;
+        return callCode;
     }
 
     public boolean isEnabled()
@@ -102,6 +101,14 @@ public class Channel
         {
             return true;
         }
+    }
+
+    public void setEnabledForPlayer(UUID uuid, boolean setEnabled)
+    {
+    	String enabledPath = "Channels." + getName() + ".Enabled";
+    	SinkUser user = SinkLibrary.getUser(uuid);
+    	PlayerConfiguration config = user.getPlayerConfiguration();
+    	config.set(enabledPath, setEnabled);
     }
 
     public boolean sendMessage(SinkUser user, String message)
