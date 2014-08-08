@@ -61,6 +61,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Commands.Channel.PlayerLeaves", "You left the %s channel.");
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
         addDefault("SinkChat.Commands.Channel.ChannelUnknown", "%s is an unknown channel.");
+        addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel %s already exists.");
         addDefault("SinkChat.Commands.Channel.List", "These channels are available: %s");
         addDefault("SinkChat.Commands.Channel.Part", "You have the following channels enabled:");
         addDefault("SinkChat.Commands.Channel.Help", "These commands are available:");
