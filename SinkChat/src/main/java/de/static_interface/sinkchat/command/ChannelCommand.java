@@ -65,6 +65,11 @@ public class ChannelCommand extends Command
 				else
 				{
 					Channel channel = ChannelHandler.getRegisteredChannel(args[1]);
+					if ( channel == null ) channel = ChannelHandler.getChannelByName(args[1]);
+					if ( channel == null )
+					{
+						user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
+					}
 					if ( !user.hasPermission(channel.getPermission()) )
 					{
 						user.sendMessage(String.format(m("Permissions.SinkChat.Channel"), channel.getName()));
@@ -72,12 +77,13 @@ public class ChannelCommand extends Command
 					}
 					if ( channel.enabledForPlayer(user.getUniqueId()) )
 					{
-						user.sendMessage(m("SinkChat.EnabledChannel.AlreadyEnabled"));
+						user.sendMessage(m("SinkChat.AlreadyEnabled"));
 						return true;
 					}
 					else
 					{
 						channel.setEnabledForPlayer(user.getUniqueId(), true);
+						user.sendMessage(PREFIX + m("SinkChat.EnabledChannel"));
 						return true;
 					}
 				}
@@ -105,19 +111,22 @@ public class ChannelCommand extends Command
 				}
 
 				Channel channel = ChannelHandler.getRegisteredChannel(args[1]);
+				if ( channel == null ) channel = ChannelHandler.getChannelByName(args[1]);
 				if ( channel == null )
 				{
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
+					channel = ChannelHandler.getChannelByName(args[1]);
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
 					return true;
 				}
 				if ( !channel.enabledForPlayer(user.getUniqueId()) )
 				{
-					user.sendMessage(m("SinkChat.DisabledChannel.AlreadyDisabled"));
+					user.sendMessage(PREFIX + m("SinkChat.AlreadyDisabled"));
 					return true;
 				}
 				else
 				{
 					channel.setEnabledForPlayer(user.getUniqueId(), false);
+					user.sendMessage(PREFIX + m("SinkChat.DisabledChannel"));
 					return true;
 				}
 			case "list":
@@ -130,10 +139,10 @@ public class ChannelCommand extends Command
 
 				for ( Channel c : ChannelHandler.getRegisteredChannels().values() )
 				{
-					channels = channels.concat(String.format("%s %s: %s – enabled=%s%n", PREFIX, c.getName(), c.getCallChar(), c.enabledForPlayer(user.getUniqueId())));
+					channels = channels + String.format("%s %s: %s – enabled=%s%n", PREFIX, c.getName(), c.getCallChar(), c.enabledForPlayer(user.getUniqueId()));
 				}
 
-				user.sendMessage(String.format(m("SinkChat.Commands.Channel.List"), channels));
+				user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.List"), channels));
 				return true;
 			case "participating":
 				if ( !user.hasPermission("sinkchat.channel.use") && !user.hasPermission("sinkchat.channel.*") )
@@ -145,10 +154,10 @@ public class ChannelCommand extends Command
 
 				for ( Channel c : ChannelHandler.getRegisteredChannels().values() )
 				{
-					if ( c.enabledForPlayer(user.getUniqueId()) ) enabledChannels = enabledChannels.concat(c.getName().concat(" "));
+					if ( c.enabledForPlayer(user.getUniqueId()) ) enabledChannels = enabledChannels + c.getName() + " ";
 				}
 
-				user.sendMessage(PREFIX.concat(" ").concat(enabledChannels));
+				user.sendMessage(PREFIX + " " + enabledChannels);
 				return true;
 			case "add":
 				if ( !user.hasPermission("sinkchat.channel.admin") && !user.hasPermission("sinkchat.channel.*") )
@@ -175,12 +184,12 @@ public class ChannelCommand extends Command
 				Channel newChannel = new Channel(name, callCode, enabled, permission, prefix, sendToIRC, range);
 				if ( ChannelHandler.getRegisteredChannel(callCode) != null )
 				{
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.ChannelAlreadyExists"), name));
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.ChannelAlreadyExists"), name));
 					return true;
 				}
 				else
 				{
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.SuccessfullyCreated"), name));
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.SuccessfullyCreated"), name));
 					ChannelHandler.registerChannel(newChannel);
 				}
 				return true;
@@ -193,19 +202,19 @@ public class ChannelCommand extends Command
 				}
 				if ( args.length < 2 )
 				{
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.NoChannelGiven")));
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.NoChannelGiven")));
 					return true;
 				}
 
 				if ( ChannelHandler.getChannelByName(args[1]) == null )
 				{
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.ChannelUnknown"), args[1]));
 					return true;
 				}
 				else
 				{
 					ChannelHandler.removeRegisteredChannel(args[1]);
-					user.sendMessage(String.format(m("SinkChat.Commands.Channel.SuccessfullyDeleted"), args[1]));
+					user.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Channel.SuccessfullyDeleted"), args[1]));
 					return true;
 				}
 			}

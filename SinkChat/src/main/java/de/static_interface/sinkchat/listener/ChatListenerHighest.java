@@ -20,6 +20,7 @@ package de.static_interface.sinkchat.listener;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
+import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
@@ -59,15 +60,18 @@ public class ChatListenerHighest implements Listener
             return;
         }
 
+        Channel target = null;
         for ( String callChar : ChannelHandler.getRegisteredChannels().keySet() )
         {
+        	target = ChannelHandler.getRegisteredChannel(callChar);
+        	System.out.println(target.getName());
             if ( event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar) )
             {
-            	if ( (ChannelHandler.getRegisteredChannel(callChar)).enabledForPlayer(event.getPlayer().getUniqueId()) )
+            	if ( !target.enabledForPlayer(event.getPlayer().getUniqueId()) )
             	{
             		break;
             	}
-                if ( ChannelHandler.getRegisteredChannel(callChar).sendMessage(user, event.getMessage()) )
+                if ( target.sendMessage(user, event.getMessage()) )
                 {
                     event.setCancelled(true);
                     return;
