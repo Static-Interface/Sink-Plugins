@@ -180,7 +180,7 @@ public class ChannelCommand extends Command
 				callCode = args[2];
 				enabled = ( args[3].equalsIgnoreCase("true") ? true : false );
 				permission = args[4];
-				prefix = args[5]+" ";
+				prefix = args[5]+" "+ChatColor.RESET;
 				sendToIRC = ( args[6].equalsIgnoreCase("true") ? true : false );
 				range = ( isValidNumber(args[7]) ? Integer.parseInt(args[7]) : 0 );
 				Channel newChannel = new Channel(name, callCode, enabled, permission, prefix, sendToIRC, range);
