@@ -254,10 +254,11 @@ public class ChannelCommand extends Command
         user.sendMessage(PREFIX + label+" part <channel>");
         user.sendMessage(PREFIX + label+" list");
         user.sendMessage(PREFIX + label+" participating");
-        if ( user.hasPermission("sinkchat.channel.admin") )
+        if ( user.hasPermission("sinkchat.channel.admin") || user.getPlayer().isOp() )
         {
-        	user.sendMessage(PREFIX + label + "delete <channel>");
-        	user.sendMessage(PREFIX + label + "add <channel>");
+        	//Red because this can cause serious problems.
+        	user.sendMessage(PREFIX + label + ChatColor.RED + " delete <channel>" + ChatColor.RESET);
+        	user.sendMessage(PREFIX + label + ChatColor.RED + " add <channel>" + ChatColor.RESET);
         }
     }
 }
