@@ -137,7 +137,7 @@ public class Channel
             return false;
         }
 
-        String formattedMessage = message.substring(1);
+        String formattedMessage = message.substring(callCode.length());
 
         String townyPrefix = "";
         if ( SinkChat.isTownyAvailable() )
