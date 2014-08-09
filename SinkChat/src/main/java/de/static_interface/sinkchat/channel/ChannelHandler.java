@@ -21,6 +21,10 @@ import java.util.HashMap;
 
 import de.static_interface.sinkchat.ChannelConfigurations;
 import de.static_interface.sinkchat.SinkChat;
+import de.static_interface.sinkchat.command.ChannelCommand;
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class ChannelHandler
 {
@@ -60,10 +64,21 @@ public class ChannelHandler
         return registeredChannels.get(callCode);
     }
 
-    private static void deleteChannel(Channel channel)
+    private static boolean deleteChannel(Channel channel)
     {
-    	ChannelConfigurations config = SinkChat.getChannelConfigs();
-    	config.set("Channels."+channel.getName(), null);
+    	if ( channel == null ) return false;
+
+    	for ( SinkUser user : SinkLibrary.getOnlineUsers() )
+    	{
+    		if ( (channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId()) )
+    		{
+    			user.sendMessage(ChannelCommand.PREFIX + String.format(m("SinkChat.DeletedChannel"), channel.getName()));
+    		}
+    	}
+
+    	SinkChat.getChannelConfigs().set("Channels." + channel.getName(), null);
+
+    	return true;
     }
 
     private static void saveChannel(Channel channel)
@@ -83,10 +98,13 @@ public class ChannelHandler
     /**
      * Removes a channel by it's call code.
      */
-    public static void removeRegisteredChannel(String callCode)
+    public static boolean removeRegisteredChannel(String channelName)
     {
-    	Channel channel = registeredChannels.get(callCode);
-    	registeredChannels.remove(callCode);
-    	deleteChannel(channel);
+    	Channel channel = getChannelByName(channelName);
+    	if ( channel == null ) channel = registeredChannels.get(channelName);
+    	if ( channel == null ) return false;
+
+    	registeredChannels.remove(channelName);
+    	return deleteChannel(channel);
     }
 }

@@ -104,6 +104,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Prefix.Spy", "&7[Spy]");
         addDefault("SinkChat.Prefix.Local", "&7[Local]");
         addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
+        addDefault("SinkChat.DeletedChannel", "The channel %s has been deleted.");
         addDefault("SinkChat.AlreadyDisabled", "&4This channel has already been disabled.");
         addDefault("SinkChat.EnabledChannel", "&4This channel has been enabled.");
         addDefault("SinkChat.AlreadyEnabled", "&4This channel has already been enabled.");
