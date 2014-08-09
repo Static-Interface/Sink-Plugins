@@ -64,7 +64,6 @@ public class ChatListenerHighest implements Listener
         for ( String callChar : ChannelHandler.getRegisteredChannels().keySet() )
         {
         	target = ChannelHandler.getRegisteredChannel(callChar);
-        	System.out.println(target.getName());
             if ( event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar) )
             {
             	if ( !target.enabledForPlayer(event.getPlayer().getUniqueId()) )
