@@ -18,6 +18,7 @@
 package de.static_interface.sinkchat;
 
 import com.palmergames.bukkit.towny.Towny;
+
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinkchat.channel.ChannelValues;
@@ -26,6 +27,7 @@ import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,6 +40,7 @@ public class SinkChat extends JavaPlugin
 {
     private static boolean initialized = false;
     private static Towny towny;
+    private static ChannelConfigurations channelconfigs = null;
 
     public void onEnable()
     {
@@ -58,24 +61,30 @@ public class SinkChat extends JavaPlugin
 
     private void registerChannels()
     {
-        ChannelConfigurations config = new ChannelConfigurations();
-        YamlConfiguration yamlConfig = config.getYamlConfiguration();
+        channelconfigs = new ChannelConfigurations();
+        YamlConfiguration yamlConfig = channelconfigs.getYamlConfiguration();
         ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
+        Channel channel = null;
         for (String key : section.getKeys(false))
         {
             String pathPrefix = "Channels." + key + ".";
 
-            String callChar = (String) config.get(pathPrefix + ChannelValues.CALLCHAR);
-            boolean enabled = (boolean) config.get(pathPrefix + ChannelValues.ENABLED);
-            String permission = (String) config.get(pathPrefix + ChannelValues.PERMISSION);
-            String prefix = (String) config.get(pathPrefix + ChannelValues.PREFIX);
-            boolean sendToIRC = (boolean) config.get(pathPrefix + ChannelValues.SEND_TO_IRC);
-            int range = (int) config.get(pathPrefix + ChannelValues.RANGE);
+            String callChar = (String) channelconfigs.get(pathPrefix + ChannelValues.CALLCHAR);
+            boolean enabled = (boolean) channelconfigs.get(pathPrefix + ChannelValues.ENABLED);
+            String permission = (String) channelconfigs.get(pathPrefix + ChannelValues.PERMISSION);
+            String prefix = (String) channelconfigs.get(pathPrefix + ChannelValues.PREFIX);
+            boolean sendToIRC = (boolean) channelconfigs.get(pathPrefix + ChannelValues.SEND_TO_IRC);
+            int range = (int) channelconfigs.get(pathPrefix + ChannelValues.RANGE);
 
-            Channel channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
+            channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
             ChannelHandler.registerChannel(channel);
         }
     }
+
+    public static ChannelConfigurations getChannelConfigs()
+	{
+		return channelconfigs;
+	}
 
     public void onDisable()
     {
@@ -128,9 +137,9 @@ public class SinkChat extends JavaPlugin
     private void registerCommands()
     {
         getCommand("nick").setExecutor(new NickCommand());
-        getCommand("channel").setExecutor(new ChannelCommand());
         getCommand("enablespy").setExecutor(new SpyCommands.EnableSpyCommand());
         getCommand("disablespy").setExecutor(new SpyCommands.DisablSpyCommand());
+        SinkLibrary.registerCommand("channel", new ChannelCommand(this));
         if ( towny != null )
         {
             getCommand("nationchat").setExecutor(new NationChatCommand());

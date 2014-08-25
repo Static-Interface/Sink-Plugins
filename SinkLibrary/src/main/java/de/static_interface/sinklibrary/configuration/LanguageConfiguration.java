@@ -38,7 +38,7 @@ public class LanguageConfiguration extends ConfigurationBase
         if ( instance == null )
         {
             instance = new LanguageConfiguration();
-            instance.load();
+            instance.init();
         }
         return instance;
     }
@@ -61,15 +61,20 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Commands.Channel.PlayerLeaves", "You left the %s channel.");
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
         addDefault("SinkChat.Commands.Channel.ChannelUnknown", "%s is an unknown channel.");
+        addDefault("SinkChat.Commands.Channel.Enabled", "&aenabled");
+        addDefault("SinKChat.Commands.Channel.Disabled", "&cdisabled");
+        addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel %s already exists.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel %s was successfully created.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel %s was successfully deleted.");
         addDefault("SinkChat.Commands.Channel.List", "These channels are available: %s");
         addDefault("SinkChat.Commands.Channel.Part", "You have the following channels enabled:");
         addDefault("SinkChat.Commands.Channel.Help", "These commands are available:");
 
         addDefault("SinkChat.Commands.Spy.Enabled", "&aSpy chat has been enabled!");
-        addDefault("SinkChat.Commands.Spy.AlreadyEnabled", "&cSpy chat has been already enabled!");
+        addDefault("SinkChat.Commands.Spy.AlreadyEnabled", "&cSpy chat has already been enabled!");
 
         addDefault("SinkChat.Commands.Spy.Disabled", "&4Spy chat has been disabled!");
-        addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has been already disabled!");
+        addDefault("SinkChat.Commands.Spy.AlreadyDisabled", "&cSpy chat has already been disabled!");
 
         /*
         addDefault("SinkChat.Channels.Help", "Help");
@@ -88,7 +93,7 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Channels.Private.WrongUsage", "&cWrong Usage!");
         addDefault("SinkChat.Channels.Private.Created", "&2Created successfully channel: \"%s\"!");
         addDefault("SinkChat.Channels.Private.IdentifierUsed", "&cIdentifier is already used!");
-        addDefault("SinkChat.Channels.Private.AlreadyExstis", "&6Channel already exists! Use a diffrent identifier.");
+        addDefault("SinkChat.Channels.Private.AlreadyExstis", "&6Channel already exists! Use a different identifier.");
         addDefault("SinkChat.Channels.Private.Renamed", "&bChannel renamed to: %s");
         addDefault("SinkChat.Channels.Private.Users", "Users in channel \"%s\":");
         addDefault("SinkChat.Channels.Private.Channels", "&bAvailable channels: %s");
@@ -99,6 +104,11 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkChat.Prefix.Spy", "&7[Spy]");
         addDefault("SinkChat.Prefix.Local", "&7[Local]");
         addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
+        addDefault("SinkChat.DeletedChannel", "The channel %s has been deleted.");
+        addDefault("SinkChat.AlreadyDisabled", "&4This channel has already been disabled.");
+        addDefault("SinkChat.EnabledChannel", "&4This channel has been enabled.");
+        addDefault("SinkChat.AlreadyEnabled", "&4This channel has already been enabled.");
+        addDefault("SinkChat.NoChannelJoined", "&4You don't take part in any channels.");
         addDefault("SinkChat.Towny.NotInTown", "&4Error:&c You are not a resident of any town");
         addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
         addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");

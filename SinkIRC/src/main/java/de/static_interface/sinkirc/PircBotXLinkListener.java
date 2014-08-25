@@ -18,56 +18,58 @@
 package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.events.*;
+
 import org.bukkit.Bukkit;
+import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.*;
 
-public class PircBotXLinkListener extends ListenerAdapter
+public class PircBotXLinkListener extends ListenerAdapter<PircBotX>
 {
     @Override
-    public void onMessage(MessageEvent event)
+    public void onMessage(MessageEvent<PircBotX> event)
     {
         IrcReceiveMessageEvent bukkitEvent = new IrcReceiveMessageEvent(event.getUser(), event.getChannel(), event.getMessage(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onJoin(JoinEvent event)
+    public void onJoin(JoinEvent<PircBotX> event)
     {
         IrcJoinEvent bukkitEvent = new IrcJoinEvent(event.getUser(), event.getChannel(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onPart(PartEvent event)
+    public void onPart(PartEvent<PircBotX> event)
     {
         IrcPartEvent bukkitEvent = new IrcPartEvent(event.getUser(), event.getChannel(), event.getReason(), event.getDaoSnapshot(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onKick(KickEvent event)
+    public void onKick(KickEvent<PircBotX> event)
     {
         IrcKickEvent bukkitEvent = new IrcKickEvent(event.getUser(), event.getRecipient(), event.getChannel(), event.getReason(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onQuit(QuitEvent event)
+    public void onQuit(QuitEvent<PircBotX> event)
     {
         IrcQuitEvent bukkitEvent = new IrcQuitEvent(event.getUser(), event.getReason(), event.getDaoSnapshot(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onNickChange(NickChangeEvent event)
+    public void onNickChange(NickChangeEvent<PircBotX> event)
     {
         IrcNickChangeEvent bukkitEvent = new IrcNickChangeEvent(event.getOldNick(), event.getNewNick(), event.getUser(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
-    public void onPrivateMessage(PrivateMessageEvent event)
+    public void onPrivateMessage(PrivateMessageEvent<PircBotX> event)
     {
         IrcPrivateMessageEvent bukkitEvent = new IrcPrivateMessageEvent(event.getUser(), event.getMessage(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
