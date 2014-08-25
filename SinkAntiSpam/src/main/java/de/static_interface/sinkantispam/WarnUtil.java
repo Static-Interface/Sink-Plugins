@@ -68,8 +68,10 @@ public class WarnUtil
 
         if ( tmp.size() >= getMaxWarnings() )
         {
+            UUID uuid = player.getUniqueId();
             player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
             tempBanPlayer(player.getUniqueId(), System.currentTimeMillis() + 5 * 60 * 1000); //Todo: make time configurable
+            warnings.put(uuid, new ArrayList<Warning>()); // Reset warnings
         }
     }
 

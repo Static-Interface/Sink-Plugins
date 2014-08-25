@@ -38,6 +38,12 @@ public class WarnCommand extends Command
     }
 
     @Override
+    public boolean isIrcOnly() { return false; }
+
+    @Override
+    public boolean isPlayerOnly() { return false; }
+
+    @Override
     public boolean isIrcOpOnly()
     {
         return true;
@@ -76,7 +82,7 @@ public class WarnCommand extends Command
             reason = reason + ' ' + args[i];
         }
 
-        WarnUtil.warnPlayer(target, new Warning(reason, SinkLibrary.getUser(sender).getDisplayName(), true));
+        WarnUtil.warnPlayer(target, new Warning(reason, SinkLibrary.getUser(sender).getDisplayName(), false));
         return true;
     }
 }

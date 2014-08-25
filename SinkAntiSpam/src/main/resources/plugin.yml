@@ -6,6 +6,11 @@ website: http://static-interface.de
 main: de.static_interface.sinkantispam.SinkAntiSpam
 soft-depend: [SinkLibrary]
 
+commands:
+ warn:
+   description: Warn a player
+   permission: sinkcommands.warn
+
 permissions:
  sinkantispam.*:
    description: Gives access to all SinkAntiSpam commands
@@ -13,6 +18,13 @@ permissions:
      sinkantispam.autowarnmessage: true
      sinkantispam.warnmessage: true
      sinkantispam.bypass: true
+     sinkantispam.warn: true
+
+ sinkantispam.warn:
+    description: Allows to warn players
+    default: op
+    children:
+      sinkantispam.warn.message: true
 
  sinkantispam.bypass:
     description: Allows to bypass SinkAntiSpam

@@ -20,10 +20,6 @@ commands:
     description: Remove the invisibility potion of players
     permission: sinkcommands.milk
 
-  warn:
-    description: Warn a player
-    permission: sinkcommands.warn
-
   globalmute:
     descripion: Mutes all players
     usage: "Falsche Benutzung! Korrekte Benutzung: /<command>[Grund]"
@@ -177,16 +173,6 @@ permissions:
     default: op
     children:
       sinkcommands.milk.message: true
-
-  sinkcommands.warn:
-    description: Allows to warn players
-    default: op
-    children:
-      sinkcommands.warn.message: true
-
-  sinkcommands.warn.message:
-    description: Allows to receive a message when somebody got warned
-    default: op
 
   sinkcommands.ver:
     description: Allows to use commandsver command
