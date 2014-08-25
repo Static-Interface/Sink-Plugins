@@ -121,7 +121,14 @@ public class IrcUtil
 
         try
         {
-            SinkIRC.getIrcBot().sendIRC().message(target, message);
+            if(target.startsWith("#"))
+            {
+                SinkIRC.getIrcBot().sendIRC().message(target ,message);
+            }
+            else
+            {
+                getUser(SinkIRC.getMainChannel(), target).send().message(message);
+            }
             return true;
         }
         catch(Exception e)
