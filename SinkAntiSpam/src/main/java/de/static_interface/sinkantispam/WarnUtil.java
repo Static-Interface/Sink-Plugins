@@ -47,13 +47,6 @@ public class WarnUtil
         tmp.add(warning);
         warnings.put(player.getUniqueId(), tmp);
 
-        if ( tmp.size() >= getMaxWarnings() )
-        {
-            player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-            tempBanPlayer(player.getUniqueId(), System.currentTimeMillis() + 5 * 60 * 1000); //Todo: make time configurable
-            return;
-        }
-
         String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getUser(player).getDisplayName(),
                 warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
         SinkUser user = SinkLibrary.getUser(player);
@@ -71,6 +64,12 @@ public class WarnUtil
         if ( !user.hasPermission(perm) )
         {
             player.sendMessage(message);
+        }
+
+        if ( tmp.size() >= getMaxWarnings() )
+        {
+            player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
+            tempBanPlayer(player.getUniqueId(), System.currentTimeMillis() + 5 * 60 * 1000); //Todo: make time configurable
         }
     }
 
