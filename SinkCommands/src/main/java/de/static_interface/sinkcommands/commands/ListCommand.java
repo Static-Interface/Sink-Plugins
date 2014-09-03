@@ -19,6 +19,7 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.irc.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -33,11 +34,11 @@ public class ListCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
+        com.earth2me.essentials.Essentials essentials =
+                (com.earth2me.essentials.Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         List<String> out = new ArrayList<>();
         HashMap<String, List<SinkUser>> groupUsers = new HashMap<>();
         Collection<SinkUser> onlineUsers = SinkLibrary.getOnlineUsers();
-        out.add(ChatColor.GOLD + "Es sind " + ChatColor.RED + onlineUsers.size() + ChatColor.GOLD + " von maximal "
-                + ChatColor.RED + Bukkit.getMaxPlayers() + ChatColor.GOLD + " online.");
         for ( SinkUser user :  onlineUsers)
         {
             String userGroup;
@@ -56,23 +57,46 @@ public class ListCommand implements CommandExecutor
         }
 
         SortedSet<String> sortedGroups = new TreeSet<>(groupUsers.keySet());
+        int i = 0;
         for ( String group : sortedGroups )
         {
             List<SinkUser> users = groupUsers.get(group);
             String tmp = "";
             for ( SinkUser user : users )
             {
+                String prefix = "";
+                if(essentials != null)
+                {
+                    com.earth2me.essentials.User essUser = essentials.getUser(user.getPlayer());
+
+                    if(!sender.isOp() || sender instanceof IrcCommandSender)
+                    {
+                        continue;
+                    }
+
+                    if(essUser.isAfk())
+                    {
+                        prefix += ChatColor.GRAY + "[Abwesend]" + ChatColor.RESET;
+                    }
+
+                    if(essUser.isHidden())
+                    {
+                        prefix += ChatColor.GRAY + "[Versteckt]" + ChatColor.RESET;
+                        i++;
+                    }
+                }
+
                 if ( tmp.equals("") )
                 {
-                    tmp = user.getDisplayName();
+                    tmp = prefix + user.getDisplayName();
                 }
                 else
                 {
-                    tmp += ChatColor.GRAY + ", " + user.getDisplayName();
+                    tmp += ChatColor.GRAY + ", " + prefix + user.getDisplayName();
                 }
             }
 
-            out.add(ChatColor.GOLD + group + ChatColor.RESET + ": " + users);
+            out.add(ChatColor.GOLD + group + ChatColor.RESET + ": " + tmp);
         }
 
         if(SinkLibrary.isIrcAvailable())
@@ -104,6 +128,11 @@ public class ListCommand implements CommandExecutor
             }
             out.add(ircUsers);
         }
+
+        String onlineUsersCount = ChatColor.RED.toString() + (onlineUsers.size()-i)
+                                    + ChatColor.GOLD + (i > 0 ? "/" +i : "");
+        out.add(0, ChatColor.GOLD + "Es sind " +  onlineUsersCount + " von maximal "
+                + ChatColor.RED + Bukkit.getMaxPlayers() + ChatColor.GOLD + " online.");
 
         String[] msgs = out.toArray(new String[out.size()]);
         sender.sendMessage(msgs);
