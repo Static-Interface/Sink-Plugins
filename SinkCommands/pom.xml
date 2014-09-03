@@ -61,6 +61,12 @@
         </dependency>
         <dependency>
             <groupId>de.static_interface</groupId>
+            <artifactId>SinkIRC</artifactId>
+            <version>1.9.8.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.static_interface</groupId>
             <artifactId>SinkAFK</artifactId>
             <version>1.9</version>
             <scope>system</scope>

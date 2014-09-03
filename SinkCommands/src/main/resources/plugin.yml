@@ -5,7 +5,7 @@ author: Trojaner
 authors: [Diar, _ShadowRaven_, Scary_Block]
 website: http://static-interface.de
 main: de.static_interface.sinkcommands.SinkCommands
-soft-depend: [SinkLibrary]
+soft-depend: [SinkLibrary, SinkIRC]
 
 commands:
   commandsver:
@@ -102,10 +102,10 @@ commands:
     description: Go up!
     permission: sinkcommands.gup
 
-#  list:
-#    description: Lists all users with specified prefix
-#    permission: sinkcommands.list
-#    aliases: [online, who]
+  list:
+    description: Lists all users with specified prefix
+    permission: sinkcommands.list
+    aliases: [online, who]
 
 permissions:
   sinkcommands.*:
@@ -289,4 +289,4 @@ permissions:
 
   sinkcommands.list:
     default: true
-    description: Allows to list all users
+    description: Allows to list all online users

@@ -23,7 +23,6 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -49,9 +48,8 @@ public class ListCommand extends IrcCommand
         String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
-        for ( Player player : BukkitUtil.getOnlinePlayers() )
+        for ( SinkUser user : SinkLibrary.getOnlineUsers())
         {
-            SinkUser user = SinkLibrary.getUser(player);
             if ( firstPlayer )
             {
                 onlineMessage += user.getDisplayName();

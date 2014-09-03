@@ -18,7 +18,6 @@
 package de.static_interface.sinklibrary;
 
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import de.static_interface.sinklibrary.exceptions.ChatNotAvailableException;
 import de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exceptions.PermissionsNotAvailableException;
 import net.milkbowl.vault.economy.Economy;
@@ -32,7 +31,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
-public class SinkUser
+public class SinkUser implements Comparable<SinkUser>
 {
     private static Player base = null;
     private static Economy econ = null;
@@ -236,7 +235,7 @@ public class SinkUser
     {
         if ( isConsole() )
         {
-            throw new NullPointerException("User is console!");
+            throw new IllegalArgumentException("User is console!");
         }
 
         if ( !SinkLibrary.isPermissionsAvailable() )
@@ -280,7 +279,7 @@ public class SinkUser
     {
         if ( !SinkLibrary.isChatAvailable() )
         {
-            throw new ChatNotAvailableException();
+            return base.isOp() ? ChatColor.DARK_RED.toString() : ChatColor.WHITE.toString();
         }
         return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getChat().getPlayerPrefix(base));
     }
@@ -390,5 +389,11 @@ public class SinkUser
     public boolean isPlayer()
     {
         return base != null || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
+    }
+
+    @Override
+    public int compareTo(SinkUser o)
+    {
+        return getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 }

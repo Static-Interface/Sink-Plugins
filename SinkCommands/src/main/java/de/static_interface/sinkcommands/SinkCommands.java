@@ -211,6 +211,7 @@ public class SinkCommands extends JavaPlugin
         getCommand("clear").setExecutor(new ClearCommand());
         getCommand("enablestats").setExecutor(new StatsCommands.EnableStatsCommand());
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
+        getCommand("list").setExecutor(new ListCommand());
 
         SinkLibrary.registerCommand("commandsver", new CommandsverCommand(this));
         SinkLibrary.registerCommand("countdown", new CountdownCommand(this));

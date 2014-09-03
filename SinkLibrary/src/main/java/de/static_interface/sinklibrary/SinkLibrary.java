@@ -65,7 +65,7 @@ public class SinkLibrary extends JavaPlugin
 
     public static boolean initialized = false;
     public static boolean sinkChatAvailable;
-    public static boolean ircAvailable = false;
+    public static boolean ircAvailable;
     static Logger logger;
     private static HashMap<String, Command> commandAliases;
     private static HashMap<String, Command> commands;
@@ -73,6 +73,11 @@ public class SinkLibrary extends JavaPlugin
     public static HashMap<String, Command> getCommands()
     {
         return commands;
+    }
+
+    public static boolean isIrcAvailable()
+    {
+        return ircAvailable;
     }
 
     public void onEnable()

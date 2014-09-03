@@ -8,11 +8,6 @@ main: de.static_interface.sinkirc.SinkIRC
 soft-depend: [SinkLibrary]
 
 commands:
-  irclist:
-    aliases: ilist
-    description: Shows online Users in IRC
-    permission: sinkirc.irclist
-
   ircprivatemessage:
     aliases: [ircmsg,imsg]
     description: Send a private message to an IRC User
@@ -34,10 +29,6 @@ permissions:
   sinkirc.irckick:
     description: Allows to use the irckick command
     default: op
-
-  sinkirc.irclist:
-    description: Shows online users in IRC
-    default: true
 
   sinkirc.privatemessage:
     description: Allows to send private messages to IRC Users
