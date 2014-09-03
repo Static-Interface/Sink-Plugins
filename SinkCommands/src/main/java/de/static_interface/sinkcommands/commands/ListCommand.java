@@ -73,7 +73,7 @@ public class ListCommand implements CommandExecutor
 
         if(SinkLibrary.isIrcAvailable())
         {
-            out.add(ChatColor.YELLOW + "[IRC] " + ChatColor.RESET + "Online IRC Benutzer: ");
+            out.add(ChatColor.GOLD + "Online IRC Benutzer: ");
             String ircUsers = "";
             for ( User user : de.static_interface.sinkirc.SinkIRC.getMainChannel().getUsers() )
             {
