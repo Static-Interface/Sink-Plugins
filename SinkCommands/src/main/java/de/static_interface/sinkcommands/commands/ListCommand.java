@@ -19,6 +19,7 @@ package de.static_interface.sinkcommands.commands;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,7 +35,10 @@ public class ListCommand implements CommandExecutor
     {
         List<String> out = new ArrayList<>();
         HashMap<String, List<SinkUser>> groupUsers = new HashMap<>();
-        for ( SinkUser user : SinkLibrary.getOnlineUsers() )
+        Collection<SinkUser> onlineUsers = SinkLibrary.getOnlineUsers();
+        out.add(ChatColor.GOLD + "Es sind " + ChatColor.RED + onlineUsers.size() + ChatColor.GOLD + " von maximal "
+                + ChatColor.RED + Bukkit.getMaxPlayers() + ChatColor.GOLD + " online.");
+        for ( SinkUser user :  onlineUsers)
         {
             String userGroup;
             if(SinkLibrary.isPermissionsAvailable())
