@@ -456,7 +456,6 @@ public class SinkLibrary extends JavaPlugin
     public static SinkUser getUser(String playerName)
     {
         UUID uuid = BukkitUtil.getUUIDByName(playerName);
-
         return getUser(uuid);
     }
 
@@ -467,7 +466,8 @@ public class SinkLibrary extends JavaPlugin
         if ( user == null || !user.isOnline() )
         {
             user = new SinkUser(uuid);
-            onlineUsers.put(uuid, user);
+            if(Bukkit.getPlayer(uuid) != null)
+                onlineUsers.put(uuid, user);
         }
 
         return user;
@@ -552,6 +552,7 @@ public class SinkLibrary extends JavaPlugin
         SinkUser user = onlineUsers.get(uuid);
         if ( user == null || !user.getPlayer().getUniqueId().equals(uuid) )
         {
+            if(Bukkit.getPlayer(uuid) == null) throw new IllegalArgumentException("Can't load an offline player");
             user = new SinkUser(uuid);
             onlineUsers.put(uuid, user);
         }

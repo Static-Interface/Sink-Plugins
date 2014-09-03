@@ -98,7 +98,7 @@ public class IrcUtil
             if(user.getNick().equalsIgnoreCase(name)) return user;
         }
 
-        if(matchedUsers.size() > 1)
+        if(matchedUsers.size() > 0)
             return matchedUsers.get(0);
         SinkLibrary.getCustomLogger().debug("Couldn't find IRC user: " + name);
         return null;
