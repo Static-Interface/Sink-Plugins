@@ -19,7 +19,6 @@ package de.static_interface.sinkirc;
 
 import de.static_interface.sinkirc.commands.IrcKickCommand;
 import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
-import de.static_interface.sinkirc.commands.IrclistCommand;
 import de.static_interface.sinkirc.irc_commands.*;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.exceptions.NotInitializedException;
@@ -99,7 +98,6 @@ public class SinkIRC extends JavaPlugin
 
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
-        getCommand("irclist").setExecutor(new IrclistCommand());
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
         getCommand("irckick").setExecutor(new IrcKickCommand());
 
