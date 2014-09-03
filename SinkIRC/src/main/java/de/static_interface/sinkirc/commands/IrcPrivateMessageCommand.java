@@ -44,7 +44,8 @@ public class IrcPrivateMessageCommand implements CommandExecutor
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
 
-        if (!IrcUtil.sendMessage(message, target))
+
+        if (!IrcUtil.sendMessage(target, message))
         {
             sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
         }
