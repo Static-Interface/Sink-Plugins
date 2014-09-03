@@ -38,6 +38,8 @@ public class IrcPrivateMessageCommand implements CommandExecutor
 
         String target = args[0];
 
+        if(target.startsWith("#")) return false;
+
         String message = ChatColor.GRAY + SinkLibrary.getUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
 
         for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
