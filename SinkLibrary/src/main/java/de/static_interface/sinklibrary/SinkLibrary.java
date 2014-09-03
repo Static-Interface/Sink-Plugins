@@ -467,6 +467,7 @@ public class SinkLibrary extends JavaPlugin
         if ( user == null || !user.isOnline() )
         {
             user = new SinkUser(uuid);
+            onlineUsers.put(uuid, user);
         }
 
         return user;
@@ -589,7 +590,7 @@ public class SinkLibrary extends JavaPlugin
      */
     public static Collection<SinkUser> getOnlineUsers()
     {
-        return onlineUsers.values();
+        return Collections.unmodifiableCollection(onlineUsers.values());
     }
 
     public static Logger getCustomLogger()
