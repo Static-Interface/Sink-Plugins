@@ -107,12 +107,17 @@ commands:
     permission: sinkcommands.list
     aliases: [online, who]
 
+  sudo:
+    description: Execute commands as other players
+    permission: sinkcommands.sudo
+
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
     default: op
     children:
       sinkcommands.drug: true
+      sinkcommands.sudo: true
       sinkcommands.milk.*: true
       sinkcommands.message: true
       sinkcommands.freeze: true
@@ -138,6 +143,10 @@ permissions:
     default: true
 
   sinkcommands.gup:
+    default: op
+
+  sinkcommands.sudo:
+    description: Allows to use sudo
     default: op
 
   sinkcommands.milk.*:
