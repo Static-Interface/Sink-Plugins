@@ -50,7 +50,7 @@ public class MsgCommand extends IrcCommand
             return true;
         }
 
-        String message = ChatColor.YELLOW + "[IRC] [PRIVMSG] " + ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW + ": " + ChatColor.WHITE;
+        String message = ChatColor.GOLD + "[IRC] [Privmsg] " + ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW + ":" + ChatColor.WHITE;
 
         for ( int x = 1; x < args.length; x++ )
         {
@@ -60,7 +60,7 @@ public class MsgCommand extends IrcCommand
         message = message.replace("null", "").trim();
 
         target.getPlayer().sendMessage(message);
-        sender.sendMessage("Message was send to \"" + target.getDisplayName() + ChatColor.RESET + "\"!");
+        sender.sendMessage("Nachricht wurde an \"" + target.getDisplayName() + ChatColor.RESET + "\" gesendet!");
         return true;
     }
 }

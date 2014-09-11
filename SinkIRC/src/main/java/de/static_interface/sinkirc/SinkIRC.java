@@ -55,7 +55,7 @@ public class SinkIRC extends JavaPlugin
                     mainChannel = SinkLibrary.getSettings().getIRCChannel();
 
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<PircBotX>()
-                            .setName(SinkLibrary.getSettings().getIRCBotUsername())
+                            .setName(SinkLibrary.getSettings().getIRCBotNickname())
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
                             .setAutoReconnect(true)

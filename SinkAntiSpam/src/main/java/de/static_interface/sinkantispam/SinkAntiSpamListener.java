@@ -157,8 +157,8 @@ public class SinkAntiSpamListener implements Listener
         }
         if(SinkLibrary.getSettings().isWhitelistedDomainCheckEnabled())
         {
-            pattern = Pattern.compile("((w{3}\\.)?([A-Za-z0-9]+\\.)+[A-Za-z]{2,3}/?)\\s");
-            matcher = pattern.matcher(message.replaceAll("www.", ""));
+            pattern = Pattern.compile("((w{3}\\.)?([\\-A-Za-z0-9]+\\.)+[A-Za-z]{2,3}+/?)\\s");
+            matcher = pattern.matcher(message.replaceAll("www.", "") + " ");
             if ( !matcher.find() ) return result;
             String domain = matcher.group(0).trim();
             if ( containsWord(domain, whiteListDomains) != null )

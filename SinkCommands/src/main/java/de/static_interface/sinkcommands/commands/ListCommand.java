@@ -66,6 +66,7 @@ public class ListCommand implements CommandExecutor
         }
 
         //Sort groups and format to "Group: Player1, Player2, Player n" format
+        //todo use essentials permissions instead of isOp
         SortedSet<String> sortedGroups = new TreeSet<>(groupUsers.keySet());
         int vanishUsers = 0;
         for ( String group : sortedGroups )
@@ -97,7 +98,6 @@ public class ListCommand implements CommandExecutor
                         prefix += ChatColor.GRAY + "[Versteckt]" + ChatColor.RESET;
                         vanishUsers++;
                     }
-                    groupUserCount++;
                 }
 
                 if ( tmp.equals("") )
@@ -108,6 +108,8 @@ public class ListCommand implements CommandExecutor
                 {
                     tmp += ChatColor.GRAY + ", " + prefix + user.getDisplayName();
                 }
+
+                groupUserCount++;
             }
             if(groupUserCount > 0)
                 out.add(ChatColor.GOLD + group + ChatColor.RESET + ": " + tmp);
