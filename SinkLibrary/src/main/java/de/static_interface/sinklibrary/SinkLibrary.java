@@ -57,7 +57,7 @@ public class SinkLibrary extends JavaPlugin
     private static String version;
     private static Settings settings;
     private static List<JavaPlugin> registeredPlugins;
-    private static HashMap<UUID, SinkUser> onlineUsers;
+    private static volatile HashMap<UUID, SinkUser> onlineUsers;
     private static PluginDescriptionFile description;
     private static boolean economyAvailable = true;
     private static boolean permissionsAvailable = true;
@@ -462,14 +462,10 @@ public class SinkLibrary extends JavaPlugin
     public static SinkUser getUser(UUID uuid)
     {
         SinkUser user = onlineUsers.get(uuid);
-
-        if ( user == null || !user.isOnline() )
+        if(user == null)
         {
             user = new SinkUser(uuid);
-            if(Bukkit.getPlayer(uuid) != null)
-                onlineUsers.put(uuid, user);
         }
-
         return user;
     }
 
@@ -549,13 +545,8 @@ public class SinkLibrary extends JavaPlugin
      */
     public static void loadUser(UUID uuid)
     {
-        SinkUser user = onlineUsers.get(uuid);
-        if ( user == null || !user.getPlayer().getUniqueId().equals(uuid) )
-        {
-            if(Bukkit.getPlayer(uuid) == null) throw new IllegalArgumentException("Can't load an offline player");
-            user = new SinkUser(uuid);
-            onlineUsers.put(uuid, user);
-        }
+        if(onlineUsers.get(uuid) != null || Bukkit.getPlayer(uuid) == null) return;
+        onlineUsers.put(uuid, new SinkUser(uuid));
     }
 
     /**
@@ -568,10 +559,7 @@ public class SinkLibrary extends JavaPlugin
     {
         SinkUser user = getUser(uuid);
         user.getPlayerConfiguration().save();
-        if ( uuid != null )
-        {
-            onlineUsers.remove(uuid);
-        }
+        onlineUsers.remove(uuid);
     }
 
     /**
@@ -593,6 +581,7 @@ public class SinkLibrary extends JavaPlugin
     {
         return Collections.unmodifiableCollection(onlineUsers.values());
     }
+
 
     public static Logger getCustomLogger()
     {

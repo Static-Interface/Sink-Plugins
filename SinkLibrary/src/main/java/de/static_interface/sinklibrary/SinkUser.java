@@ -303,15 +303,8 @@ public class SinkUser implements Comparable<SinkUser>
         {
             return true;
         }
-        base = BukkitUtil.getPlayer(playerName);
-        if ( base != null )
-        {
-            if ( base.isOnline() )
-            {
-                return true;
-            }
-        }
-        return false;
+        if(base == null) base = Bukkit.getPlayer(uuid);
+        return base != null && base.isOnline();
 
     }
 

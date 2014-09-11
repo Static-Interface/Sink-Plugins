@@ -23,9 +23,9 @@ import de.static_interface.sinklibrary.Util;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 @SuppressWarnings({"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
@@ -34,6 +34,7 @@ public abstract class ConfigurationBase
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
+    HashMap<String, String> comments = new HashMap<>();
 
     /**
      * Create a new configuration
@@ -90,15 +91,14 @@ public abstract class ConfigurationBase
             yamlConfiguration = new YamlConfiguration();
 
             if ( yamlFile != null ) yamlConfiguration.load(yamlFile);
-
             addDefaults();
-
             if(createNewConfiguration)
             {
                 onCreate();
             }
 
             save();
+
         }
         catch ( InvalidConfigurationException e )
         {
@@ -110,6 +110,143 @@ public abstract class ConfigurationBase
         {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + getFile().getName());
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
+        }
+    }
+
+    private void writeToFile(File file) throws IOException
+    {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(yamlFile, true));
+
+        if (!endsWithSpace(file))
+        {
+            writer.newLine();
+        }
+
+        for(String path : getDefaults().keySet())
+        {
+            Object value = get(path);
+            writer.write(parse(path, value, comments.get(path)));
+            writer.newLine();
+        }
+        writer.close();
+    }
+
+    /**
+     * Parses a path with value into a YAML-compatible string
+     * @return YAML Parsed value
+     */
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    private String parse(String path, Object value, String comment)
+    {
+        StringBuilder builder = new StringBuilder();
+        String[] subpaths = path.split(".");
+
+        if (!Util.isStringEmptyOrNull(comment))
+        {
+            String[] lines = comment.split("\n");
+
+
+            String whiteSpaces = "";
+
+            // get whitespaces from path
+            if(subpaths.length > 1)
+            {
+                for ( int i = 1; i < subpaths.length; i++ )
+                {
+                    whiteSpaces += "  ";
+                }
+            }
+
+            //check for comment prefix
+            if(!comment.startsWith("#"))
+            {
+                comment = "# " + comment;
+            }
+
+            // comment is single line
+            if(lines.length == 1)
+            {
+                builder.append(whiteSpaces).append(comment);
+            }
+            else
+            {
+                // comment is multiline, handle all lines
+                int i = 0;
+                for(String line : lines)
+                {
+                    if(i > 0)
+                    {
+                        // add line break to every line except the first one
+                        builder.append("\n");
+                    }
+                    builder.append(whiteSpaces).append(line);
+                    i++;
+                }
+            }
+        }
+
+        // add line break for path: value
+        builder.append('\n');
+
+        //split subpaths
+        int i = 0;
+        for(String p : subpaths)
+        {
+            //todo: search for sub paths***
+            if(i == 0)
+            {
+                builder.append(p);
+            }
+            else
+            {
+                builder.append("  ").append(p);
+            }
+            if (i == subpaths.length)
+            {
+                builder.append(": ");
+            }
+
+            builder.append("\n");
+
+            i++;
+        }
+
+
+        builder.append(ValueParser.parseToYAML(value));
+
+        return builder.toString();
+    }
+
+    /**
+     * Set comment of path, dont forget to call {@link #save()}
+     * @param path YAML Path
+     * @param comment Comment
+     */
+    public void setComment(String path, String comment)
+    {
+        comments.put(path, comment);
+    }
+
+
+    /**
+     * Checks if the file ends with space
+     *
+     * @param file File to check
+     * @return If the file ends with space
+     */
+    private boolean endsWithSpace(File file) {
+        try {
+            Scanner scanner = new Scanner(file);
+            String lastLine = "";
+
+            while (scanner.hasNextLine()) {
+                lastLine = scanner.nextLine();
+            }
+
+            return lastLine.isEmpty();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -145,10 +282,18 @@ public abstract class ConfigurationBase
         try
         {
             getYamlConfiguration().save(getFile());
+            //writeToFile(getFile()); // Todo!
         }
-        catch ( IOException ignored )
+        catch ( IOException e )
         {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
+            if(SinkLibrary.getSettings().isDebugEnabled())
+            {
+                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
+            }
+            else
+            {
+                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
+            }
         }
     }
 
@@ -267,16 +412,22 @@ public abstract class ConfigurationBase
      */
     public void addDefault(String path, Object value)
     {
-        assert getDefaults() != null;
-        assert getYamlConfiguration() != null;
+        addDefault(path, value, null);
+    }
 
-        if ( exists() && getYamlConfiguration() != null && !getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
+    public void addDefault(String path, Object value, String comment)
+    {
+        if(getDefaults() == null) throw new NullPointerException("getDefaults() equals null!");
+        if(getYamlConfiguration() == null) throw new NullPointerException("getYamlConfiguration() equals null!");
+
+        if (!getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
         {
             getYamlConfiguration().set(path, value);
-            save();
+            if(comment != null) setComment(path, comment);
         }
         getDefaults().put(path, value);
     }
+
 
     /**
      * Get Defaults
