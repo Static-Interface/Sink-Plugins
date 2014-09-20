@@ -78,52 +78,9 @@
             <version>1.9.8.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>de.static_interface</groupId>
-            <artifactId>SinkAFK</artifactId>
-            <version>1.9</version>
-            <scope>system</scope>
-            <systemPath>${main.basedir}/libs/SinkAFK-1.9.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <properties>
         <main.basedir>${project.basedir}/../</main.basedir>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>de.static_interface.shadow:Tameru:*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>de.static_interface.shadow:sinkafk</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
