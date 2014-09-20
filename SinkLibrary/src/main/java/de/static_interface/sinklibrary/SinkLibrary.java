@@ -17,13 +17,13 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.commands.Command;
-import de.static_interface.sinklibrary.commands.SinkDebugCommand;
-import de.static_interface.sinklibrary.commands.SinkReloadCommand;
+import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.command.SinkDebugCommand;
+import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
-import de.static_interface.sinklibrary.events.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;

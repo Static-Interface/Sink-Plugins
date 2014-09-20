@@ -18,7 +18,7 @@
 package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.events.IrcCommandEvent;
+import de.static_interface.sinklibrary.event.IrcCommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.pircbotx.Channel;

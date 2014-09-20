@@ -19,7 +19,7 @@ package de.static_interface.sinkchat.channel;
 
 import java.util.HashMap;
 
-import de.static_interface.sinkchat.ChannelConfigurations;
+import de.static_interface.sinkchat.ChannelConfiguration;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.command.ChannelCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -84,7 +84,7 @@ public class ChannelHandler
     private static void saveChannel(Channel channel)
     {
     	String pathPrefix = "Channels." + channel.getName() + ".";
-    	ChannelConfigurations config = SinkChat.getChannelConfigs();
+    	ChannelConfiguration config = SinkChat.getChannelConfigs();
 
     	config.set(pathPrefix + ChannelValues.DEFAULT, true);
     	config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());

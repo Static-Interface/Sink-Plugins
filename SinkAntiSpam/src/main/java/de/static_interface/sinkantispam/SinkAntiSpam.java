@@ -18,7 +18,7 @@
 package de.static_interface.sinkantispam;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exceptions.NotInitializedException;
+import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

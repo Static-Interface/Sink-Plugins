@@ -18,9 +18,9 @@
 package de.static_interface.sinklibrary.listener;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.commands.Command;
-import de.static_interface.sinklibrary.events.IrcCommandEvent;
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
+import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

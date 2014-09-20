@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkcommands.listener;
 
-import de.static_interface.sinkcommands.commands.DrugCommand;
+import de.static_interface.sinkcommands.command.DrugCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;

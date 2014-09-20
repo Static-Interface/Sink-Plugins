@@ -26,7 +26,7 @@ import de.static_interface.sinkchat.command.*;
 import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exceptions.NotInitializedException;
+import de.static_interface.sinklibrary.exception.NotInitializedException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -40,7 +40,7 @@ public class SinkChat extends JavaPlugin
 {
     private static boolean initialized = false;
     private static Towny towny;
-    private static ChannelConfigurations channelconfigs = null;
+    private static ChannelConfiguration channelconfigs = null;
 
     public void onEnable()
     {
@@ -61,7 +61,7 @@ public class SinkChat extends JavaPlugin
 
     private void registerChannels()
     {
-        channelconfigs = new ChannelConfigurations();
+        channelconfigs = new ChannelConfiguration();
         YamlConfiguration yamlConfig = channelconfigs.getYamlConfiguration();
         ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
         Channel channel = null;
@@ -81,7 +81,7 @@ public class SinkChat extends JavaPlugin
         }
     }
 
-    public static ChannelConfigurations getChannelConfigs()
+    public static ChannelConfiguration getChannelConfigs()
 	{
 		return channelconfigs;
 	}

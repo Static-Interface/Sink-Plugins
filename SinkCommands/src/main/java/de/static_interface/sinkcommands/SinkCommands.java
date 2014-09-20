@@ -17,13 +17,13 @@
 
 package de.static_interface.sinkcommands;
 
-import de.static_interface.sinkcommands.commands.*;
+import de.static_interface.sinkcommands.command.*;
 import de.static_interface.sinkcommands.listener.*;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import de.static_interface.sinklibrary.exceptions.NotInitializedException;
+import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

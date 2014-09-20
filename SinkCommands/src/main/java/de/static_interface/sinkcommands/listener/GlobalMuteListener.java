@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands.listener;
 
 import de.static_interface.sinkcommands.SinkCommands;
-import de.static_interface.sinkcommands.commands.GlobalmuteCommand;
+import de.static_interface.sinkcommands.command.GlobalmuteCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.event.EventHandler;

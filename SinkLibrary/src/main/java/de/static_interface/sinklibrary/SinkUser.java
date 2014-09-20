@@ -18,8 +18,8 @@
 package de.static_interface.sinklibrary;
 
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException;
-import de.static_interface.sinklibrary.exceptions.PermissionsNotAvailableException;
+import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
+import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -91,7 +91,7 @@ public class SinkUser implements Comparable<SinkUser>
      * Get current money of player
      *
      * @return Money of player
-     * @throws de.static_interface.sinklibrary.exceptions.EconomyNotAvailableException if economy is not available.
+     * @throws de.static_interface.sinklibrary.exception.EconomyNotAvailableException if economy is not available.
      */
     public double getMoney()
     {
@@ -229,7 +229,7 @@ public class SinkUser implements Comparable<SinkUser>
      * Get user's primary group.
      *
      * @return Primary Group
-     * @throws de.static_interface.sinklibrary.exceptions.PermissionsNotAvailableException if permissions are not available
+     * @throws de.static_interface.sinklibrary.exception.PermissionsNotAvailableException if permissions are not available
      */
     public String getPrimaryGroup()
     {
@@ -273,7 +273,7 @@ public class SinkUser implements Comparable<SinkUser>
      * Get Prefix
      *
      * @return Player prefix
-     * @throws de.static_interface.sinklibrary.exceptions.ChatNotAvailableException if chat is not available
+     * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
      */
     public String getPrefix()
     {

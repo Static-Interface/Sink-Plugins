@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkirc;
 
-import de.static_interface.sinklibrary.events.*;
+import de.static_interface.sinklibrary.event.*;
 
 import org.bukkit.Bukkit;
 import org.pircbotx.PircBotX;

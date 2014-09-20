@@ -17,11 +17,11 @@
 
 package de.static_interface.sinkirc;
 
-import de.static_interface.sinkirc.commands.IrcKickCommand;
-import de.static_interface.sinkirc.commands.IrcPrivateMessageCommand;
-import de.static_interface.sinkirc.irc_commands.*;
+import de.static_interface.sinkirc.command.IrcKickCommand;
+import de.static_interface.sinkirc.command.IrcPrivateMessageCommand;
+import de.static_interface.sinkirc.irc_command.*;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exceptions.NotInitializedException;
+import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;

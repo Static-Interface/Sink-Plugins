@@ -20,7 +20,7 @@ package de.static_interface.sinkantispam;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.command.Command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

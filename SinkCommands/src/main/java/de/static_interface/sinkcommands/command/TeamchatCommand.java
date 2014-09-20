@@ -15,36 +15,28 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkcommands;
+package de.static_interface.sinkcommands.command;
 
-import de.static_interface.sinkcommands.command.LagCommand;
 import de.static_interface.sinklibrary.BukkitUtil;
-import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
-public class LagTimer implements Runnable
+public class TeamchatCommand implements CommandExecutor
 {
-    String PREFIX = LagCommand.PREFIX;
-
-    private static boolean send = false;
+    public static final String PREFIX = ChatColor.GRAY + "[" + ChatColor.DARK_RED + 'T' + ChatColor.RED + "eam" + ChatColor.DARK_RED + 'C' + ChatColor.RED + "hat" + ChatColor.GRAY + "] " + ChatColor.RESET;
 
     @Override
-    public void run()
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        double tps = SinkLibrary.getSinkTimer().getAverageTPS();
-        if ( tps <= 17 && !send )
+        if ( args.length < 1 )
         {
-            BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + "Der Server laggt gerade!");
-            send = true;
+            return false;
         }
-        else if ( tps <= 18.5 && !send )
-        {
-            BukkitUtil.broadcastMessage(PREFIX + ChatColor.YELLOW + "Der Server könnte gerade etwas laggen!");
-            send = true;
-        }
-        else
-        {
-            send = false;
-        }
+        String message = Util.formatArrayToString(args, " ");
+        BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.teamchat", false);
+        return true;
     }
 }

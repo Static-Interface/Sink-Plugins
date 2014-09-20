@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.irc.IrcCommandSender;
+import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

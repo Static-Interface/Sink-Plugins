@@ -25,7 +25,7 @@ import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.commands.Command;
+import de.static_interface.sinklibrary.command.Command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 public class ChannelCommand extends Command
