@@ -138,5 +138,5 @@ public class SinkIRC extends JavaPlugin {
         ircThread = null;
         ircBot = null;
         System.gc();
-
+    }
 }
