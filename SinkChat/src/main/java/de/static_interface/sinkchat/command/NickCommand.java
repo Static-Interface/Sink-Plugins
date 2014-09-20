@@ -38,12 +38,12 @@ public class NickCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!SinkLibrary.getSettings().isDisplayNamesEnabled()) {
+        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled()) {
             sender.sendMessage(PREFIX + "DisplayNames have been disabled in the config.");
             return true;
         }
 
-        SinkUser user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getInstance().getUser(sender);
         String newDisplayName;
 
         if (args.length < 1) {
@@ -66,7 +66,7 @@ public class NickCommand implements CommandExecutor {
             }
 
             if (setDisplayName(target, newDisplayName, sender)) {
-                user = SinkLibrary.getUser(target);
+                user = SinkLibrary.getInstance().getUser(target);
                 sender.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Nick.OtherChanged"), playerName, user.getDisplayName()));
             }
             return true;
@@ -85,7 +85,7 @@ public class NickCommand implements CommandExecutor {
 
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean setDisplayName(Player target, String newDisplayName, CommandSender sender) {
-        SinkUser user = SinkLibrary.getUser(target);
+        SinkUser user = SinkLibrary.getInstance().getUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if (!NICKNAME_PATTERN.matcher(cleanDisplayName).matches()) {
             sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.IllegalNickname"));
@@ -114,7 +114,7 @@ public class NickCommand implements CommandExecutor {
             }
         }
 
-        if (SinkLibrary.isChatAvailable()) {
+        if (SinkLibrary.getInstance().isChatAvailable()) {
             newDisplayName = user.getPrefix() + newDisplayName;
         }
 
@@ -122,7 +122,7 @@ public class NickCommand implements CommandExecutor {
         config.setDisplayName(newDisplayName);
         config.setHasDisplayName(true);
 
-        SinkLibrary.refreshDisplayName(user.getPlayer());
+        SinkLibrary.getInstance().refreshDisplayName(user.getPlayer());
         return true;
     }
 }

@@ -45,9 +45,9 @@ public class WarnUtil {
         tmp.add(warning);
         warnings.put(player.getUniqueId(), tmp);
 
-        String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getUser(player).getDisplayName(),
+        String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getInstance().getUser(player).getDisplayName(),
                                                 warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
-        SinkUser user = SinkLibrary.getUser(player);
+        SinkUser user = SinkLibrary.getInstance().getUser(player);
         String perm;
         if (warning.isAutoWarning()) {
             perm = "sinkantispam.autowarnmessage";

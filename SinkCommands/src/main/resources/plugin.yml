@@ -8,10 +8,6 @@ main: de.static_interface.sinkcommands.SinkCommands
 soft-depend: [SinkLibrary, SinkIRC]
 
 commands:
-  commandsver:
-    description: Shows Version
-    permission: sinkcommands.ver
-
   drug:
     description: Take drugs!
     permission: sinkcommands.drug
@@ -121,7 +117,6 @@ permissions:
       sinkcommands.milk.*: true
       sinkcommands.message: true
       sinkcommands.freeze: true
-      sinkcommands.ver: true
       sinkcommands.globalmute: true
       sinkcommands.teamchat: true
       sinkcommands.teamchat.color: true
@@ -182,10 +177,6 @@ permissions:
     default: op
     children:
       sinkcommands.milk.message: true
-
-  sinkcommands.ver:
-    description: Allows to use commandsver command
-    default: true
 
   sinkcommands.globalmute:
     description: Allows to use globalmute command

@@ -76,14 +76,14 @@ public abstract class ConfigurationBase {
             boolean createNewConfiguration = !exists();
 
             if (createNewConfiguration) {
-                SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
+                SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
             }
 
             if (yamlFile != null) {
                 Files.createParentDirs(yamlFile);
 
                 if (createNewConfiguration && !yamlFile.createNewFile()) {
-                    SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration: " + yamlFile);
+                    SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't create configuration: " + yamlFile);
                 }
             }
 
@@ -102,12 +102,12 @@ public abstract class ConfigurationBase {
             save();
 
         } catch (InvalidConfigurationException e) {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file: " + yamlFile);
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Invalid configuration file: " + yamlFile);
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, e.getMessage());
             recreate();
         } catch (Exception e) {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + getFile().getName());
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + getFile().getName());
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
     }
 
@@ -256,10 +256,10 @@ public abstract class ConfigurationBase {
             getYamlConfiguration().save(getFile());
             //writeToFile(getFile()); // Todo!
         } catch (IOException e) {
-            if (SinkLibrary.getSettings().isDebugEnabled()) {
-                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
+            if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+                SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
             } else {
-                SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
+                SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
             }
         }
     }
@@ -276,7 +276,7 @@ public abstract class ConfigurationBase {
             getYamlConfiguration().set(path, value);
             save();
         } catch (Exception e) {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
+            SinkLibrary.getInstance().getCustomLogger().log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
         }
     }
 
@@ -293,7 +293,7 @@ public abstract class ConfigurationBase {
         try {
             Object value = getYamlConfiguration().get(path);
             if (!path.equals("General.EnableDebug") && !path.equals("General.EnableLog")) {
-                SinkLibrary.getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
+                SinkLibrary.getInstance().getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
             }
             if (value == null) {
                 throw new NullPointerException("Path " + path + " returned null!");
@@ -415,11 +415,11 @@ public abstract class ConfigurationBase {
      * Recreate configuration
      */
     public void recreate() {
-        SinkLibrary.getCustomLogger().log(Level.WARNING, "Recreating Configuration: " + getFile());
+        SinkLibrary.getInstance().getCustomLogger().log(Level.WARNING, "Recreating Configuration: " + getFile());
         try {
             backup();
         } catch (IOException e) {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't backup configuration: " + getFile(), e);
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't backup configuration: " + getFile(), e);
             return;
         }
         delete();

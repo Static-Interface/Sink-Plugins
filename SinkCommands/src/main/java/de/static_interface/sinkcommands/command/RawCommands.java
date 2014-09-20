@@ -65,7 +65,7 @@ public class RawCommands {
             if (args.length < 1) {
                 return false;
             }
-            SinkUser target = SinkLibrary.getUser(args[0]);
+            SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
             if (!target.isOnline()) {
                 sender.sendMessage(ChatColor.RED + "User ist nicht online!");

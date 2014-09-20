@@ -30,7 +30,7 @@ public class Settings extends ConfigurationBase {
     public static final int REQUIRED_VERSION = 1;
 
     public Settings() {
-        super(new File(SinkLibrary.getCustomDataFolder(), "Settings.yml"));
+        super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Settings.yml"));
     }
 
     @Override
@@ -95,12 +95,20 @@ public class Settings extends ConfigurationBase {
         switch (((String) get("Updater.UpdateType")).toLowerCase()) {
             case "default":
                 return Updater.UpdateType.DEFAULT;
+            case "download":
+                return Updater.UpdateType.DEFAULT;
             case "no_download":
+                return Updater.UpdateType.NO_DOWNLOAD;
+            case "notify":
                 return Updater.UpdateType.NO_DOWNLOAD;
             case "no_version_check":
                 return Updater.UpdateType.NO_VERSION_CHECK;
+            case "off":
+                return Updater.UpdateType.NO_VERSION_CHECK;
+            case "disabled":
+                return Updater.UpdateType.NO_VERSION_CHECK;
             default:
-                return Updater.UpdateType.DEFAULT;
+                return Updater.UpdateType.NO_DOWNLOAD;
         }
     }
 
@@ -133,7 +141,7 @@ public class Settings extends ConfigurationBase {
             }
             return value;
         } catch (Exception e) {
-            SinkLibrary.getCustomLogger().log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
+            SinkLibrary.getInstance().getCustomLogger().log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -166,7 +174,6 @@ public class Settings extends ConfigurationBase {
         return (boolean) get("SinkIRC.Server.PasswordEnabled");
     }
 
-
     public String getIRCPassword() {
         return (String) get("SinkIRC.Server.Password");
     }
@@ -197,22 +204,6 @@ public class Settings extends ConfigurationBase {
 
     public boolean isDebugEnabled() {
         return (boolean) get("General.EnableDebug");
-    }
-
-    public boolean isBroadcastAFKEnabled() {
-        return (boolean) get("SinkAFK.Broadcast.AFK");
-    }
-
-    public boolean isBroadcastBackEnabled() {
-        return (boolean) get("SinkAFK.Broadcast.Back");
-    }
-
-    public boolean isIRCBroadcastAFKEnabled() {
-        return (boolean) get("SinkAFK.Broadcast.IRC.AFK");
-    }
-
-    public boolean isIRCBroadcastBackEnabled() {
-        return (boolean) get("SinkAFK.Broadcast.IRC.Back");
     }
 
     public boolean isTownyEnabled() {

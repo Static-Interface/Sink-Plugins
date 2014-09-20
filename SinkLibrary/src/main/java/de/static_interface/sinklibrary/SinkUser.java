@@ -66,12 +66,12 @@ public class SinkUser implements Comparable<SinkUser> {
         if (player.equalsIgnoreCase("console")) {
             sender = Bukkit.getConsoleSender();
             base = null;
-            econ = SinkLibrary.getEconomy();
+            econ = SinkLibrary.getInstance().getEconomy();
             playerName = "Console";
             return;
         }
         base = BukkitUtil.getPlayer(player);
-        econ = SinkLibrary.getEconomy();
+        econ = SinkLibrary.getInstance().getEconomy();
         playerName = player;
         if (base == null) {
             uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
@@ -121,16 +121,16 @@ public class SinkUser implements Comparable<SinkUser> {
         validateEconomy();
         EconomyResponse response;
         if (roundedAmount > 0) {
-            SinkLibrary.getCustomLogger().debug("econ.withDrawPlayer(" + getName() + ", " + -roundedAmount + ");");
+            SinkLibrary.getInstance().getCustomLogger().debug("econ.withDrawPlayer(" + getName() + ", " + -roundedAmount + ");");
             response = econ.withdrawPlayer(getName(), -roundedAmount);
         } else if (roundedAmount < 0) {
-            SinkLibrary.getCustomLogger().debug("econ.depositPlayer(" + getName() + ", " + roundedAmount + ");");
+            SinkLibrary.getInstance().getCustomLogger().debug("econ.depositPlayer(" + getName() + ", " + roundedAmount + ");");
             response = econ.depositPlayer(getName(), roundedAmount);
         } else {
             return true;
         }
         boolean result = response.transactionSuccess();
-        SinkLibrary.getCustomLogger().debug("result = " + result);
+        SinkLibrary.getInstance().getCustomLogger().debug("result = " + result);
         return response.transactionSuccess();
     }
 
@@ -139,7 +139,7 @@ public class SinkUser implements Comparable<SinkUser> {
             throw new NullPointerException("User is console, cannot get Player instance!");
         }
 
-        if (!SinkLibrary.isEconomyAvailable()) {
+        if (!SinkLibrary.getInstance().isEconomyAvailable()) {
             throw new EconomyNotAvailableException();
         }
 
@@ -192,9 +192,9 @@ public class SinkUser implements Comparable<SinkUser> {
         if (!isOnline()) {
             throw new RuntimeException("This may be only used for online players!");
         }
-        //if (SinkLibrary.permissionsAvailable())
+        //if (SinkLibrary.getInstance().permissionsAvailable())
         //{
-        //    return SinkLibrary.getPermissions().has(base, permission);
+        //    return SinkLibrary.getInstance().getPermissions().has(base, permission);
         //}
         //else
         //{
@@ -213,10 +213,10 @@ public class SinkUser implements Comparable<SinkUser> {
             throw new IllegalArgumentException("User is console!");
         }
 
-        if (!SinkLibrary.isPermissionsAvailable()) {
+        if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
             throw new PermissionsNotAvailableException();
         }
-        return SinkLibrary.getPermissions().getPrimaryGroup(base);
+        return SinkLibrary.getInstance().getPermissions().getPrimaryGroup(base);
     }
 
 
@@ -228,7 +228,7 @@ public class SinkUser implements Comparable<SinkUser> {
             return playerName;
         }
         try {
-            if (SinkLibrary.isChatAvailable()) {
+            if (SinkLibrary.getInstance().isChatAvailable()) {
                 String playerPrefix = getPrefix();
                 return playerPrefix + playerName + ChatColor.RESET;
             }
@@ -246,10 +246,10 @@ public class SinkUser implements Comparable<SinkUser> {
      * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
      */
     public String getPrefix() {
-        if (!SinkLibrary.isChatAvailable()) {
+        if (!SinkLibrary.getInstance().isChatAvailable()) {
             return base.isOp() ? ChatColor.DARK_RED.toString() : ChatColor.WHITE.toString();
         }
-        return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getChat().getPlayerPrefix(base));
+        return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
     }
 
     /**
@@ -294,10 +294,10 @@ public class SinkUser implements Comparable<SinkUser> {
         if (!isOnline()) {
             return playerName;
         }
-        if (!SinkLibrary.getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName()) {
+        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName()) {
             String prefix = "";
-            if (SinkLibrary.isChatAvailable()) {
-                prefix = ChatColor.translateAlternateColorCodes('&', SinkLibrary.getChat().getPlayerPrefix(base));
+            if (SinkLibrary.getInstance().isChatAvailable()) {
+                prefix = ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
             }
             return prefix + base.getDisplayName();
         } else {
@@ -333,7 +333,7 @@ public class SinkUser implements Comparable<SinkUser> {
      * @param message Message to be displayed
      */
     public void sendDebugMessage(String message) {
-        if (SinkLibrary.getSettings().isDebugEnabled()) {
+        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
         }
     }

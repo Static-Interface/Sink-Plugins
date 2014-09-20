@@ -89,7 +89,7 @@ public class IrcUtil {
     }
 
     public static User getUser(Channel channel, String name) {
-        SinkLibrary.getCustomLogger().debug("Searching IRC user: " + name);
+        SinkLibrary.getInstance().getCustomLogger().debug("Searching IRC user: " + name);
         ArrayList<User> matchedUsers = new ArrayList<>();
         for (User user : channel.getUsers()) {
             if (user.getNick().startsWith(name)) {
@@ -103,7 +103,7 @@ public class IrcUtil {
         if (matchedUsers.size() > 0) {
             return matchedUsers.get(0);
         }
-        SinkLibrary.getCustomLogger().debug("Couldn't find IRC user: " + name);
+        SinkLibrary.getInstance().getCustomLogger().debug("Couldn't find IRC user: " + name);
         return null;
     }
 
@@ -118,7 +118,7 @@ public class IrcUtil {
     }
 
     public static boolean sendMessage(String target, String message) {
-        //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
+        //SinkLibrary.getInstance().getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
 
         try {
@@ -135,7 +135,7 @@ public class IrcUtil {
     }
 
     public static boolean sendMessage(Channel target, String message) {
-        //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
+        //SinkLibrary.getInstance().getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
         try {
             target.send().message(message);
@@ -146,7 +146,7 @@ public class IrcUtil {
     }
 
     public static void handleCommand(String command, String[] args, String source, User user, String label) {
-        SinkLibrary.getCustomLogger().debug("handleCommand: " + label);
+        SinkLibrary.getInstance().getCustomLogger().debug("handleCommand: " + label);
         if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);
         } else {

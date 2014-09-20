@@ -29,7 +29,6 @@ import de.static_interface.sinkchat.command.TownChatCommand;
 import de.static_interface.sinkchat.listener.ChatListenerHighest;
 import de.static_interface.sinkchat.listener.ChatListenerLowest;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -65,7 +64,7 @@ public class SinkChat extends JavaPlugin {
             registerEvents();
             registerCommands();
             registerChannels();
-            SinkLibrary.registerPlugin(this);
+            SinkLibrary.getInstance().registerPlugin(this);
             initialized = true;
         }
     }
@@ -106,12 +105,9 @@ public class SinkChat extends JavaPlugin {
             towny = (Towny) tmp;
         } else {
             towny = null;
-            SinkLibrary.getCustomLogger().log(Level.INFO, "Towny not found. Disabling Towny Chat features");
+            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Towny not found. Disabling Towny Chat features");
         }
 
-        if (!SinkLibrary.initialized) {
-            throw new NotInitializedException();
-        }
         return true;
     }
 
@@ -124,7 +120,7 @@ public class SinkChat extends JavaPlugin {
         getCommand("nick").setExecutor(new NickCommand());
         getCommand("enablespy").setExecutor(new SpyCommands.EnableSpyCommand());
         getCommand("disablespy").setExecutor(new SpyCommands.DisablSpyCommand());
-        SinkLibrary.registerCommand("channel", new ChannelCommand(this));
+        SinkLibrary.getInstance().registerCommand("channel", new ChannelCommand(this));
         if (towny != null) {
             getCommand("nationchat").setExecutor(new NationChatCommand());
             getCommand("townchat").setExecutor(new TownChatCommand());

@@ -18,7 +18,6 @@
 package de.static_interface.sinkantispam;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,11 +33,11 @@ public class SinkAntiSpam extends JavaPlugin {
         }
         if (!initialized) {
             Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
-            SinkLibrary.registerPlugin(this);
+            SinkLibrary.getInstance().registerPlugin(this);
             initialized = true;
         }
 
-        SinkLibrary.registerCommand("warn", new WarnCommand(this));
+        SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
     }
 
     public void onDisable() {
@@ -52,9 +51,6 @@ public class SinkAntiSpam extends JavaPlugin {
             return false;
         }
 
-        if (!SinkLibrary.initialized) {
-            throw new NotInitializedException();
-        }
         return true;
     }
 }

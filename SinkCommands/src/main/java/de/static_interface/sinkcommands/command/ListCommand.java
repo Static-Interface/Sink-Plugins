@@ -50,10 +50,10 @@ public class ListCommand implements CommandExecutor {
         out.add("");
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getInstance().getUser(p);
             String userGroup;
 
-            if (SinkLibrary.isPermissionsAvailable()) {
+            if (SinkLibrary.getInstance().isPermissionsAvailable()) {
                 userGroup = user.getPrimaryGroup();
             } else {
                 userGroup = user.getPlayer().isOp() ? "OP" : "Default";
@@ -108,7 +108,7 @@ public class ListCommand implements CommandExecutor {
             }
         }
 
-        if (SinkLibrary.isIrcAvailable()) {
+        if (SinkLibrary.getInstance().isIrcAvailable()) {
             HashMap<String, List<org.pircbotx.User>> ircGroupUsers = new HashMap<>(); // group - list of users in group
             Collection<org.pircbotx.User> onlineIrcUsers = de.static_interface.sinkirc.SinkIRC.getMainChannel().getUsers();
             out.add("");

@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 public class BukkitUtil {
 
     /** Since Bukkit 1.7.9 R0.3, the return type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
@@ -59,6 +61,7 @@ public class BukkitUtil {
      * @param name Name of the
      * @return If more than one matches, it will return the player with exact name.
      */
+    @Nullable
     public static Player getPlayer(String name) {
         List<Player> matchedPlayers = new ArrayList<>();
         for (Player player : BukkitUtil.getOnlinePlayers()) {
@@ -97,7 +100,7 @@ public class BukkitUtil {
         if (sender instanceof ConsoleCommandSender) {
             return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
         }
-        SinkUser user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getInstance().getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }
 
@@ -117,7 +120,7 @@ public class BukkitUtil {
         if (!sendIRC) {
             return;
         }
-        SinkLibrary.sendIrcMessage(message);
+        SinkLibrary.getInstance().sendIrcMessage(message);
     }
 
     /**
@@ -138,7 +141,7 @@ public class BukkitUtil {
      */
     public static void broadcast(String message, String permission, boolean sendIRC) {
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getInstance().getUser(p);
             if (!user.hasPermission(permission)) {
                 continue;
             }
@@ -146,7 +149,7 @@ public class BukkitUtil {
         }
         Bukkit.getConsoleSender().sendMessage(message);
         if (sendIRC) {
-            SinkLibrary.sendIrcMessage(message);
+            SinkLibrary.getInstance().sendIrcMessage(message);
         }
     }
 }

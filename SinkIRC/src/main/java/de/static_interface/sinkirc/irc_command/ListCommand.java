@@ -45,7 +45,7 @@ public class ListCommand extends IrcCommand {
         String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
-        for (SinkUser user : SinkLibrary.getOnlineUsers()) {
+        for (SinkUser user : SinkLibrary.getInstance().getOnlineUsers()) {
             if (firstPlayer) {
                 onlineMessage += user.getDisplayName();
                 firstPlayer = false;

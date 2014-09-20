@@ -35,7 +35,7 @@ public class StatsCommands {
 
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getInstance().getUser(sender);
 
             if (user.isConsole()) {
                 sender.sendMessage("This command is only ingame available.");
@@ -61,7 +61,7 @@ public class StatsCommands {
 
         @Override
         public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getInstance().getUser(sender);
 
             if (user.isConsole()) {
                 sender.sendMessage("This command is only ingame available.");

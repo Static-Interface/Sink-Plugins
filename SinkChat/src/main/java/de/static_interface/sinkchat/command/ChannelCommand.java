@@ -70,10 +70,10 @@ public class ChannelCommand extends Command {
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         if (args.length < 1) {
-            sendHelp(label, SinkLibrary.getUser(sender));
+            sendHelp(label, SinkLibrary.getInstance().getUser(sender));
             return true;
         } else {
-            SinkUser user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getInstance().getUser(sender);
             switch (args[0].toLowerCase()) {
                 case "join":
                     if (args.length < 2) {

@@ -29,7 +29,7 @@ import org.bukkit.plugin.Plugin;
 public class SinkReloadCommand extends Command {
     //Todo: fix exceptions on reload
 
-    private static String pluginName = SinkLibrary.getPluginName();
+    private static String pluginName = SinkLibrary.getInstance().getPluginName();
     public static final String PREFIX = ChatColor.DARK_GREEN + "[" + pluginName + "] " + ChatColor.RESET;
 
     public SinkReloadCommand(Plugin plugin) {
@@ -49,18 +49,18 @@ public class SinkReloadCommand extends Command {
 
         sender.sendMessage(PREFIX + "Reloaded " + name);
 
-        SinkLibrary.getSettings().reload();
-        name = SinkLibrary.getSettings().getFile().getName();
+        SinkLibrary.getInstance().getSettings().reload();
+        name = SinkLibrary.getInstance().getSettings().getFile().getName();
         sender.sendMessage(PREFIX + "Reloaded " + name);
 
         sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getUser(p);
+            SinkUser user = SinkLibrary.getInstance().getUser(p);
             user.getPlayerConfiguration().reload();
         }
 
         sender.sendMessage(PREFIX + "Reloading Plugins...");
-        for (Plugin p : SinkLibrary.getRegisteredPlugins()) {
+        for (Plugin p : SinkLibrary.getInstance().getRegisteredPlugins()) {
             p.onDisable();
             p.onEnable();
         }

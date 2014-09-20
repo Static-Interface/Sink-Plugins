@@ -15,23 +15,22 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkcommands.command;
+package de.static_interface.sinklibrary.command;
 
 import de.static_interface.sinklibrary.Util;
-import de.static_interface.sinklibrary.command.Command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class CommandsverCommand extends Command {
+public class SinkVersionrCommand extends Command {
 
     public static final String PREFIX = ChatColor.BLUE + "[SinkCommands] " + ChatColor.RESET;
 
     Plugin plugin;
 
-    public CommandsverCommand(Plugin plugin) {
+    public SinkVersionrCommand(Plugin plugin) {
         super(plugin);
     }
 

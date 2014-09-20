@@ -47,7 +47,7 @@ public class TownyBridge {
      * @return Formatted name of the resident
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank) {
-        SinkUser user = SinkLibrary.getUser(resident.getName()); // TODO: GET UUID FROM NAME
+        SinkUser user = SinkLibrary.getInstance().getUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
 

@@ -85,7 +85,7 @@ public class IrcCommandSender implements CommandSender {
             sendNotice(msg);
             return;
         }
-        SinkLibrary.sendIrcMessage(base.getNick() + ": " + msg, source);
+        SinkLibrary.getInstance().sendIrcMessage(base.getNick() + ": " + msg, source);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class IrcCommandSender implements CommandSender {
                 msg = base.getNick() + ": " + msg;
                 first = false;
             }
-            SinkLibrary.sendIrcMessage(msg, source);
+            SinkLibrary.getInstance().sendIrcMessage(msg, source);
         }
     }
 
@@ -185,7 +185,7 @@ public class IrcCommandSender implements CommandSender {
             return false;
         }
 
-        SinkLibrary.getCustomLogger().debug("isOp(): " + value + " for user: " + base.getNick());
+        SinkLibrary.getInstance().getCustomLogger().debug("isOp(): " + value + " for user: " + base.getNick());
         return value;
     }
 

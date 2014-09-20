@@ -56,7 +56,7 @@ public abstract class IrcCommand extends Command {
             //    if ( !isOp ) throw new UnauthorizedAccessException();
             //    sender.sendMessage(Colors.BLUE + "Debug Output: ");
             //    String values = "";
-            //    for ( de.static_interface.sinklibrary.User u : SinkLibrary.getOnlineUsers() )
+            //    for ( de.static_interface.sinklibrary.User u : SinkLibrary.getInstance().getOnlineUsers() )
             //    {
             //        String user = u.getName();
             //        String tmp = '<' + user + ',' + ChatColor.stripColor(u.getDisplayName()) + '>';

@@ -67,7 +67,7 @@ public class ChannelHandler {
             return false;
         }
 
-        for (SinkUser user : SinkLibrary.getOnlineUsers()) {
+        for (SinkUser user : SinkLibrary.getInstance().getOnlineUsers()) {
             if ((channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId())) {
                 user.sendMessage(ChannelCommand.PREFIX + String.format(m("SinkChat.DeletedChannel"), channel.getName()));
             }

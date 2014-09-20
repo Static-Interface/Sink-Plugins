@@ -26,10 +26,10 @@ public class IrcLinkListener implements Listener {
 
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
-        if (SinkLibrary.sinkChatAvailable) {
+        if (SinkLibrary.getInstance().isSinkChatAvailable()) {
             return;
         }
         String msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-        SinkLibrary.sendIrcMessage(msg);
+        SinkLibrary.getInstance().sendIrcMessage(msg);
     }
 }

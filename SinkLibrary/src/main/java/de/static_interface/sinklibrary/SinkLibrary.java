@@ -49,64 +49,182 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
-    public static List<String> tmpBannedPlayers;
-    public static boolean initialized = false;
-    public static boolean sinkChatAvailable;
-    public static boolean ircAvailable;
+    public List<String> tmpBannedPlayers;
+    private boolean sinkChatAvailable;
+    private boolean ircAvailable;
     static Logger logger;
-    private static TpsTimer timer;
-    private static Economy econ;
-    private static Permission perm;
-    private static Chat chat;
-    private static File dataFolder;
-    private static String version;
-    private static Settings settings;
-    private static List<JavaPlugin> registeredPlugins;
-    private static volatile HashMap<UUID, SinkUser> onlineUsers;
-    private static PluginDescriptionFile description;
-    private static boolean economyAvailable = true;
-    private static boolean permissionsAvailable = true;
-    private static boolean chatAvailable = true;
-    private static HashMap<String, Command> commandAliases;
-    private static HashMap<String, Command> commands;
+    private TpsTimer timer;
+    private Economy econ;
+    private Permission perm;
+    private Chat chat;
+    private static SinkLibrary instance;
+    private File dataFolder;
+    private String version;
+    private Settings settings;
+    private List<JavaPlugin> registeredPlugins;
+    private volatile HashMap<UUID, SinkUser> onlineUsers;
+    private PluginDescriptionFile description;
+    private boolean economyAvailable = true;
+    private boolean permissionsAvailable = true;
+    private boolean chatAvailable = true;
+    private boolean vaultAvailable = false;
+    private HashMap<String, Command> commandAliases;
+    private HashMap<String, Command> commands;
 
-    public static HashMap<String, Command> getCommands() {
+    public void onEnable() {
+        // Init variables first to prevent NullPointerExceptions when other plugins try to access them
+        version = getDescription().getVersion();
+        tmpBannedPlayers = new ArrayList<>();
+        registeredPlugins = new ArrayList<>();
+        onlineUsers = new HashMap<>();
+        description = getDescription();
+        dataFolder = getDataFolder();
+        logger = new Logger();
+        timer = new TpsTimer();
+        commands = new HashMap<>();
+        commandAliases = new HashMap<>();
+
+        // Init language
+        LanguageConfiguration languageConfiguration = new LanguageConfiguration();
+        languageConfiguration.init();
+
+        // Init Settings
+        settings = new Settings();
+        settings.init();
+
+        logger.log(Level.INFO, "Loading...");
+        // Check optional dependencies
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            getCustomLogger().warning("Vault Plugin not found. Disabling economy and some permission features.");
+            permissionsAvailable = false;
+            economyAvailable = false;
+            chatAvailable = false;
+            vaultAvailable = false;
+        } else {
+            vaultAvailable = true;
+
+            if (!setupChat()) {
+                chatAvailable = false;
+            }
+
+            if (!setupEcononmy()) {
+                getCustomLogger().warning("Economy Plugin not found. Disabling economy features.");
+                economyAvailable = false;
+            }
+            if (!setupPermissions()) {
+                getCustomLogger().warning("Permissions Plugin not found. Disabling permissions features.");
+                permissionsAvailable = false;
+            }
+
+            for (Player p : BukkitUtil.getOnlinePlayers()) {
+                refreshDisplayName(p);
+            }
+        }
+
+        if (!getCustomDataFolder().exists()) {
+            try {
+                boolean success = getCustomDataFolder().mkdirs();
+                if (!success) {
+                    throw new IOException("Couldn't create directories!");
+                }
+            } catch (Exception e) {
+                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Data Folder!", e); // Log via Bukkits Logger, because Log File doesnt exists
+            }
+        }
+
+        if (chatAvailable && economyAvailable && permissionsAvailable) {
+            getCustomLogger().info("Successfully hooked into permissions, economy and chat.");
+        }
+
+        // Register Listeners and Commands
+        if (instance == null) {
+            registerListeners();
+            registerCommands();
+            instance = this;
+        }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
+
+        // Check for updates
+        update();
+
+        // Init players (reload etc)
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
+            refreshDisplayName(p);
+            getUser(p.getUniqueId());
+        }
+
+        sinkChatAvailable = Bukkit.getPluginManager().getPlugin("SinkChat") != null;
+
+        if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null) {
+            ircAvailable = true;
+            Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
+
+            if (Bukkit.getPluginManager().getPlugin("SinkChat") != null) {
+                getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
+            } else {
+                getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
+                Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
+            }
+        }
+    }
+
+    public void onDisable() {
+        getCustomLogger().log(Level.INFO, "Disabling...");
+        getCustomLogger().info("Saving players...");
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
+            SinkUser user = getUser(p);
+            if (user.getPlayerConfiguration().exists()) {
+                user.getPlayerConfiguration().save();
+            }
+        }
+        getCustomLogger().debug("Disabled.");
+        try {
+            logger.getFileWriter().close();
+        } catch (Exception ignored) {
+        }
+        System.gc();
+    }
+
+    public HashMap<String, Command> getCommands() {
         return commands;
     }
 
-    public static boolean isIrcAvailable() {
+    public boolean isIrcAvailable() {
         return ircAvailable;
     }
 
     /**
      * @return True if chat is available
      */
-    public static boolean isChatAvailable() {
+    public boolean isChatAvailable() {
         return chatAvailable;
     }
 
     /**
      * @return True if economy is available
      */
-    public static boolean isEconomyAvailable() {
+    public boolean isEconomyAvailable() {
         return economyAvailable;
     }
 
     /**
      * @return True if permissions are available
      */
-    public static boolean isPermissionsAvailable() {
+    public boolean isPermissionsAvailable() {
         return permissionsAvailable;
     }
 
     /**
      * @return True if Vault available
      */
-    public static boolean isVaultAvailable() {
-        return Bukkit.getPluginManager().getPlugin("Vault") != null;
+    public boolean isVaultAvailable() {
+        return vaultAvailable;
     }
 
     /**
@@ -114,7 +232,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return SinkTimer
      */
-    public static TpsTimer getSinkTimer() {
+    public TpsTimer getSinkTimer() {
         return timer;
     }
 
@@ -124,7 +242,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return Chat instance
      * @see Chat
      */
-    public static Chat getChat() {
+    public Chat getChat() {
         return chat;
     }
 
@@ -134,8 +252,18 @@ public class SinkLibrary extends JavaPlugin {
      * @return Economy instace
      * @see Economy
      */
-    public static Economy getEconomy() {
+    public Economy getEconomy() {
         return econ;
+    }
+
+    /**
+     * Get the instance of this plugin
+     * @return instance
+     */
+    @Nullable
+    public static SinkLibrary getInstance()
+    {
+        return instance;
     }
 
     /**
@@ -144,7 +272,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return Permissions
      * @see Permission
      */
-    public static Permission getPermissions() {
+    public Permission getPermissions() {
         return perm;
     }
 
@@ -153,7 +281,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return Data Folder of Sink Plugins (.../plugins/SinkPlugins/)
      */
-    public static File getCustomDataFolder() {
+    public File getCustomDataFolder() {
         String pluginName = getPluginName();
         if (pluginName == null) {
             throw new NullPointerException("getPluginName() returned null");
@@ -171,7 +299,7 @@ public class SinkLibrary extends JavaPlugin {
      * @deprecated use {@link #sendIrcMessage(String)} instead
      */
     @Deprecated
-    public static boolean sendIRCMessage(String message) {
+    public boolean sendIRCMessage(String message) {
         return sendIrcMessage(message);
     }
 
@@ -180,7 +308,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      */
-    public static boolean sendIrcMessage(String message) {
+    public boolean sendIrcMessage(String message) {
         return sendIrcMessage(message, null);
     }
 
@@ -191,11 +319,11 @@ public class SinkLibrary extends JavaPlugin {
      * @param target Target user/channel, use null for default channel
      * @return true if successfully sended, false if event got cancelled or irc is not available
      */
-    public static boolean sendIrcMessage(String message, String target) {
+    public boolean sendIrcMessage(String message, String target) {
         if (!ircAvailable) {
             return false;
         }
-        SinkLibrary.getCustomLogger().debug("Firing new IRCSendMessageEvent(\"" + message + "\")");
+        getCustomLogger().debug("Firing new IRCSendMessageEvent(\"" + message + "\")");
         IrcSendMessageEvent event = new IrcSendMessageEvent(message, target);
         Bukkit.getPluginManager().callEvent(event);
         return event.isCancelled();
@@ -206,7 +334,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param username Player to ban
      */
-    public static void addTempBan(String username) {
+    public void addTempBan(String username) {
         tmpBannedPlayers.add(username);
     }
 
@@ -215,7 +343,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param username Player to unban
      */
-    public static void removeTempBan(String username) {
+    public void removeTempBan(String username) {
         tmpBannedPlayers.remove(username);
     }
 
@@ -224,7 +352,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return Settings
      */
-    public static Settings getSettings() {
+    public Settings getSettings() {
         return settings;
     }
 
@@ -233,7 +361,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param plugin Class which extends {@link org.bukkit.plugin.java.JavaPlugin}
      */
-    public static void registerPlugin(JavaPlugin plugin) {
+    public void registerPlugin(JavaPlugin plugin) {
         registeredPlugins.add(plugin);
     }
 
@@ -241,7 +369,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player
      * @return User instance of player
      */
-    public static SinkUser getUser(Player player) {
+    public SinkUser getUser(Player player) {
         return getUser(player.getUniqueId());
     }
 
@@ -251,12 +379,12 @@ public class SinkLibrary extends JavaPlugin {
      * @deprecated use {@link #getUser(java.util.UUID)} instead
      */
     @Deprecated
-    public static SinkUser getUser(String playerName) {
+    public SinkUser getUser(String playerName) {
         UUID uuid = BukkitUtil.getUUIDByName(playerName);
         return getUser(uuid);
     }
 
-    public static SinkUser getUser(UUID uuid) {
+    public SinkUser getUser(UUID uuid) {
         SinkUser user = onlineUsers.get(uuid);
         if (user == null) {
             user = new SinkUser(uuid);
@@ -268,7 +396,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param sender Command Sender
      * @return User instance
      */
-    public static SinkUser getUser(CommandSender sender) {
+    public SinkUser getUser(CommandSender sender) {
         if (!(sender instanceof Player)) {
             return new SinkUser(sender);
         }
@@ -282,7 +410,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return Version
      */
-    public static String getVersion() {
+    public String getVersion() {
         return version;
     }
 
@@ -291,7 +419,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param player Player that needs to refresh DisplayName
      */
-    public static void refreshDisplayName(Player player) {
+    public void refreshDisplayName(Player player) {
         if (!settings.isDisplayNamesEnabled()) {
             return;
         }
@@ -325,7 +453,7 @@ public class SinkLibrary extends JavaPlugin {
     /**
      * @return Plugins which are registered through {@link SinkLibrary#registerPlugin(org.bukkit.plugin.java.JavaPlugin)}
      */
-    public static List<JavaPlugin> getRegisteredPlugins() {
+    public List<JavaPlugin> getRegisteredPlugins() {
         return registeredPlugins;
     }
 
@@ -335,7 +463,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param uuid UUID of the user who needs to be loaded
      */
-    public static void loadUser(UUID uuid) {
+    public void loadUser(UUID uuid) {
         if (onlineUsers.get(uuid) != null || Bukkit.getPlayer(uuid) == null) {
             return;
         }
@@ -348,7 +476,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param uuid UUID of the User who needs to be unloaded
      */
-    public static void unloadUser(UUID uuid) {
+    public void unloadUser(UUID uuid) {
         SinkUser user = getUser(uuid);
         user.getPlayerConfiguration().save();
         onlineUsers.remove(uuid);
@@ -359,7 +487,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return the name of this plugin
      */
-    public static String getPluginName() {
+    public String getPluginName() {
         return description.getName();
     }
 
@@ -368,15 +496,15 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return Online players as Users
      */
-    public static Collection<SinkUser> getOnlineUsers() {
+    public Collection<SinkUser> getOnlineUsers() {
         return Collections.unmodifiableCollection(onlineUsers.values());
     }
 
-    public static Logger getCustomLogger() {
+    public Logger getCustomLogger() {
         return logger;
     }
 
-    public static SinkUser getUserByUniqueId(UUID uuid) {
+    public SinkUser getUserByUniqueId(UUID uuid) {
         for (SinkUser user : getOnlineUsers()) {
             if (user.getUniqueId().equals(uuid)) {
                 return user;
@@ -385,7 +513,7 @@ public class SinkLibrary extends JavaPlugin {
         return null;
     }
 
-    public static void registerCommand(String name, Command command) {
+    public void registerCommand(String name, Command command) {
         name = name.toLowerCase();
         if (!command.isIrcOnly()) {
             try {
@@ -411,123 +539,13 @@ public class SinkLibrary extends JavaPlugin {
         commands.put(name, command);
     }
 
-    public static Command getCustomCommand(String name) {
+    public Command getCustomCommand(String name) {
         Command cmd;
         cmd = commands.get(name.toLowerCase());
         if (cmd == null) {
             cmd = commandAliases.get(name.toLowerCase());
         }
         return cmd;
-    }
-
-    public void onEnable() {
-        // Init variables first to prevent NullPointerExceptions when other plugins try to access them
-        version = getDescription().getVersion();
-        tmpBannedPlayers = new ArrayList<>();
-        registeredPlugins = new ArrayList<>();
-        onlineUsers = new HashMap<>();
-        description = getDescription();
-        dataFolder = getDataFolder();
-        logger = new Logger();
-        timer = new TpsTimer();
-        commands = new HashMap<>();
-        commandAliases = new HashMap<>();
-
-        // Init language
-        LanguageConfiguration languageConfiguration = new LanguageConfiguration();
-        languageConfiguration.init();
-
-        // Init Settings
-        settings = new Settings();
-        settings.init();
-
-        logger.log(Level.INFO, "Loading...");
-        // Check optional dependencies
-        if (!isVaultAvailable()) {
-            SinkLibrary.getCustomLogger().warning("Vault Plugin not found. Disabling economy and some permission features.");
-            permissionsAvailable = false;
-            economyAvailable = false;
-            chatAvailable = false;
-        } else {
-            if (!setupChat()) {
-                chatAvailable = false;
-            }
-
-            if (!setupEcononmy()) {
-                SinkLibrary.getCustomLogger().warning("Economy Plugin not found. Disabling economy features.");
-                economyAvailable = false;
-            }
-            if (!setupPermissions()) {
-                SinkLibrary.getCustomLogger().warning("Permissions Plugin not found. Disabling permissions features.");
-                permissionsAvailable = false;
-            }
-
-            for (Player p : BukkitUtil.getOnlinePlayers()) {
-                refreshDisplayName(p);
-            }
-        }
-
-        if (!getCustomDataFolder().exists()) {
-            try {
-                boolean success = getCustomDataFolder().mkdirs();
-                if (!success) {
-                    throw new IOException("Couldn't create directories!");
-                }
-            } catch (Exception e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Data Folder!", e); // Log via Bukkits Logger, because Log File doesnt exists
-            }
-        }
-
-        if (chatAvailable && economyAvailable && permissionsAvailable) {
-            SinkLibrary.getCustomLogger().info("Successfully hooked into permissions, economy and chat.");
-        }
-
-        // Register Listeners and Commands
-        if (!initialized) {
-            registerListeners();
-            registerCommands();
-            initialized = true;
-        }
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
-
-        // Check for updates
-        update();
-
-        // Init players (reload etc)
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            refreshDisplayName(p);
-            getUser(p.getUniqueId());
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null) {
-            ircAvailable = true;
-            Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
-
-            if (Bukkit.getPluginManager().getPlugin("SinkChat") != null) {
-                SinkLibrary.getCustomLogger().debug("SinkChat found. Skipping registration of IRCLinkListener");
-            } else {
-                SinkLibrary.getCustomLogger().debug("SinkChat not found. Registering IRCLinkListener");
-                Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
-            }
-        }
-    }
-
-    public void onDisable() {
-        SinkLibrary.getCustomLogger().log(Level.INFO, "Disabling...");
-        SinkLibrary.getCustomLogger().info("Saving players...");
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getUser(p);
-            if (user.getPlayerConfiguration().exists()) {
-                user.getPlayerConfiguration().save();
-            }
-        }
-        SinkLibrary.getCustomLogger().debug("Disabled.");
-        try {
-            logger.getFileWriter().close();
-        } catch (Exception ignored) {
-        }
-        System.gc();
     }
 
     private void update() {
@@ -541,9 +559,9 @@ public class SinkLibrary extends JavaPlugin {
             BukkitUtil
                     .broadcast(Updater.CONSOLEPREFIX + "A new" + versionType + "update is available: " + updater.getLatestName(), permission, false);
         } else if (updater.getResult() == Updater.UpdateResult.NO_UPDATE) {
-            SinkLibrary.getCustomLogger().info(Updater.CONSOLEPREFIX + "No new updates found...");
+            getCustomLogger().info(Updater.CONSOLEPREFIX + "No new updates found...");
         } else if (updater.getResult() == Updater.UpdateResult.SUCCESS) {
-            SinkLibrary.getCustomLogger().info(Updater.CONSOLEPREFIX + "Updates downloaded, please restart or reload the server to take effect...");
+            getCustomLogger().info(Updater.CONSOLEPREFIX + "Updates downloaded, please restart or reload the server to take effect...");
         }
     }
 
@@ -580,5 +598,9 @@ public class SinkLibrary extends JavaPlugin {
     private void registerCommands() {
         registerCommand("sdebug", new SinkDebugCommand(this));
         registerCommand("sinkreload", new SinkReloadCommand(this));
+    }
+
+    public boolean isSinkChatAvailable() {
+        return sinkChatAvailable;
     }
 }

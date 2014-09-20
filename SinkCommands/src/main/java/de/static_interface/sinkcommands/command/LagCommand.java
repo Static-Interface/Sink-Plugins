@@ -35,7 +35,7 @@ public class LagCommand extends Command {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
+        double realTPS = SinkLibrary.getInstance().getSinkTimer().getAverageTPS();
         DecimalFormat decimalFormat = new DecimalFormat("##.0");
         String shownTPS = decimalFormat.format(realTPS);
         if (realTPS >= 18.5) {

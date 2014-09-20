@@ -33,12 +33,12 @@ public class DrugCommand implements CommandExecutor {
 
     public static final String PREFIX = ChatColor.AQUA + "[Drogen] " + ChatColor.RESET;
 
-    public static Player killedByDrugs;
+    public static Player lastPlayer;
 
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        SinkUser user = SinkLibrary.getUser(sender);
+        SinkUser user = SinkLibrary.getInstance().getUser(sender);
         if (user.isConsole()) {
             sender.sendMessage("Dieser Befehl kann nur von einem Spieler genutzt werden.");
             return true;
@@ -66,7 +66,7 @@ public class DrugCommand implements CommandExecutor {
                 } else if (amplifier == 4) {
                     player.sendMessage(PREFIX + ChatColor.BLUE + "Wow, du hast so viele Drogen genommen... und lebst immer noch!");
                 } else if (amplifier >= 5) {
-                    killedByDrugs = player;
+                    lastPlayer = player;
                     player.setHealth(0.0);
                     return true;
                 }

@@ -62,7 +62,7 @@ public class Logger {
 
         boolean enabled;
         try {
-            enabled = SinkLibrary.initialized && SinkLibrary.getSettings().isLogEnabled();
+            enabled = SinkLibrary.getInstance().getSettings().isLogEnabled();
         } catch (Exception ignored) {
             return;
         }
@@ -70,7 +70,7 @@ public class Logger {
             return;
         }
 
-        File logFile = new File(SinkLibrary.getCustomDataFolder() + File.separator + "SinkPlugins.log");
+        File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder() + File.separator + "SinkPlugins.log");
         if (!failed && !logFile.exists()) // Prevent creating/checking every time
         {
             if (!Util.createFile(logFile)) {
@@ -114,11 +114,7 @@ public class Logger {
     }
 
     public void debug(String message) {
-        if (!SinkLibrary.initialized) {
-            return;
-        }
-
-        if (SinkLibrary.getSettings().isDebugEnabled()) {
+        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             log(Level.INFO, "[DEBUG] " + message);
         }
     }

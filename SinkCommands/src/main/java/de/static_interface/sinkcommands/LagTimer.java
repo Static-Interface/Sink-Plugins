@@ -29,7 +29,7 @@ public class LagTimer implements Runnable {
 
     @Override
     public void run() {
-        double tps = SinkLibrary.getSinkTimer().getAverageTPS();
+        double tps = SinkLibrary.getInstance().getSinkTimer().getAverageTPS();
         if (tps <= 17 && !send) {
             BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + "Der Server laggt gerade!");
             send = true;

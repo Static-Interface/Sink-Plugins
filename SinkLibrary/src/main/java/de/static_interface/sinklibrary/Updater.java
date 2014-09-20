@@ -97,9 +97,7 @@ public class Updater {
         id = 66370;
         updateFolder = Bukkit.getUpdateFolder();
 
-        //this.config.addDefault("api-key", "PUT_API_KEY_HERE");
-
-        if (!SinkLibrary.getSettings().isUpdaterEnabled()) {
+        if (!SinkLibrary.getInstance().getSettings().isUpdaterEnabled()) {
             result = UpdateResult.DISABLED;
             return;
         }
@@ -107,12 +105,12 @@ public class Updater {
         try {
             url = new URL(Updater.HOST + Updater.QUERY + id);
         } catch (MalformedURLException e) {
-            SinkLibrary.getCustomLogger().severe(CONSOLEPREFIX + "The project ID provided for updating, " + id + " is invalid.");
+            SinkLibrary.getInstance().getCustomLogger().severe(CONSOLEPREFIX + "The project ID provided for updating, " + id + " is invalid.");
             result = UpdateResult.FAIL_BADID;
             e.printStackTrace();
         }
 
-        thread = new Thread(new UpdateRunnable());
+        thread = new Thread(new UpdateRunnable(), "Sink-Update-Thread");
         thread.start();
     }
 
@@ -190,25 +188,26 @@ public class Updater {
 
             final byte[] data = new byte[Updater.BYTE_SIZE];
             int count;
-            SinkLibrary.getCustomLogger().info(CONSOLEPREFIX + "About to download a new update: " + versionName);
+            SinkLibrary.getInstance().getCustomLogger().info(CONSOLEPREFIX + "About to download a new update: " + versionName);
             long downloaded = 0;
             while ((count = in.read(data, 0, Updater.BYTE_SIZE)) != -1) {
                 downloaded += count;
                 fout.write(data, 0, count);
                 final int percent = (int) ((downloaded * 100) / fileLength);
                 if (((percent % 10) == 0)) {
-                    SinkLibrary.getCustomLogger().info(CONSOLEPREFIX + "Downloading update: " + percent + "% of " + fileLength + " bytes.");
+                    SinkLibrary.getInstance().getCustomLogger().info(CONSOLEPREFIX + "Downloading update: " + percent + "% of " + fileLength + " bytes.");
                 }
             }
             //Just a quick check to make sure we didn't leave any files from last time...
-            for (final File xFile : new File(SinkLibrary.getCustomDataFolder().getParent(), updateFolder).listFiles()) {
+            for (final File xFile : new File(SinkLibrary.getInstance().getCustomDataFolder().getParent(), updateFolder).listFiles()) {
                 xFile.delete();
             }
-            // Check to see if it's a zip file, if it is, unzip it.
+
+            // Unzip
             final File dFile = new File(folder.getAbsolutePath() + File.separator + tempFile);
             unzip(dFile);
         } catch (final Exception ex) {
-            SinkLibrary.getCustomLogger()
+            SinkLibrary.getInstance().getCustomLogger()
                     .log(Level.WARNING, CONSOLEPREFIX + "The auto-updater tried to download a new update, but was unsuccessful.", ex);
             result = Updater.UpdateResult.FAIL_DOWNLOAD;
         } finally {
@@ -265,7 +264,7 @@ public class Updater {
             zipFile.delete();
 
         } catch (IOException ex) {
-            SinkLibrary.getCustomLogger().warning("The auto-updater tried to unzip a new update file, but was unsuccessful.");
+            SinkLibrary.getInstance().getCustomLogger().warning("The auto-updater tried to unzip a new update file, but was unsuccessful.");
             result = Updater.UpdateResult.FAIL_DOWNLOAD;
             ex.printStackTrace();
         }
@@ -277,7 +276,7 @@ public class Updater {
     @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
     private boolean checkVersion(String title) {
         if (type != UpdateType.NO_VERSION_CHECK) {
-            final String version = SinkLibrary.getVersion();
+            final String version = SinkLibrary.getInstance().getVersion();
             if (title.split(VERSION_PATTERN).length == 2) {
                 final String remoteVersion = title.split(VERSION_PATTERN)[1].split(" ")[0]; // Get the newest file's version number
                 int remVer, curVer = 0;
@@ -294,8 +293,8 @@ public class Updater {
                 }
             } else {
                 // The file's name did not contain the string 'vVersion'
-                SinkLibrary.getCustomLogger().warning("Couldn't get latest version of plugin.");
-                SinkLibrary.getCustomLogger().warning("Please notify the author of this error.");
+                SinkLibrary.getInstance().getCustomLogger().warning("Couldn't get latest version of plugin.");
+                SinkLibrary.getInstance().getCustomLogger().warning("Please notify the author of this error.");
                 result = Updater.UpdateResult.FAIL_NOVERSION;
                 return false;
             }
@@ -333,7 +332,7 @@ public class Updater {
             final URLConnection conn = url.openConnection();
             conn.setConnectTimeout(5000);
 
-            String version = SinkLibrary.getVersion();
+            String version = SinkLibrary.getInstance().getVersion();
 
             conn.addRequestProperty("User-Agent", "SinkLibrary/v" + version + " (modified by Trojaner)");
 
@@ -345,7 +344,7 @@ public class Updater {
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
             if (array.size() == 0) {
-                SinkLibrary.getCustomLogger().warning("The updater could not find any files for the project id " + id);
+                SinkLibrary.getInstance().getCustomLogger().warning("The updater could not find any files for the project id " + id);
                 result = UpdateResult.FAIL_BADID;
                 return false;
             }
@@ -358,12 +357,12 @@ public class Updater {
             return true;
         } catch (final IOException e) {
             if (e.getMessage().contains("HTTP response code: 403")) {
-                SinkLibrary.getCustomLogger().warning("dev.bukkit.org rejected the API key provided in plugins/Updater/config.yml");
-                SinkLibrary.getCustomLogger().warning("Please double-check your configuration to ensure it is correct.");
+                SinkLibrary.getInstance().getCustomLogger().warning("dev.bukkit.org rejected the API key provided in plugins/Updater/config.yml");
+                SinkLibrary.getInstance().getCustomLogger().warning("Please double-check your configuration to ensure it is correct.");
                 result = UpdateResult.FAIL_APIKEY;
             } else {
-                SinkLibrary.getCustomLogger().warning("The updater could not contact dev.bukkit.org for updating.");
-                SinkLibrary.getCustomLogger().warning(
+                SinkLibrary.getInstance().getCustomLogger().warning("The updater could not contact dev.bukkit.org for updating.");
+                SinkLibrary.getInstance().getCustomLogger().warning(
                         "If you have not recently modified your configuration and this is the first time you are seeing this message, the site may be experiencing temporary downtime.");
                 result = UpdateResult.FAIL_DBO;
             }
@@ -447,7 +446,7 @@ public class Updater {
                             // If it's a zip file, it shouldn't be downloaded as the plugin's name
                             //final String[] split = Updater.this.versionLink.split("/");
                             //name = split[split.length - 1];
-                            saveFile(new File(SinkLibrary.getCustomDataFolder().getParent(), updateFolder), versionLink);
+                            saveFile(new File(SinkLibrary.getInstance().getCustomDataFolder().getParent(), updateFolder), versionLink);
                         } else {
                             result = UpdateResult.UPDATE_AVAILABLE;
                         }

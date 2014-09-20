@@ -31,7 +31,7 @@ public class LanguageConfiguration extends ConfigurationBase {
     private static LanguageConfiguration instance;
 
     public LanguageConfiguration() {
-        super(new File(SinkLibrary.getCustomDataFolder(), "Language.yml"));
+        super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Language.yml"));
     }
 
     public static LanguageConfiguration getInstance() {

@@ -43,10 +43,9 @@ public class Util {
         if (file.exists()) {
             return true;
         }
-        try {
-            com.google.common.io.Files.createParentDirs(file);
-        } catch (IOException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Directorys for file " + file + ": ", e);
+
+        if (!file.mkdirs()) {
+            Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Directorys for file " + file + "!");
             return false;
         }
 
@@ -67,7 +66,7 @@ public class Util {
      */
     public static void backupFile(File file, boolean notify) throws IOException {
         if (notify) {
-            SinkLibrary.getCustomLogger().log(Level.INFO, "Creating backup of " + file + "...");
+            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Creating backup of " + file + "...");
         }
 
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh.mm");
@@ -78,7 +77,7 @@ public class Util {
         try {
             Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
         } catch (IOException e) {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't backup file: " + file.getAbsolutePath());
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't backup file: " + file.getAbsolutePath());
             throw e;
         }
     }

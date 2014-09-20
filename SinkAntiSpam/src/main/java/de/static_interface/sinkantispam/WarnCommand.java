@@ -78,7 +78,7 @@ public class WarnCommand extends Command {
             reason = reason + ' ' + args[i];
         }
 
-        WarnUtil.warnPlayer(target, new Warning(reason, SinkLibrary.getUser(sender).getDisplayName(), false));
+        WarnUtil.warnPlayer(target, new Warning(reason, SinkLibrary.getInstance().getUser(sender).getDisplayName(), false));
         return true;
     }
 }

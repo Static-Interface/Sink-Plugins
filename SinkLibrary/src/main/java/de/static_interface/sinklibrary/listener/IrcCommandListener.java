@@ -38,11 +38,11 @@ public class IrcCommandListener implements Listener {
         String label = event.getLabel();
         String[] args = event.getArgs();
 
-        SinkLibrary.getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
+        SinkLibrary.getInstance().getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
                                             + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
 
         if (!executeCommand(user, command, source, label, args)) {
-            SinkLibrary.sendIrcMessage(user.getNick() + ": Unknown command: " + command, source);
+            SinkLibrary.getInstance().sendIrcMessage(user.getNick() + ": Unknown command: " + command, source);
             event.setCancelled(true); // Debug
         }
     }
@@ -50,7 +50,7 @@ public class IrcCommandListener implements Listener {
     private boolean executeCommand(User user, String command, String source, String label, String[] args) {
         //Todo add events
         IrcCommandSender sender = new IrcCommandSender(user, source);
-        Command cmd = SinkLibrary.getCustomCommand(command);
+        Command cmd = SinkLibrary.getInstance().getCustomCommand(command);
         if (cmd == null || cmd.isPlayerOnly()) {
             return false;
         }

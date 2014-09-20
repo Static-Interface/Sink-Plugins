@@ -60,11 +60,11 @@ public class VotekickCommands {
                         + "%, Nein: " + percentNo + "%). Er wurde für 5 Minuten gebannt.", "sinkcommands.votekick.vote", true);
                 final String username = targetPlayer.getName();
                 targetPlayer.kickPlayer(ChatColor.RED + "Du wurdest durch einen Votekick gekickt und für 5 Minuten gebannt.");
-                SinkLibrary.addTempBan(username);
+                SinkLibrary.getInstance().addTempBan(username);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     @Override
                     public void run() {
-                        SinkLibrary.removeTempBan(username);
+                        SinkLibrary.getInstance().removeTempBan(username);
                     }
                 }, 20 * 300); //Unban player after 5 minutes
             } else {
@@ -155,11 +155,11 @@ public class VotekickCommands {
                 return true;
             }
             boolean voteable = true;
-            SinkUser user = SinkLibrary.getUser(sender);
+            SinkUser user = SinkLibrary.getInstance().getUser(sender);
             if (!user.hasPermission("sinkcommands.votekick.staff")) {
                 int i = 0;
                 for (Player p : BukkitUtil.getOnlinePlayers()) {
-                    SinkUser onlinePlayer = SinkLibrary.getUser(p);
+                    SinkUser onlinePlayer = SinkLibrary.getInstance().getUser(p);
                     if (!onlinePlayer.hasPermission("sinkcommands.votekick.staff")) {
                         i++;
                         break;
@@ -176,7 +176,7 @@ public class VotekickCommands {
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
-            SinkUser targetUser = SinkLibrary.getUser(targetPlayer);
+            SinkUser targetUser = SinkLibrary.getInstance().getUser(targetPlayer);
             target = targetUser.getDisplayName();
             if (targetPlayer.equals(sender)) {
                 sender.sendMessage(PREFIX + "Du kannst nicht einen Votekick gegen dich selbst starten!");
@@ -286,11 +286,11 @@ public class VotekickCommands {
                 return false;
             }
             String username = args[0];
-            if (!SinkLibrary.tmpBannedPlayers.contains(username)) {
+            if (!SinkLibrary.getInstance().tmpBannedPlayers.contains(username)) {
                 sender.sendMessage(PREFIX + ChatColor.BLUE + username + ChatColor.RESET + " wurde nicht durch einen Votekick gebannt!");
                 return true;
             }
-            SinkLibrary.removeTempBan(username);
+            SinkLibrary.getInstance().removeTempBan(username);
             sender.sendMessage(PREFIX + ChatColor.BLUE + username + ChatColor.RESET + " wurde entbannt.");
             return true;
         }

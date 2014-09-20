@@ -26,7 +26,7 @@ import java.io.File;
 public class ChannelConfiguration extends ConfigurationBase {
 
     public ChannelConfiguration() {
-        super(new File(SinkLibrary.getCustomDataFolder(), "ChatChannels.yml"), true);
+        super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "ChatChannels.yml"), true);
     }
 
     @Override

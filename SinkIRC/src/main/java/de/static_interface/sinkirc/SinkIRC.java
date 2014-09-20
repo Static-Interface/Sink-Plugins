@@ -27,7 +27,6 @@ import de.static_interface.sinkirc.irc_command.MsgCommand;
 import de.static_interface.sinkirc.irc_command.SayCommand;
 import de.static_interface.sinkirc.irc_command.SetCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -64,34 +63,34 @@ public class SinkIRC extends JavaPlugin {
             @Override
             public void run() {
                 try {
-                    mainChannel = SinkLibrary.getSettings().getIRCChannel();
+                    mainChannel = SinkLibrary.getInstance().getSettings().getIRCChannel();
 
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<PircBotX>()
-                            .setName(SinkLibrary.getSettings().getIRCBotUsername())
+                            .setName(SinkLibrary.getInstance().getSettings().getIRCBotUsername())
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
                             .setAutoReconnect(true)
-                            .setServer(SinkLibrary.getSettings().getIRCAddress(), SinkLibrary.getSettings().getIRCPort())
+                            .setServer(SinkLibrary.getInstance().getSettings().getIRCAddress(), SinkLibrary.getInstance().getSettings().getIRCPort())
                             .addListener(new PircBotXLinkListener())
                             .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
 
-                    if (SinkLibrary.getSettings().isIRCPasswordEnabled()) {
-                        configBuilder = configBuilder.setServerPassword(SinkLibrary.getSettings().getIRCPassword());
+                    if (SinkLibrary.getInstance().getSettings().isIRCPasswordEnabled()) {
+                        configBuilder = configBuilder.setServerPassword(SinkLibrary.getInstance().getSettings().getIRCPassword());
                     }
-                    if (!SinkLibrary.getSettings().isIRCAuthentificationEnabled()) {
+                    if (!SinkLibrary.getInstance().getSettings().isIRCAuthentificationEnabled()) {
                         configBuilder = configBuilder.addAutoJoinChannel(mainChannel);
                     }
 
                     ircBot = new PircBotX(configBuilder.buildConfiguration());
                     ircBot.startBot();
-                    if (SinkLibrary.getSettings().isIRCAuthentificationEnabled()) {
-                        ircBot.sendIRC().message(SinkLibrary.getSettings().getIRCAuthBot(), SinkLibrary.getSettings().getIRCAuthMessage());
+                    if (SinkLibrary.getInstance().getSettings().isIRCAuthentificationEnabled()) {
+                        ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIRCAuthBot(), SinkLibrary.getInstance().getSettings().getIRCAuthMessage());
                         try {
                             Thread.sleep(1000); //Todo
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        ircBot.sendIRC().joinChannel(SinkLibrary.getSettings().getIRCChannel());
+                        ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIRCChannel());
                     }
                 } catch (IOException | IrcException e) {
                     e.printStackTrace();
@@ -105,15 +104,15 @@ public class SinkIRC extends JavaPlugin {
         getCommand("ircprivatemessage").setExecutor(new IrcPrivateMessageCommand());
         getCommand("irckick").setExecutor(new IrcKickCommand());
 
-        SinkLibrary.registerCommand("help", new HelpCommand(this));
-        SinkLibrary.registerCommand("exec", new ExecCommand(this));
-        SinkLibrary.registerCommand("say", new SayCommand(this));
-        SinkLibrary.registerCommand("kick", new KickCommand(this));
-        SinkLibrary.registerCommand("msg", new MsgCommand(this));
-        SinkLibrary.registerCommand("list", new ListCommand(this));
-        SinkLibrary.registerCommand("set", new SetCommand(this));
+        SinkLibrary.getInstance().registerCommand("help", new HelpCommand(this));
+        SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this));
+        SinkLibrary.getInstance().registerCommand("say", new SayCommand(this));
+        SinkLibrary.getInstance().registerCommand("kick", new KickCommand(this));
+        SinkLibrary.getInstance().registerCommand("msg", new MsgCommand(this));
+        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this));
+        SinkLibrary.getInstance().registerCommand("set", new SetCommand(this));
 
-        SinkLibrary.registerPlugin(this);
+        SinkLibrary.getInstance().registerPlugin(this);
         initialized = true;
     }
 
@@ -125,9 +124,6 @@ public class SinkIRC extends JavaPlugin {
             return false;
         }
 
-        if (!SinkLibrary.initialized) {
-            throw new NotInitializedException();
-        }
         return true;
     }
 

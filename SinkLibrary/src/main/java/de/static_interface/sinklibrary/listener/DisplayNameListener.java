@@ -27,14 +27,14 @@ public class DisplayNameListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SinkLibrary.refreshDisplayName(event.getPlayer());
+        SinkLibrary.getInstance().refreshDisplayName(event.getPlayer());
     }
 
     /*
     @EventHandler(priority = EventPriority.NORMAL)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
     {
-        SinkLibrary.refreshDisplayName(event.getPlayer());
+        SinkLibrary.getInstance().refreshDisplayName(event.getPlayer());
     }
     */
 
@@ -42,7 +42,7 @@ public class DisplayNameListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
-        SinkLibrary.refreshDisplayName(event.getPlayer());
+        SinkLibrary.getInstance().refreshDisplayName(event.getPlayer());
     }
     */
 }

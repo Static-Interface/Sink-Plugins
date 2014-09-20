@@ -42,12 +42,12 @@ public class ChatListenerHighest implements Listener {
         try {
             onChat(event);
         } catch (RuntimeException e) {
-            SinkLibrary.getCustomLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred:", e);
+            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred:", e);
         }
     }
 
     private void onChat(AsyncPlayerChatEvent event) {
-        SinkUser user = SinkLibrary.getUser(event.getPlayer());
+        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
 
         if (event.isCancelled()) {
             return;
@@ -69,7 +69,7 @@ public class ChatListenerHighest implements Listener {
         }
 
         String message = event.getMessage();
-        int range = SinkLibrary.getSettings().getLocalChatRange();
+        int range = SinkLibrary.getInstance().getSettings().getLocalChatRange();
 
         String townyPrefix = "";
         if (SinkChat.isTownyAvailable()) {
@@ -80,7 +80,7 @@ public class ChatListenerHighest implements Listener {
 
         formattedMessage = townyPrefix + formattedMessage;
 
-        if (!SinkLibrary.isPermissionsAvailable()) {
+        if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
             formattedMessage = ChatColor.GRAY + m("SinkChat.Prefix.Local") + ChatColor.RESET + ' ' + formattedMessage;
         }
 

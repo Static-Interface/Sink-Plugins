@@ -36,13 +36,13 @@ public class PlayerConfiguration extends ConfigurationBase {
      * @param user User
      */
     public PlayerConfiguration(SinkUser user) {
-        super(new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
+        super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
         if (user.isConsole()) {
             throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
         }
 
         //Convert to UUID
-        File oldFile = new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getName() + ".yml");
+        File oldFile = new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players"), user.getName() + ".yml");
         File uniqueFile = getFile();
 
         if (oldFile.exists()) {

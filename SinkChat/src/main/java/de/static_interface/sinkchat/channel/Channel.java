@@ -94,7 +94,7 @@ public class Channel {
 
     public boolean enabledForPlayer(UUID uuid) {
         String enabledPath = "Channels." + getName() + ".Enabled";
-        SinkUser user = SinkLibrary.getUser(uuid);
+        SinkUser user = SinkLibrary.getInstance().getUser(uuid);
         PlayerConfiguration config = user.getPlayerConfiguration();
         try {
             return (boolean) config.get(enabledPath, true);
@@ -105,7 +105,7 @@ public class Channel {
 
     public void setEnabledForPlayer(UUID uuid, boolean setEnabled) {
         String enabledPath = "Channels." + getName() + ".Enabled";
-        SinkUser user = SinkLibrary.getUser(uuid);
+        SinkUser user = SinkLibrary.getInstance().getUser(uuid);
         PlayerConfiguration config = user.getPlayerConfiguration();
         config.set(enabledPath, setEnabled);
     }
@@ -127,7 +127,7 @@ public class Channel {
             townyPrefix = TownyBridge.getTownyPrefix(user.getPlayer());
         }
 
-        if (SinkLibrary.isPermissionsAvailable()) {
+        if (SinkLibrary.getInstance().isPermissionsAvailable()) {
             formattedMessage =
                     getPrefix() + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName()
                     + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
@@ -147,7 +147,7 @@ public class Channel {
 
         Bukkit.getConsoleSender().sendMessage(formattedMessage);
         if (sendToIRC()) {
-            SinkLibrary.sendIrcMessage(formattedMessage);
+            SinkLibrary.getInstance().sendIrcMessage(formattedMessage);
         }
         return true;
     }

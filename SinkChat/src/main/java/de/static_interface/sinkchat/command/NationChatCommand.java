@@ -115,7 +115,7 @@ public class NationChatCommand implements CommandExecutor {
             p.sendMessage(formattedMessage);
         }
 
-        SinkLibrary.getCustomLogger().log(Level.INFO, formattedMessage);
+        SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, formattedMessage);
         return true;
     }
 }

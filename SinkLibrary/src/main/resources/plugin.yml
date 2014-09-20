@@ -18,6 +18,11 @@ commands:
     permission: sinklibrary.reload
     aliases: sreload
 
+  sinkversion:
+    description: Shows Version
+    permission: sinklibrary.version
+    aliases: [sver, sversion, sinkver]
+
 permissions:
   sinklibrary.*:
     default: op
@@ -26,7 +31,8 @@ permissions:
       sinklibrary.updatenotification: true
       sinklibrary.debug: true
       sinklibrary.reload: true
-      sinklibrary.trackexceptions: true
+      sinklibrary.ver: true
+      sinklibrary.script: true
 
   sinklibrary.updatenotification:
     default: op
@@ -40,10 +46,10 @@ permissions:
     default: op
     description: Permission required for reloading SinkPlugins Configurations
 
-  sinklibrary.trackexceptions:
-    default: op
-    descriptions: Permission required for tracking exceptions
-
   sinklibrary.script:
     default: op
     description: Allows to use groovy scripts.
+
+  sinklibrary.ver:
+    description: Allows to use version command
+    default: true
