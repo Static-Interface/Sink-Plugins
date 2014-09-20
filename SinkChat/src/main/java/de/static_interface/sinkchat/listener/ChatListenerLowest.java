@@ -29,29 +29,28 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 /**
  * Used for setting chat format
  */
-public class ChatListenerLowest implements Listener
-{
+public class ChatListenerLowest implements Listener {
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onAsyncPlayerChat(AsyncPlayerChatEvent event)
-    {
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         SinkUser user = SinkLibrary.getUser(event.getPlayer());
 
-        String groupPrefix = SinkLibrary.isPermissionsAvailable() ? ChatColor.RESET.toString() + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.RESET + ChatColor.GRAY + "] " : "";
+        String
+                groupPrefix =
+                SinkLibrary.isPermissionsAvailable() ? ChatColor.RESET.toString() + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.RESET
+                                                       + ChatColor.GRAY + "] " : "";
 
         event.setFormat(groupPrefix + "%1$s" + ChatColor.GRAY + ':' + ChatColor.WHITE + " %2$s");
 
-        if ( user.hasPermission("sinkchat.color") )
-        {
+        if (user.hasPermission("sinkchat.color")) {
             event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
-    {
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         SinkUser user = SinkLibrary.getUser(event.getPlayer());
-        if ( user.hasPermission("sinkchat.color") )
-        {
+        if (user.hasPermission("sinkchat.color")) {
             event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }
     }

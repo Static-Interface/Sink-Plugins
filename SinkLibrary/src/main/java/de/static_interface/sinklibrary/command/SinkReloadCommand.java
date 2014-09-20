@@ -26,27 +26,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class SinkReloadCommand extends Command
-{
+public class SinkReloadCommand extends Command {
     //Todo: fix exceptions on reload
 
     private static String pluginName = SinkLibrary.getPluginName();
     public static final String PREFIX = ChatColor.DARK_GREEN + "[" + pluginName + "] " + ChatColor.RESET;
 
-    public SinkReloadCommand(Plugin plugin)
-    {
+    public SinkReloadCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         String name;
         LanguageConfiguration.getInstance().reload();
         name = LanguageConfiguration.getInstance().getFile().getName();
@@ -58,15 +54,13 @@ public class SinkReloadCommand extends Command
         sender.sendMessage(PREFIX + "Reloaded " + name);
 
         sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
             SinkUser user = SinkLibrary.getUser(p);
             user.getPlayerConfiguration().reload();
         }
 
         sender.sendMessage(PREFIX + "Reloading Plugins...");
-        for ( Plugin p : SinkLibrary.getRegisteredPlugins() )
-        {
+        for (Plugin p : SinkLibrary.getRegisteredPlugins()) {
             p.onDisable();
             p.onEnable();
         }

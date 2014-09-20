@@ -24,43 +24,35 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
-public class SinkAntiSpam extends JavaPlugin
-{
+public class SinkAntiSpam extends JavaPlugin {
+
     private static boolean initialized = false;
-    public void onEnable()
-    {
-        if ( !checkDependencies() )
-        {
+
+    public void onEnable() {
+        if (!checkDependencies()) {
             return;
         }
-        if ( !initialized )
-        {
+        if (!initialized) {
             Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
             SinkLibrary.registerPlugin(this);
             initialized = true;
         }
 
-
-
         SinkLibrary.registerCommand("warn", new WarnCommand(this));
     }
 
-    public void onDisable()
-    {
+    public void onDisable() {
         System.gc();
     }
 
-    private boolean checkDependencies()
-    {
-        if ( Bukkit.getPluginManager().getPlugin("SinkLibrary") == null )
-        {
+    private boolean checkDependencies() {
+        if (Bukkit.getPluginManager().getPlugin("SinkLibrary") == null) {
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
 
-        if ( !SinkLibrary.initialized )
-        {
+        if (!SinkLibrary.initialized) {
             throw new NotInitializedException();
         }
         return true;

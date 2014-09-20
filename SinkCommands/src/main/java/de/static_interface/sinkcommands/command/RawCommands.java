@@ -26,26 +26,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class RawCommands
-{
-    public static class RawCommand extends Command
-    {
-        public RawCommand(Plugin plugin)
-        {
+public class RawCommands {
+
+    public static class RawCommand extends Command {
+
+        public RawCommand(Plugin plugin) {
             super(plugin);
         }
 
         @Override
-        public boolean isIrcOpOnly()
-        {
+        public boolean isIrcOpOnly() {
             return true;
         }
 
         @Override
-        public boolean onExecute(CommandSender sender, String label, String[] args)
-        {
-            if ( args.length < 1 )
-            {
+        public boolean onExecute(CommandSender sender, String label, String[] args) {
+            if (args.length < 1) {
                 return false;
             }
             BukkitUtil.broadcastMessage(ChatColor.translateAlternateColorCodes('&', Util.formatArrayToString(args, " ")));
@@ -53,37 +49,31 @@ public class RawCommands
         }
     }
 
-    public static class RawUserCommand extends Command
-    {
-        public RawUserCommand(Plugin plugin)
-        {
+    public static class RawUserCommand extends Command {
+
+        public RawUserCommand(Plugin plugin) {
             super(plugin);
         }
 
         @Override
-        public boolean isIrcOpOnly()
-        {
+        public boolean isIrcOpOnly() {
             return true;
         }
 
         @Override
-        public boolean onExecute(CommandSender sender, String label, String[] args)
-        {
-            if ( args.length < 1 )
-            {
+        public boolean onExecute(CommandSender sender, String label, String[] args) {
+            if (args.length < 1) {
                 return false;
             }
             SinkUser target = SinkLibrary.getUser(args[0]);
 
-            if ( !target.isOnline() )
-            {
+            if (!target.isOnline()) {
                 sender.sendMessage(ChatColor.RED + "User ist nicht online!");
             }
 
             String message = "";
 
-            for ( int i = 1; i < args.length; i++ )
-            {
+            for (int i = 1; i < args.length; i++) {
                 message += args[i] + ' ';
             }
             message = message.trim();

@@ -22,29 +22,25 @@ import de.static_interface.sinklibrary.command.Command;
 import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import org.bukkit.plugin.Plugin;
 
-public abstract class IrcCommand extends Command
-{
+public abstract class IrcCommand extends Command {
+
     protected static final String IRC_PREFIX = IrcListener.IRC_PREFIX;
 
-    public IrcCommand(Plugin plugin)
-    {
+    public IrcCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOnly()
-    {
+    public boolean isIrcOnly() {
         return true;
     }
 
     @Override
-    public boolean isPlayerOnly()
-    {
+    public boolean isPlayerOnly() {
         return false;
     }
 
-    public boolean isQueryCommand()
-    {
+    public boolean isQueryCommand() {
         assert sender instanceof IrcCommandSender;
 
         IrcCommandSender ircSender = (IrcCommandSender) sender;

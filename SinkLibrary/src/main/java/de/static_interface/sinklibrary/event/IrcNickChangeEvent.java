@@ -20,39 +20,34 @@ package de.static_interface.sinklibrary.event;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcNickChangeEvent extends IrcEventBase
-{
+public class IrcNickChangeEvent extends IrcEventBase {
+
     private final String oldNick;
     private final String newNick;
     private final User user;
     private final PircBotX bot;
 
-    public IrcNickChangeEvent(String oldNick, String newNick, User user, PircBotX bot)
-    {
+    public IrcNickChangeEvent(String oldNick, String newNick, User user, PircBotX bot) {
         this.oldNick = oldNick;
         this.newNick = newNick;
         this.user = user;
         this.bot = bot;
     }
 
-    public String getOldNick()
-    {
+    public String getOldNick() {
         return oldNick;
     }
 
-    public String getNewNick()
-    {
+    public String getNewNick() {
         return newNick;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

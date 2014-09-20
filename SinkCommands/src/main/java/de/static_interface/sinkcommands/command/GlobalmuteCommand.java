@@ -24,51 +24,42 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class GlobalmuteCommand extends Command
-{
+public class GlobalmuteCommand extends Command {
+
     public static final String PREFIX = ChatColor.DARK_RED + "[GlobalMute] " + ChatColor.RESET;
 
-    public GlobalmuteCommand(Plugin plugin)
-    {
+    public GlobalmuteCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkCommands.globalmuteEnabled = !SinkCommands.globalmuteEnabled;
 
-        if ( SinkCommands.globalmuteEnabled )
-        {
-            if ( args.length > 0 )
-            {
+        if (SinkCommands.globalmuteEnabled) {
+            if (args.length > 0) {
                 String reason = "";
-                for ( String arg : args )
-                {
-                    if ( reason.isEmpty() )
-                    {
+                for (String arg : args) {
+                    if (reason.isEmpty()) {
                         reason = arg;
                         continue;
                     }
                     reason = reason + ' ' + arg;
                 }
-                BukkitUtil.broadcastMessage(PREFIX + "Der globale Mute wurde von " + BukkitUtil.getSenderName(sender) + " aktiviert. Grund: " + reason + ". Alle Spieler sind jetzt stumm.");
-            }
-            else
-            {
-                BukkitUtil.broadcastMessage(PREFIX + "Der global Mute wurde von " + BukkitUtil.getSenderName(sender) + " aktiviert. Alle Spieler sind jetzt stumm.");
+                BukkitUtil.broadcastMessage(PREFIX + "Der globale Mute wurde von " + BukkitUtil.getSenderName(sender) + " aktiviert. Grund: " + reason
+                                            + ". Alle Spieler sind jetzt stumm.");
+            } else {
+                BukkitUtil.broadcastMessage(
+                        PREFIX + "Der global Mute wurde von " + BukkitUtil.getSenderName(sender) + " aktiviert. Alle Spieler sind jetzt stumm.");
             }
             SinkCommands.globalmuteEnabled = true;
             return true;
-        }
-        else
-        {
+        } else {
             BukkitUtil.broadcastMessage(PREFIX + "Der global Mute wurde von " + BukkitUtil.getSenderName(sender) + " deaktiviert.");
         }
         return true;

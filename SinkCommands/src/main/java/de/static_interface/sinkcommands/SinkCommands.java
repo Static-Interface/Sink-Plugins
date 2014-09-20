@@ -17,8 +17,29 @@
 
 package de.static_interface.sinkcommands;
 
-import de.static_interface.sinkcommands.command.*;
-import de.static_interface.sinkcommands.listener.*;
+import static de.static_interface.sinklibrary.Constants.TICK;
+
+import de.static_interface.sinkcommands.command.ClearCommand;
+import de.static_interface.sinkcommands.command.CommandsverCommand;
+import de.static_interface.sinkcommands.command.CountdownCommand;
+import de.static_interface.sinkcommands.command.DrugCommand;
+import de.static_interface.sinkcommands.command.GlobalmuteCommand;
+import de.static_interface.sinkcommands.command.GupCommand;
+import de.static_interface.sinkcommands.command.LagCommand;
+import de.static_interface.sinkcommands.command.ListCommand;
+import de.static_interface.sinkcommands.command.MilkCommand;
+import de.static_interface.sinkcommands.command.NewbiechatCommand;
+import de.static_interface.sinkcommands.command.RawCommands;
+import de.static_interface.sinkcommands.command.RenameCommand;
+import de.static_interface.sinkcommands.command.StatsCommands;
+import de.static_interface.sinkcommands.command.SudoCommand;
+import de.static_interface.sinkcommands.command.TeamchatCommand;
+import de.static_interface.sinkcommands.command.VotekickCommands;
+import de.static_interface.sinkcommands.listener.DrugDeadListener;
+import de.static_interface.sinkcommands.listener.DutyListener;
+import de.static_interface.sinkcommands.listener.GlobalMuteListener;
+import de.static_interface.sinkcommands.listener.ScoreboardListener;
+import de.static_interface.sinkcommands.listener.VotekickListener;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
@@ -30,92 +51,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.Constants.TICK;
+public class SinkCommands extends JavaPlugin {
 
-public class SinkCommands extends JavaPlugin
-{
     public static boolean globalmuteEnabled;
 
     private static boolean initialized = false;
 
-    @Override
-    public void onEnable()
-    {
-        if ( !checkDependencies() )
-        {
-            return;
-        }
-
-        LagTimer lagTimer = new LagTimer();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
-
-        if ( !initialized )
-        {
-            registerEvents();
-            registerCommands();
-            SinkLibrary.registerPlugin(this);
-            initialized = true;
-        }
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                refreshScoreboard();
-            }
-        }, 0, (long) (TICK * 30)); //Update every 30 seconds
-
-    }
-
-    private boolean checkDependencies()
-    {
-        Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
-
-        if ( sinkLibrary == null )
-        {
-            getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return false;
-        }
-
-        if ( !SinkLibrary.initialized )
-        {
-            throw new NotInitializedException();
-        }
-        return true;
-    }
-
-    @Override
-    public void onDisable()
-    {
-        //for ( User user : DutyCommand.getPlayersInDuty() )
-        //{
-        //    user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
-        //    DutyCommand.endDuty(user);
-        //}
-
-        SinkLibrary.getCustomLogger().info("Saving player configurations...");
-
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
-            SinkUser user = SinkLibrary.getUser(p);
-            PlayerConfiguration config = user.getPlayerConfiguration();
-            config.save();
-        }
-        SinkLibrary.getCustomLogger().info("Done, disabled.");
-        System.gc();
-    }
-
     /**
      * Refresh Scoreboard for all players
      */
-    public static void refreshScoreboard()
-    {
+    public static void refreshScoreboard() {
         refreshScoreboard(-1);
     }
 
@@ -124,10 +78,8 @@ public class SinkCommands extends JavaPlugin
      *
      * @param players Online Players
      */
-    public static void refreshScoreboard(int players)
-    {
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
+    public static void refreshScoreboard(int players) {
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
             refreshScoreboard(p, players);
         }
     }
@@ -138,20 +90,17 @@ public class SinkCommands extends JavaPlugin
      * @param player Refresh scoreboard for this player
      */
     @SuppressWarnings("deprecation")
-    public static void refreshScoreboard(Player player, int players)
-    {
+    public static void refreshScoreboard(Player player, int players) {
         SinkUser user = SinkLibrary.getUser(player);
         PlayerConfiguration config = user.getPlayerConfiguration();
 
-        if ( !config.exists() )
-        {
+        if (!config.exists()) {
             return;
         }
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
 
-        if ( !user.hasPermission("sinkcommands.stats") || !config.isStatsEnabled() )
-        {
+        if (!user.hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
             player.setScoreboard(manager.getNewScoreboard());
             return;
         }
@@ -161,20 +110,16 @@ public class SinkCommands extends JavaPlugin
         Objective objective = board.registerNewObjective(ChatColor.DARK_GREEN + "Statistiken", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        if ( SinkLibrary.isEconomyAvailable() )
-        {
+        if (SinkLibrary.isEconomyAvailable()) {
             Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
             money.setScore(new Double(user.getMoney()).intValue());
         }
 
         Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
 
-        if ( players >= 0 )
-        {
+        if (players >= 0) {
             onlinePlayers.setScore(players);
-        }
-        else
-        {
+        } else {
             onlinePlayers.setScore(BukkitUtil.getOnlinePlayers().size());
         }
 
@@ -185,8 +130,66 @@ public class SinkCommands extends JavaPlugin
         player.setScoreboard(board);
     }
 
-    private void registerEvents()
-    {
+    @Override
+    public void onEnable() {
+        if (!checkDependencies()) {
+            return;
+        }
+
+        LagTimer lagTimer = new LagTimer();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
+
+        if (!initialized) {
+            registerEvents();
+            registerCommands();
+            SinkLibrary.registerPlugin(this);
+            initialized = true;
+        }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                refreshScoreboard();
+            }
+        }, 0, (long) (TICK * 30)); //Update every 30 seconds
+
+    }
+
+    private boolean checkDependencies() {
+        Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
+
+        if (sinkLibrary == null) {
+            getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return false;
+        }
+
+        if (!SinkLibrary.initialized) {
+            throw new NotInitializedException();
+        }
+        return true;
+    }
+
+    @Override
+    public void onDisable() {
+        //for ( User user : DutyCommand.getPlayersInDuty() )
+        //{
+        //    user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
+        //    DutyCommand.endDuty(user);
+        //}
+
+        SinkLibrary.getCustomLogger().info("Saving player configurations...");
+
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
+            SinkUser user = SinkLibrary.getUser(p);
+            PlayerConfiguration config = user.getPlayerConfiguration();
+            config.save();
+        }
+        SinkLibrary.getCustomLogger().info("Done, disabled.");
+        System.gc();
+    }
+
+    private void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GlobalMuteListener(), this);
         pm.registerEvents(new DutyListener(), this);
@@ -195,8 +198,7 @@ public class SinkCommands extends JavaPlugin
         pm.registerEvents(new ScoreboardListener(), this);
     }
 
-    private void registerCommands()
-    {
+    private void registerCommands() {
         getCommand("drug").setExecutor(new DrugCommand());
         getCommand("milk").setExecutor(new MilkCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());

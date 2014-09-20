@@ -25,29 +25,30 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
-public class BukkitUtil
-{
+public class BukkitUtil {
+
     /** Since Bukkit 1.7.9 R0.3, the return type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
      *  plugins will possibly break when using this method on older bukkit versions
      *
      * @return the current online players
      */
-    public static List<Player> getOnlinePlayers()
-    {
+    public static List<Player> getOnlinePlayers() {
         List<Player> tmp = new ArrayList<>();
         try {
             if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
             {
                 tmp = (List<Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null);
-            }
-            else
-            {
+            } else {
                 Collections.addAll(tmp, ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)));
             }
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
         }
-        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored ){}
         return tmp;
     }
 
@@ -58,34 +59,27 @@ public class BukkitUtil
      * @param name Name of the
      * @return If more than one matches, it will return the player with exact name.
      */
-    public static Player getPlayer(String name)
-    {
+    public static Player getPlayer(String name) {
         List<Player> matchedPlayers = new ArrayList<>();
-        for ( Player player : BukkitUtil.getOnlinePlayers() )
-        {
-            if ( player.getName().toLowerCase().contains(name.toLowerCase()) ) matchedPlayers.add(player);
+        for (Player player : BukkitUtil.getOnlinePlayers()) {
+            if (player.getName().toLowerCase().contains(name.toLowerCase())) {
+                matchedPlayers.add(player);
+            }
         }
 
         Player exactPlayer = Bukkit.getPlayerExact(name);
-        if ( matchedPlayers.toArray().length > 1 && exactPlayer != null )
-        {
+        if (matchedPlayers.toArray().length > 1 && exactPlayer != null) {
             return exactPlayer;
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 return matchedPlayers.get(0);
-            }
-            catch ( Exception ignored )
-            {
+            } catch (Exception ignored) {
                 return null;
             }
         }
     }
 
-    public static UUID getUUIDByName(String name)
-    {
+    public static UUID getUUIDByName(String name) {
         return Bukkit.getOfflinePlayer(name).getUniqueId();
     }
 
@@ -95,14 +89,14 @@ public class BukkitUtil
      * it will return "Console" in {@link org.bukkit.ChatColor#RED RED}, if sender is instance of
      * {@link org.bukkit.entity.Player Player}, it will return player's {@link org.bukkit.entity.Player#getDisplayName() DisplayName}
      */
-    public static String getSenderName(CommandSender sender)
-    {
-        if (sender instanceof IrcCommandSender)
-        {
+    public static String getSenderName(CommandSender sender) {
+        if (sender instanceof IrcCommandSender) {
             ChatColor prefix = sender.isOp() ? ChatColor.DARK_RED : ChatColor.DARK_AQUA;
             return prefix + sender.getName() + ChatColor.RESET;
         }
-        if(sender instanceof ConsoleCommandSender) return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
+        if (sender instanceof ConsoleCommandSender) {
+            return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
+        }
         SinkUser user = SinkLibrary.getUser(sender);
         return user.getDisplayName() + ChatColor.RESET;
     }
@@ -115,22 +109,21 @@ public class BukkitUtil
      * @param message Message to send
      * @param sendIRC If true, message will be broadcasted to IRC if available
      */
-    public static void broadcastMessage(String message, boolean sendIRC)
-    {
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
+    public static void broadcastMessage(String message, boolean sendIRC) {
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
             p.sendMessage(message);
         }
         Bukkit.getConsoleSender().sendMessage(message);
-        if ( !sendIRC ) return;
+        if (!sendIRC) {
+            return;
+        }
         SinkLibrary.sendIrcMessage(message);
     }
 
     /**
      * @param message Message to send
      */
-    public static void broadcastMessage(String message)
-    {
+    public static void broadcastMessage(String message) {
         broadcastMessage(message, true);
     }
 
@@ -143,20 +136,16 @@ public class BukkitUtil
      * @param permission Permission needed to receive the message
      * @param sendIRC    If true, message will broadcasted to IRC if available
      */
-    public static void broadcast(String message, String permission, boolean sendIRC)
-    {
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
+    public static void broadcast(String message, String permission, boolean sendIRC) {
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
             SinkUser user = SinkLibrary.getUser(p);
-            if ( !user.hasPermission(permission) )
-            {
+            if (!user.hasPermission(permission)) {
                 continue;
             }
             p.sendMessage(message);
         }
         Bukkit.getConsoleSender().sendMessage(message);
-        if ( sendIRC )
-        {
+        if (sendIRC) {
             SinkLibrary.sendIrcMessage(message);
         }
     }

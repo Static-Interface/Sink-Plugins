@@ -22,39 +22,32 @@ import de.static_interface.sinklibrary.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class SetCommand extends Command
-{
-    public SetCommand(Plugin plugin)
-    {
+public class SetCommand extends Command {
+
+    public SetCommand(Plugin plugin) {
         super(plugin);
         setUsage("Wrong usage! Usage: " + getCommandPrefix() + "set <option> <value>");
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    protected boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if(args.length < 2)
-        {
+    protected boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
             return false;
         }
 
-        switch(args[0].toLowerCase())
-        {
-            case "cmdprefix":
-            {
+        switch (args[0].toLowerCase()) {
+            case "cmdprefix": {
                 IrcUtil.setCommandPrefix(args[1]);
                 sender.sendMessage("Commandprefix has been changed to: " + args[1]);
                 break;
             }
 
-            default:
-            {
+            default: {
                 sender.sendMessage("Unknown option! Valid options: cmdprefix");
                 break;
             }

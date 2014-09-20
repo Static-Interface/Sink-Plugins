@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkcommands.command;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
@@ -27,45 +29,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class MilkCommand implements CommandExecutor {
 
-public class MilkCommand implements CommandExecutor
-{
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
     //Todo: convert to command
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-    {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         SinkUser user = SinkLibrary.getUser(sender);
-        if ( !user.hasPermission("sinkcommands.milk.all") )
-        {
+        if (!user.hasPermission("sinkcommands.milk.all")) {
             sender.sendMessage(m("Permissions.General"));
             return true;
         }
-        if ( args.length == 0 ) //Remove all
+        if (args.length == 0) //Remove all
         {
             String s = "";
             int i = 0;
-            for ( Player p : BukkitUtil.getOnlinePlayers() )
-            {
-                if ( p.hasPotionEffect(PotionEffectType.INVISIBILITY) )
-                {
+            for (Player p : BukkitUtil.getOnlinePlayers()) {
+                if (p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                     i++;
                     p.removePotionEffect(PotionEffectType.INVISIBILITY);
-                    if ( s.isEmpty() )
-                    {
+                    if (s.isEmpty()) {
                         s = p.getDisplayName();
-                    }
-                    else
-                    {
+                    } else {
                         s = s + ", " + p.getDisplayName();
                     }
                 }
             }
-            if ( i > 0 )
-            {
-                BukkitUtil.broadcast(PREFIX + "Der Unsichtbarkeits Trank von den folgenden Spielern wurde durch " + BukkitUtil.getSenderName(sender) + " entfernt:", "sinkcommands.milk.message", false);
+            if (i > 0) {
+                BukkitUtil.broadcast(PREFIX + "Der Unsichtbarkeits Trank von den folgenden Spielern wurde durch " + BukkitUtil.getSenderName(sender)
+                                     + " entfernt:", "sinkcommands.milk.message", false);
                 BukkitUtil.broadcast(PREFIX + s, "sinkcommands.milk.message", false);
                 return true;
             }
@@ -74,23 +67,21 @@ public class MilkCommand implements CommandExecutor
         }
         //Remove from specified player
         Player target = BukkitUtil.getPlayer(args[0]);
-        if ( target == null )
-        {
+        if (target == null) {
             sender.sendMessage(PREFIX + args[0] + " ist nicht online!");
             return true;
         }
 
-        if ( !user.isConsole() )
-        {
-            if ( !user.getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others") )
-            {
+        if (!user.isConsole()) {
+            if (!user.getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others")) {
                 sender.sendMessage(m("Permissions.General"));
                 return true;
             }
         }
-        if ( target.hasPotionEffect(PotionEffectType.INVISIBILITY) )
-        {
-            BukkitUtil.broadcast(PREFIX + "Der Unsichtbarkeits Trank von " + target.getDisplayName() + " wurde durch " + BukkitUtil.getSenderName(sender) + " entfernt.", "sinkcommands.milk.message", false);
+        if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            BukkitUtil.broadcast(
+                    PREFIX + "Der Unsichtbarkeits Trank von " + target.getDisplayName() + " wurde durch " + BukkitUtil.getSenderName(sender)
+                    + " entfernt.", "sinkcommands.milk.message", false);
             target.removePotionEffect(PotionEffectType.INVISIBILITY);
             return true;
         }

@@ -28,11 +28,10 @@ import org.pircbotx.User;
 
 import java.util.Arrays;
 
-public class IrcCommandListener implements Listener
-{
+public class IrcCommandListener implements Listener {
+
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onCommand(IrcCommandEvent event)
-    {
+    public void onCommand(IrcCommandEvent event) {
         User user = event.getUser();
         String command = event.getCommand();
         String source = event.getSource();
@@ -40,21 +39,21 @@ public class IrcCommandListener implements Listener
         String[] args = event.getArgs();
 
         SinkLibrary.getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
-                + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
+                                            + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
 
-        if (!executeCommand(user, command, source, label, args))
-        {
+        if (!executeCommand(user, command, source, label, args)) {
             SinkLibrary.sendIrcMessage(user.getNick() + ": Unknown command: " + command, source);
             event.setCancelled(true); // Debug
         }
     }
 
-    private boolean executeCommand(User user, String command, String source, String label, String[] args)
-    {
+    private boolean executeCommand(User user, String command, String source, String label, String[] args) {
         //Todo add events
         IrcCommandSender sender = new IrcCommandSender(user, source);
         Command cmd = SinkLibrary.getCustomCommand(command);
-        if (cmd == null || cmd.isPlayerOnly()) return false;
+        if (cmd == null || cmd.isPlayerOnly()) {
+            return false;
+        }
         cmd.onCommand(sender, null, label, args);
         return true;
     }

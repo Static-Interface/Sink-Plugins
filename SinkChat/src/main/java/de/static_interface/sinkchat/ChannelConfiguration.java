@@ -23,16 +23,14 @@ import de.static_interface.sinklibrary.configuration.ConfigurationBase;
 
 import java.io.File;
 
-public class ChannelConfiguration extends ConfigurationBase
-{
-    public ChannelConfiguration()
-    {
+public class ChannelConfiguration extends ConfigurationBase {
+
+    public ChannelConfiguration() {
         super(new File(SinkLibrary.getCustomDataFolder(), "ChatChannels.yml"), true);
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         set("Channels.Help." + ChannelValues.DEFAULT, true);
         set("Channels.Help." + ChannelValues.CALLCHAR, "?");
         set("Channels.Help." + ChannelValues.ENABLED, true);
@@ -59,8 +57,7 @@ public class ChannelConfiguration extends ConfigurationBase
     }
 
     @Override
-    public void addDefaults()
-    {
+    public void addDefaults() {
         // Do nothing
     }
 }

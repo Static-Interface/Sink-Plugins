@@ -22,54 +22,44 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class ExecCommand extends IrcCommand
-{
-    public ExecCommand(Plugin plugin)
-    {
+public class ExecCommand extends IrcCommand {
+
+    public ExecCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean useNotices()
-    {
+    public boolean useNotices() {
         return true;
     }
 
     @Override
-    public boolean onExecute(final CommandSender cs, String label, String[] args)
-    {
+    public boolean onExecute(final CommandSender cs, String label, String[] args) {
         final IrcCommandSender sender = (IrcCommandSender) cs;
         String commandWithArgs = "";
         int i = 0;
-        for ( String arg : args )
-        {
-            if ( i == args.length)
-            {
+        for (String arg : args) {
+            if (i == args.length) {
                 break;
             }
             i++;
-            if ( commandWithArgs.isEmpty() )
-            {
+            if (commandWithArgs.isEmpty()) {
                 commandWithArgs = arg;
                 continue;
             }
             commandWithArgs = commandWithArgs + ' ' + arg;
         }
 
-
         final String finalCommandWithArgs = commandWithArgs;
 
-        Bukkit.getScheduler().runTask(plugin, new Runnable()
-        {
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 Bukkit.dispatchCommand(sender, finalCommandWithArgs);
             }
         });

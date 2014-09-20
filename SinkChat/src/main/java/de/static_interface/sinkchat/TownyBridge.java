@@ -27,16 +27,12 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TownyBridge
-{
-    public static String getFormattedTownName(Town town, boolean onlyCapital)
-    {
-        if ( town.isCapital() )
-        {
+public class TownyBridge {
+
+    public static String getFormattedTownName(Town town, boolean onlyCapital) {
+        if (town.isCapital()) {
             return TownySettings.getCapitalPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getCapitalPostfix(town);
-        }
-        else if ( onlyCapital )
-        {
+        } else if (onlyCapital) {
             return town.getName().replaceAll("_", " ");
         }
         return TownySettings.getTownPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getTownPostfix(town);
@@ -50,8 +46,7 @@ public class TownyBridge
      * @param includeNationRank Include Nation Ranks when formatting
      * @return Formatted name of the resident
      */
-    public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank)
-    {
+    public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank) {
         SinkUser user = SinkLibrary.getUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
@@ -61,40 +56,49 @@ public class TownyBridge
         String nationRank;
         String townRank;
 
-        try
-        {
+        try {
             nationRank = resident.getNationRanks().get(0);
 
-            if ( nationRank.equals("assistant") ) nationRank = "Assistent";
-            if ( nationRank.equals("helper") ) nationRank = "Helfer";
+            if (nationRank.equals("assistant")) {
+                nationRank = "Assistent";
+            }
+            if (nationRank.equals("helper")) {
+                nationRank = "Helfer";
+            }
 
-            if ( !includeNationRank ) nationRank = null;
+            if (!includeNationRank) {
+                nationRank = null;
+            }
+        } catch (Exception ignored) {
+            nationRank = null;
         }
-        catch ( Exception ignored ) {nationRank = null; }
 
-        try
-        {
+        try {
             townRank = resident.getTownRanks().get(0);
-            if ( townRank.equals("assistant") ) townRank = "Assistent";
-            if ( townRank.equals("vip") ) townRank = "VIP";
-            if ( !includeTownRank ) townRank = null;
+            if (townRank.equals("assistant")) {
+                townRank = "Assistent";
+            }
+            if (townRank.equals("vip")) {
+                townRank = "VIP";
+            }
+            if (!includeTownRank) {
+                townRank = null;
+            }
+        } catch (Exception ignored) {
+            townRank = null;
         }
-        catch ( Exception ignored ) {townRank = null; }
 
-        if ( resident.isKing() )
-        {
-            prefixName = ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getKingPostfix(resident);
-        }
-        else if ( nationRank != null && !nationRank.isEmpty() )
-        {
+        if (resident.isKing()) {
+            prefixName =
+                    ChatColor.GOLD + TownySettings.getKingPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings
+                            .getKingPostfix(resident);
+        } else if (nationRank != null && !nationRank.isEmpty()) {
             prefixName = ChatColor.GOLD + nationRank + ' ' + color + resident.getName();
-        }
-        else if ( resident.isMayor() )
-        {
-            prefixName = ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings.getMayorPostfix(resident);
-        }
-        else if ( townRank != null && !townRank.isEmpty() )
-        {
+        } else if (resident.isMayor()) {
+            prefixName =
+                    ChatColor.GOLD + TownySettings.getMayorPrefix(resident) + color + resident.getName() + ChatColor.GOLD + TownySettings
+                            .getMayorPostfix(resident);
+        } else if (townRank != null && !townRank.isEmpty()) {
             prefixName = ChatColor.GOLD + townRank + ' ' + color + resident.getName();
         }
 
@@ -109,12 +113,9 @@ public class TownyBridge
      * @param name Name of the resident
      * @return null when resident not found or offline
      */
-    public static Resident getResident(String name)
-    {
-        for ( Resident resident : SinkChat.getTowny().getTownyUniverse().getActiveResidents() )
-        {
-            if ( resident.getName().equals(name) )
-            {
+    public static Resident getResident(String name) {
+        for (Resident resident : SinkChat.getTowny().getTownyUniverse().getActiveResidents()) {
+            if (resident.getName().equals(name)) {
                 return resident;
             }
         }
@@ -129,33 +130,32 @@ public class TownyBridge
      * @param player Player
      * @return {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
      */
-    public static String getTownyPrefix(Player player)
-    {
+    public static String getTownyPrefix(Player player) {
         Resident res = getResident(player.getName());
 
-        if ( res == null ) return "";
-
-        Town town;
-
-        try
-        {
-            town = res.getTown();
-        }
-        catch ( NotRegisteredException ignored )
-        {
+        if (res == null) {
             return "";
         }
 
-        if ( town == null ) return "";
-        if ( !town.hasNation() ) return "";
+        Town town;
+
+        try {
+            town = res.getTown();
+        } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        if (town == null) {
+            return "";
+        }
+        if (!town.hasNation()) {
+            return "";
+        }
 
         Nation nation;
-        try
-        {
+        try {
             nation = town.getNation();
-        }
-        catch ( NotRegisteredException ignored )
-        {
+        } catch (NotRegisteredException ignored) {
             return "";
         }
 

@@ -19,8 +19,9 @@ package de.static_interface.sinklibrary.sender;
 
 import org.bukkit.command.CommandSender;
 
-public interface FakeSender extends CommandSender
-{
+public interface FakeSender extends CommandSender {
+
     CommandSender getBase();
+
     CommandSender getFaker();
 }

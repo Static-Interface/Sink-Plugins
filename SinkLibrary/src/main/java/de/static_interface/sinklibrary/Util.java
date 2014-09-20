@@ -17,6 +17,8 @@
 
 package de.static_interface.sinklibrary;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -29,35 +31,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+public class Util {
 
-public class Util
-{
     /**
      * Create a file
      *
      * @param file file to create
      * @return true if file exists or has been created, false if it failed
      */
-    public static boolean createFile(File file)
-    {
-        if ( file.exists() ) return true;
-        try
-        {
-            com.google.common.io.Files.createParentDirs(file);
+    public static boolean createFile(File file) {
+        if (file.exists()) {
+            return true;
         }
-        catch ( IOException e )
-        {
+        try {
+            com.google.common.io.Files.createParentDirs(file);
+        } catch (IOException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Directorys for file " + file + ": ", e);
             return false;
         }
 
-        try
-        {
+        try {
             return file.createNewFile();
-        }
-        catch ( IOException ignored )
-        {
+        } catch (IOException ignored) {
             Bukkit.getLogger().log(Level.SEVERE, "Couldn't create file: " + file);
             return false;
         }
@@ -70,21 +65,19 @@ public class Util
      * @param notify Send message to Console?
      * @throws java.lang.RuntimeException When backup fails
      */
-    public static void backupFile(File file, boolean notify) throws IOException
-    {
-        if ( notify ) SinkLibrary.getCustomLogger().log(Level.INFO, "Creating backup of " + file + "...");
+    public static void backupFile(File file, boolean notify) throws IOException {
+        if (notify) {
+            SinkLibrary.getCustomLogger().log(Level.INFO, "Creating backup of " + file + "...");
+        }
 
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh.mm");
         String date = format.format(new Date());
 
         Path sourcePath = file.getAbsoluteFile().toPath();
         Path targetPath = Paths.get(file.getPath() + '.' + date + ".backup");
-        try
-        {
+        try {
             Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
-        }
-        catch ( IOException e )
-        {
+        } catch (IOException e) {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't backup file: " + file.getAbsolutePath());
             throw e;
         }
@@ -97,13 +90,10 @@ public class Util
      * @param character Chat
      * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
      */
-    public static String formatArrayToString(Object[] input, String character)
-    {
+    public static String formatArrayToString(Object[] input, String character) {
         String tmp = "";
-        for ( Object o : input )
-        {
-            if ( tmp.isEmpty() )
-            {
+        for (Object o : input) {
+            if (tmp.isEmpty()) {
                 tmp = (String) o;
                 continue;
             }
@@ -118,20 +108,16 @@ public class Util
      * @param names Names
      * @return If names contains "user1", "user2", "user3", it will return "user1, user2 and user3".
      */
-    public static String formatPlayerListToString(List<String> names)
-    {
+    public static String formatPlayerListToString(List<String> names) {
         String tmp = "";
         int i = 0;
-        for ( String s : names )
-        {
+        for (String s : names) {
             i++;
-            if ( tmp.isEmpty() )
-            {
+            if (tmp.isEmpty()) {
                 tmp = s;
                 continue;
             }
-            if ( i == names.toArray().length )
-            {
+            if (i == names.toArray().length) {
                 tmp = tmp + " and " + s;
                 continue;
             }
@@ -144,21 +130,16 @@ public class Util
      * @param input String Input
      * @return True if input is a number
      */
-    public static boolean isNumber(String input)
-    {
-        try
-        {
+    public static boolean isNumber(String input) {
+        try {
             Integer.parseInt(input);
-        }
-        catch ( NumberFormatException ignored )
-        {
+        } catch (NumberFormatException ignored) {
             return false;
         }
         return true;
     }
 
-    public static boolean isStringEmptyOrNull(String s)
-    {
+    public static boolean isStringEmptyOrNull(String s) {
         return s == null || s.trim().length() == 0;
     }
 }

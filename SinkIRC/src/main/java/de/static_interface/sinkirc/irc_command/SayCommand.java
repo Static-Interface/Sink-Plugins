@@ -24,36 +24,32 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class SayCommand extends IrcCommand
-{
-    public SayCommand(Plugin plugin)
-    {
+public class SayCommand extends IrcCommand {
+
+    public SayCommand(Plugin plugin) {
         super(plugin);
         setUsage("Usage: " + IrcUtil.getCommandPrefix() + "say <text>");
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender cs, String label, String[] args) {
         IrcCommandSender sender = (IrcCommandSender) cs;
-        if ( args.length < 1 )
-        {
+        if (args.length < 1) {
             return false;
         }
 
         String source;
 
-        if ( isQueryCommand())
-        {
+        if (isQueryCommand()) {
             source = "Query";
-        }
-        else
-        {
+        } else {
             source = sender.getSource();
         }
 
         String messageWithPrefix;
-        messageWithPrefix = IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + IrcUtil.getFormattedName(sender.getUser()) + ChatColor.GRAY + ": " + ChatColor.WHITE + label.replaceFirst("say", "");
+        messageWithPrefix =
+                IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + IrcUtil.getFormattedName(sender.getUser()) + ChatColor.GRAY + ": "
+                + ChatColor.WHITE + label.replaceFirst("say", "");
 
         BukkitUtil.broadcastMessage(messageWithPrefix);
         return true;

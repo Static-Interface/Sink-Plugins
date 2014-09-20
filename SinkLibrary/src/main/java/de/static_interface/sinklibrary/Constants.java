@@ -17,8 +17,8 @@
 
 package de.static_interface.sinklibrary;
 
-public class Constants
-{
+public class Constants {
+
     @SuppressWarnings("HardcodedFileSeparator")
     public static final String COMMAND_PREFIX = "/";
     public static final double TICK = 20.0d;

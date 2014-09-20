@@ -23,11 +23,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class DutyListener implements Listener
-{
+public class DutyListener implements Listener {
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event)
-    {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         //Todo: DutyCommand.endDuty(SinkLibrary.getUser(event.getPlayer()));
     }
 }

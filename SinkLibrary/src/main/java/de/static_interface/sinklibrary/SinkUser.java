@@ -31,8 +31,8 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 @SuppressWarnings("NewExceptionWithoutArguments")
-public class SinkUser implements Comparable<SinkUser>
-{
+public class SinkUser implements Comparable<SinkUser> {
+
     private static Player base = null;
     private static Economy econ = null;
     private String playerName = null;
@@ -47,16 +47,23 @@ public class SinkUser implements Comparable<SinkUser>
      *
      * @param sender Sender
      */
-    SinkUser(CommandSender sender)
-    {
+    SinkUser(CommandSender sender) {
         this.sender = sender;
         initUser(sender.getName());
     }
 
-    public void initUser(String player)
-    {
-        if ( player.equalsIgnoreCase("console") )
-        {
+    /**
+     * Get an user by UUID
+     *
+     * @param uuid UUID of user
+     */
+    SinkUser(UUID uuid) {
+        this.uuid = uuid;
+        initUser(Bukkit.getOfflinePlayer(uuid).getName());
+    }
+
+    public void initUser(String player) {
+        if (player.equalsIgnoreCase("console")) {
             sender = Bukkit.getConsoleSender();
             base = null;
             econ = SinkLibrary.getEconomy();
@@ -66,25 +73,14 @@ public class SinkUser implements Comparable<SinkUser>
         base = BukkitUtil.getPlayer(player);
         econ = SinkLibrary.getEconomy();
         playerName = player;
-        if ( base == null )
-        {
+        if (base == null) {
             uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             return;
         }
-        if(sender == null)
+        if (sender == null) {
             sender = base;
+        }
         uuid = base.getUniqueId();
-    }
-
-    /**
-     * Get an user by UUID
-     *
-     * @param uuid UUID of user
-     */
-    SinkUser(UUID uuid)
-    {
-        this.uuid = uuid;
-        initUser(Bukkit.getOfflinePlayer(uuid).getName());
     }
 
     /**
@@ -93,17 +89,14 @@ public class SinkUser implements Comparable<SinkUser>
      * @return Money of player
      * @throws de.static_interface.sinklibrary.exception.EconomyNotAvailableException if economy is not available.
      */
-    public double getMoney()
-    {
+    public double getMoney() {
         validateEconomy();
 
         OfflinePlayer player = base;
 
         String target = playerName;
-        if ( target == null || target.isEmpty() )
-        {
-            if ( player == null )
-            {
+        if (target == null || target.isEmpty()) {
+            if (player == null) {
                 player = Bukkit.getOfflinePlayer(uuid);
             }
             target = player.getName();
@@ -119,25 +112,21 @@ public class SinkUser implements Comparable<SinkUser>
      * @param amount Amount to be added / substracted. May be negative for substracting
      * @return true if successful
      */
-    public boolean addBalance(double amount)
-    {
-        if ( getName().isEmpty() ) return false;
+    public boolean addBalance(double amount) {
+        if (getName().isEmpty()) {
+            return false;
+        }
 
         double roundedAmount = (int) Math.round(amount * 100) / (double) 100;
         validateEconomy();
         EconomyResponse response;
-        if ( roundedAmount > 0 )
-        {
+        if (roundedAmount > 0) {
             SinkLibrary.getCustomLogger().debug("econ.withDrawPlayer(" + getName() + ", " + -roundedAmount + ");");
             response = econ.withdrawPlayer(getName(), -roundedAmount);
-        }
-        else if ( roundedAmount < 0 )
-        {
+        } else if (roundedAmount < 0) {
             SinkLibrary.getCustomLogger().debug("econ.depositPlayer(" + getName() + ", " + roundedAmount + ");");
             response = econ.depositPlayer(getName(), roundedAmount);
-        }
-        else
-        {
+        } else {
             return true;
         }
         boolean result = response.transactionSuccess();
@@ -145,15 +134,12 @@ public class SinkUser implements Comparable<SinkUser>
         return response.transactionSuccess();
     }
 
-    private void validateEconomy()
-    {
-        if ( isConsole() )
-        {
+    private void validateEconomy() {
+        if (isConsole()) {
             throw new NullPointerException("User is console, cannot get Player instance!");
         }
 
-        if ( !SinkLibrary.isEconomyAvailable() )
-        {
+        if (!SinkLibrary.isEconomyAvailable()) {
             throw new EconomyNotAvailableException();
         }
 
@@ -164,14 +150,11 @@ public class SinkUser implements Comparable<SinkUser>
     /**
      * @return The PlayerConfiguration of the Player
      */
-    public PlayerConfiguration getPlayerConfiguration()
-    {
-        if (!isPlayer())
-        {
+    public PlayerConfiguration getPlayerConfiguration() {
+        if (!isPlayer()) {
             throw new IllegalStateException("User is not a player");
         }
-        if ( config == null )
-        {
+        if (config == null) {
             config = new PlayerConfiguration(this);
         }
         return config;
@@ -180,8 +163,7 @@ public class SinkUser implements Comparable<SinkUser>
     /**
      * @return CommandSender
      */
-    public CommandSender getSender()
-    {
+    public CommandSender getSender() {
         return sender;
     }
 
@@ -190,10 +172,8 @@ public class SinkUser implements Comparable<SinkUser>
      *
      * @return Player
      */
-    public Player getPlayer()
-    {
-        if ( isConsole() )
-        {
+    public Player getPlayer() {
+        if (isConsole()) {
             throw new NullPointerException("User is console!");
         }
         return base;
@@ -203,16 +183,13 @@ public class SinkUser implements Comparable<SinkUser>
      * @param permission Permission required
      * @return True if the player has the permission specified by parameter.
      */
-    public boolean hasPermission(String permission)
-    {
+    public boolean hasPermission(String permission) {
         //Todo: fix this for offline usage
-        if ( isConsole() )
-        {
+        if (isConsole()) {
             return true;
         }
 
-        if ( !isOnline() )
-        {
+        if (!isOnline()) {
             throw new RuntimeException("This may be only used for online players!");
         }
         //if (SinkLibrary.permissionsAvailable())
@@ -231,15 +208,12 @@ public class SinkUser implements Comparable<SinkUser>
      * @return Primary Group
      * @throws de.static_interface.sinklibrary.exception.PermissionsNotAvailableException if permissions are not available
      */
-    public String getPrimaryGroup()
-    {
-        if ( isConsole() )
-        {
+    public String getPrimaryGroup() {
+        if (isConsole()) {
             throw new IllegalArgumentException("User is console!");
         }
 
-        if ( !SinkLibrary.isPermissionsAvailable() )
-        {
+        if (!SinkLibrary.isPermissionsAvailable()) {
             throw new PermissionsNotAvailableException();
         }
         return SinkLibrary.getPermissions().getPrimaryGroup(base);
@@ -249,21 +223,17 @@ public class SinkUser implements Comparable<SinkUser>
     /**
      * @return Display Name with Permission Prefix or Op/non-Op Prefix
      */
-    public String getDefaultDisplayName()
-    {
-        if ( isConsole() || !isOnline() )
-        {
+    public String getDefaultDisplayName() {
+        if (isConsole() || !isOnline()) {
             return playerName;
         }
-        try
-        {
-            if ( SinkLibrary.isChatAvailable() )
-            {
+        try {
+            if (SinkLibrary.isChatAvailable()) {
                 String playerPrefix = getPrefix();
                 return playerPrefix + playerName + ChatColor.RESET;
             }
+        } catch (Exception ignored) {
         }
-        catch ( Exception ignored ) {}
 
         String prefix = base.isOp() ? ChatColor.RED.toString() : ChatColor.WHITE.toString();
         return prefix + playerName + ChatColor.RESET;
@@ -275,10 +245,8 @@ public class SinkUser implements Comparable<SinkUser>
      * @return Player prefix
      * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
      */
-    public String getPrefix()
-    {
-        if ( !SinkLibrary.isChatAvailable() )
-        {
+    public String getPrefix() {
+        if (!SinkLibrary.isChatAvailable()) {
             return base.isOp() ? ChatColor.DARK_RED.toString() : ChatColor.WHITE.toString();
         }
         return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getChat().getPlayerPrefix(base));
@@ -289,21 +257,20 @@ public class SinkUser implements Comparable<SinkUser>
      *
      * @return Players name
      */
-    public String getName()
-    {
+    public String getName() {
         return playerName;
     }
 
     /**
      * @return True if player is online and does not equals null
      */
-    public boolean isOnline()
-    {
-        if ( isConsole() )
-        {
+    public boolean isOnline() {
+        if (isConsole()) {
             return true;
         }
-        if(base == null) base = Bukkit.getPlayer(uuid);
+        if (base == null) {
+            base = Bukkit.getPlayer(uuid);
+        }
         return base != null && base.isOnline();
 
     }
@@ -311,8 +278,7 @@ public class SinkUser implements Comparable<SinkUser>
     /**
      * @return True if User is Console
      */
-    public boolean isConsole()
-    {
+    public boolean isConsole() {
         return sender != null && (sender.equals(Bukkit.getConsoleSender()));
     }
 
@@ -321,27 +287,20 @@ public class SinkUser implements Comparable<SinkUser>
      * it will return "Console" in {@link org.bukkit.ChatColor#RED RED}, if sender is instance of
      * {@link org.bukkit.entity.Player Player}, it will return player's {@link org.bukkit.entity.Player#getDisplayName() DisplayName}
      */
-    public String getDisplayName()
-    {
-        if ( isConsole() )
-        {
+    public String getDisplayName() {
+        if (isConsole()) {
             return ChatColor.RED + "Console" + ChatColor.RESET;
         }
-        if ( !isOnline() )
-        {
+        if (!isOnline()) {
             return playerName;
         }
-        if ( !SinkLibrary.getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName() )
-        {
+        if (!SinkLibrary.getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName()) {
             String prefix = "";
-            if ( SinkLibrary.isChatAvailable() )
-            {
+            if (SinkLibrary.isChatAvailable()) {
                 prefix = ChatColor.translateAlternateColorCodes('&', SinkLibrary.getChat().getPlayerPrefix(base));
             }
             return prefix + base.getDisplayName();
-        }
-        else
-        {
+        } else {
             return getPlayerConfiguration().getDisplayName();
         }
     }
@@ -351,20 +310,20 @@ public class SinkUser implements Comparable<SinkUser>
      *
      * @param message Message to be displayed
      */
-    public void sendMessage(String message)
-    {
-        if ( isOnline() )
-        {
-            if ( !isPlayer() ) sender.sendMessage(message);
-            else base.sendMessage(message);
+    public void sendMessage(String message) {
+        if (isOnline()) {
+            if (!isPlayer()) {
+                sender.sendMessage(message);
+            } else {
+                base.sendMessage(message);
+            }
         }
     }
 
     /**
      * @return The unique ID of the user
      */
-    public UUID getUniqueId()
-    {
+    public UUID getUniqueId() {
         return uuid;
     }
 
@@ -373,20 +332,18 @@ public class SinkUser implements Comparable<SinkUser>
      *
      * @param message Message to be displayed
      */
-    public void sendDebugMessage(String message)
-    {
-        if ( SinkLibrary.getSettings().isDebugEnabled() )
+    public void sendDebugMessage(String message) {
+        if (SinkLibrary.getSettings().isDebugEnabled()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
+        }
     }
 
-    public boolean isPlayer()
-    {
+    public boolean isPlayer() {
         return base != null || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
     }
 
     @Override
-    public int compareTo(SinkUser o)
-    {
+    public int compareTo(SinkUser o) {
         return getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 }

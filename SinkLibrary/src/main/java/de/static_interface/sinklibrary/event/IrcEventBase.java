@@ -22,34 +22,30 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.pircbotx.PircBotX;
 
-public abstract class IrcEventBase extends Event implements Cancellable
-{
+public abstract class IrcEventBase extends Event implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
     boolean cancelled;
+
+    @SuppressWarnings("UnusedDeclaration")
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     public abstract PircBotX getBot();
 
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean value)
-    {
+    public void setCancelled(boolean value) {
         cancelled = value;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
 }

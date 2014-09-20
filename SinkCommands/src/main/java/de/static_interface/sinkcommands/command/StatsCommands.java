@@ -27,19 +27,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StatsCommands
-{
+public class StatsCommands {
+
     public static String PREFIX = ChatColor.DARK_GREEN + "[Statistiken] " + ChatColor.RESET;
 
-    public static class EnableStatsCommand implements CommandExecutor
-    {
+    public static class EnableStatsCommand implements CommandExecutor {
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-        {
+        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
             SinkUser user = SinkLibrary.getUser(sender);
 
-            if ( user.isConsole() )
-            {
+            if (user.isConsole()) {
                 sender.sendMessage("This command is only ingame available.");
                 return true;
             }
@@ -47,8 +45,7 @@ public class StatsCommands
 
             PlayerConfiguration config = user.getPlayerConfiguration();
 
-            if ( config.isStatsEnabled() )
-            {
+            if (config.isStatsEnabled()) {
                 player.sendMessage(PREFIX + ChatColor.RED + "Die Statistiken sind schon aktiviert!");
                 return true;
             }
@@ -60,15 +57,13 @@ public class StatsCommands
         }
     }
 
-    public static class DisableStatsCommand implements CommandExecutor
-    {
+    public static class DisableStatsCommand implements CommandExecutor {
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-        {
+        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
             SinkUser user = SinkLibrary.getUser(sender);
 
-            if ( user.isConsole() )
-            {
+            if (user.isConsole()) {
                 sender.sendMessage("This command is only ingame available.");
                 return true;
             }
@@ -76,8 +71,7 @@ public class StatsCommands
 
             PlayerConfiguration config = user.getPlayerConfiguration();
 
-            if ( !config.isStatsEnabled() )
-            {
+            if (!config.isStatsEnabled()) {
                 player.sendMessage(PREFIX + ChatColor.RED + "Die Statistiken sind schon deaktiviert!");
                 return true;
             }

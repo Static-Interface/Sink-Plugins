@@ -26,15 +26,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.pircbotx.Channel;
 
-public class IrcKickCommand implements CommandExecutor
-{
+public class IrcKickCommand implements CommandExecutor {
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-    {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         SinkUser user = SinkLibrary.getUser(sender);
 
-        if ( args.length < 1 )
-        {
+        if (args.length < 1) {
             return false;
         }
 
@@ -42,11 +40,9 @@ public class IrcKickCommand implements CommandExecutor
 
         String target = args[0];
 
-        if ( args.length > 1 )
-        {
+        if (args.length > 1) {
             reason = reason + ", reason: ";
-            for ( int i = 1; i < args.length; i++ )
-            {
+            for (int i = 1; i < args.length; i++) {
                 reason += args[i] + ' ';
             }
         }

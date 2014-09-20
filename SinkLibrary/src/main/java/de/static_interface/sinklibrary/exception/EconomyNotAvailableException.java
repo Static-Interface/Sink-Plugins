@@ -17,10 +17,9 @@
 
 package de.static_interface.sinklibrary.exception;
 
-public class EconomyNotAvailableException extends RuntimeException
-{
-    public EconomyNotAvailableException()
-    {
+public class EconomyNotAvailableException extends RuntimeException {
+
+    public EconomyNotAvailableException() {
         super("Economy is not available!");
     }
 }

@@ -17,6 +17,8 @@
 
 package de.static_interface.sinklibrary.command;
 
+import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
+
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.Util;
@@ -26,39 +28,30 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
+public class SinkDebugCommand extends Command {
 
-public class SinkDebugCommand extends Command
-{
     public static final String PREFIX = ChatColor.BLUE + "[Debug] " + ChatColor.RESET;
 
     String cmd = getCommandPrefix() + "sdebug";
 
-    public SinkDebugCommand(Plugin plugin)
-    {
+    public SinkDebugCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if ( args.length < 1 )
-        {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (args.length < 1) {
             return false;
         }
         String option = args[0];
 
-        switch ( option.toLowerCase() )
-        {
-            case "getplayervalue":
-            {
-                if ( args.length != 3 )
-                {
+        switch (option.toLowerCase()) {
+            case "getplayervalue": {
+                if (args.length != 3) {
                     sender.sendMessage(PREFIX + "Wrong Usage! Correct Usage: " + COMMAND_PREFIX + cmd + " getplayervalue <player> <path.to.key>");
                     break;
                 }
@@ -70,11 +63,10 @@ public class SinkDebugCommand extends Command
                 break;
             }
 
-            case "setplayervalue":
-            {
-                if ( args.length != 4 )
-                {
-                    sender.sendMessage(PREFIX + "Wrong Usage! Correct Usage: " + COMMAND_PREFIX + cmd + " setplayervalue <player> <path.to.key> <value>");
+            case "setplayervalue": {
+                if (args.length != 4) {
+                    sender.sendMessage(
+                            PREFIX + "Wrong Usage! Correct Usage: " + COMMAND_PREFIX + cmd + " setplayervalue <player> <path.to.key> <value>");
                     break;
                 }
                 String player = args[1];
@@ -88,10 +80,8 @@ public class SinkDebugCommand extends Command
                 break;
             }
 
-            case "haspermission":
-            {
-                if ( args.length != 3 )
-                {
+            case "haspermission": {
+                if (args.length != 3) {
                     sender.sendMessage(PREFIX + "Wrong Usage! Correct Usage: " + COMMAND_PREFIX + cmd + " haspermission <player> <permission>");
                     break;
                 }
@@ -103,33 +93,26 @@ public class SinkDebugCommand extends Command
 
             }
 
-            case "backuplanguage":
-            {
-                try
-                {
+            case "backuplanguage": {
+                try {
                     LanguageConfiguration.getInstance().backup();
                     sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
                     sender.sendMessage(PREFIX + ChatColor.RED + "Failed: ");
                     sender.sendMessage(PREFIX + ChatColor.RED + e.getMessage());
                 }
                 break;
             }
 
-            case "isop":
-            {
+            case "isop": {
                 boolean isOp = sender.isOp();
                 sender.sendMessage(option + ": " + isOp);
                 break;
             }
 
-            case "testop":
-            {
+            case "testop": {
                 boolean isOp = sender.isOp();
-                if (isOp)
-                {
+                if (isOp) {
                     sender.sendMessage(option + ": setting value: " + false);
                     sender.setOp(false);
                     sender.sendMessage(option + ": restoring value: " + true);
@@ -138,26 +121,21 @@ public class SinkDebugCommand extends Command
                 }
             }
 
-            default:
-            {
+            default: {
                 sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, backuplanguage, isop, testop");
             }
         }
         return true;
     }
 
-    private Object replaceValue(String value)
-    {
-        if ( value.equals("true") )
-        {
+    private Object replaceValue(String value) {
+        if (value.equals("true")) {
             return true;
         }
-        if ( value.equals("false") )
-        {
+        if (value.equals("false")) {
             return false;
         }
-        if ( Util.isNumber(value) )
-        {
+        if (Util.isNumber(value)) {
             return Integer.parseInt(value);
         }
         return value;

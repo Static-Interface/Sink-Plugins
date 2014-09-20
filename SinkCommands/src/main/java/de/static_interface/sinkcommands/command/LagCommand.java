@@ -25,31 +25,24 @@ import org.bukkit.plugin.Plugin;
 
 import java.text.DecimalFormat;
 
-public class LagCommand extends Command
-{
+public class LagCommand extends Command {
+
     public static final String PREFIX = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
 
-    public LagCommand(Plugin plugin)
-    {
+    public LagCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         double realTPS = SinkLibrary.getSinkTimer().getAverageTPS();
         DecimalFormat decimalFormat = new DecimalFormat("##.0");
         String shownTPS = decimalFormat.format(realTPS);
-        if ( realTPS >= 18.5 )
-        {
+        if (realTPS >= 18.5) {
             sender.sendMessage(PREFIX + ChatColor.GREEN + "Der Server läuft ohne Probleme!");
-        }
-        else if ( realTPS >= 17 )
-        {
+        } else if (realTPS >= 17) {
             sender.sendMessage(PREFIX + ChatColor.YELLOW + "Der Server könnte gerade etwas laggen!");
-        }
-        else
-        {
+        } else {
             sender.sendMessage(PREFIX + ChatColor.RED + "Der Server laggt gerade!");
         }
         sender.sendMessage(PREFIX + "(TPS: " + shownTPS + ')');

@@ -21,16 +21,15 @@ import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcKickEvent extends IrcEventBase
-{
+public class IrcKickEvent extends IrcEventBase {
+
     private final User user;
     private final User recipient;
     private final Channel channel;
     private final String reason;
     private final PircBotX bot;
 
-    public IrcKickEvent(User user, User recipient, Channel channel, String reason, PircBotX bot)
-    {
+    public IrcKickEvent(User user, User recipient, Channel channel, String reason, PircBotX bot) {
         this.user = user;
         this.recipient = recipient;
         this.channel = channel;
@@ -38,29 +37,24 @@ public class IrcKickEvent extends IrcEventBase
         this.bot = bot;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
-    public User getRecipient()
-    {
+    public User getRecipient() {
         return recipient;
     }
 
-    public Channel getChannel()
-    {
+    public Channel getChannel() {
         return channel;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

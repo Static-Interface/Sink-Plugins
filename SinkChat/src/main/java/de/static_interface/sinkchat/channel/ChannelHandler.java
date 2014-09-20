@@ -17,21 +17,21 @@
 
 package de.static_interface.sinkchat.channel;
 
-import java.util.HashMap;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkchat.ChannelConfiguration;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.command.ChannelCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-public class ChannelHandler
-{
+import java.util.HashMap;
+
+public class ChannelHandler {
+
     private static HashMap<String, Channel> registeredChannels = new HashMap<>();
 
-    public static void registerChannel(Channel channel)
-    {
+    public static void registerChannel(Channel channel) {
         registeredChannels.put(channel.getCallCode(), channel);
         saveChannel(channel);
     }
@@ -39,72 +39,72 @@ public class ChannelHandler
     /**
      * @return All registered channels. HashMap<String, Channel> where String is the call code, Channel is the channel instance.
      */
-    public static HashMap<String, Channel> getRegisteredChannels()
-    {
+    public static HashMap<String, Channel> getRegisteredChannels() {
         return registeredChannels;
     }
 
     /**
      * Returns a channel using a given name or null, if the channel can't be found.
      */
-    public static Channel getChannelByName(String channelname)
-    {
-    	for ( Channel channel : registeredChannels.values() )
-    	{
-    		if ( channel.getName().equalsIgnoreCase(channelname) || channel.getPrefix().equalsIgnoreCase(channelname) ) return channel;
-    	}
-    	return null;
+    public static Channel getChannelByName(String channelname) {
+        for (Channel channel : registeredChannels.values()) {
+            if (channel.getName().equalsIgnoreCase(channelname) || channel.getPrefix().equalsIgnoreCase(channelname)) {
+                return channel;
+            }
+        }
+        return null;
     }
 
     /**
      * Gets a registered channel by it's call code.
      */
-    public static Channel getRegisteredChannel(String callCode)
-    {
+    public static Channel getRegisteredChannel(String callCode) {
         return registeredChannels.get(callCode);
     }
 
-    private static boolean deleteChannel(Channel channel)
-    {
-    	if ( channel == null ) return false;
+    private static boolean deleteChannel(Channel channel) {
+        if (channel == null) {
+            return false;
+        }
 
-    	for ( SinkUser user : SinkLibrary.getOnlineUsers() )
-    	{
-    		if ( (channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId()) )
-    		{
-    			user.sendMessage(ChannelCommand.PREFIX + String.format(m("SinkChat.DeletedChannel"), channel.getName()));
-    		}
-    	}
+        for (SinkUser user : SinkLibrary.getOnlineUsers()) {
+            if ((channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId())) {
+                user.sendMessage(ChannelCommand.PREFIX + String.format(m("SinkChat.DeletedChannel"), channel.getName()));
+            }
+        }
 
-    	SinkChat.getChannelConfigs().set("Channels." + channel.getName(), null);
+        SinkChat.getChannelConfigs().set("Channels." + channel.getName(), null);
 
-    	return true;
+        return true;
     }
 
-    private static void saveChannel(Channel channel)
-    {
-    	String pathPrefix = "Channels." + channel.getName() + ".";
-    	ChannelConfiguration config = SinkChat.getChannelConfigs();
+    private static void saveChannel(Channel channel) {
+        String pathPrefix = "Channels." + channel.getName() + ".";
+        ChannelConfiguration config = SinkChat.getChannelConfigs();
 
-    	config.set(pathPrefix + ChannelValues.DEFAULT, true);
-    	config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());
-    	config.set(pathPrefix + ChannelValues.ENABLED, channel.enabled);
-    	config.set(pathPrefix + ChannelValues.PERMISSION, channel.getPermission());
-    	config.set(pathPrefix + ChannelValues.PREFIX, channel.getPrefix());
-    	config.set(pathPrefix + ChannelValues.SEND_TO_IRC, channel.sendToIRC);
-    	config.set(pathPrefix + ChannelValues.RANGE, channel.getRange());;
+        config.set(pathPrefix + ChannelValues.DEFAULT, true);
+        config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());
+        config.set(pathPrefix + ChannelValues.ENABLED, channel.enabled);
+        config.set(pathPrefix + ChannelValues.PERMISSION, channel.getPermission());
+        config.set(pathPrefix + ChannelValues.PREFIX, channel.getPrefix());
+        config.set(pathPrefix + ChannelValues.SEND_TO_IRC, channel.sendToIRC);
+        config.set(pathPrefix + ChannelValues.RANGE, channel.getRange());
+        ;
     }
 
     /**
      * Removes a channel by it's call code.
      */
-    public static boolean removeRegisteredChannel(String channelName)
-    {
-    	Channel channel = getChannelByName(channelName);
-    	if ( channel == null ) channel = registeredChannels.get(channelName);
-    	if ( channel == null ) return false;
+    public static boolean removeRegisteredChannel(String channelName) {
+        Channel channel = getChannelByName(channelName);
+        if (channel == null) {
+            channel = registeredChannels.get(channelName);
+        }
+        if (channel == null) {
+            return false;
+        }
 
-    	registeredChannels.remove(channelName);
-    	return deleteChannel(channel);
+        registeredChannels.remove(channelName);
+        return deleteChannel(channel);
     }
 }

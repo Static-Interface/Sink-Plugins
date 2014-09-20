@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkantispam;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -26,56 +28,50 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class WarnCommand extends Command {
 
-public class WarnCommand extends Command
-{
     public static final String PREFIX = ChatColor.RED + "[Warn] " + ChatColor.RESET;
 
-    public WarnCommand(Plugin plugin)
-    {
+    public WarnCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOnly() { return false; }
+    public boolean isIrcOnly() {
+        return false;
+    }
 
     @Override
-    public boolean isPlayerOnly() { return false; }
+    public boolean isPlayerOnly() {
+        return false;
+    }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if ( args.length < 2 )
-        {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
             sender.sendMessage(PREFIX + m("General.CommandMisused.Arguments.TooFew"));
             sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Player] [Reason]");
             return false;
         }
         Player target = (BukkitUtil.getPlayer(args[0]));
-        if ( target == null )
-        {
+        if (target == null) {
             sender.sendMessage(PREFIX + String.format(m("General.NotOnline"), args[0]));
             return true;
         }
-        if ( target.getName().equals(sender.getName()))
-        {
+        if (target.getName().equals(sender.getName())) {
             sender.sendMessage(PREFIX + m("SinkAntiSpam.WarnSelf"));
             return true;
         }
 
         String reason = "";
 
-        for ( int i = 1; i < args.length; i++ )
-        {
-            if ( reason.isEmpty() )
-            {
+        for (int i = 1; i < args.length; i++) {
+            if (reason.isEmpty()) {
                 reason = args[i];
                 continue;
             }

@@ -17,15 +17,13 @@
 
 package de.static_interface.sinklibrary.exception;
 
-public class NotInitializedException extends RuntimeException
-{
-    public NotInitializedException(String s)
-    {
+public class NotInitializedException extends RuntimeException {
+
+    public NotInitializedException(String s) {
         super(s);
     }
 
-    public NotInitializedException()
-    {
+    public NotInitializedException() {
         super("SinkLibrary is not initialized!");
     }
 }

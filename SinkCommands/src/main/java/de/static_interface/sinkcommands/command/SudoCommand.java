@@ -17,48 +17,40 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.command.Command;
 import de.static_interface.sinklibrary.sender.FakeConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.FakePlayerCommandSender;
-import de.static_interface.sinklibrary.command.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class SudoCommand extends Command
-{
-    public SudoCommand(Plugin plugin)
-    {
+public class SudoCommand extends Command {
+
+    public SudoCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    protected boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if ( args.length < 2 )
-        {
+    protected boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
             return false;
         }
         String target = args[0];
         CommandSender fakeSender;
 
-        if(target.equalsIgnoreCase("console"))
-        {
+        if (target.equalsIgnoreCase("console")) {
             fakeSender = new FakeConsoleCommandSender
                     (Bukkit.getConsoleSender(), sender);
-        }
-        else
-        {
+        } else {
             Player p = Bukkit.getPlayer(target);
-            if ( p == null )
-            {
+            if (p == null) {
                 sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");
                 return true;
             }
@@ -66,10 +58,8 @@ public class SudoCommand extends Command
         }
 
         String commandLine = "";
-        for ( int i = 1; i < args.length; i++ )
-        {
-            if ( commandLine.equals("") )
-            {
+        for (int i = 1; i < args.length; i++) {
+            if (commandLine.equals("")) {
                 commandLine = args[i];
                 continue;
             }

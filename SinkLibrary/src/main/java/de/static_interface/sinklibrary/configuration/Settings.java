@@ -25,18 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class Settings extends ConfigurationBase
-{
+public class Settings extends ConfigurationBase {
+
     public static final int REQUIRED_VERSION = 1;
 
-    public Settings()
-    {
+    public Settings() {
         super(new File(SinkLibrary.getCustomDataFolder(), "Settings.yml"));
     }
 
     @Override
-    public void addDefaults()
-    {
+    public void addDefaults() {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
 
         addDefault("General.DisplayNamesEnabled", false);
@@ -81,7 +79,6 @@ public class Settings extends ConfigurationBase
         defaultExcludedCommands.add("t");
         addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
 
-
         addDefault("SinkChat.LocalChatRange", 50);
         addDefault("SinkChat.Channels.Help.Prefix", "?");
         addDefault("SinkChat.Channels.Shout.Prefix", "!");
@@ -94,10 +91,8 @@ public class Settings extends ConfigurationBase
         addDefault("SinkAFK.Broadcast.IRC.Back", false);
     }
 
-    public Updater.UpdateType getUpdateType()
-    {
-        switch ( ((String) get("Updater.UpdateType")).toLowerCase() )
-        {
+    public Updater.UpdateType getUpdateType() {
+        switch (((String) get("Updater.UpdateType")).toLowerCase()) {
             case "default":
                 return Updater.UpdateType.DEFAULT;
             case "no_download":
@@ -109,148 +104,118 @@ public class Settings extends ConfigurationBase
         }
     }
 
-    public boolean isUpdaterEnabled()
-    {
+    public boolean isUpdaterEnabled() {
         return (boolean) get("Updater.Enabled");
     }
 
-    public boolean isDisplayNamesEnabled()
-    {
+    public boolean isDisplayNamesEnabled() {
         //return (boolean) get("General.DisplayNamesEnabled"); //TODO: Fix this
         return false;
     }
 
-    public List<String> getBlackListedWords()
-    {
+    public List<String> getBlackListedWords() {
         return getStringList("SinkAntiSpam.BlacklistedWordsCheck.Words");
     }
 
-    public List<String> getWhitelistedWords()
-    {
+    public List<String> getWhitelistedWords() {
         return getStringList("SinkAntiSpam.WhitelistedDomainsCheck.Domains");
     }
 
-    public List<String> getExcludedCommands()
-    {
+    public List<String> getExcludedCommands() {
         return getStringList("SinkAntiSpam.ExcludedCommands.Commands");
     }
 
-    public List<String> getStringList(String path)
-    {
-        try
-        {
+    public List<String> getStringList(String path) {
+        try {
             List<String> value = yamlConfiguration.getStringList(path);
-            if ( value == null )
-            {
+            if (value == null) {
                 throw new NullPointerException("Path returned null!");
             }
             return value;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             SinkLibrary.getCustomLogger().log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    public boolean isBlacklistedWordsEnabled()
-    {
+    public boolean isBlacklistedWordsEnabled() {
         return (boolean) get("SinkAntiSpam.BlacklistedWordsCheck.Enabled");
     }
 
-    public boolean isIPCheckEnabled()
-    {
+    public boolean isIPCheckEnabled() {
         return (boolean) get("SinkAntiSpam.IPCheck.Enabled");
     }
 
-    public boolean isWhitelistedDomainCheckEnabled()
-    {
+    public boolean isWhitelistedDomainCheckEnabled() {
         return (boolean) get("SinkAntiSpam.WhitelistedDomainsCheck.Enabled");
     }
 
-    public int getLocalChatRange()
-    {
+    public int getLocalChatRange() {
         return (int) get("SinkChat.LocalChatRange");
     }
 
-    public String getIRCBotUsername()
-    {
+    public String getIRCBotUsername() {
         return (String) get("SinkIRC.Username");
     }
 
-    public String getIRCAddress()
-    {
+    public String getIRCAddress() {
         return (String) get("SinkIRC.Server.Address");
     }
 
-    public boolean isIRCPasswordEnabled()
-    {
+    public boolean isIRCPasswordEnabled() {
         return (boolean) get("SinkIRC.Server.PasswordEnabled");
     }
 
 
-    public String getIRCPassword()
-    {
+    public String getIRCPassword() {
         return (String) get("SinkIRC.Server.Password");
     }
 
-    public int getIRCPort()
-    {
+    public int getIRCPort() {
         return (int) get("SinkIRC.Server.Port");
     }
 
-    public String getIRCChannel()
-    {
+    public String getIRCChannel() {
         return (String) get("SinkIRC.Channel");
     }
 
-    public boolean isIRCAuthentificationEnabled()
-    {
+    public boolean isIRCAuthentificationEnabled() {
         return (boolean) get("SinkIRC.Authentification.Enabled");
     }
 
-    public String getIRCAuthBot()
-    {
+    public String getIRCAuthBot() {
         return (String) get("SinkIRC.Authentification.AuthBot");
     }
 
-    public String getIRCAuthMessage()
-    {
+    public String getIRCAuthMessage() {
         return (String) get("SinkIRC.Authentification.AuthMessage");
     }
 
-    public boolean isLogEnabled()
-    {
+    public boolean isLogEnabled() {
         return (boolean) get("General.EnableLog");
     }
 
-    public boolean isDebugEnabled()
-    {
+    public boolean isDebugEnabled() {
         return (boolean) get("General.EnableDebug");
     }
 
-    public boolean isBroadcastAFKEnabled()
-    {
+    public boolean isBroadcastAFKEnabled() {
         return (boolean) get("SinkAFK.Broadcast.AFK");
     }
 
-    public boolean isBroadcastBackEnabled()
-    {
+    public boolean isBroadcastBackEnabled() {
         return (boolean) get("SinkAFK.Broadcast.Back");
     }
 
-    public boolean isIRCBroadcastAFKEnabled()
-    {
+    public boolean isIRCBroadcastAFKEnabled() {
         return (boolean) get("SinkAFK.Broadcast.IRC.AFK");
     }
 
-    public boolean isIRCBroadcastBackEnabled()
-    {
+    public boolean isIRCBroadcastBackEnabled() {
         return (boolean) get("SinkAFK.Broadcast.IRC.Back");
     }
 
-    public boolean isTownyEnabled()
-    {
+    public boolean isTownyEnabled() {
         return (boolean) get("SinkChat.TownyEnabled");
     }
 }

@@ -19,37 +19,32 @@ package de.static_interface.sinkantispam.warning;
 
 import org.bukkit.ChatColor;
 
-public class Warning
-{
+public class Warning {
+
     public static String SYSTEM = ChatColor.DARK_RED + "System";
     private final String reason;
     private final String warnedBy;
     private final boolean autoWarning;
 
-    public Warning(String reason, String warnedBy)
-    {
+    public Warning(String reason, String warnedBy) {
         this(reason, warnedBy, true);
     }
 
-    public Warning(String reason, String warnedBy, boolean autoWarning)
-    {
+    public Warning(String reason, String warnedBy, boolean autoWarning) {
         this.reason = reason;
         this.warnedBy = warnedBy;
         this.autoWarning = autoWarning;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
-    public String getWarnedBy()
-    {
+    public String getWarnedBy() {
         return warnedBy;
     }
 
-    public boolean isAutoWarning()
-    {
+    public boolean isAutoWarning() {
         return autoWarning;
     }
 }

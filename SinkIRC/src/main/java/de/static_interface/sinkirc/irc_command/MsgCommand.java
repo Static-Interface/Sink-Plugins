@@ -26,34 +26,29 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class MsgCommand extends IrcCommand
-{
-    public MsgCommand(Plugin plugin)
-    {
+public class MsgCommand extends IrcCommand {
+
+    public MsgCommand(Plugin plugin) {
         super(plugin);
         setUsage("Usage: " + IrcUtil.getCommandPrefix() + "msg <target> <msg>");
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender cs, String label, String[] args) {
         IrcCommandSender sender = (IrcCommandSender) cs;
-        if ( args.length < 2 )
-        {
+        if (args.length < 2) {
             return false;
         }
         SinkUser target;
         target = SinkLibrary.getUser(args[0]);
-        if ( !target.isOnline() )
-        {
+        if (!target.isOnline()) {
             sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
             return true;
         }
 
         String message = ChatColor.YELLOW + "[IRC] [PRIVMSG] " + ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW + ": " + ChatColor.WHITE;
 
-        for ( int x = 1; x < args.length; x++ )
-        {
+        for (int x = 1; x < args.length; x++) {
             message += ' ' + args[x];
         }
 

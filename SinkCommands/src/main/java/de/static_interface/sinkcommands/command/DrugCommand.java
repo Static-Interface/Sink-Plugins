@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkcommands.command;
 
+import static de.static_interface.sinklibrary.Constants.TICK;
+
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
@@ -27,61 +29,43 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import static de.static_interface.sinklibrary.Constants.TICK;
+public class DrugCommand implements CommandExecutor {
 
-public class DrugCommand implements CommandExecutor
-{
     public static final String PREFIX = ChatColor.AQUA + "[Drogen] " + ChatColor.RESET;
 
     public static Player killedByDrugs;
 
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-    {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         SinkUser user = SinkLibrary.getUser(sender);
-        if ( user.isConsole() )
-        {
+        if (user.isConsole()) {
             sender.sendMessage("Dieser Befehl kann nur von einem Spieler genutzt werden.");
             return true;
         }
 
         Player player = user.getPlayer();
 
-        if ( !player.hasPotionEffect(PotionEffectType.BLINDNESS) )
-        {
+        if (!player.hasPotionEffect(PotionEffectType.BLINDNESS)) {
             player.sendMessage(PREFIX + ChatColor.BLUE + "Du hast Drogen genommen...");
             player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 20, 1), true);
             player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * 20, 1), true);
-        }
-        else
-        {
-            for ( PotionEffect pe : player.getActivePotionEffects() )
-            {
-                if ( !pe.getType().equals(PotionEffectType.BLINDNESS) )
-                {
+        } else {
+            for (PotionEffect pe : player.getActivePotionEffects()) {
+                if (!pe.getType().equals(PotionEffectType.BLINDNESS)) {
                     continue;
                 }
                 int duration = pe.getDuration();
                 int amplifier = pe.getAmplifier();
-                if ( amplifier == 1 )
-                {
+                if (amplifier == 1) {
                     player.sendMessage(PREFIX + ChatColor.BLUE + "Du hast mehr Drogen genommen...");
-                }
-                else if ( amplifier == 2 )
-                {
+                } else if (amplifier == 2) {
                     player.sendMessage(PREFIX + ChatColor.BLUE + "Vielleicht solltest du nicht so viele Drogen nehmen.");
-                }
-                else if ( amplifier == 3 )
-                {
+                } else if (amplifier == 3) {
                     player.sendMessage(PREFIX + ChatColor.BLUE + "Noch mehr Drogen...");
-                }
-                else if ( amplifier == 4 )
-                {
+                } else if (amplifier == 4) {
                     player.sendMessage(PREFIX + ChatColor.BLUE + "Wow, du hast so viele Drogen genommen... und lebst immer noch!");
-                }
-                else if ( amplifier >= 5 )
-                {
+                } else if (amplifier >= 5) {
                     killedByDrugs = player;
                     player.setHealth(0.0);
                     return true;

@@ -22,28 +22,21 @@ import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.ChatColor;
 
-public class LagTimer implements Runnable
-{
-    String PREFIX = LagCommand.PREFIX;
+public class LagTimer implements Runnable {
 
     private static boolean send = false;
+    String PREFIX = LagCommand.PREFIX;
 
     @Override
-    public void run()
-    {
+    public void run() {
         double tps = SinkLibrary.getSinkTimer().getAverageTPS();
-        if ( tps <= 17 && !send )
-        {
+        if (tps <= 17 && !send) {
             BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + "Der Server laggt gerade!");
             send = true;
-        }
-        else if ( tps <= 18.5 && !send )
-        {
+        } else if (tps <= 18.5 && !send) {
             BukkitUtil.broadcastMessage(PREFIX + ChatColor.YELLOW + "Der Server könnte gerade etwas laggen!");
             send = true;
-        }
-        else
-        {
+        } else {
             send = false;
         }
     }

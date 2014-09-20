@@ -25,20 +25,18 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class CommandsverCommand extends Command
-{
+public class CommandsverCommand extends Command {
+
     public static final String PREFIX = ChatColor.BLUE + "[SinkCommands] " + ChatColor.RESET;
 
     Plugin plugin;
 
-    public CommandsverCommand(Plugin plugin)
-    {
+    public CommandsverCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         List<String> authorsList = plugin.getDescription().getAuthors();
         String authors = Util.formatPlayerListToString(authorsList);
         sender.sendMessage(PREFIX + plugin.getDescription().getName() + " by " + authors);

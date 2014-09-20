@@ -21,32 +21,28 @@ import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcJoinEvent extends IrcEventBase
-{
+public class IrcJoinEvent extends IrcEventBase {
+
     private final User user;
     private final Channel channel;
     private final PircBotX bot;
 
-    public IrcJoinEvent(User user, Channel channel, PircBotX bot)
-    {
+    public IrcJoinEvent(User user, Channel channel, PircBotX bot) {
         this.user = user;
         this.channel = channel;
         this.bot = bot;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
-    public Channel getChannel()
-    {
+    public Channel getChannel() {
         return channel;
     }
 
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

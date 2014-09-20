@@ -17,8 +17,8 @@
 
 package de.static_interface.sinkchat.channel;
 
-public class ChannelValues
-{
+public class ChannelValues {
+
     public static final String DEFAULT = "Default";
     public static final String CALLCHAR = "CallChar";
     public static final String ENABLED = "Enabled";

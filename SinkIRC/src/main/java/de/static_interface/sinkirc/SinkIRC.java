@@ -19,7 +19,13 @@ package de.static_interface.sinkirc;
 
 import de.static_interface.sinkirc.command.IrcKickCommand;
 import de.static_interface.sinkirc.command.IrcPrivateMessageCommand;
-import de.static_interface.sinkirc.irc_command.*;
+import de.static_interface.sinkirc.irc_command.ExecCommand;
+import de.static_interface.sinkirc.irc_command.HelpCommand;
+import de.static_interface.sinkirc.irc_command.KickCommand;
+import de.static_interface.sinkirc.irc_command.ListCommand;
+import de.static_interface.sinkirc.irc_command.MsgCommand;
+import de.static_interface.sinkirc.irc_command.SayCommand;
+import de.static_interface.sinkirc.irc_command.SetCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.exception.NotInitializedException;
 import org.bukkit.Bukkit;
@@ -33,25 +39,31 @@ import org.pircbotx.exception.IrcException;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class SinkIRC extends JavaPlugin
-{
-    private static boolean initialized = false;
+public class SinkIRC extends JavaPlugin {
 
     static PircBotX ircBot;
     static String mainChannel;
+    private static boolean initialized = false;
     Thread ircThread;
-    @Override
-    public void onEnable()
-    {
-        if ( !checkDependencies() || initialized ) return;
 
-        ircThread = new Thread( new Runnable()
-        {
+    public static PircBotX getIrcBot() {
+        return ircBot;
+    }
+
+    public static Channel getMainChannel() {
+        return IrcUtil.getChannel(mainChannel);
+    }
+
+    @Override
+    public void onEnable() {
+        if (!checkDependencies() || initialized) {
+            return;
+        }
+
+        ircThread = new Thread(new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     mainChannel = SinkLibrary.getSettings().getIRCChannel();
 
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<PircBotX>()
@@ -63,33 +75,25 @@ public class SinkIRC extends JavaPlugin
                             .addListener(new PircBotXLinkListener())
                             .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
 
-                    if(SinkLibrary.getSettings().isIRCPasswordEnabled())
-                    {
+                    if (SinkLibrary.getSettings().isIRCPasswordEnabled()) {
                         configBuilder = configBuilder.setServerPassword(SinkLibrary.getSettings().getIRCPassword());
                     }
-                    if(!SinkLibrary.getSettings().isIRCAuthentificationEnabled())
-                    {
+                    if (!SinkLibrary.getSettings().isIRCAuthentificationEnabled()) {
                         configBuilder = configBuilder.addAutoJoinChannel(mainChannel);
                     }
 
                     ircBot = new PircBotX(configBuilder.buildConfiguration());
                     ircBot.startBot();
-                    if(SinkLibrary.getSettings().isIRCAuthentificationEnabled())
-                    {
+                    if (SinkLibrary.getSettings().isIRCAuthentificationEnabled()) {
                         ircBot.sendIRC().message(SinkLibrary.getSettings().getIRCAuthBot(), SinkLibrary.getSettings().getIRCAuthMessage());
-                        try
-                        {
+                        try {
                             Thread.sleep(1000); //Todo
-                        }
-                        catch ( InterruptedException e )
-                        {
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         ircBot.sendIRC().joinChannel(SinkLibrary.getSettings().getIRCChannel());
                     }
-                }
-                catch ( IOException | IrcException e )
-                {
+                } catch (IOException | IrcException e) {
                     e.printStackTrace();
                 }
             }
@@ -113,40 +117,30 @@ public class SinkIRC extends JavaPlugin
         initialized = true;
     }
 
-    private boolean checkDependencies()
-    {
+    private boolean checkDependencies() {
         Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
-        if ( sinkLibrary == null )
-        {
+        if (sinkLibrary == null) {
             Bukkit.getLogger().log(Level.WARNING, "This plugin requires SinkLibrary");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
 
-        if ( !SinkLibrary.initialized )
-        {
+        if (!SinkLibrary.initialized) {
             throw new NotInitializedException();
         }
         return true;
     }
 
     @Override
-    public void onDisable()
-    {
-        if ( ircBot != null) ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
-        if(!ircThread.isInterrupted()) ircThread.interrupt();
+    public void onDisable() {
+        if (ircBot != null) {
+            ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
+        }
+        if (!ircThread.isInterrupted()) {
+            ircThread.interrupt();
+        }
         ircThread = null;
         ircBot = null;
         System.gc();
-    }
-
-    public static PircBotX getIrcBot()
-    {
-        return ircBot;
-    }
-
-    public static Channel getMainChannel()
-    {
-        return IrcUtil.getChannel(mainChannel);
     }
 }

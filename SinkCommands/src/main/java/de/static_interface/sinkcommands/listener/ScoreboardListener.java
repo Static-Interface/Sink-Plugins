@@ -26,23 +26,20 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class ScoreboardListener implements Listener
-{
+public class ScoreboardListener implements Listener {
+
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerJoin(PlayerJoinEvent event)
-    {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayers().size() + 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerQuit(PlayerQuitEvent event)
-    {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         SinkCommands.refreshScoreboard(BukkitUtil.getOnlinePlayers().size() - 1);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
-    {
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         SinkCommands.refreshScoreboard(event.getPlayer(), -1);
     }
 }

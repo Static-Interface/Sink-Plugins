@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkchat.command;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
@@ -26,21 +28,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class SpyCommands {
 
-public class SpyCommands
-{
     public static final String PREFIX = m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
 
-    public static class EnableSpyCommand implements CommandExecutor
-    {
+    public static class EnableSpyCommand implements CommandExecutor {
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-        {
+        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
             SinkUser user = SinkLibrary.getUser(sender);
 
-            if ( user.isConsole() )
-            {
+            if (user.isConsole()) {
                 sender.sendMessage(m("General.ConsoleNotAvailable"));
                 return true;
             }
@@ -48,8 +46,7 @@ public class SpyCommands
 
             PlayerConfiguration config = user.getPlayerConfiguration();
 
-            if ( config.isSpyEnabled() )
-            {
+            if (config.isSpyEnabled()) {
                 player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyEnabled"));
                 return true;
             }
@@ -60,14 +57,12 @@ public class SpyCommands
         }
     }
 
-    public static class DisablSpyCommand implements CommandExecutor
-    {
+    public static class DisablSpyCommand implements CommandExecutor {
+
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-        {
+        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
             SinkUser user = SinkLibrary.getUser(sender);
-            if ( user.isConsole() )
-            {
+            if (user.isConsole()) {
                 sender.sendMessage(m("General.ConsoleNotAvailable"));
                 return true;
             }
@@ -75,8 +70,7 @@ public class SpyCommands
 
             PlayerConfiguration config = user.getPlayerConfiguration();
 
-            if ( !config.isSpyEnabled() )
-            {
+            if (!config.isSpyEnabled()) {
                 player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyDisabled"));
                 return true;
             }

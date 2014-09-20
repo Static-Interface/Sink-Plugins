@@ -19,10 +19,9 @@ package de.static_interface.sinkantispam.warning;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-public class IpWarning extends Warning
-{
-    public IpWarning(String ip)
-    {
+public class IpWarning extends Warning {
+
+    public IpWarning(String ip) {
         super(String.format(m("SinkAntiSpam.Reasons.IP"), ip), Warning.SYSTEM);
     }
 }

@@ -25,57 +25,45 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class KickCommand extends IrcCommand
-{
-    public KickCommand(Plugin plugin)
-    {
+public class KickCommand extends IrcCommand {
+
+    public KickCommand(Plugin plugin) {
         super(plugin);
         setUsage("Usage: " + IrcUtil.getCommandPrefix() + "kick <player> <reason>");
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         String targetPlayerName;
-        try
-        {
+        try {
             targetPlayerName = args[0];
-        }
-        catch ( Exception ignored )
-        {
+        } catch (Exception ignored) {
             return false;
         }
         final Player targetPlayer = BukkitUtil.getPlayer(targetPlayerName);
-        if ( targetPlayer == null )
-        {
+        if (targetPlayer == null) {
             sender.sendMessage("Player \"" + targetPlayerName + "\" is not online!");
             return true;
         }
 
         String formattedReason;
-        if ( args.length > 1 )
-        {
+        if (args.length > 1) {
             String reason = label.replace(targetPlayerName, "");
             reason = reason.replace("kick ", "").trim();
             formattedReason = " (Reason: " + reason + ')';
-        }
-        else
-        {
+        } else {
             formattedReason = ".";
         }
         formattedReason = ChatColor.translateAlternateColorCodes('&', formattedReason);
         final String finalReason = "kicked by " + sender + " from IRC" + formattedReason;
-        Bukkit.getScheduler().runTask(plugin, new Runnable()
-        {
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 targetPlayer.kickPlayer("You've been " + finalReason);
             }
         });

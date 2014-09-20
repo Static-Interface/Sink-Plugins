@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkchat.command;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -32,15 +34,11 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class TownChatCommand implements CommandExecutor {
 
-public class TownChatCommand implements CommandExecutor
-{
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-    {
-        if ( !(sender instanceof Player) )
-        {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(m("General.ConsoleNotAvailable"));
             return true;
         }
@@ -48,31 +46,26 @@ public class TownChatCommand implements CommandExecutor
         Player player = (Player) sender;
         Resident resident = TownyBridge.getResident(player.getName());
 
-        if ( !resident.hasTown() )
-        {
+        if (!resident.hasTown()) {
             player.sendMessage(m("SinkChat.Towny.NotInTown"));
             return true;
         }
 
-        if ( args.length < 1 )
-        {
+        if (args.length < 1) {
             player.sendMessage(m("SinkChat.Towny.NoArguments"));
             return true;
         }
 
         Town town;
-        try
-        {
+        try {
             town = resident.getTown();
-        }
-        catch ( NotRegisteredException ignored ) //Shouldn't happen...
+        } catch (NotRegisteredException ignored) //Shouldn't happen...
         {
             return true;
         }
 
         String msg = "";
-        for ( String arg : args )
-        {
+        for (String arg : args) {
             msg += arg + ' ';
         }
 
@@ -80,27 +73,35 @@ public class TownChatCommand implements CommandExecutor
 
         String prefixName = TownyBridge.getFormattedResidentName(resident, true, false);
 
-        String formattedMessage = ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE + msg;
+        String
+                formattedMessage =
+                ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE
+                + msg;
 
         ArrayList<Player> sendPlayers = new ArrayList<>();
 
-        for ( Resident townResident : town.getResidents() )
-        {
-            if ( townResident.isNPC() ) continue;
+        for (Resident townResident : town.getResidents()) {
+            if (townResident.isNPC()) {
+                continue;
+            }
             Player onlineResident = BukkitUtil.getPlayer(townResident.getName());
-            if ( onlineResident == null ) continue;
+            if (onlineResident == null) {
+                continue;
+            }
             sendPlayers.add(onlineResident);
         }
 
-        for ( Player onlinePlayer : BukkitUtil.getOnlinePlayers() )
-        {
-            if ( !onlinePlayer.hasPermission("sinkchat.townyspy") ) continue;
-            if ( sendPlayers.contains(onlinePlayer) ) continue;
+        for (Player onlinePlayer : BukkitUtil.getOnlinePlayers()) {
+            if (!onlinePlayer.hasPermission("sinkchat.townyspy")) {
+                continue;
+            }
+            if (sendPlayers.contains(onlinePlayer)) {
+                continue;
+            }
             sendPlayers.add(onlinePlayer);
         }
 
-        for ( Player p : sendPlayers )
-        {
+        for (Player p : sendPlayers) {
             p.sendMessage(formattedMessage);
         }
 

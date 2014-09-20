@@ -17,23 +17,27 @@
 
 package de.static_interface.sinkantispam;
 
-public class WarnResult
-{
-    private int resultCode;
-    public String censoredMessage;
+public class WarnResult {
 
     public static final int PASS = 0;
     public static final int CENSOR = 1;
     public static final int CANCEL = 2;
+    public String censoredMessage;
+    private int resultCode;
 
-    public void setCensoredMessage(String censoredMessage) { this.censoredMessage = censoredMessage; }
+    public String getCensoredMessage() {
+        return censoredMessage;
+    }
 
-    public String getCensoredMessage() { return censoredMessage; }
+    public void setCensoredMessage(String censoredMessage) {
+        this.censoredMessage = censoredMessage;
+    }
 
-    public void setResultcode(int resultCode) { this.resultCode = resultCode; }
+    public void setResultcode(int resultCode) {
+        this.resultCode = resultCode;
+    }
 
-    public int getResultCode()
-    {
+    public int getResultCode() {
         return resultCode;
     }
 }

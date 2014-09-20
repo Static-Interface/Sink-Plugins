@@ -22,30 +22,38 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 
-@SuppressWarnings({"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention", "StaticMethodNamingConvention"})
-public class LanguageConfiguration extends ConfigurationBase
-{
+@SuppressWarnings(
+        {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention",
+         "StaticMethodNamingConvention"})
+public class LanguageConfiguration extends ConfigurationBase {
+
     public static final int REQUIRED_VERSION = 1;
     private static LanguageConfiguration instance;
 
-    public LanguageConfiguration()
-    {
+    public LanguageConfiguration() {
         super(new File(SinkLibrary.getCustomDataFolder(), "Language.yml"));
     }
 
-    public static LanguageConfiguration getInstance()
-    {
-        if ( instance == null )
-        {
+    public static LanguageConfiguration getInstance() {
+        if (instance == null) {
             instance = new LanguageConfiguration();
             instance.init();
         }
         return instance;
     }
 
+    /**
+     * Get language as String from key
+     *
+     * @param path Path to language variable
+     * @return Language String
+     */
+    public static String m(String path) {
+        return ChatColor.translateAlternateColorCodes('&', (String) getInstance().get(path));
+    }
+
     @Override
-    public void addDefaults()
-    {
+    public void addDefaults() {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
         addDefault("General.NotOnline", "&c%s is not online!");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
@@ -135,16 +143,5 @@ public class LanguageConfiguration extends ConfigurationBase
         addDefault("SinkDuty.Time.NotInDuty", "You are not in duty mode !");
         addDefault("SinkDuty.Reload.ForceLeave", "You have been forced to leave duty mode because of a reload.");
         */
-    }
-
-    /**
-     * Get language as String from key
-     *
-     * @param path Path to language variable
-     * @return Language String
-     */
-    public static String m(String path)
-    {
-        return ChatColor.translateAlternateColorCodes('&', (String) getInstance().get(path));
     }
 }

@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkantispam;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -29,45 +31,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class WarnUtil {
 
-public class WarnUtil
-{
     static HashMap<UUID, Long> bannedPlayers = new HashMap<>();
     static HashMap<UUID, List<Warning>> warnings = new HashMap<>();
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
-    public static void warnPlayer(Player player, Warning warning)
-    {
+    public static void warnPlayer(Player player, Warning warning) {
         List<Warning> tmp = warnings.get(player.getUniqueId());
-        if ( tmp == null )
-        {
+        if (tmp == null) {
             tmp = new ArrayList<>();
         }
         tmp.add(warning);
         warnings.put(player.getUniqueId(), tmp);
 
         String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getUser(player).getDisplayName(),
-                warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
+                                                warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
         SinkUser user = SinkLibrary.getUser(player);
         String perm;
-        if(warning.isAutoWarning())
-        {
+        if (warning.isAutoWarning()) {
             perm = "sinkantispam.autowarnmessage";
-            BukkitUtil.broadcast(message, perm , false);
-        }
-        else
-        {
+            BukkitUtil.broadcast(message, perm, false);
+        } else {
             perm = "sinkantispam.warnmessage";
             BukkitUtil.broadcast(message, perm, true);
         }
-        if ( !user.hasPermission(perm) )
-        {
+        if (!user.hasPermission(perm)) {
             player.sendMessage(message);
         }
 
-        if ( tmp.size() >= getMaxWarnings() )
-        {
+        if (tmp.size() >= getMaxWarnings()) {
             UUID uuid = player.getUniqueId();
             player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
             tempBanPlayer(player.getUniqueId(), System.currentTimeMillis() + 5 * 60 * 1000); //Todo: make time configurable
@@ -75,19 +68,16 @@ public class WarnUtil
         }
     }
 
-    private static void tempBanPlayer(UUID uniqueId, long unbanTimestamp)
-    {
+    private static void tempBanPlayer(UUID uniqueId, long unbanTimestamp) {
         bannedPlayers.put(uniqueId, unbanTimestamp);
     }
 
-    public static boolean isBanned(UUID uniqueId)
-    {
+    public static boolean isBanned(UUID uniqueId) {
         Long unbantimeStamp = bannedPlayers.get(uniqueId);
         return unbantimeStamp != null && unbantimeStamp < System.currentTimeMillis();
     }
 
-    public static int getMaxWarnings()
-    {
+    public static int getMaxWarnings() {
         return 5;
     }
 }

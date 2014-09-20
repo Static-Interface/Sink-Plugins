@@ -28,119 +28,102 @@ import java.util.Date;
 import java.util.logging.Level;
 
 @SuppressWarnings("InstanceMethodNamingConvention")
-public class Logger
-{
+public class Logger {
 
+    boolean failed = false;
+    FileWriter fileWriter = null;
     /**
      * Protected constructor
      * Use {@link de.static_interface.sinklibrary.SinkLibrary#getLogger()} instead
      */
-    protected Logger()
-    {}
+    protected Logger() {
+    }
 
-    boolean failed = false;
-    FileWriter fileWriter = null;
-
-    public void log(Level level, String message)
-    {
-        try
-        {
+    public void log(Level level, String message) {
+        try {
             logToFile(level, ChatColor.stripColor(message));
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
 
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message));
     }
 
-    public void log(Level level, String message, Throwable throwable)
-    {
-        try
-        {
+    public void log(Level level, String message, Throwable throwable) {
+        try {
             logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", throwable));
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message), throwable);
     }
 
-    public void logToFile(Level level, String message)
-    {
+    public void logToFile(Level level, String message) {
 
         boolean enabled;
-        try
-        {
+        try {
             enabled = SinkLibrary.initialized && SinkLibrary.getSettings().isLogEnabled();
-        }
-        catch ( Exception ignored )
-        {
+        } catch (Exception ignored) {
             return;
         }
-        if ( !enabled ) return;
+        if (!enabled) {
+            return;
+        }
 
         File logFile = new File(SinkLibrary.getCustomDataFolder() + File.separator + "SinkPlugins.log");
-        if ( !failed && !logFile.exists() ) // Prevent creating/checking every time
+        if (!failed && !logFile.exists()) // Prevent creating/checking every time
         {
-            if ( !Util.createFile(logFile) ) return;
+            if (!Util.createFile(logFile)) {
+                return;
+            }
             failed = true;
             return;
-        }
-        else if ( failed ) return;
-        if ( fileWriter == null ) try
-        {
-            fileWriter = new FileWriter(logFile, true);
-        }
-        catch ( IOException e )
-        {
-            Bukkit.getLogger().log(Level.SEVERE, "Couldn't create FileWriter: ", e);
+        } else if (failed) {
             return;
+        }
+        if (fileWriter == null) {
+            try {
+                fileWriter = new FileWriter(logFile, true);
+            } catch (IOException e) {
+                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create FileWriter: ", e);
+                return;
+            }
         }
 
         String newLine = System.getProperty("line.separator");
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh:mm:ss");
         String date = format.format(new Date());
 
-        try
-        {
+        try {
             fileWriter.write('[' + date + ' ' + level.getName() + "]: " + message + newLine);
-        }
-        catch ( IOException ignored )
-        {
+        } catch (IOException ignored) {
             //Do nothing...
         }
     }
 
-    public void severe(String message)
-    {
+    public void severe(String message) {
         log(Level.SEVERE, message);
     }
 
-    public void info(String message)
-    {
+    public void info(String message) {
         log(Level.INFO, message);
     }
 
-    public void warning(String message)
-    {
+    public void warning(String message) {
         log(Level.WARNING, message);
     }
 
-    public void debug(String message)
-    {
-        if ( !SinkLibrary.initialized ) return;
+    public void debug(String message) {
+        if (!SinkLibrary.initialized) {
+            return;
+        }
 
-        if ( SinkLibrary.getSettings().isDebugEnabled() )
-        {
+        if (SinkLibrary.getSettings().isDebugEnabled()) {
             log(Level.INFO, "[DEBUG] " + message);
         }
     }
 
-    FileWriter getFileWriter()
-    {
+    FileWriter getFileWriter() {
         return fileWriter;
     }
 }

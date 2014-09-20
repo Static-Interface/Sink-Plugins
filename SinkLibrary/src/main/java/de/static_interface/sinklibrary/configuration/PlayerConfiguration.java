@@ -23,22 +23,21 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 
-public class PlayerConfiguration extends ConfigurationBase
-{
+public class PlayerConfiguration extends ConfigurationBase {
+
     public static final int REQUIRED_VERSION = 1;
 
     private SinkUser user = null;
+
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
      * Should be accessed via {@link de.static_interface.sinklibrary.SinkUser#getPlayerConfiguration()}
      *
      * @param user User
      */
-    public PlayerConfiguration(SinkUser user)
-    {
+    public PlayerConfiguration(SinkUser user) {
         super(new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
-        if ( user.isConsole() )
-        {
+        if (user.isConsole()) {
             throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
         }
 
@@ -46,8 +45,7 @@ public class PlayerConfiguration extends ConfigurationBase
         File oldFile = new File(new File(SinkLibrary.getCustomDataFolder(), "Players"), user.getName() + ".yml");
         File uniqueFile = getFile();
 
-        if ( oldFile.exists() )
-        {
+        if (oldFile.exists()) {
             oldFile.renameTo(uniqueFile);
         }
 
@@ -56,8 +54,7 @@ public class PlayerConfiguration extends ConfigurationBase
     }
 
     @Override
-    public void addDefaults()
-    {
+    public void addDefaults() {
         yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
 
         addDefault("ConfigVersion", REQUIRED_VERSION);
@@ -72,8 +69,7 @@ public class PlayerConfiguration extends ConfigurationBase
     /**
      * @return True if spy is enabled
      */
-    public boolean isSpyEnabled()
-    {
+    public boolean isSpyEnabled() {
         return (boolean) get("SpyEnabled");
     }
 
@@ -82,16 +78,14 @@ public class PlayerConfiguration extends ConfigurationBase
      *
      * @param value True will enable it, false disable
      */
-    public void setSpyEnabled(boolean value)
-    {
+    public void setSpyEnabled(boolean value) {
         set("SpyEnabled", value);
     }
 
     /**
      * @return True if stats are enabled
      */
-    public boolean isStatsEnabled()
-    {
+    public boolean isStatsEnabled() {
         return (boolean) get("StatsEnabled");
     }
 
@@ -100,9 +94,18 @@ public class PlayerConfiguration extends ConfigurationBase
      *
      * @param value Value
      */
-    public void setStatsEnabled(boolean value)
-    {
+    public void setStatsEnabled(boolean value) {
         set("StatsEnabled", value);
+    }
+
+    /**
+     * @return Custom Display Name of Player
+     */
+    public String getDisplayName() {
+        if (!getHasDisplayName()) {
+            return user.getDefaultDisplayName();
+        }
+        return (String) get("Nick.DisplayName");
     }
 
     /**
@@ -110,41 +113,25 @@ public class PlayerConfiguration extends ConfigurationBase
      *
      * @param displayName New Display Name
      */
-    public void setDisplayName(String displayName)
-    {
+    public void setDisplayName(String displayName) {
         set("Nick.DisplayName", displayName);
-        if ( ChatColor.stripColor(displayName).equals(ChatColor.stripColor(user.getDefaultDisplayName())) )
-        {
+        if (ChatColor.stripColor(displayName).equals(ChatColor.stripColor(user.getDefaultDisplayName()))) {
             setHasDisplayName(false);
         }
-    }
-
-    /**
-     * @return Custom Display Name of Player
-     */
-    public String getDisplayName()
-    {
-        if ( !getHasDisplayName() )
-        {
-            return user.getDefaultDisplayName();
-        }
-        return (String) get("Nick.DisplayName");
     }
 
     /**
      * @return True if player has an custom Display Name
      */
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    public boolean getHasDisplayName()
-    {
+    public boolean getHasDisplayName() {
         return (boolean) get("Nick.HasDisplayName");
     }
 
     /**
      * @param value If set to true, player will use custom displayname instead of default
      */
-    public void setHasDisplayName(boolean value)
-    {
+    public void setHasDisplayName(boolean value) {
         set("Nick.HasDisplayName", value);
     }
 }

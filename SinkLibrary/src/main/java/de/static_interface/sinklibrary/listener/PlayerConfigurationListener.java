@@ -26,25 +26,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerConfigurationListener implements Listener
-{
+public class PlayerConfigurationListener implements Listener {
+
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerJoin(PlayerJoinEvent event)
-    {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         SinkLibrary.loadUser(event.getPlayer().getUniqueId());
 
         SinkUser user = SinkLibrary.getUser(event.getPlayer());
         PlayerConfiguration config = user.getPlayerConfiguration();
 
-        if ( !config.exists() )
-        {
+        if (!config.exists()) {
             config.init();
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerQuit(PlayerQuitEvent event)
-    {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         SinkLibrary.unloadUser(event.getPlayer().getUniqueId());
     }
 }

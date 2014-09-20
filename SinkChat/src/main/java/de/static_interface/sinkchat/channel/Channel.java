@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkchat.channel;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
@@ -30,10 +32,8 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class Channel {
 
-public class Channel
-{
     String name;
     String callCode;
     boolean enabled;
@@ -42,19 +42,17 @@ public class Channel
     boolean sendToIRC;
     int range;
 
-    public Channel(String name, String callCode, boolean enabled, String permission, String prefix, boolean sendToIRC, int range)
-    {
+    public Channel(String name, String callCode, boolean enabled, String permission, String prefix, boolean sendToIRC, int range) {
         this.name = name;
         this.callCode = callCode;
         this.enabled = enabled;
         this.permission = permission;
-        this.prefix =  ChatColor.translateAlternateColorCodes('&', prefix);
+        this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
         this.sendToIRC = sendToIRC;
         this.range = range;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -63,114 +61,94 @@ public class Channel
      * @deprecated use {@link #getCallCode()} instead.  
      */
     @Deprecated
-    public String getCallChar()
-    {
+    public String getCallChar() {
         return getCallCode();
     }
 
     /**
      * Returns the callCode.
      */
-    public String getCallCode()
-    {
+    public String getCallCode() {
         return callCode;
     }
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public String getPermission()
-    {
+    public String getPermission() {
         return permission;
     }
 
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return prefix;
     }
 
-    public boolean sendToIRC()
-    {
+    public boolean sendToIRC() {
         return sendToIRC;
     }
 
-    public int getRange()
-    {
+    public int getRange() {
         return range;
     }
 
-    public boolean enabledForPlayer(UUID uuid)
-    {
+    public boolean enabledForPlayer(UUID uuid) {
         String enabledPath = "Channels." + getName() + ".Enabled";
         SinkUser user = SinkLibrary.getUser(uuid);
         PlayerConfiguration config = user.getPlayerConfiguration();
-        try
-        {
+        try {
             return (boolean) config.get(enabledPath, true);
-        }
-        catch(NullPointerException ignored)
-        {
+        } catch (NullPointerException ignored) {
             return true;
         }
     }
 
-    public void setEnabledForPlayer(UUID uuid, boolean setEnabled)
-    {
-    	String enabledPath = "Channels." + getName() + ".Enabled";
-    	SinkUser user = SinkLibrary.getUser(uuid);
-    	PlayerConfiguration config = user.getPlayerConfiguration();
-    	config.set(enabledPath, setEnabled);
+    public void setEnabledForPlayer(UUID uuid, boolean setEnabled) {
+        String enabledPath = "Channels." + getName() + ".Enabled";
+        SinkUser user = SinkLibrary.getUser(uuid);
+        PlayerConfiguration config = user.getPlayerConfiguration();
+        config.set(enabledPath, setEnabled);
     }
 
-    public boolean sendMessage(SinkUser user, String message)
-    {
-        if(!isEnabled())
-        {
+    public boolean sendMessage(SinkUser user, String message) {
+        if (!isEnabled()) {
             user.sendMessage(m("SinkChat.DisabledChannel"));
             return true;
         }
 
-        if ( !enabledForPlayer(user.getUniqueId()) )
-        {
+        if (!enabledForPlayer(user.getUniqueId())) {
             return false;
         }
 
         String formattedMessage = message.substring(callCode.length());
 
         String townyPrefix = "";
-        if ( SinkChat.isTownyAvailable() )
-        {
+        if (SinkChat.isTownyAvailable()) {
             townyPrefix = TownyBridge.getTownyPrefix(user.getPlayer());
         }
 
-        if ( SinkLibrary.isPermissionsAvailable() )
-        {
-            formattedMessage = getPrefix() + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
-        }
-        else
-        {
+        if (SinkLibrary.isPermissionsAvailable()) {
+            formattedMessage =
+                    getPrefix() + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName()
+                    + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
+        } else {
             formattedMessage = getPrefix() + townyPrefix + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
         }
 
-        if (range <= 0)
-        {
-            for ( Player target : BukkitUtil.getOnlinePlayers() )
-            {
-                if ( (enabledForPlayer(target.getUniqueId())) && target.hasPermission(getPermission()) )
-                {
+        if (range <= 0) {
+            for (Player target : BukkitUtil.getOnlinePlayers()) {
+                if ((enabledForPlayer(target.getUniqueId())) && target.hasPermission(getPermission())) {
                     target.sendMessage(formattedMessage);
                 }
             }
-        }
-        else
-        {
+        } else {
             Util.sendMessage(user, formattedMessage, getRange());
         }
 
         Bukkit.getConsoleSender().sendMessage(formattedMessage);
-        if (sendToIRC()) SinkLibrary.sendIrcMessage(formattedMessage);
+        if (sendToIRC()) {
+            SinkLibrary.sendIrcMessage(formattedMessage);
+        }
         return true;
     }
 }

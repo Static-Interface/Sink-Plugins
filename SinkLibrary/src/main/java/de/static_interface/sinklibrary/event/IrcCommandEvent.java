@@ -20,17 +20,16 @@ package de.static_interface.sinklibrary.event;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcCommandEvent extends IrcEventBase
-{
+public class IrcCommandEvent extends IrcEventBase {
+
+    private final PircBotX bot;
     private String source;
     private User user;
     private String command;
     private String label;
     private String[] args;
-    private final PircBotX bot;
 
-    public IrcCommandEvent(String source, User user, String command, String label, String[] args, PircBotX bot)
-    {
+    public IrcCommandEvent(String source, User user, String command, String label, String[] args, PircBotX bot) {
         this.source = source;
         this.user = user;
         this.command = command;
@@ -39,50 +38,48 @@ public class IrcCommandEvent extends IrcEventBase
         this.bot = bot;
     }
 
-    public void setSource(String source)
-    {
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
         this.source = source;
     }
 
-    public void setUser(User user)
-    {
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public void setCommand(String command)
-    {
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
         this.command = command;
     }
 
-    public void setLabel(String label)
-    {
-        this.label = label;
-    }
-
-    public void setArgs(String[] args)
-    {
-        this.args = args;
-    }
-
-    public String getSource() { return source; }
-
-    public User getUser() { return user; }
-
-    public String getCommand() { return command; }
-
-    public String getLabel()
-    {
+    public String getLabel() {
         return label;
     }
 
-    public String[] getArgs()
-    {
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String[] getArgs() {
         return args;
     }
 
+    public void setArgs(String[] args) {
+        this.args = args;
+    }
+
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

@@ -24,90 +24,71 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CountdownCommand extends Command
-{
-    static long secondsLeft;
+public class CountdownCommand extends Command {
 
     public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RED + "CountDown" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
+    static long secondsLeft;
 
-    public CountdownCommand(Plugin plugin)
-    {
+    public CountdownCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean isIrcOpOnly()
-    {
+    public boolean isIrcOpOnly() {
         return true;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if ( args.length < 2 )
-        {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
             sender.sendMessage(PREFIX + ChatColor.RED + "Falsche Benutzung! /cd <Sekunden> <Grund>");
             return true;
         }
 
-        if ( secondsLeft > 0 )
-        {
+        if (secondsLeft > 0) {
             sender.sendMessage(PREFIX + ChatColor.RED + "Es läuft bereits ein Countdown!");
         }
 
         String secondsString = args[0];
         long seconds;
-        try
-        {
+        try {
             seconds = Long.parseLong(secondsString);
-        }
-        catch ( NumberFormatException ignored )
-        {
+        } catch (NumberFormatException ignored) {
             sender.sendMessage(PREFIX + ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + '"' + secondsString + "\" ist keine gueltige Zahl!");
             return true;
         }
 
-        if ( seconds < 0 )
-        {
+        if (seconds < 0) {
             sender.sendMessage(PREFIX + ChatColor.RED + "Countdown darf nicht negative sein!");
             return true;
         }
 
-        if ( seconds > 60 )
-        {
+        if (seconds > 60) {
             sender.sendMessage(PREFIX + ChatColor.RED + "Max Zeit: 60 Sekunden");
             return true;
         }
 
         String message = "";
-        for ( int i = 1; i < args.length; i++ )
-        {
+        for (int i = 1; i < args.length; i++) {
             message += ' ' + args[i];
         }
         message = message.trim();
         secondsLeft = seconds;
         BukkitUtil.broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!", true);
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                if ( secondsLeft <= 0 )
-                {
+            public void run() {
+                if (secondsLeft <= 0) {
                     secondsLeft = 0;
                     BukkitUtil.broadcastMessage(PREFIX + ChatColor.GREEN + "Los!", true);
                     cancel();
                     return;
                 }
-                if ( secondsLeft > 10 )
-                {
-                    if ( secondsLeft % 10 == 0 )
-                    {
+                if (secondsLeft > 10) {
+                    if (secondsLeft % 10 == 0) {
                         BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + secondsLeft + "...", true);
                     }
-                }
-                else
-                {
+                } else {
                     BukkitUtil.broadcastMessage(PREFIX + ChatColor.DARK_RED + secondsLeft, true);
                 }
                 secondsLeft--;

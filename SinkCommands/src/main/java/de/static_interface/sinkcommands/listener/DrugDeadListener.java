@@ -28,14 +28,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffectType;
 
-public class DrugDeadListener implements Listener
-{
+public class DrugDeadListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerDeath(PlayerDeathEvent event)
-    {
-        if ( event.getEntity().equals(DrugCommand.killedByDrugs) && event.getEntityType() == EntityType.PLAYER )
-        {
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (event.getEntity().equals(DrugCommand.killedByDrugs) && event.getEntityType() == EntityType.PLAYER) {
             SinkUser user = SinkLibrary.getUser(event.getEntity());
             event.setDeathMessage(ChatColor.RED + user.getDisplayName() + ChatColor.RESET + " nahm zu viele Drogen und ist gestorben.");
             DrugCommand.killedByDrugs.removePotionEffect(PotionEffectType.BLINDNESS);

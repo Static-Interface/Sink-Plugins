@@ -24,18 +24,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TestConfiguration extends ConfigurationBase
-{
-    public TestConfiguration(File file)
-    {
-        super(file);
-    }
+public class TestConfiguration extends ConfigurationBase {
 
     public HashMap<String, Object> defaultTestValues = new HashMap<>();
 
+    public TestConfiguration(File file) {
+        super(file);
+    }
+
     @Override
-    public void addDefaults()
-    {
+    public void addDefaults() {
         defaultTestValues.put("Default.String", "Test");
         defaultTestValues.put("Default.Integer", Integer.MAX_VALUE);
         defaultTestValues.put("Default.Long", Long.MAX_VALUE);
@@ -50,17 +48,17 @@ public class TestConfiguration extends ConfigurationBase
         testList.add(0.1);
         defaultTestValues.put("Default.List", testList);
 
-        for ( String s : defaultTestValues.keySet() )
-        {
+        for (String s : defaultTestValues.keySet()) {
             addDefault(s, defaultTestValues.get(s));
         }
     }
 
-    public HashMap<String, Object> getDefaultTestValues() { return defaultTestValues; }
+    public HashMap<String, Object> getDefaultTestValues() {
+        return defaultTestValues;
+    }
 
     @Override
-    public void save()
-    {
+    public void save() {
         // Do nothing, we dont want to save this
     }
 }

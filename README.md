@@ -9,27 +9,10 @@ License
 This work is licensed under an GNU General Public Licenese v3. For more information, read the LICENSE file.
 
 
-Coding Standards and Rules
+Contribution Guidelines
 ==============
-* Each public method should have a javadoc comment
-* JavaDoc, comments, commit message etc. must be of course written in english.
-* Every single "{" and "}" needs to start on a new line.
-* Each keyword like "if", "else", "for" etc. needs to start on a new line. Except "else if (...)" which is allowed.
-* Code must be easy readable.
-* The code is compiled in Java 7, so use the Java 7 Coding Standards.
-
-Example:<p>
-Code like this:
-```Java
-} else {
-```
-is not allowed.
-Correct is:
-```Java
-}
-else
-{
-```
+* Same as <a href="https://github.com/SpongePowered/Sponge/blob/master/CONTRIBUTING.md">Sponge's Contributing Guidelines</a>
+* We compile with Java 7, so use the Java 7 Coding Standards.
 
 ToDo List
 ==============

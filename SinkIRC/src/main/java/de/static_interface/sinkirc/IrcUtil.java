@@ -27,39 +27,42 @@ import org.pircbotx.User;
 
 import java.util.ArrayList;
 
-public class IrcUtil
-{
+public class IrcUtil {
+
     private static String commandPrefix = "~";
-    public static boolean isOp(User user)
-    {
+
+    public static boolean isOp(User user) {
         return SinkIRC.getMainChannel().isOp(user);
     }
 
-    public static void setOp(User user, boolean value)
-    {
-        if (value && isOp(user)) return;
-        if (!value && !isOp(user)) return;
+    public static void setOp(User user, boolean value) {
+        if (value && isOp(user)) {
+            return;
+        }
+        if (!value && !isOp(user)) {
+            return;
+        }
 
-        if (value)
+        if (value) {
             SinkIRC.getMainChannel().send().op(user);
-        else
+        } else {
             SinkIRC.getMainChannel().send().deOp(user);
+        }
     }
 
-    public static String getCommandPrefix()
-    {
+    public static String getCommandPrefix() {
         return commandPrefix;
     }
 
-    public static void setCommandPrefix(String commandPrefix)
-    {
+    public static void setCommandPrefix(String commandPrefix) {
         //Todo: make configurable
         IrcUtil.commandPrefix = commandPrefix;
     }
 
-    public static String replaceColorCodes(String input)
-    {
-        if ( input == null || input.isEmpty() ) return input;
+    public static String replaceColorCodes(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
         input = input.replace(ChatColor.BLACK.toString(), Colors.BLACK);
         input = input.replace(ChatColor.DARK_BLUE.toString(), Colors.DARK_BLUE);
         input = input.replace(ChatColor.DARK_GREEN.toString(), Colors.DARK_GREEN);
@@ -85,97 +88,78 @@ public class IrcUtil
         return input;
     }
 
-    public static User getUser(Channel channel, String name)
-    {
+    public static User getUser(Channel channel, String name) {
         SinkLibrary.getCustomLogger().debug("Searching IRC user: " + name);
         ArrayList<User> matchedUsers = new ArrayList<>();
-        for(User user : channel.getUsers())
-        {
-            if(user.getNick().startsWith(name))
-            {
+        for (User user : channel.getUsers()) {
+            if (user.getNick().startsWith(name)) {
                 matchedUsers.add(user);
             }
-            if(user.getNick().equalsIgnoreCase(name)) return user;
+            if (user.getNick().equalsIgnoreCase(name)) {
+                return user;
+            }
         }
 
-        if(matchedUsers.size() > 0)
+        if (matchedUsers.size() > 0) {
             return matchedUsers.get(0);
+        }
         SinkLibrary.getCustomLogger().debug("Couldn't find IRC user: " + name);
         return null;
     }
 
-    public static Channel getChannel(String name)
-    {
-        for(Channel channel : SinkIRC.getIrcBot().getUserBot().getChannels())
-        {
-            if(channel.getName().equalsIgnoreCase(name)) return channel;
+    public static Channel getChannel(String name) {
+        for (Channel channel : SinkIRC.getIrcBot().getUserBot().getChannels()) {
+            if (channel.getName().equalsIgnoreCase(name)) {
+                return channel;
+            }
         }
 
         return null;
     }
 
-    public static boolean sendMessage(String target, String message)
-    {
+    public static boolean sendMessage(String target, String message) {
         //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
 
-        try
-        {
-            if(target.startsWith("#"))
-            {
-                SinkIRC.getIrcBot().sendIRC().message(target ,message);
-            }
-            else
-            {
+        try {
+            if (target.startsWith("#")) {
+                SinkIRC.getIrcBot().sendIRC().message(target, message);
+            } else {
                 getUser(SinkIRC.getMainChannel(), target).send().message(message);
             }
             return true;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static boolean sendMessage(Channel target, String message)
-    {
+    public static boolean sendMessage(Channel target, String message) {
         //SinkLibrary.getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
-        try
-        {
+        try {
             target.send().message(message);
             return true;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static void handleCommand(String command, String[] args, String source, User user, String label)
-    {
+    public static void handleCommand(String command, String[] args, String source, User user, String label) {
         SinkLibrary.getCustomLogger().debug("handleCommand: " + label);
-        if(IrcUtil.isOp(user))
-        {
+        if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);
-        }
-        else
-        {
+        } else {
             label = ChatColor.stripColor(label);
         }
         IrcCommandEvent event = new IrcCommandEvent(source, user, command, label, args, SinkIRC.getIrcBot());
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    public static String getFormattedName(User user)
-    {
-        if(isOp(user))
-        {
+    public static String getFormattedName(User user) {
+        if (isOp(user)) {
             return ChatColor.DARK_RED + user.getNick() + ChatColor.RESET;
-        }
-        else
-        {
+        } else {
             return ChatColor.DARK_AQUA + user.getNick() + ChatColor.RESET;
         }
 

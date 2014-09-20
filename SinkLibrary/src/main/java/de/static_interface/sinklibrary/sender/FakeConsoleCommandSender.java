@@ -29,167 +29,141 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
-public class FakeConsoleCommandSender implements ConsoleCommandSender, FakeSender
-{
+public class FakeConsoleCommandSender implements ConsoleCommandSender, FakeSender {
+
     private final ConsoleCommandSender base;
     private final CommandSender faker;
 
-    public FakeConsoleCommandSender(ConsoleCommandSender base, CommandSender faker)
-    {
+    public FakeConsoleCommandSender(ConsoleCommandSender base, CommandSender faker) {
         this.base = base;
         this.faker = faker;
     }
 
     @Override
-    public void sendMessage(String s)
-    {
+    public void sendMessage(String s) {
         base.sendMessage(s);
         faker.sendMessage(s);
     }
 
     @Override
-    public void sendMessage(String[] strings)
-    {
+    public void sendMessage(String[] strings) {
         base.sendMessage(strings);
         faker.sendMessage(strings);
     }
 
     @Override
-    public Server getServer()
-    {
+    public Server getServer() {
         return base.getServer();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return base.getName();
     }
 
     @Override
-    public boolean isPermissionSet(String s)
-    {
+    public boolean isPermissionSet(String s) {
         return base.isPermissionSet(s);
     }
 
     @Override
-    public boolean isPermissionSet(Permission permission)
-    {
+    public boolean isPermissionSet(Permission permission) {
         return base.isPermissionSet(permission);
     }
 
     @Override
-    public boolean hasPermission(String s)
-    {
+    public boolean hasPermission(String s) {
         return base.hasPermission(s);
     }
 
     @Override
-    public boolean hasPermission(Permission permission)
-    {
+    public boolean hasPermission(Permission permission) {
         return base.hasPermission(permission);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b)
-    {
+    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b) {
         return base.addAttachment(plugin, s, b);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin)
-    {
+    public PermissionAttachment addAttachment(Plugin plugin) {
         return base.addAttachment(plugin);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i)
-    {
-        return base.addAttachment(plugin, s ,b, i);
+    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i) {
+        return base.addAttachment(plugin, s, b, i);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, int i)
-    {
+    public PermissionAttachment addAttachment(Plugin plugin, int i) {
         return base.addAttachment(plugin, i);
     }
 
     @Override
-    public void removeAttachment(PermissionAttachment permissionAttachment)
-    {
+    public void removeAttachment(PermissionAttachment permissionAttachment) {
         base.removeAttachment(permissionAttachment);
     }
 
     @Override
-    public void recalculatePermissions()
-    {
+    public void recalculatePermissions() {
         base.recalculatePermissions();
     }
 
     @Override
-    public Set<PermissionAttachmentInfo> getEffectivePermissions()
-    {
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
         return base.getEffectivePermissions();
     }
 
     @Override
-    public boolean isOp()
-    {
+    public boolean isOp() {
         return base.isOp();
     }
 
     @Override
-    public void setOp(boolean b)
-    {
+    public void setOp(boolean b) {
         base.setOp(b);
     }
 
     @Override
-    public boolean isConversing()
-    {
+    public boolean isConversing() {
         return base.isConversing();
     }
 
     @Override
-    public void acceptConversationInput(String s)
-    {
+    public void acceptConversationInput(String s) {
         base.acceptConversationInput(s);
     }
 
     @Override
-    public boolean beginConversation(Conversation conversation)
-    {
+    public boolean beginConversation(Conversation conversation) {
         return base.beginConversation(conversation);
     }
 
     @Override
-    public void abandonConversation(Conversation conversation)
-    {
+    public void abandonConversation(Conversation conversation) {
         base.abandonConversation(conversation);
     }
 
     @Override
-    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent)
-    {
+    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent) {
         base.abandonConversation(conversation, conversationAbandonedEvent);
     }
 
     @Override
-    public void sendRawMessage(String s)
-    {
+    public void sendRawMessage(String s) {
         base.sendRawMessage(s);
         faker.sendMessage(s);
     }
 
     @Override
-    public CommandSender getBase()
-    {
+    public CommandSender getBase() {
         return base;
     }
 
     @Override
-    public CommandSender getFaker()
-    {
+    public CommandSender getFaker() {
         return faker;
     }
 }

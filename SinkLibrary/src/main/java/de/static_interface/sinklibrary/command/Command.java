@@ -28,61 +28,68 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
 
-public abstract class Command implements CommandExecutor
-{
+public abstract class Command implements CommandExecutor {
+
     protected CommandSender sender;
     protected Plugin plugin;
     private String usage = null;
 
-    public Command(Plugin plugin)
-    {
+    public Command(Plugin plugin) {
         this.plugin = plugin;
     }
+
     @Override
-    public final boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
-    {
+    public final boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         this.sender = sender;
         return onPreExecute(sender, label, args);
     }
 
-    public boolean isPlayerOnly() { return false; };
-    public boolean isIrcOnly() { return false; }
-    public boolean isIrcOpOnly() { return false; }
-    public boolean useNotices() { return false; }
-    protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args)
-    {
-        if(isPlayerOnly() && isIrcOnly()) throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
+    public boolean isPlayerOnly() {
+        return false;
+    }
 
-        if( isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) throw new UnauthorizedAccessException();
+    ;
 
-        if ( !(sender instanceof IrcCommandSender) && isIrcOnly() )
-        {
-            return false;
+    public boolean isIrcOnly() {
+        return false;
+    }
+
+    public boolean isIrcOpOnly() {
+        return false;
+    }
+
+    public boolean useNotices() {
+        return false;
+    }
+
+    protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args) {
+        if (isPlayerOnly() && isIrcOnly()) {
+            throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
         }
 
-        else if ( !(sender instanceof Player) && isPlayerOnly() )
-        {
+        if (isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
+            throw new UnauthorizedAccessException();
+        }
+
+        if (!(sender instanceof IrcCommandSender) && isIrcOnly()) {
+            return false;
+        } else if (!(sender instanceof Player) && isPlayerOnly()) {
             return false;
         }
         boolean defaultNotices = false;
-        if(useNotices() && sender instanceof IrcCommandSender)
-        {
-            defaultNotices = ((IrcCommandSender)sender).getUseNotice();
-            ((IrcCommandSender)sender).setUseNotice(true);
+        if (useNotices() && sender instanceof IrcCommandSender) {
+            defaultNotices = ((IrcCommandSender) sender).getUseNotice();
+            ((IrcCommandSender) sender).setUseNotice(true);
         }
 
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 Exception exception = null;
                 boolean success = false;
-                try
-                {
+                try {
                     success = onExecute(sender, label, args);
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     exception = e;
                 }
 
@@ -90,9 +97,8 @@ public abstract class Command implements CommandExecutor
             }
         });
 
-        if(useNotices() && sender instanceof IrcCommandSender)
-        {
-            ((IrcCommandSender)sender).setUseNotice(defaultNotices);
+        if (useNotices() && sender instanceof IrcCommandSender) {
+            ((IrcCommandSender) sender).setUseNotice(defaultNotices);
         }
 
         return true;
@@ -100,61 +106,50 @@ public abstract class Command implements CommandExecutor
 
     protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
-    protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception,  boolean success)
-    {
-        if (exception instanceof UnauthorizedAccessException)
-        {
+    protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception, boolean success) {
+        if (exception instanceof UnauthorizedAccessException) {
             sender.sendMessage(ChatColor.DARK_RED + "You don't have access to this command.");
             return;
         }
 
-        if (exception != null) exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
 
-        if (exception != null)
-        {
+        if (exception != null) {
             sender.sendMessage(exception.getMessage());
         }
 
-        if (!success && getUsage() != null)
-        {
+        if (!success && getUsage() != null) {
             sender.sendMessage(getUsage());
         }
     }
 
-    protected String getCommandPrefix()
-    {
-        if(sender instanceof IrcCommandSender)
-        {
+    protected String getCommandPrefix() {
+        if (sender instanceof IrcCommandSender) {
             return getIrcCommandPrefix();
         }
         return "/";
     }
 
-    protected String getIrcCommandPrefix()
-    {
-        try
-        {
+    protected String getIrcCommandPrefix() {
+        try {
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
             Method method = c.getMethod("getCommandPrefix", null);
-            if ( !method.isAccessible() )
-            {
+            if (!method.isAccessible()) {
                 method.setAccessible(true);
             }
             return (String) method.invoke(null);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
-    public void setUsage(String usage)
-    {
-        this.usage = usage;
+    public String getUsage() {
+        return usage;
     }
 
-    public String getUsage()
-    {
-        return usage;
+    public void setUsage(String usage) {
+        this.usage = usage;
     }
 }

@@ -17,10 +17,9 @@
 
 package de.static_interface.sinklibrary.exception;
 
-public class PermissionsNotAvailableException extends RuntimeException
-{
-    public PermissionsNotAvailableException()
-    {
+public class PermissionsNotAvailableException extends RuntimeException {
+
+    public PermissionsNotAvailableException() {
         super("Permissions are not available!");
     }
 }

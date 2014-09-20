@@ -20,32 +20,28 @@ package de.static_interface.sinklibrary.event;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcPrivateMessageEvent extends IrcEventBase
-{
+public class IrcPrivateMessageEvent extends IrcEventBase {
+
     private final User user;
     private final String message;
     private final PircBotX bot;
 
-    public IrcPrivateMessageEvent(User user, String message, PircBotX bot)
-    {
+    public IrcPrivateMessageEvent(User user, String message, PircBotX bot) {
         this.user = user;
         this.message = message;
         this.bot = bot;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

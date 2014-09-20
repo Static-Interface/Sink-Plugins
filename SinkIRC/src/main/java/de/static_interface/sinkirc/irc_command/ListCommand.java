@@ -28,18 +28,15 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListCommand extends IrcCommand
-{
-    public ListCommand(Plugin plugin)
-    {
+public class ListCommand extends IrcCommand {
+
+    public ListCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args)
-    {
-        if ( BukkitUtil.getOnlinePlayers().size() == 0 )
-        {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        if (BukkitUtil.getOnlinePlayers().size() == 0) {
             sender.sendMessage("There are currently no online players");
             return true;
         }
@@ -48,17 +45,12 @@ public class ListCommand extends IrcCommand
         String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
-        for ( SinkUser user : SinkLibrary.getOnlineUsers())
-        {
-            if ( firstPlayer )
-            {
+        for (SinkUser user : SinkLibrary.getOnlineUsers()) {
+            if (firstPlayer) {
                 onlineMessage += user.getDisplayName();
                 firstPlayer = false;
-            }
-            else
-            {
-                if ( onlineMessage.length() > 0 )
-                {
+            } else {
+                if (onlineMessage.length() > 0) {
                     onlineMessage += ChatColor.RESET + ", ";
                 }
 
@@ -66,15 +58,13 @@ public class ListCommand extends IrcCommand
             }
 
             // standard length: 512 (inclusive headers)
-            if ( onlineMessage.length() > 400 )
-            {
+            if (onlineMessage.length() > 400) {
                 out.add(onlineMessage);
                 onlineMessage = "";
             }
         }
 
-        if ( onlineMessage.length() > 0 )
-        {
+        if (onlineMessage.length() > 0) {
             out.add(onlineMessage);
         }
 

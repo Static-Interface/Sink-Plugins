@@ -17,10 +17,9 @@
 
 package de.static_interface.sinklibrary.exception;
 
-public class UnauthorizedAccessException extends RuntimeException
-{
-    public UnauthorizedAccessException()
-    {
+public class UnauthorizedAccessException extends RuntimeException {
+
+    public UnauthorizedAccessException() {
         super();
     }
 }

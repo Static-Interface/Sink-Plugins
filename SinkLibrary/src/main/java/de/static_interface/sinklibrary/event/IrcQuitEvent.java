@@ -21,39 +21,34 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.snapshot.UserChannelDaoSnapshot;
 import org.pircbotx.snapshot.UserSnapshot;
 
-public class IrcQuitEvent extends IrcEventBase
-{
+public class IrcQuitEvent extends IrcEventBase {
+
     private final UserSnapshot user;
     private final String reason;
     private final UserChannelDaoSnapshot daoSnapshot;
     private final PircBotX bot;
 
-    public IrcQuitEvent(UserSnapshot user, String reason, UserChannelDaoSnapshot daoSnapshot, PircBotX bot)
-    {
+    public IrcQuitEvent(UserSnapshot user, String reason, UserChannelDaoSnapshot daoSnapshot, PircBotX bot) {
         this.user = user;
         this.reason = reason;
         this.daoSnapshot = daoSnapshot;
         this.bot = bot;
     }
 
-    public UserSnapshot getUser()
-    {
+    public UserSnapshot getUser() {
         return user;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
-    public UserChannelDaoSnapshot getDaoSnapshot()
-    {
+    public UserChannelDaoSnapshot getDaoSnapshot() {
         return daoSnapshot;
     }
 
     @Override
-    public PircBotX getBot()
-    {
+    public PircBotX getBot() {
         return bot;
     }
 }

@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkchat;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
@@ -25,19 +27,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+public class Util {
 
-public class Util
-{
-    public static void sendMessage(SinkUser user, String message, int range)
-    {
+    public static void sendMessage(SinkUser user, String message, int range) {
 
         double x = user.getPlayer().getLocation().getX();
         double y = user.getPlayer().getLocation().getY();
         double z = user.getPlayer().getLocation().getZ();
 
-        for ( Player p : BukkitUtil.getOnlinePlayers() )
-        {
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
             Location loc = p.getLocation();
             boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
 
@@ -45,23 +43,19 @@ public class Util
 
             // Check for spy
             boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")
-                    && !user.hasPermission("sinkchat.spy.bypass"));
+                                                                              && !user.hasPermission("sinkchat.spy.bypass"));
 
             PlayerConfiguration config = onlineUser.getPlayerConfiguration();
 
-            if ( isInRange )
-            {
+            if (isInRange) {
                 p.sendMessage(message);
-            }
-            else if ( canSpy && config.isSpyEnabled())
-            {
+            } else if (canSpy && config.isSpyEnabled()) {
                 p.sendMessage(getSpyPrefix() + message);
             }
         }
     }
 
-    public static String getSpyPrefix()
-    {
+    public static String getSpyPrefix() {
         return ChatColor.GRAY + m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
     }
 }

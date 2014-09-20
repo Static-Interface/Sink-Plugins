@@ -4,6 +4,7 @@ package de.static_interface.sinklibrary.configuration;
  * @author Acrobot
  */
 public class ValueParser {
+
     /**
      * Parses an object to a YAML-usable string
      *

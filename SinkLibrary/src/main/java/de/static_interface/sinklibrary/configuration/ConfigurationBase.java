@@ -23,14 +23,19 @@ import de.static_interface.sinklibrary.Util;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-@SuppressWarnings({"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
-public abstract class ConfigurationBase
-{
+@SuppressWarnings(
+        {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
+public abstract class ConfigurationBase {
+
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
@@ -40,8 +45,7 @@ public abstract class ConfigurationBase
      * Create a new configuration
      * @param file Configurations YAML file (will be created if doesn't exist)
      */
-    public ConfigurationBase(File file)
-    {
+    public ConfigurationBase(File file) {
         yamlFile = file;
     }
 
@@ -51,37 +55,34 @@ public abstract class ConfigurationBase
      * @param file   Configurations YAML file (will be created if doesn't exist)
      * @param init If true, the config file will be created if it doesn't exists
      */
-    public ConfigurationBase(File file, boolean init)
-    {
+    public ConfigurationBase(File file, boolean init) {
         yamlFile = file;
-        if ( init ) init();
+        if (init) {
+            init();
+        }
     }
 
     /**
      * Called when the config is generated, you can add e.g. values which won't be regenerated if you delete them
      */
-    public void onCreate() { }
+    public void onCreate() {
+    }
 
     /**
      * Inits the configuration
      */
-    public void init()
-    {
-        try
-        {
+    public void init() {
+        try {
             boolean createNewConfiguration = !exists();
 
-            if ( createNewConfiguration )
-            {
+            if (createNewConfiguration) {
                 SinkLibrary.getCustomLogger().log(Level.INFO, "Creating new configuration: " + yamlFile);
             }
 
-            if ( yamlFile != null )
-            {
+            if (yamlFile != null) {
                 Files.createParentDirs(yamlFile);
 
-                if ( createNewConfiguration && !yamlFile.createNewFile() )
-                {
+                if (createNewConfiguration && !yamlFile.createNewFile()) {
                     SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration: " + yamlFile);
                 }
             }
@@ -90,40 +91,34 @@ public abstract class ConfigurationBase
 
             yamlConfiguration = new YamlConfiguration();
 
-            if ( yamlFile != null ) yamlConfiguration.load(yamlFile);
+            if (yamlFile != null) {
+                yamlConfiguration.load(yamlFile);
+            }
             addDefaults();
-            if(createNewConfiguration)
-            {
+            if (createNewConfiguration) {
                 onCreate();
             }
 
             save();
 
-        }
-        catch ( InvalidConfigurationException e )
-        {
+        } catch (InvalidConfigurationException e) {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Invalid configuration file: " + yamlFile);
             SinkLibrary.getCustomLogger().log(Level.SEVERE, e.getMessage());
             recreate();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't create configuration file: " + getFile().getName());
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
     }
 
-    private void writeToFile(File file) throws IOException
-    {
+    private void writeToFile(File file) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(yamlFile, true));
 
-        if (!endsWithSpace(file))
-        {
+        if (!endsWithSpace(file)) {
             writer.newLine();
         }
 
-        for(String path : getDefaults().keySet())
-        {
+        for (String path : getDefaults().keySet()) {
             Object value = get(path);
             writer.write(parse(path, value, comments.get(path)));
             writer.newLine();
@@ -136,46 +131,35 @@ public abstract class ConfigurationBase
      * @return YAML Parsed value
      */
     @SuppressWarnings("ForLoopReplaceableByForEach")
-    private String parse(String path, Object value, String comment)
-    {
+    private String parse(String path, Object value, String comment) {
         StringBuilder builder = new StringBuilder();
         String[] subpaths = path.split(".");
 
-        if (!Util.isStringEmptyOrNull(comment))
-        {
+        if (!Util.isStringEmptyOrNull(comment)) {
             String[] lines = comment.split("\n");
-
 
             String whiteSpaces = "";
 
             // get whitespaces from path
-            if(subpaths.length > 1)
-            {
-                for ( int i = 1; i < subpaths.length; i++ )
-                {
+            if (subpaths.length > 1) {
+                for (int i = 1; i < subpaths.length; i++) {
                     whiteSpaces += "  ";
                 }
             }
 
             //check for comment prefix
-            if(!comment.startsWith("#"))
-            {
+            if (!comment.startsWith("#")) {
                 comment = "# " + comment;
             }
 
             // comment is single line
-            if(lines.length == 1)
-            {
+            if (lines.length == 1) {
                 builder.append(whiteSpaces).append(comment);
-            }
-            else
-            {
+            } else {
                 // comment is multiline, handle all lines
                 int i = 0;
-                for(String line : lines)
-                {
-                    if(i > 0)
-                    {
+                for (String line : lines) {
+                    if (i > 0) {
                         // add line break to every line except the first one
                         builder.append("\n");
                     }
@@ -190,19 +174,14 @@ public abstract class ConfigurationBase
 
         //split subpaths
         int i = 0;
-        for(String p : subpaths)
-        {
+        for (String p : subpaths) {
             //todo: search for sub paths***
-            if(i == 0)
-            {
+            if (i == 0) {
                 builder.append(p);
-            }
-            else
-            {
+            } else {
                 builder.append("  ").append(p);
             }
-            if (i == subpaths.length)
-            {
+            if (i == subpaths.length) {
                 builder.append(": ");
             }
 
@@ -210,7 +189,6 @@ public abstract class ConfigurationBase
 
             i++;
         }
-
 
         builder.append(ValueParser.parseToYAML(value));
 
@@ -222,8 +200,7 @@ public abstract class ConfigurationBase
      * @param path YAML Path
      * @param comment Comment
      */
-    public void setComment(String path, String comment)
-    {
+    public void setComment(String path, String comment) {
         comments.put(path, comment);
     }
 
@@ -255,8 +232,7 @@ public abstract class ConfigurationBase
      * @deprecated use {@link #init()} instead
      */
     @Deprecated
-    public void create()
-    {
+    public void create() {
         init();
     }
 
@@ -268,30 +244,21 @@ public abstract class ConfigurationBase
     /**
      * Save config file
      */
-    public void save()
-    {
-        if ( getFile() == null )
-        {
+    public void save() {
+        if (getFile() == null) {
             return;
         }
-        if ( !exists() )
-        {
+        if (!exists()) {
             return;
         }
 
-        try
-        {
+        try {
             getYamlConfiguration().save(getFile());
             //writeToFile(getFile()); // Todo!
-        }
-        catch ( IOException e )
-        {
-            if(SinkLibrary.getSettings().isDebugEnabled())
-            {
+        } catch (IOException e) {
+            if (SinkLibrary.getSettings().isDebugEnabled()) {
                 SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
-            }
-            else
-            {
+            } else {
                 SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
             }
         }
@@ -301,19 +268,14 @@ public abstract class ConfigurationBase
      * @param path  Path to value
      * @param value Value of path
      */
-    public void set(String path, Object value)
-    {
-        try
-        {
-            if ( getFile() == null || getYamlConfiguration() == null )
-            {
+    public void set(String path, Object value) {
+        try {
+            if (getFile() == null || getYamlConfiguration() == null) {
                 addDefault(path, value);
             }
             getYamlConfiguration().set(path, value);
             save();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             SinkLibrary.getCustomLogger().log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
         }
     }
@@ -324,38 +286,29 @@ public abstract class ConfigurationBase
      * @param path Path to value
      * @return Value of path
      */
-    public Object get(String path)
-    {
-        if ( getYamlConfiguration() == null || getFile() == null )
-        {
+    public Object get(String path) {
+        if (getYamlConfiguration() == null || getFile() == null) {
             return getDefault(path);
         }
-        try
-        {
+        try {
             Object value = getYamlConfiguration().get(path);
-            if ( !path.equals("General.EnableDebug") && !path.equals("General.EnableLog") )
+            if (!path.equals("General.EnableDebug") && !path.equals("General.EnableLog")) {
                 SinkLibrary.getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
-            if ( value == null )
-            {
+            }
+            if (value == null) {
                 throw new NullPointerException("Path " + path + " returned null!");
             }
             return value;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             Object value = getDefault(path);
             return value;
         }
     }
 
-    public Object get(String path, Object defaultValue)
-    {
-        try
-        {
+    public Object get(String path, Object defaultValue) {
+        try {
             return get(path);
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             return defaultValue;
         }
     }
@@ -363,10 +316,8 @@ public abstract class ConfigurationBase
     /**
      * Get YAML Configuration
      */
-    public YamlConfiguration getYamlConfiguration()
-    {
-        if ( yamlConfiguration == null )
-        {
+    public YamlConfiguration getYamlConfiguration() {
+        if (yamlConfiguration == null) {
             throw new NullPointerException("yamlConfiguration is null! Did you forgot to call load()?");
         }
         return yamlConfiguration;
@@ -375,8 +326,7 @@ public abstract class ConfigurationBase
     /**
      * @return True if the config file exists
      */
-    public boolean exists()
-    {
+    public boolean exists() {
         return getFile() != null && getFile().exists();
     }
 
@@ -385,8 +335,7 @@ public abstract class ConfigurationBase
      * @deprecated use {@link #init()} instead
      */
     @Deprecated
-    public void load()
-    {
+    public void load() {
         init();
     }
 
@@ -395,10 +344,8 @@ public abstract class ConfigurationBase
      *
      * @param path Path to value
      */
-    public Object getDefault(String path)
-    {
-        if ( getDefaults() == null )
-        {
+    public Object getDefault(String path) {
+        if (getDefaults() == null) {
             throw new RuntimeException("defaultValues are null! Couldn't read value from path: " + path);
         }
         return getDefaults().get(path);
@@ -410,20 +357,23 @@ public abstract class ConfigurationBase
      * @param path  Path to value
      * @param value Value of path
      */
-    public void addDefault(String path, Object value)
-    {
+    public void addDefault(String path, Object value) {
         addDefault(path, value, null);
     }
 
-    public void addDefault(String path, Object value, String comment)
-    {
-        if(getDefaults() == null) throw new NullPointerException("getDefaults() equals null!");
-        if(getYamlConfiguration() == null) throw new NullPointerException("getYamlConfiguration() equals null!");
+    public void addDefault(String path, Object value, String comment) {
+        if (getDefaults() == null) {
+            throw new NullPointerException("getDefaults() equals null!");
+        }
+        if (getYamlConfiguration() == null) {
+            throw new NullPointerException("getYamlConfiguration() equals null!");
+        }
 
-        if (!getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null )
-        {
+        if (!getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null) {
             getYamlConfiguration().set(path, value);
-            if(comment != null) setComment(path, comment);
+            if (comment != null) {
+                setComment(path, comment);
+            }
         }
         getDefaults().put(path, value);
     }
@@ -433,8 +383,7 @@ public abstract class ConfigurationBase
      * Get Defaults
      * @return Default values
      */
-    public HashMap<String, Object> getDefaults()
-    {
+    public HashMap<String, Object> getDefaults() {
         return defaultValues;
     }
 
@@ -442,16 +391,14 @@ public abstract class ConfigurationBase
      * Backup Configuration.
      * @throws IOException if backup fails
      */
-    public void backup() throws IOException
-    {
+    public void backup() throws IOException {
         Util.backupFile(getFile(), true);
     }
 
     /**
      * Delete Configuration
      */
-    public void delete()
-    {
+    public void delete() {
         getFile().delete();
     }
 
@@ -460,23 +407,18 @@ public abstract class ConfigurationBase
      *
      * @return configuration file
      */
-    public File getFile()
-    {
+    public File getFile() {
         return yamlFile;
     }
 
     /**
      * Recreate configuration
      */
-    public void recreate()
-    {
+    public void recreate() {
         SinkLibrary.getCustomLogger().log(Level.WARNING, "Recreating Configuration: " + getFile());
-        try
-        {
+        try {
             backup();
-        }
-        catch ( IOException e )
-        {
+        } catch (IOException e) {
             SinkLibrary.getCustomLogger().log(Level.SEVERE, "Couldn't backup configuration: " + getFile(), e);
             return;
         }
@@ -487,9 +429,10 @@ public abstract class ConfigurationBase
     /**
      * Reload a config
      */
-    public void reload()
-    {
-        if ( !exists() ) return;
+    public void reload() {
+        if (!exists()) {
+            return;
+        }
         init();
     }
 }

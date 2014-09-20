@@ -23,25 +23,20 @@ import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class HelpCommand extends IrcCommand
-{
-    public HelpCommand(Plugin plugin)
-    {
+public class HelpCommand extends IrcCommand {
+
+    public HelpCommand(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onExecute(CommandSender cs, String label, String[] args)
-    {
+    public boolean onExecute(CommandSender cs, String label, String[] args) {
         IrcCommandSender sender = (IrcCommandSender) cs;
         String cmds = "";
-        for (String cmdName : SinkLibrary.getCommands().keySet())
-        {
+        for (String cmdName : SinkLibrary.getCommands().keySet()) {
             Command cmd = SinkLibrary.getCommands().get(cmdName);
-            if (!cmd.isPlayerOnly())
-            {
-                if( cmds.equals("") )
-                {
+            if (!cmd.isPlayerOnly()) {
+                if (cmds.equals("")) {
                     cmds = cmdName;
                     continue;
                 }

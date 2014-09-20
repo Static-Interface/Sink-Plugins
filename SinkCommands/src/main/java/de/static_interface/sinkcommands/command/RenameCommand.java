@@ -29,28 +29,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class RenameCommand implements CommandExecutor
-{
+public class RenameCommand implements CommandExecutor {
 
     public static final String PREFIX = ChatColor.AQUA + "[Rename] " + ChatColor.RESET;
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         SinkUser user = SinkLibrary.getUser(sender);
-        if ( user.isConsole() )
-        {
+        if (user.isConsole()) {
             sender.sendMessage(PREFIX + "Dieser Befehl ist nur Ingame ausführbar.");
             return true;
         }
         Player p = user.getPlayer();
 
-        if ( args.length < 1 )
-        {
+        if (args.length < 1) {
             return false;
         }
-        if ( p.getItemInHand().getType() == Material.AIR )
-        {
+        if (p.getItemInHand().getType() == Material.AIR) {
             sender.sendMessage(PREFIX + "Nimm ein Item in die Hand bevor du diesen Befehl ausführst.");
             return true;
         }

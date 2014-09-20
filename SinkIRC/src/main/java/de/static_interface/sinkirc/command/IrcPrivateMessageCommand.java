@@ -25,32 +25,30 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class IrcPrivateMessageCommand implements CommandExecutor
-{
+public class IrcPrivateMessageCommand implements CommandExecutor {
+
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
-        if ( args.length < 2 )
-        {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length < 2) {
             sender.sendMessage(LanguageConfiguration.m("General.CommandMisused.Arguments.TooFew"));
             return true;
         }
 
         String target = args[0];
 
-        if(target.startsWith("#")) return false;
+        if (target.startsWith("#")) {
+            return false;
+        }
 
         String message = ChatColor.GRAY + SinkLibrary.getUser(sender).getDisplayName() + ChatColor.GRAY + ": ";
 
-        for ( int x = 1; x < args.length; x++ ) message = message + ' ' + args[x];
-
-
-        if (!IrcUtil.sendMessage(target, message))
-        {
-            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
+        for (int x = 1; x < args.length; x++) {
+            message = message + ' ' + args[x];
         }
-        else
-        {
+
+        if (!IrcUtil.sendMessage(target, message)) {
+            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
+        } else {
             sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
         }
         return true;
