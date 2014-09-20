@@ -65,7 +65,7 @@ public class SinkIRC extends JavaPlugin {
                 try {
                     mainChannel = SinkLibrary.getInstance().getSettings().getIRCChannel();
 
-                    Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<PircBotX>()
+                    Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
                             .setName(SinkLibrary.getInstance().getSettings().getIRCBotUsername())
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
@@ -138,5 +138,5 @@ public class SinkIRC extends JavaPlugin {
         ircThread = null;
         ircBot = null;
         System.gc();
-    }
+
 }

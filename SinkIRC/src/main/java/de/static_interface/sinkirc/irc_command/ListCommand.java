@@ -15,14 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkirc.irc_command;
+package de.static_interface.sinkirc.irc_commands;
 
+import de.static_interface.sinkirc.irc_command.IrcCommand;
 import de.static_interface.sinklibrary.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -45,7 +47,8 @@ public class ListCommand extends IrcCommand {
         String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
-        for (SinkUser user : SinkLibrary.getInstance().getOnlineUsers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SinkUser user = SinkLibrary.getInstance().getUser(player);
             if (firstPlayer) {
                 onlineMessage += user.getDisplayName();
                 firstPlayer = false;

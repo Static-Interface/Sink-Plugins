@@ -37,22 +37,23 @@ public class Settings extends ConfigurationBase {
     public void addDefaults() {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
 
-        addDefault("General.DisplayNamesEnabled", false);
-        addDefault("General.EnableLog", true);
-        addDefault("General.EnableDebug", false);
+        addDefault("General.DisplayNamesEnabled", false, "Broken");
+        addDefault("General.EnableLog", true, "Use Log file?");
+        addDefault("General.EnableDebug", false, "Provides more information, useful for bug reports etc");
 
-        addDefault("Updater.Enabled", true);
+        addDefault("Updater.Enabled", true, "Enable Updater");
         addDefault("Updater.UpdateType", "default");
 
-        addDefault("SinkIRC.Username", "SinkIRCBot");
+        addDefault("SinkIRC.Nickname", "SinkIRCBot", "IRC Bot Nickname");
         addDefault("SinkIRC.Server.Address", "irc.example.com");
         addDefault("SinkIRC.Server.PasswordEnabled", false);
-        addDefault("SinkIRC.Server.Password", "ServerPasswordHere");
-        addDefault("SinkIRC.Server.Port", 6667);
-        addDefault("SinkIRC.Channel", "#ChatBot");
-        addDefault("SinkIRC.Authentification.Enabled", false);
-        addDefault("SinkIRC.Authentification.AuthBot", "NickServ");
-        addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere");
+        addDefault("SinkIRC.Server.Password", "", "Server password, leave empty if there no password");
+        addDefault("SinkIRC.Server.Port", 6667, "IRC Server port");
+        addDefault("SinkIRC.Channel", "#ServerName", "IRC Channel");
+        addDefault("SinkIRC.Authentification.Enabled", false, "Enable Authentification");
+        addDefault("SinkIRC.Authentification.AuthBot", "NickServ", "Name of the authbot");
+        addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
+                "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
 
         addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
 

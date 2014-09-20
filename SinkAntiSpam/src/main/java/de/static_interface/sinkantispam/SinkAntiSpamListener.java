@@ -46,17 +46,19 @@ public class SinkAntiSpamListener implements Listener {
     private static List<String> excludedCommands;
 
     public SinkAntiSpamListener() {
-        blacklistedWords = SinkLibrary.getInstance().getSettings().getBlackListedWords();
-        whiteListDomains = SinkLibrary.getInstance().getSettings().getWhitelistedWords();
-        excludedCommands = SinkLibrary.getInstance().getSettings().getExcludedCommands();
+        blacklistedWords = SinkLibrary.getSettings().getBlackListedWords();
+        whiteListDomains = SinkLibrary.getSettings().getWhitelistedWords();
+        excludedCommands = SinkLibrary.getSettings().getExcludedCommands();
     }
 
-    public static WarnResult checkMessage(Player player, String message) {
+    public static WarnResult checkMessage(Player player, String message)
+    {
         WarnResult result = new WarnResult();
         result.setResultcode(WarnResult.PASS);
-        SinkUser user = SinkLibrary.getInstance().getUser(player);
+        SinkUser user = SinkLibrary.getUser(player);
 
-        if (user.hasPermission("sinkcommands.bypass")) {
+        if ( user.hasPermission("sinkcommands.bypass") )
+        {
             return result;
         }
 
@@ -83,10 +85,12 @@ public class SinkAntiSpamListener implements Listener {
 
         Pattern pattern;
         Matcher matcher;
-        if (SinkLibrary.getInstance().getSettings().isIPCheckEnabled()) {
+        if(SinkLibrary.getSettings().isIPCheckEnabled())
+        {
             pattern = Pattern.compile("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
             matcher = pattern.matcher(message);
-            if (matcher.find()) {
+            if ( matcher.find() )
+            {
                 String ip = matcher.group(0);
                 WarnUtil.warnPlayer(player, new IpWarning(ip));
                 result.setResultcode(WarnResult.CENSOR);
@@ -94,8 +98,9 @@ public class SinkAntiSpamListener implements Listener {
                 return result;
             }
         }
-        if (SinkLibrary.getInstance().getSettings().isWhitelistedDomainCheckEnabled()) {
-            pattern = Pattern.compile("((w{3}\\.)?([A-Za-z0-9]+\\.)+[A-Za-z]{2,3}/?)\\s");
+        if(SinkLibrary.getInstance().getSettings().isWhitelistedDomainCheckEnabled())
+        {
+            pattern = Pattern.compile("((w{3}\\.)?([\\-A-Za-z0-9]+\\.)+[A-Za-z]{2,3}+/?)\\s");
             matcher = pattern.matcher(message.replaceAll("www.", ""));
             if (!matcher.find()) {
                 return result;
