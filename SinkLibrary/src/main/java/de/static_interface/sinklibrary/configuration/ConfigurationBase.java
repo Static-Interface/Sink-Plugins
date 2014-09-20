@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.configuration;
 
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.Util;
+import de.static_interface.sinklibrary.util.Util;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 

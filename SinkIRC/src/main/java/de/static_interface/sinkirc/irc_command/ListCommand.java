@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkirc.irc_command;
 
-import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.Bukkit;

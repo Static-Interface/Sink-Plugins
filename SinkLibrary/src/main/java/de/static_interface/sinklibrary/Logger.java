@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

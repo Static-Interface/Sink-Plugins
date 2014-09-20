@@ -15,10 +15,11 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary;
+package de.static_interface.sinklibrary.util;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
 
 import java.io.File;

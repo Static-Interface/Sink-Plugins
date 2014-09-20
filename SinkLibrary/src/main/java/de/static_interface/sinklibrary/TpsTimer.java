@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary;
 
 import static de.static_interface.sinklibrary.Constants.TICK;
 
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;

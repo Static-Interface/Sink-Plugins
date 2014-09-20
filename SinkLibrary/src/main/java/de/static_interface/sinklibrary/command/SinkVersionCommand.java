@@ -15,27 +15,32 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkcommands.command;
+package de.static_interface.sinklibrary.command;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Util;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
-public class NewbiechatCommand implements CommandExecutor {
+import java.util.List;
 
-    public static final String PREFIX = ChatColor.YELLOW + "[SupportChat] " + ChatColor.RESET;
+public class SinkVersionCommand extends Command {
+
+    public static final String PREFIX = ChatColor.BLUE + "[SinkLibrary] " + ChatColor.RESET;
+
+    Plugin plugin;
+
+    public SinkVersionCommand(Plugin plugin) {
+        super(plugin);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length < 1) {
-            return false;
-        }
-        String message = Util.formatArrayToString(args, " ");
-
-        BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.newbiechat", false);
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        List<String> authorsList = plugin.getDescription().getAuthors();
+        String authors = Util.formatPlayerListToString(authorsList);
+        sender.sendMessage(PREFIX + plugin.getDescription().getName() + " by " + authors);
+        sender.sendMessage(PREFIX + "Version: " + plugin.getDescription().getVersion());
+        sender.sendMessage(PREFIX + "Copyright © 2013 - 2014 Adventuria / static-interface.de");
         return true;
     }
 }

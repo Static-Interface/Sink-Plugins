@@ -38,10 +38,10 @@ import de.static_interface.sinkcommands.listener.DrugDeadListener;
 import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinkcommands.listener.ScoreboardListener;
 import de.static_interface.sinkcommands.listener.VotekickListener;
-import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.command.SinkVersionrCommand;
+import de.static_interface.sinklibrary.command.SinkVersion;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -196,7 +196,7 @@ public class SinkCommands extends JavaPlugin {
         getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
         getCommand("list").setExecutor(new ListCommand());
 
-        SinkLibrary.getInstance().registerCommand("commandsver", new SinkVersionrCommand(this));
+        SinkLibrary.getInstance().registerCommand("commandsver", new SinkVersion(this));
         SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this));
         SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this));
         SinkLibrary.getInstance().registerCommand("lag", new LagCommand(this));

@@ -15,8 +15,10 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary;
+package de.static_interface.sinklibrary.util;
 
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

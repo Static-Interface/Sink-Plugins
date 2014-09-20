@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands;
 
 import de.static_interface.sinkcommands.command.LagCommand;
-import de.static_interface.sinklibrary.BukkitUtil;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.ChatColor;
 
