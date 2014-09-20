@@ -20,9 +20,9 @@ package de.static_interface.sinkantispam;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkantispam.warning.Warning;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
