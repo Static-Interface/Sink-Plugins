@@ -24,39 +24,39 @@ import org.bukkit.entity.Player;
 
 public class FormatUtil {
 
-    public static String formatMessage(String message, Player player, String userMessage) {
-        return formatMessage(message, SinkLibrary.getInstance().getUser(player), userMessage);
+    public static String formatString(String str, Player player, String userMessage) {
+        return formatString(str, SinkLibrary.getInstance().getUser(player), userMessage);
     }
 
-    public static String formatMessage(String message, Player player) {
-        return formatMessage(message, SinkLibrary.getInstance().getUser(player));
+    public static String formatString(String str, Player player) {
+        return formatString(str, SinkLibrary.getInstance().getUser(player));
     }
 
-    public static String formatMessage(String message, SinkUser user, String userMessage) {
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        message = message.replaceAll("(?i)\\{(PLAYER|NAME)\\}", user.getName());
-        message = message.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
-        message = message.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(MathUtil.round(VaultHelper.getBalance(user.getPlayer()))));
-        message = message.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
-        message = message.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
-        message = message.replaceAll("(?i)\\{(GAMEMODE|GM)\\}", user.getPlayer().getGameMode().name());
-        message = message.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(user.getPlayer().getHealth()));
-        message = message.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(user.getPlayer().getMaxHealth()));
-        message = message.replaceAll("(?i)\\{PREFIX\\}", user.getPrefix());
-        message = message.replaceAll("(?i)\\{LEVEL\\}", String.valueOf(user.getPlayer().getLevel()));
-        message = message.replaceAll("(?i)\\{(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getExp()));
-        message = message.replaceAll("(?i)\\{TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getTotalExperience()));
-        message = message.replaceAll("(?i)\\{(FOOD|FOODLEVEL)\\}", String.valueOf(user.getPlayer().getFoodLevel()));
-        message = message.replaceAll("(?i)\\{X\\}", String.valueOf(user.getPlayer().getLocation().getX()));
-        message = message.replaceAll("(?i)\\{Y\\}", String.valueOf(user.getPlayer().getLocation().getY()));
-        message = message.replaceAll("(?i)\\{Z\\}", String.valueOf(user.getPlayer().getLocation().getZ()));
+    public static String formatString(String str, SinkUser user, String userMessage) {
+        str = str.replaceAll("(?i)\\{(PLAYER|NAME)\\}", user.getName());
+        str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
+        str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(MathUtil.round(VaultHelper.getBalance(user.getPlayer()))));
+        str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
+        str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
+        str = str.replaceAll("(?i)\\{(GAMEMODE|GM)\\}", user.getPlayer().getGameMode().name());
+        str = str.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(user.getPlayer().getHealth()));
+        str = str.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(user.getPlayer().getMaxHealth()));
+        str = str.replaceAll("(?i)\\{PREFIX\\}", user.getPrefix());
+        str = str.replaceAll("(?i)\\{LEVEL\\}", String.valueOf(user.getPlayer().getLevel()));
+        str = str.replaceAll("(?i)\\{(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getExp()));
+        str = str.replaceAll("(?i)\\{TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getTotalExperience()));
+        str = str.replaceAll("(?i)\\{(FOOD|FOODLEVEL)\\}", String.valueOf(user.getPlayer().getFoodLevel()));
+        str = str.replaceAll("(?i)\\{X\\}", String.valueOf(user.getPlayer().getLocation().getX()));
+        str = str.replaceAll("(?i)\\{Y\\}", String.valueOf(user.getPlayer().getLocation().getY()));
+        str = str.replaceAll("(?i)\\{Z\\}", String.valueOf(user.getPlayer().getLocation().getZ()));
+        str = ChatColor.translateAlternateColorCodes('&', str);
         if (userMessage != null) {
-            message = message.replaceAll("(?i)\\{MESSAGE\\}", userMessage);
+            str = str.replaceAll("(?i)\\{MESSAGE\\}", userMessage);
         }
-        return message;
+        return str;
     }
 
-    public static String formatMessage(String message, SinkUser user) {
-        return formatMessage(message, user, null);
+    public static String formatString(String str, SinkUser user) {
+        return formatString(str, user, null);
     }
 }
