@@ -90,7 +90,7 @@ public class SinkUser implements Comparable<SinkUser> {
      * @return Money of player
      * @throws de.static_interface.sinklibrary.exception.EconomyNotAvailableException if economy is not available.
      */
-    public double getMoney() {
+    public double getBalance() {
         validateEconomy();
 
         OfflinePlayer player = base;

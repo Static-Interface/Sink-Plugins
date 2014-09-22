@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -75,7 +75,7 @@ public class Logger {
         File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder() + File.separator + "SinkPlugins.log");
         if (!failed && !logFile.exists()) // Prevent creating/checking every time
         {
-            if (!Util.createFile(logFile)) {
+            if (!FileUtil.createFile(logFile)) {
                 return;
             }
             failed = true;

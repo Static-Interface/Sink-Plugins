@@ -19,7 +19,8 @@ package de.static_interface.sinklibrary.configuration;
 
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.FileUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -135,7 +136,7 @@ public abstract class ConfigurationBase {
         StringBuilder builder = new StringBuilder();
         String[] subpaths = path.split(".");
 
-        if (!Util.isStringEmptyOrNull(comment)) {
+        if (!StringUtil.isStringEmptyOrNull(comment)) {
             String[] lines = comment.split("\n");
 
             String whiteSpaces = "";
@@ -304,6 +305,23 @@ public abstract class ConfigurationBase {
             value = getDefault(path);
         }
         String stringValue = String.valueOf(value);
+
+        // fix old configs
+        if(stringValue.contains("%s")) {
+            int i = 0;
+            String tmp = "";
+            for (String s : stringValue.split(" ")) {
+                if(tmp.equals(""))
+                    tmp = s.replaceFirst("%s", "{" + i +"}");
+                else
+                    tmp += " " + s.replaceFirst("%s", "{" + i +"}");
+                i++;
+            }
+            value = tmp;
+            stringValue = tmp;
+            set(path, value);
+        }
+
         value = stringValue.replace("\\n", System.lineSeparator());
         return value;
     }
@@ -395,7 +413,7 @@ public abstract class ConfigurationBase {
      * @throws IOException if backup fails
      */
     public void backup() throws IOException {
-        Util.backupFile(getFile(), true);
+        FileUtil.backupFile(getFile(), true);
     }
 
     /**

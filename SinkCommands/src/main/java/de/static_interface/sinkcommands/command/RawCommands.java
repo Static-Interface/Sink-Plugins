@@ -17,11 +17,11 @@
 
 package de.static_interface.sinkcommands.command;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.util.Util;
 import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -44,7 +44,7 @@ public class RawCommands {
             if (args.length < 1) {
                 return false;
             }
-            BukkitUtil.broadcastMessage(ChatColor.translateAlternateColorCodes('&', Util.formatArrayToString(args, " ")));
+            BukkitUtil.broadcastMessage(ChatColor.translateAlternateColorCodes('&', StringUtil.formatArrayToString(args, " ")));
             return true;
         }
     }

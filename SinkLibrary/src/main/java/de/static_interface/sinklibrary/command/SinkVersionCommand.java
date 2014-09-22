@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary.command;
 
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -37,7 +37,7 @@ public class SinkVersionCommand extends Command {
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         List<String> authorsList = plugin.getDescription().getAuthors();
-        String authors = Util.formatPlayerListToString(authorsList);
+        String authors = StringUtil.formatPlayerListToString(authorsList);
         sender.sendMessage(PREFIX + plugin.getDescription().getName() + " by " + authors);
         sender.sendMessage(PREFIX + "Version: " + plugin.getDescription().getVersion());
         sender.sendMessage(PREFIX + "Copyright © 2013 - 2014 Adventuria / static-interface.de");

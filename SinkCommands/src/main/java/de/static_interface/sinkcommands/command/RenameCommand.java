@@ -19,7 +19,7 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -49,7 +49,7 @@ public class RenameCommand implements CommandExecutor {
             sender.sendMessage(PREFIX + "Nimm ein Item in die Hand bevor du diesen Befehl ausführst.");
             return true;
         }
-        String text = Util.formatArrayToString(args, " ");
+        String text = StringUtil.formatArrayToString(args, " ");
 
         text = ChatColor.translateAlternateColorCodes('&', text);
         ItemStack item = p.getItemInHand();

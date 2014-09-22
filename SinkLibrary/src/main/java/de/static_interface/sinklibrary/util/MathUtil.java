@@ -22,5 +22,18 @@ public class MathUtil {
     public static double round(double value) {
         return (double) Math.round(value * 100) / (double) 100;
     }
+
+    /**
+     * @param input String Input
+     * @return True if input is a number
+     */
+    public static boolean isNumber(String input) {
+        try {
+            Long.parseLong(input);
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+        return true;
+    }
 }
 

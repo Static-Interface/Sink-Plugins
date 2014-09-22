@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.MathUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -135,7 +135,7 @@ public class SinkDebugCommand extends Command {
         if (value.equals("false")) {
             return false;
         }
-        if (Util.isNumber(value)) {
+        if (MathUtil.isNumber(value)) {
             return Integer.parseInt(value);
         }
         return value;

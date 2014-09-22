@@ -22,19 +22,21 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 public class StringUtil {
 
-    public static String format(String str, Player player, @Nullable String userMessage, @Nullable String... paramValues) {
+    public static String format(String str, Player player, @Nullable String userMessage, @Nullable Object... paramValues) {
         return format(str, SinkLibrary.getInstance().getUser(player), userMessage, paramValues);
     }
 
-    public static String format(String str, String... paramValues) {
+    public static String format(String str, Object... paramValues) {
         return format(str, (SinkUser) null, null, paramValues);
     }
 
-    public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable String... paramValues) {
+    public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
@@ -59,8 +61,8 @@ public class StringUtil {
 
         if(paramValues != null) {
             int i = 0;
-            for (String s : paramValues) {
-                str = str.replaceAll("\\{" + i + "\\}", s);
+            for (Object s : paramValues) {
+                str = str.replaceAll("\\{" + i + "\\}", String.valueOf(s));
                 i++;
             }
         }
@@ -73,5 +75,52 @@ public class StringUtil {
         }
 
         return str;
+    }
+
+    /**
+     * Format Array to String
+     *
+     * @param input     Input String
+     * @param character Chat
+     * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
+     */
+    public static String formatArrayToString(Object[] input, String character) {
+        String tmp = "";
+        for (Object o : input) {
+            if (tmp.isEmpty()) {
+                tmp = (String) o;
+                continue;
+            }
+            tmp = tmp + character + o;
+        }
+        return tmp;
+    }
+
+    /**
+     * Formats a list with names to String.
+     *
+     * @param names Names
+     * @return If names contains "user1", "user2", "user3", it will return "user1, user2 and user3".
+     */
+    public static String formatPlayerListToString(List<String> names) {
+        String tmp = "";
+        int i = 0;
+        for (String s : names) {
+            i++;
+            if (tmp.isEmpty()) {
+                tmp = s;
+                continue;
+            }
+            if (i == names.toArray().length) {
+                tmp = tmp + " and " + s;
+                continue;
+            }
+            tmp = tmp + ", " + s;
+        }
+        return tmp;
+    }
+
+    public static boolean isStringEmptyOrNull(String s) {
+        return s == null || s.trim().length() == 0;
     }
 }

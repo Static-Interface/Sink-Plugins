@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.util.BukkitUtil;
-import de.static_interface.sinklibrary.util.Util;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +33,7 @@ public class NewbiechatCommand implements CommandExecutor {
         if (args.length < 1) {
             return false;
         }
-        String message = Util.formatArrayToString(args, " ");
+        String message = StringUtil.formatArrayToString(args, " ");
 
         BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.newbiechat", false);
         return true;

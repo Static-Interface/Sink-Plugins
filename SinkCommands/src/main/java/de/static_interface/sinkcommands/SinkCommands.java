@@ -100,7 +100,7 @@ public class SinkCommands extends JavaPlugin {
 
         if (SinkLibrary.getInstance().isEconomyAvailable()) {
             Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
-            money.setScore(new Double(user.getMoney()).intValue());
+            money.setScore(new Double(user.getBalance()).intValue());
         }
 
         Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
