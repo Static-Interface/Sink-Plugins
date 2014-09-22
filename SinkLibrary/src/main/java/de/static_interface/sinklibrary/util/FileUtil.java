@@ -29,10 +29,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 
-public class Util {
+public class FileUtil {
 
     /**
      * Create a file
@@ -81,65 +80,5 @@ public class Util {
             SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't backup file: " + file.getAbsolutePath());
             throw e;
         }
-    }
-
-    /**
-     * Format Array to String
-     *
-     * @param input     Input String
-     * @param character Chat
-     * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
-     */
-    public static String formatArrayToString(Object[] input, String character) {
-        String tmp = "";
-        for (Object o : input) {
-            if (tmp.isEmpty()) {
-                tmp = (String) o;
-                continue;
-            }
-            tmp = tmp + character + o;
-        }
-        return tmp;
-    }
-
-    /**
-     * Formats a list with names to String.
-     *
-     * @param names Names
-     * @return If names contains "user1", "user2", "user3", it will return "user1, user2 and user3".
-     */
-    public static String formatPlayerListToString(List<String> names) {
-        String tmp = "";
-        int i = 0;
-        for (String s : names) {
-            i++;
-            if (tmp.isEmpty()) {
-                tmp = s;
-                continue;
-            }
-            if (i == names.toArray().length) {
-                tmp = tmp + " and " + s;
-                continue;
-            }
-            tmp = tmp + ", " + s;
-        }
-        return tmp;
-    }
-
-    /**
-     * @param input String Input
-     * @return True if input is a number
-     */
-    public static boolean isNumber(String input) {
-        try {
-            Integer.parseInt(input);
-        } catch (NumberFormatException ignored) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isStringEmptyOrNull(String s) {
-        return s == null || s.trim().length() == 0;
     }
 }

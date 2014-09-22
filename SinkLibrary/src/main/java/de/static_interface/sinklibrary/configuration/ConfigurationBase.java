@@ -288,22 +288,24 @@ public abstract class ConfigurationBase {
      * @return Value of path
      */
     public Object get(String path) {
+        Object value;
         if (getYamlConfiguration() == null || getFile() == null) {
             return getDefault(path);
         }
         try {
-            Object value = getYamlConfiguration().get(path);
+            value = getYamlConfiguration().get(path);
             if (!path.equals("General.EnableDebug") && !path.equals("General.EnableLog")) {
                 SinkLibrary.getInstance().getCustomLogger().debug(getFile().getName() + ": Loaded value: " + value + " for path: " + path);
             }
             if (value == null) {
                 throw new NullPointerException("Path " + path + " returned null!");
             }
-            return value;
         } catch (Exception e) {
-            Object value = getDefault(path);
-            return value;
+            value = getDefault(path);
         }
+        String stringValue = String.valueOf(value);
+        value = stringValue.replace("\\n", System.lineSeparator());
+        return value;
     }
 
     public Object get(String path, Object defaultValue) {
