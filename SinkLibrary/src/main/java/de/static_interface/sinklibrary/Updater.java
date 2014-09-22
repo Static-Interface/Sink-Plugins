@@ -195,7 +195,8 @@ public class Updater {
                 fout.write(data, 0, count);
                 final int percent = (int) ((downloaded * 100) / fileLength);
                 if (((percent % 10) == 0)) {
-                    SinkLibrary.getInstance().getCustomLogger().info(CONSOLEPREFIX + "Downloading update: " + percent + "% of " + fileLength + " bytes.");
+                    SinkLibrary.getInstance().getCustomLogger()
+                            .info(CONSOLEPREFIX + "Downloading update: " + percent + "% of " + fileLength + " bytes.");
                 }
             }
             //Just a quick check to make sure we didn't leave any files from last time...

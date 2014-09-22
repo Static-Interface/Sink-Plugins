@@ -276,7 +276,8 @@ public abstract class ConfigurationBase {
             getYamlConfiguration().set(path, value);
             save();
         } catch (Exception e) {
-            SinkLibrary.getInstance().getCustomLogger().log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
+            SinkLibrary.getInstance().getCustomLogger()
+                    .log(Level.WARNING, "Configuration:" + getFile() + ": Couldn't save " + value + " to path " + path, e);
         }
     }
 

@@ -33,9 +33,10 @@ public class Logger {
 
     boolean failed = false;
     FileWriter fileWriter = null;
+
     /**
      * Protected constructor
-     * Use {@link de.static_interface.sinklibrary.SinkLibrary#getLogger()} instead
+     * Use {@link de.static_interface.sinklibrary.SinkLibrary#getCustomLogger()} instead
      */
     protected Logger() {
     }

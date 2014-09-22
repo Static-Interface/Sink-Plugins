@@ -21,8 +21,8 @@ import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.VaultHelper;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -95,16 +95,12 @@ public class SinkUser implements Comparable<SinkUser> {
 
         OfflinePlayer player = base;
 
-        String target = playerName;
-        if (target == null || target.isEmpty()) {
+        if (player == null) {
             if (player == null) {
                 player = Bukkit.getOfflinePlayer(uuid);
             }
-            target = player.getName();
         }
-
-        EconomyResponse response = econ.bankBalance(target); // Does this work when the player is offline?...
-        return (int) response.balance;
+        return VaultHelper.getBalance(player);
     }
 
     /**
@@ -114,25 +110,14 @@ public class SinkUser implements Comparable<SinkUser> {
      * @return true if successful
      */
     public boolean addBalance(double amount) {
-        if (getName().isEmpty()) {
-            return false;
-        }
+        OfflinePlayer player = base;
 
-        double roundedAmount = (int) Math.round(amount * 100) / (double) 100;
-        validateEconomy();
-        EconomyResponse response;
-        if (roundedAmount > 0) {
-            SinkLibrary.getInstance().getCustomLogger().debug("econ.withDrawPlayer(" + getName() + ", " + -roundedAmount + ");");
-            response = econ.withdrawPlayer(getName(), -roundedAmount);
-        } else if (roundedAmount < 0) {
-            SinkLibrary.getInstance().getCustomLogger().debug("econ.depositPlayer(" + getName() + ", " + roundedAmount + ");");
-            response = econ.depositPlayer(getName(), roundedAmount);
-        } else {
-            return true;
+        if (player == null) {
+            if (player == null) {
+                player = Bukkit.getOfflinePlayer(uuid);
+            }
         }
-        boolean result = response.transactionSuccess();
-        SinkLibrary.getInstance().getCustomLogger().debug("result = " + result);
-        return response.transactionSuccess();
+        return VaultHelper.addBalance(player, amount);
     }
 
     private void validateEconomy() {

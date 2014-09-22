@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.command.Command;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
+import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
@@ -55,15 +56,15 @@ import javax.annotation.Nullable;
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
+    private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
     private boolean sinkChatAvailable;
     private boolean ircAvailable;
-    static Logger logger;
+    private Logger logger;
     private TpsTimer timer;
     private Economy econ;
     private Permission perm;
     private Chat chat;
-    private static SinkLibrary instance;
     private File dataFolder;
     private String version;
     private Settings settings;
@@ -76,6 +77,15 @@ public class SinkLibrary extends JavaPlugin {
     private boolean vaultAvailable = false;
     private HashMap<String, Command> commandAliases;
     private HashMap<String, Command> commands;
+
+    /**
+     * Get the instance of this plugin
+     * @return instance
+     */
+    @Nullable
+    public static SinkLibrary getInstance() {
+        return instance;
+    }
 
     public void onEnable() {
         // Init variables first to prevent NullPointerExceptions when other plugins try to access them
@@ -98,7 +108,7 @@ public class SinkLibrary extends JavaPlugin {
         settings = new Settings();
         settings.init();
 
-        logger.log(Level.INFO, "Loading...");
+        getCustomLogger().log(Level.INFO, "Loading...");
         // Check optional dependencies
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             getCustomLogger().warning("Vault Plugin not found. Disabling economy and some permission features.");
@@ -186,7 +196,7 @@ public class SinkLibrary extends JavaPlugin {
         }
         getCustomLogger().debug("Disabled.");
         try {
-            logger.getFileWriter().close();
+            getCustomLogger().getFileWriter().close();
         } catch (Exception ignored) {
         }
         System.gc();
@@ -255,16 +265,6 @@ public class SinkLibrary extends JavaPlugin {
      */
     public Economy getEconomy() {
         return econ;
-    }
-
-    /**
-     * Get the instance of this plugin
-     * @return instance
-     */
-    @Nullable
-    public static SinkLibrary getInstance()
-    {
-        return instance;
     }
 
     /**
@@ -599,6 +599,7 @@ public class SinkLibrary extends JavaPlugin {
     private void registerCommands() {
         registerCommand("sdebug", new SinkDebugCommand(this));
         registerCommand("sinkreload", new SinkReloadCommand(this));
+        registerCommand("sinkversion", new SinkVersionCommand(this));
     }
 
     public boolean isSinkChatAvailable() {

@@ -53,7 +53,7 @@ public class Settings extends ConfigurationBase {
         addDefault("SinkIRC.Authentification.Enabled", false, "Enable Authentification");
         addDefault("SinkIRC.Authentification.AuthBot", "NickServ", "Name of the authbot");
         addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
-                "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
+                   "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
 
         addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
 
@@ -142,7 +142,8 @@ public class Settings extends ConfigurationBase {
             }
             return value;
         } catch (Exception e) {
-            SinkLibrary.getInstance().getCustomLogger().log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
+            SinkLibrary.getInstance().getCustomLogger()
+                    .log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
             return new ArrayList<>();
         }
     }

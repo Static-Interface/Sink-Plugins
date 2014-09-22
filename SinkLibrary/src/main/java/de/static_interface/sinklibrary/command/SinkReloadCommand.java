@@ -17,10 +17,10 @@
 
 package de.static_interface.sinklibrary.command;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
