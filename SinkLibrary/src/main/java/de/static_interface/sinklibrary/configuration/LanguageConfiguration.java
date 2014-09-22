@@ -49,7 +49,9 @@ public class LanguageConfiguration extends ConfigurationBase {
      * @return Language String
      */
     public static String m(String path) {
-        return ChatColor.translateAlternateColorCodes('&', (String) getInstance().get(path));
+        String s = (String) getInstance().get(path);
+        s = s.replace("\\n", System.lineSeparator());
+        return ChatColor.translateAlternateColorCodes('&', s);
     }
 
     @Override

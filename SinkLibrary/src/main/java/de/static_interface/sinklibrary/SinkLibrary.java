@@ -74,6 +74,7 @@ public class SinkLibrary extends JavaPlugin {
     private boolean permissionsAvailable = true;
     private boolean chatAvailable = true;
     private boolean vaultAvailable = false;
+    private boolean initalized;
     private HashMap<String, Command> commandAliases;
     private HashMap<String, Command> commands;
 
@@ -83,13 +84,15 @@ public class SinkLibrary extends JavaPlugin {
      * @throws NotInitializedException if SinkLibrary did not initialize
      */
     public static SinkLibrary getInstance() {
-        if (instance == null)
+        if (instance == null) {
             throw new NotInitializedException("SinkLibrary is not initalized");
+        }
         return instance;
     }
 
     public void onEnable() {
         // Init variables first to prevent NullPointerExceptions when other plugins try to access them
+        instance = this;
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
         registeredPlugins = new ArrayList<>();
@@ -154,10 +157,10 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         // Register Listeners and Commands
-        if (instance == null) {
+        if (!initalized) {
             registerListeners();
             registerCommands();
-            instance = this;
+            initalized = true;
         }
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);

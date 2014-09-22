@@ -318,11 +318,9 @@ public abstract class ConfigurationBase {
                 i++;
             }
             value = tmp;
-            stringValue = tmp;
             set(path, value);
         }
 
-        value = stringValue.replace("\\n", System.lineSeparator());
         return value;
     }
 
