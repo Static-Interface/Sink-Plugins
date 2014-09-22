@@ -22,17 +22,15 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
+
 public class FormatUtil {
 
-    public static String formatString(String str, Player player, String userMessage) {
+    public static String formatString(String str, Player player, @Nullable String userMessage) {
         return formatString(str, SinkLibrary.getInstance().getUser(player), userMessage);
     }
 
-    public static String formatString(String str, Player player) {
-        return formatString(str, SinkLibrary.getInstance().getUser(player));
-    }
-
-    public static String formatString(String str, SinkUser user, String userMessage) {
+    public static String formatString(String str, SinkUser user, @Nullable String userMessage) {
         str = str.replaceAll("(?i)\\{(PLAYER|NAME)\\}", user.getName());
         str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
         str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(MathUtil.round(VaultHelper.getBalance(user.getPlayer()))));
@@ -54,9 +52,5 @@ public class FormatUtil {
             str = str.replaceAll("(?i)\\{MESSAGE\\}", userMessage);
         }
         return str;
-    }
-
-    public static String formatString(String str, SinkUser user) {
-        return formatString(str, user, null);
     }
 }

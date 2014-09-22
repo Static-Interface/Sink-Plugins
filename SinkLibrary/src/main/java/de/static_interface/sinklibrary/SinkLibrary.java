@@ -25,6 +25,7 @@ import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.exception.NotInitializedException;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
@@ -50,8 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
@@ -81,9 +80,11 @@ public class SinkLibrary extends JavaPlugin {
     /**
      * Get the instance of this plugin
      * @return instance
+     * @throws NotInitializedException if SinkLibrary did not initialize
      */
-    @Nullable
     public static SinkLibrary getInstance() {
+        if (instance == null)
+            throw new NotInitializedException("SinkLibrary is not initalized");
         return instance;
     }
 
