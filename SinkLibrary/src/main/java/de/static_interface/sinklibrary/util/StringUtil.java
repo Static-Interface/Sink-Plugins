@@ -81,39 +81,45 @@ public class StringUtil {
     /**
      * Format Array to String
      *
-     * @param input     Input String
-     * @param character Chat
-     * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
+     * @param input     Array to format
+     * @param character Character between input objects
+     * @return e.g. If input = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
      */
-    public static String formatArrayToString(Object[] input, String character) {
+    public static String formatArrayToString(Object[] input, @Nullable String character) {
         return formatArrayToString(input, character, 0, input.length);
     }
 
     /**
      * Format Array to String
      *
-     * @param input     Input String
-     * @param character Chat
-     * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
+     * @param input     Array to format
+     * @param character Character between input objects
+     * @param startIndex Start Index
+     * @return e.g. If input = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
      */
-    public static String formatArrayToString(Object[] input, String character, int startIndex) {
+    public static String formatArrayToString(Object[] input, @Nullable String character, int startIndex) {
         return formatArrayToString(input, character, startIndex, input.length);
     }
 
     /**
      * Format Array to String
      *
-     * @param input     Input String
-     * @param character Chat
+     * @param input     Array to format
+     * @param character Character between input objects
      * @param startIndex Start Index
-     * @return If Array = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
+     * @param endIndex End Index
+     * @return e.g. If input = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
      */
-    public static String formatArrayToString(Object[] input, String character, int startIndex, int endIndex) {
+    public static String formatArrayToString(Object[] input, @Nullable String character, int startIndex, int endIndex) {
         if (startIndex < 0) {
             throw new IllegalArgumentException("startIndex can't be less than 0 !");
         }
         if (endIndex <= startIndex) {
             throw new IllegalArgumentException("endIndex can't be less or equal startIndex!");
+        }
+
+        if (character == null) {
+            character = " ";
         }
 
         String tmp = "";
