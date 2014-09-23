@@ -39,7 +39,7 @@ public class SudoCommand extends Command {
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             return false;
         }
         String target = args[0];

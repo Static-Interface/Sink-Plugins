@@ -38,7 +38,7 @@ public class StringUtil {
 
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable Object... paramValues) {
         if (user != null) {
-            str = str.replaceAll("(?i)\\{(PLAYER|NAME)\\}", user.getName());
+            str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
             str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(user.getBalance()));
             str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
