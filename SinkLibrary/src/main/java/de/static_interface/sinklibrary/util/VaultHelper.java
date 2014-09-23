@@ -34,19 +34,20 @@ public class VaultHelper {
     }
 
     public static boolean addBalance(OfflinePlayer account, double amount) {
+        if(amount == 0) return true;
+
         Economy economy = SinkLibrary.getInstance().getEconomy();
         double roundedAmount = MathUtil.round(amount);
 
-        double balance = getBalance(account);
-        roundedAmount = balance > 0 || balance == 0 ? roundedAmount : -roundedAmount;
-
         EconomyResponse response;
-        if (roundedAmount < 0) {
-            response = economy.withdrawPlayer(account, -roundedAmount);
-        } else if (roundedAmount > 0) {
-            response = economy.depositPlayer(account, roundedAmount);
+        boolean withdraw = roundedAmount < 0;
+
+        roundedAmount = Math.abs(roundedAmount);
+
+        if (withdraw) {
+            response = economy.withdrawPlayer(account, roundedAmount);
         } else {
-            return true;
+            response = economy.depositPlayer(account, roundedAmount);
         }
         return response.transactionSuccess();
     }

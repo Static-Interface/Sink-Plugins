@@ -57,6 +57,7 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(user.getPlayer().getHealth()));
             str = str.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(user.getPlayer().getMaxHealth()));
             str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
+            str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
         }
 
         if(paramValues != null) {
