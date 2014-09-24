@@ -20,15 +20,12 @@ package de.static_interface.sinklibrary.configuration;
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.util.FileUtil;
-import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.logging.Level;
 
 @SuppressWarnings(
@@ -198,9 +195,7 @@ public abstract class ConfigurationBase {
                             }
                             //currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
                             currentPath += line.substring(whiteSpace, index);
-
                         }
-
                     }
 
                 } else {
@@ -224,10 +219,9 @@ public abstract class ConfigurationBase {
                 }
                 // Add the (modified) line to the total config String
                 newContents += line + ((!node) ? System.getProperty("line.separator") : "");
-
             }
             /*
-			 * Due to a bukkit bug we need to strip any extra new lines from the
+             * Due to a bukkit bug we need to strip any extra new lines from the
 			 * beginning of this file, else they will multiply.
 			 */
             while (newContents.startsWith(System.getProperty("line.separator"))) {
@@ -244,75 +238,6 @@ public abstract class ConfigurationBase {
     }
 
     /**
-     * Parses a path with value into a YAML-compatible string
-     * @return YAML Parsed value
-     */
-    @SuppressWarnings("ForLoopReplaceableByForEach")
-    private String parse(String path, Object value, String comment) {
-        StringBuilder builder = new StringBuilder();
-        String[] subpaths = path.split(".");
-
-        if (!StringUtil.isStringEmptyOrNull(comment)) {
-            String[] lines = comment.split("\n");
-
-            String whiteSpaces = "";
-
-            // get whitespaces from path
-            if (subpaths.length > 1) {
-                for (int i = 1; i < subpaths.length; i++) {
-                    whiteSpaces += "  ";
-                }
-            }
-
-            //check for comment prefix
-            if (!comment.startsWith("#")) {
-                comment = "# " + comment;
-            }
-
-            // comment is single line
-            if (lines.length == 1) {
-                builder.append(whiteSpaces).append(comment);
-            } else {
-                // comment is multiline, handle all lines
-                int i = 0;
-                for (String line : lines) {
-                    if (i > 0) {
-                        // add line break to every line except the first one
-                        builder.append("\n");
-                    }
-                    builder.append(whiteSpaces).append(line);
-                    i++;
-                }
-            }
-        }
-
-        // add line break for path: value
-        builder.append('\n');
-
-        //split subpaths
-        int i = 0;
-        for (String p : subpaths) {
-            //todo: search for sub paths***
-            if (i == 0) {
-                builder.append(p);
-            } else {
-                builder.append("  ").append(p);
-            }
-            if (i == subpaths.length) {
-                builder.append(": ");
-            }
-
-            builder.append("\n");
-
-            i++;
-        }
-
-        builder.append(ValueParser.parseToYAML(value));
-
-        return builder.toString();
-    }
-
-    /**
      * Set comment of path, dont forget to call {@link #save()}
      * @param path YAML Path
      * @param comment Comment
@@ -321,28 +246,6 @@ public abstract class ConfigurationBase {
         comments.put(path, comment);
     }
 
-
-    /**
-     * Checks if the file ends with space
-     *
-     * @param file File to check
-     * @return If the file ends with space
-     */
-    private boolean endsWithSpace(File file) {
-        try {
-            Scanner scanner = new Scanner(file);
-            String lastLine = "";
-
-            while (scanner.hasNextLine()) {
-                lastLine = scanner.nextLine();
-            }
-
-            return lastLine.isEmpty();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     /**
      * Create Configuration File
@@ -422,14 +325,15 @@ public abstract class ConfigurationBase {
         String stringValue = String.valueOf(value);
 
         // fix old configs
-        if(stringValue.contains("%s")) {
+        if (stringValue.contains("%s")) {
             int i = 0;
             String tmp = "";
             for (String s : stringValue.split(" ")) {
-                if(tmp.equals(""))
-                    tmp = s.replaceFirst("%s", "{" + i +"}");
-                else
-                    tmp += " " + s.replaceFirst("%s", "{" + i +"}");
+                if (tmp.equals("")) {
+                    tmp = s.replaceFirst("%s", "{" + i + "}");
+                } else {
+                    tmp += " " + s.replaceFirst("%s", "{" + i + "}");
+                }
                 i++;
             }
             value = tmp;
@@ -533,7 +437,9 @@ public abstract class ConfigurationBase {
      * Delete Configuration
      */
     public void delete() {
-        getFile().delete();
+        if (getFile().exists() && !getFile().delete()) {
+            throw new RuntimeException("Couldn't delete file: " + getFile());
+        }
     }
 
     /**
