@@ -28,14 +28,36 @@ import javax.annotation.Nullable;
 
 public class StringUtil {
 
+    /**
+     * Format a string
+     * @param str Input String
+     * @param userMessage Message from user (e.g. /say <message> -> <message> would be userMessage)
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @return Formatted String
+     */
     public static String format(String str, Player player, @Nullable String userMessage, @Nullable Object... paramValues) {
         return format(str, SinkLibrary.getInstance().getUser(player), userMessage, paramValues);
     }
 
-    public static String format(String str, Object... paramValues) {
+    /**
+     * Format a string
+     * @param str Input String
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable Object... paramValues) {
         return format(str, (SinkUser) null, null, paramValues);
     }
 
+    /**
+     * Format a string
+     * @param str Input String
+     * @param user If there is any user who's calling this, you can use placeholders like
+     *             {NAME} (some of the placeholders works with offline users too)
+     * @param userMessage Message from user (e.g. /say <message> -> userMessage should be  <message>)
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @return Formatted String
+     */
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
@@ -45,7 +67,7 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{PREFIX\\}", user.getPrefix());
         }
 
-        if(user.getPlayer() != null) {
+        if (user.getPlayer() != null) {
             str = str.replaceAll("(?i)\\{X\\}", String.valueOf(user.getPlayer().getLocation().getX()));
             str = str.replaceAll("(?i)\\{Y\\}", String.valueOf(user.getPlayer().getLocation().getY()));
             str = str.replaceAll("(?i)\\{Z\\}", String.valueOf(user.getPlayer().getLocation().getZ()));
@@ -57,10 +79,11 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(user.getPlayer().getHealth()));
             str = str.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(user.getPlayer().getMaxHealth()));
             str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
-            str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
         }
 
-        if(paramValues != null) {
+        str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
+
+        if (paramValues != null) {
             int i = 0;
             for (Object s : paramValues) {
                 str = str.replaceAll("\\{" + i + "\\}", String.valueOf(s));
@@ -79,7 +102,7 @@ public class StringUtil {
     }
 
     /**
-     * Format Array to String
+     * Format Array to String, useful if you want to format args to a message
      *
      * @param input     Array to format
      * @param character Character between input objects
@@ -90,7 +113,7 @@ public class StringUtil {
     }
 
     /**
-     * Format Array to String
+     * Format Array to String, useful if you want to format args to a message
      *
      * @param input     Array to format
      * @param character Character between input objects
@@ -102,7 +125,7 @@ public class StringUtil {
     }
 
     /**
-     * Format Array to String
+     * Format Array to String, useful if you want to format args to a message
      *
      * @param input     Array to format
      * @param character Character between input objects

@@ -385,7 +385,7 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Deprecated
     public SinkUser getUser(String playerName) {
-        UUID uuid = BukkitUtil.getUUIDByName(playerName);
+        UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
         return getUser(uuid);
     }
 
@@ -464,11 +464,13 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * Unload an User
+     * INTERNAL METHOD
      * Do not call this, its handled internally
      *
      * @param uuid UUID of the user who needs to be loaded
      */
     public void loadUser(UUID uuid) {
+        // If user is already loaded or offline, return
         if (onlineUsers.get(uuid) != null || Bukkit.getPlayer(uuid) == null) {
             return;
         }
@@ -482,7 +484,10 @@ public class SinkLibrary extends JavaPlugin {
      * @param uuid UUID of the User who needs to be unloaded
      */
     public void unloadUser(UUID uuid) {
-        SinkUser user = getUser(uuid);
+        SinkUser user = onlineUsers.get(uuid);
+        if (user == null) {
+            return;
+        }
         user.getPlayerConfiguration().save();
         onlineUsers.remove(uuid);
     }

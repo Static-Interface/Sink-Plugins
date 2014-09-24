@@ -84,7 +84,12 @@ public class BukkitUtil {
         }
     }
 
+    @Deprecated
     public static UUID getUUIDByName(String name) {
+        return getUniqueIdByName(name);
+    }
+
+    public static UUID getUniqueIdByName(String name) {
         return Bukkit.getOfflinePlayer(name).getUniqueId();
     }
 
