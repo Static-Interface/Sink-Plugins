@@ -24,10 +24,8 @@ import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -112,19 +110,137 @@ public abstract class ConfigurationBase {
         }
     }
 
+    /**
+     * @author dumptruckman
+     */
     private void writeToFile(File file) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(yamlFile, true));
+        getYamlConfiguration().save(getFile());
+        // if there's comments to add and it saved fine, we need to add comments
+        if (!comments.isEmpty()) {
+            // String array of each line in the config file
+            String[] yamlContents = FileUtil.convertFileToString(file).split("[" + System.getProperty("line.separator") + "]");
 
-        if (!endsWithSpace(file)) {
-            writer.newLine();
-        }
+            // This will hold the newly formatted line
+            String newContents = "";
+            // This holds the current path the lines are at in the config
+            String currentPath = "";
+            // This tells if the specified path has already been commented
+            boolean commentedPath = false;
+            // This flags if the line is a node or unknown text.
+            boolean node;
+            // The depth of the path. (number of words separated by periods - 1)
+            int depth = 0;
 
-        for (String path : getDefaults().keySet()) {
-            Object value = get(path);
-            writer.write(parse(path, value, comments.get(path)));
-            writer.newLine();
+            // Loop through the config lines
+            for (String line : yamlContents) {
+                // If the line is a node (and not something like a list value)
+                if (line.contains(": ") || (line.length() > 1 && line.charAt(line.length() - 1) == ':')) {
+
+                    // This is a new node so we need to mark it for commenting (if there are comments)
+                    commentedPath = false;
+                    // This is a node so flag it as one
+                    node = true;
+
+                    // Grab the index of the end of the node name
+                    int index = 0;
+                    index = line.indexOf(": ");
+                    if (index < 0) {
+                        index = line.length() - 1;
+                    }
+                    // If currentPath is empty, store the node name as the currentPath. (this is only on the first iteration, i think)
+                    if (currentPath.isEmpty()) {
+                        currentPath = line.substring(0, index);
+                    } else {
+                        // Calculate the whitespace preceding the node name
+                        int whiteSpace = 0;
+                        for (int n = 0; n < line.length(); n++) {
+                            if (line.charAt(n) == ' ') {
+                                whiteSpace++;
+                            } else {
+                                break;
+                            }
+                        }
+                        // Find out if the current depth (whitespace * 2) is greater/lesser/equal to the previous depth
+                        if (whiteSpace / 2 > depth) {
+                            // Path is deeper.  Add a . and the node name
+                            currentPath += "." + line.substring(whiteSpace, index);
+                            depth++;
+                        } else if (whiteSpace / 2 < depth) {
+                            // Path is shallower, calculate current depth from whitespace (whitespace / 2) and subtract that many levels from the currentPath
+                            int newDepth = whiteSpace / 2;
+                            for (int i = 0; i < depth - newDepth; i++) {
+                                currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
+                            }
+                            // Grab the index of the final period
+                            int lastIndex = currentPath.lastIndexOf(".");
+                            if (lastIndex < 0) {
+                                // if there isn't a final period, set the current path to nothing because we're at root
+                                currentPath = "";
+                            } else {
+                                // If there is a final period, replace everything after it with nothing
+                                currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
+                                currentPath += ".";
+                            }
+                            // Add the new node name to the path
+                            currentPath += line.substring(whiteSpace, index);
+                            // Reset the depth
+                            depth = newDepth;
+                        } else {
+                            // Path is same depth, replace the last path node name to the current node name
+                            int lastIndex = currentPath.lastIndexOf(".");
+                            if (lastIndex < 0) {
+                                // if there isn't a final period, set the current path to nothing because we're at root
+                                currentPath = "";
+                            } else {
+                                // If there is a final period, replace everything after it with nothing
+                                currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
+                                currentPath += ".";
+                            }
+                            //currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
+                            currentPath += line.substring(whiteSpace, index);
+
+                        }
+
+                    }
+
+                } else {
+                    node = false;
+                }
+
+                if (node) {
+                    String comment = null;
+                    if (!commentedPath) {
+                        // If there's a comment for the current path, retrieve it and flag that path as already commented
+                        comment = comments.get(currentPath);
+                    }
+                    if (comment != null) {
+                        // Add the comment to the beginning of the current line
+                        line = comment + System.getProperty("line.separator") + line + System.getProperty("line.separator");
+                        commentedPath = true;
+                    } else {
+                        // Add a new line as it is a node, but has no comment
+                        line += System.getProperty("line.separator");
+                    }
+                }
+                // Add the (modified) line to the total config String
+                newContents += line + ((!node) ? System.getProperty("line.separator") : "");
+
+            }
+            /*
+			 * Due to a bukkit bug we need to strip any extra new lines from the
+			 * beginning of this file, else they will multiply.
+			 */
+            while (newContents.startsWith(System.getProperty("line.separator"))) {
+                newContents = newContents.replaceFirst(System.getProperty("line.separator"), "");
+            }
+
+            try {
+                // Write the string to the config file
+                FileUtil.stringToFile(newContents, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        writer.close();
     }
 
     /**
@@ -254,8 +370,7 @@ public abstract class ConfigurationBase {
         }
 
         try {
-            getYamlConfiguration().save(getFile());
-            //writeToFile(getFile()); // Todo!
+            writeToFile(getFile()); // Todo!
         } catch (IOException e) {
             if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
                 SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
