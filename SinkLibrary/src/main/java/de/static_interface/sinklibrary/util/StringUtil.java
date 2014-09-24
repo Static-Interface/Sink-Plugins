@@ -67,7 +67,7 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{PREFIX\\}", user.getPrefix());
         }
 
-        if (user.getPlayer() != null) {
+        if (user != null && user.getPlayer() != null) {
             str = str.replaceAll("(?i)\\{X\\}", String.valueOf(user.getPlayer().getLocation().getX()));
             str = str.replaceAll("(?i)\\{Y\\}", String.valueOf(user.getPlayer().getLocation().getY()));
             str = str.replaceAll("(?i)\\{Z\\}", String.valueOf(user.getPlayer().getLocation().getZ()));
