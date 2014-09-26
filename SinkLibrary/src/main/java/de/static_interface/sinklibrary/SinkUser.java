@@ -31,11 +31,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-@SuppressWarnings("NewExceptionWithoutArguments")
 public class SinkUser implements Comparable<SinkUser> {
 
-    private static Player base = null;
-    private static Economy econ = null;
+    private Player base = null;
+    private Economy econ = null;
     private String playerName = null;
     private CommandSender sender = null;
     private PlayerConfiguration config = null;

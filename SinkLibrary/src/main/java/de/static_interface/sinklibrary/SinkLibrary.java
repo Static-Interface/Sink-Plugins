@@ -68,7 +68,7 @@ public class SinkLibrary extends JavaPlugin {
     private String version;
     private Settings settings;
     private List<JavaPlugin> registeredPlugins;
-    private volatile HashMap<UUID, SinkUser> onlineUsers;
+    private volatile HashMap<Player, SinkUser> onlineUsers;
     private PluginDescriptionFile description;
     private boolean economyAvailable = true;
     private boolean permissionsAvailable = true;
@@ -385,12 +385,20 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Deprecated
     public SinkUser getUser(String playerName) {
+        Player p = Bukkit.getPlayer(playerName);
+        if (p != null && p.isOnline()) {
+            return getUser(p);
+        }
         UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
         return getUser(uuid);
     }
 
     public SinkUser getUser(UUID uuid) {
-        SinkUser user = onlineUsers.get(uuid);
+        Player p = Bukkit.getPlayer(uuid);
+        SinkUser user = null;
+        if (p != null) {
+            user = onlineUsers.get(p);
+        }
         if (user == null) {
             user = new SinkUser(uuid);
         }
@@ -467,14 +475,14 @@ public class SinkLibrary extends JavaPlugin {
      * INTERNAL METHOD
      * Do not call this, its handled internally
      *
-     * @param uuid UUID of the user who needs to be loaded
+     * @param p Player instance of the user who needs to be loaded
      */
-    public void loadUser(UUID uuid) {
+    public void loadUser(Player p) {
         // If user is already loaded or offline, return
-        if (onlineUsers.get(uuid) != null || Bukkit.getPlayer(uuid) == null) {
+        if (p == null || !p.isOnline() || onlineUsers.get(p) != null) {
             return;
         }
-        onlineUsers.put(uuid, new SinkUser(uuid));
+        onlineUsers.put(p, new SinkUser(p));
     }
 
     /**
@@ -484,12 +492,16 @@ public class SinkLibrary extends JavaPlugin {
      * @param uuid UUID of the User who needs to be unloaded
      */
     public void unloadUser(UUID uuid) {
-        SinkUser user = onlineUsers.get(uuid);
+        Player p = Bukkit.getPlayer(uuid);
+        SinkUser user = null;
+        if (p != null) {
+            user = onlineUsers.get(p);
+        }
         if (user == null) {
             return;
         }
         user.getPlayerConfiguration().save();
-        onlineUsers.remove(uuid);
+        onlineUsers.remove(p);
     }
 
     /**
@@ -505,22 +517,15 @@ public class SinkLibrary extends JavaPlugin {
      * Get all online players
      *
      * @return Online players as Users
+     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and {@link #getUser(Player)} intead
      */
+    @Deprecated
     public Collection<SinkUser> getOnlineUsers() {
         return Collections.unmodifiableCollection(onlineUsers.values());
     }
 
     public Logger getCustomLogger() {
         return logger;
-    }
-
-    public SinkUser getUserByUniqueId(UUID uuid) {
-        for (SinkUser user : getOnlineUsers()) {
-            if (user.getUniqueId().equals(uuid)) {
-                return user;
-            }
-        }
-        return null;
     }
 
     public void registerCommand(String name, Command command) {
