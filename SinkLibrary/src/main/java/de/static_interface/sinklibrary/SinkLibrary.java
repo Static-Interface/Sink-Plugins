@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
@@ -68,7 +69,7 @@ public class SinkLibrary extends JavaPlugin {
     private String version;
     private Settings settings;
     private List<JavaPlugin> registeredPlugins;
-    private volatile HashMap<Player, SinkUser> onlineUsers;
+    private ConcurrentHashMap<Player, SinkUser> onlineUsers;
     private PluginDescriptionFile description;
     private boolean economyAvailable = true;
     private boolean permissionsAvailable = true;
@@ -96,7 +97,7 @@ public class SinkLibrary extends JavaPlugin {
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
         registeredPlugins = new ArrayList<>();
-        onlineUsers = new HashMap<>();
+        onlineUsers = new ConcurrentHashMap<>();
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
