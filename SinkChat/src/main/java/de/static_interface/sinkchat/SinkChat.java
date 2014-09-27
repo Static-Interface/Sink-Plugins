@@ -26,8 +26,7 @@ import de.static_interface.sinkchat.command.NationChatCommand;
 import de.static_interface.sinkchat.command.NickCommand;
 import de.static_interface.sinkchat.command.SpyCommands;
 import de.static_interface.sinkchat.command.TownChatCommand;
-import de.static_interface.sinkchat.listener.ChatListenerHighest;
-import de.static_interface.sinkchat.listener.ChatListenerLowest;
+import de.static_interface.sinkchat.listener.ChatListener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,17 +79,13 @@ public class SinkChat extends JavaPlugin {
             String callChar = (String) channelconfigs.get(pathPrefix + ChannelValues.CALLCHAR);
             boolean enabled = (boolean) channelconfigs.get(pathPrefix + ChannelValues.ENABLED);
             String permission = (String) channelconfigs.get(pathPrefix + ChannelValues.PERMISSION);
-            String prefix = (String) channelconfigs.get(pathPrefix + ChannelValues.PREFIX);
             boolean sendToIRC = (boolean) channelconfigs.get(pathPrefix + ChannelValues.SEND_TO_IRC);
             int range = (int) channelconfigs.get(pathPrefix + ChannelValues.RANGE);
+            String format = (String) channelconfigs.get(pathPrefix + ChannelValues.FORMAT);
 
-            channel = new Channel(key, callChar, enabled, permission, prefix, sendToIRC, range);
+            channel = new Channel(key, callChar, enabled, permission, sendToIRC, range, format);
             ChannelHandler.registerChannel(channel);
         }
-    }
-
-    public void onDisable() {
-        System.gc();
     }
 
     private boolean checkDependencies() {
@@ -112,8 +107,7 @@ public class SinkChat extends JavaPlugin {
     }
 
     private void registerEvents() {
-        Bukkit.getPluginManager().registerEvents(new ChatListenerLowest(), this);
-        Bukkit.getPluginManager().registerEvents(new ChatListenerHighest(), this);
+        Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
     }
 
     private void registerCommands() {

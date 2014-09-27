@@ -22,34 +22,38 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyBridge;
 import de.static_interface.sinkchat.Util;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 public class Channel {
 
-    String name;
-    String callCode;
-    boolean enabled;
-    String permission;
-    String prefix;
-    boolean sendToIRC;
-    int range;
+    private String name;
+    private String callCode;
+    private boolean enabled;
+    private String permission;
+    private boolean sendToIRC;
+    private int range;
+    private String format;
 
-    public Channel(String name, String callCode, boolean enabled, String permission, String prefix, boolean sendToIRC, int range) {
+    public Channel(String name, String callCode, boolean enabled, String permission,
+                   boolean sendToIRC, int range, @Nullable String format) {
         this.name = name;
         this.callCode = callCode;
         this.enabled = enabled;
         this.permission = permission;
-        this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
         this.sendToIRC = sendToIRC;
         this.range = range;
+        this.format = format;
     }
 
     public String getName() {
@@ -80,10 +84,6 @@ public class Channel {
         return permission;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
     public boolean sendToIRC() {
         return sendToIRC;
     }
@@ -92,10 +92,14 @@ public class Channel {
         return range;
     }
 
+    public String getFormat() {
+        return format;
+    }
+
     public boolean enabledForPlayer(UUID uuid) {
         String enabledPath = "Channels." + getName() + ".Enabled";
         SinkUser user = SinkLibrary.getInstance().getUser(uuid);
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
         try {
             return (boolean) config.get(enabledPath, true);
         } catch (NullPointerException ignored) {
@@ -106,7 +110,7 @@ public class Channel {
     public void setEnabledForPlayer(UUID uuid, boolean setEnabled) {
         String enabledPath = "Channels." + getName() + ".Enabled";
         SinkUser user = SinkLibrary.getInstance().getUser(uuid);
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
         config.set(enabledPath, setEnabled);
     }
 
@@ -120,29 +124,27 @@ public class Channel {
             return false;
         }
 
-        String formattedMessage = message.substring(callCode.length());
-
-        String townyPrefix = "";
+        HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.isTownyAvailable()) {
-            townyPrefix = TownyBridge.getTownyPrefix(user.getPlayer());
+            customParams.put("NationTag", TownyBridge.getNationTag(user.getPlayer()));
+            customParams.put("Town(y)?Tag", TownyBridge.getTownTag(user.getPlayer()));
+            customParams.put("Town(y)?", TownyBridge.getTown(user.getPlayer()));
+            customParams.put("Nation", TownyBridge.getNation(user.getPlayer()));
         }
 
-        if (SinkLibrary.getInstance().isPermissionsAvailable()) {
-            formattedMessage =
-                    getPrefix() + townyPrefix + ChatColor.GRAY + '[' + user.getPrimaryGroup() + ChatColor.GRAY + "] " + user.getDisplayName()
-                    + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
-        } else {
-            formattedMessage = getPrefix() + townyPrefix + user.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.RESET + formattedMessage;
-        }
-
-        if (range <= 0) {
-            for (Player target : BukkitUtil.getOnlinePlayers()) {
-                if ((enabledForPlayer(target.getUniqueId())) && target.hasPermission(getPermission())) {
-                    target.sendMessage(formattedMessage);
-                }
-            }
-        } else {
+        user.sendDebugMessage("Format: " + getFormat());
+        String formattedMessage = StringUtil.format(getFormat(), user,
+                                                    message.substring(callCode.length()), customParams, null);
+        user.sendDebugMessage("Formatted Message: " + formattedMessage);
+        if (getRange() > 0) {
             Util.sendMessage(user, formattedMessage, getRange());
+        } else {
+            for (Player target : BukkitUtil.getOnlinePlayers()) {
+                if ((!enabledForPlayer(target.getUniqueId())) || !target.hasPermission(getPermission())) {
+                    continue;
+                }
+                target.sendMessage(formattedMessage);
+            }
         }
 
         Bukkit.getConsoleSender().sendMessage(formattedMessage);

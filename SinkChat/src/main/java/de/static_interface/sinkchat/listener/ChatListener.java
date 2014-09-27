@@ -26,41 +26,52 @@ import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.HashMap;
 import java.util.logging.Level;
 
-public class ChatListenerHighest implements Listener {
+public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         try {
-            onChat(event);
+            handleChat(event);
         } catch (RuntimeException e) {
             SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred:", e);
         }
     }
 
-    private void onChat(AsyncPlayerChatEvent event) {
-        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
-
+    private void handleChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
-        Channel target = null;
+        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        String message = event.getMessage();
+
+        user.sendDebugMessage("message: " + message);
+
+        if (user.hasPermission("sinkchat.color")) {
+            message = ChatColor.translateAlternateColorCodes('&', message);
+        }
+
+        Channel channel;
         for (String callChar : ChannelHandler.getRegisteredChannels().keySet()) {
-            target = ChannelHandler.getRegisteredChannel(callChar);
+            channel = ChannelHandler.getRegisteredChannel(callChar);
             if (event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar)) {
-                if (!target.enabledForPlayer(event.getPlayer().getUniqueId())) {
-                    break;
+                if (!channel.enabledForPlayer(event.getPlayer().getUniqueId())) {
+                    continue;
                 }
-                if (target.sendMessage(user, event.getMessage())) {
+                user.sendDebugMessage("Channel: " + channel.getName());
+                if (channel.sendMessage(user, message)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -68,25 +79,42 @@ public class ChatListenerHighest implements Listener {
             }
         }
 
-        String message = event.getMessage();
         int range = SinkLibrary.getInstance().getSettings().getLocalChatRange();
 
-        String townyPrefix = "";
+        HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.isTownyAvailable()) {
-            townyPrefix = TownyBridge.getTownyPrefix(event.getPlayer());
+            customParams.put("NATIONTAG", TownyBridge.getNationTag(event.getPlayer()));
+            customParams.put("TOWN(Y)?TAG", TownyBridge.getTownTag(event.getPlayer()));
+            customParams.put("TOWN(Y)?", TownyBridge.getTown(event.getPlayer()));
+            customParams.put("NATION", TownyBridge.getNation(event.getPlayer()));
         }
 
-        String formattedMessage = String.format(event.getFormat(), user.getDisplayName(), message);
+        customParams.put("{CHANNEL}", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
 
-        formattedMessage = townyPrefix + formattedMessage;
+        String format = SinkLibrary.getInstance().getSettings().getDefaultChatFormat();
+
+        user.sendDebugMessage("Format: " + format);
+        String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1%\\s");
+        eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2%\\s");
+        user.sendDebugMessage("Event Format: " + format);
+        event.setFormat(eventFormat);
+        String formattedMessage = StringUtil.format(format, user, message, customParams);
 
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
-            formattedMessage = ChatColor.GRAY + m("SinkChat.Prefix.Local") + ChatColor.RESET + ' ' + formattedMessage;
+            formattedMessage = m("SinkChat.Prefix.Local") + ' ' + ChatColor.RESET + formattedMessage;
         }
 
         Util.sendMessage(user, formattedMessage, range);
 
         Bukkit.getConsoleSender().sendMessage(Util.getSpyPrefix() + formattedMessage);
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        if (user.hasPermission("sinkchat.color")) {
+            event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
+        }
     }
 }

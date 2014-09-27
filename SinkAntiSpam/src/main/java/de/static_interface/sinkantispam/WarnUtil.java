@@ -45,8 +45,8 @@ public class WarnUtil {
         tmp.add(warning);
         warnings.put(player.getUniqueId(), tmp);
 
-        String message = prefix + String.format(m("SinkAntiSpam.Warn"), SinkLibrary.getInstance().getUser(player).getDisplayName(),
-                                                warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
+        String message = prefix + m("SinkAntiSpam.Warn", SinkLibrary.getInstance().getUser(player).getDisplayName(),
+                                    warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
         SinkUser user = SinkLibrary.getInstance().getUser(player);
         String perm;
         if (warning.isAutoWarning()) {
@@ -63,7 +63,8 @@ public class WarnUtil {
         if (tmp.size() >= getMaxWarnings()) {
             UUID uuid = player.getUniqueId();
             player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-            tempBanPlayer(player.getUniqueId(), System.currentTimeMillis() + 5 * 60 * 1000); //Todo: make time configurable
+            tempBanPlayer(player.getUniqueId(),
+                          System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000);
             warnings.put(uuid, new ArrayList<Warning>()); // Reset warnings
         }
     }

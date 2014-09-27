@@ -127,7 +127,8 @@ public class SinkAntiSpamListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (WarnUtil.isBanned(event.getUniqueId())) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, m("SinkAntiSpam.AutoBan"));
+            long timeLeft = System.currentTimeMillis() - WarnUtil.bannedPlayers.get(event.getUniqueId());
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, m("SinkAntiSpam.AutoBan", timeLeft / 1000 * 60));
         }
     }
 

@@ -22,8 +22,8 @@ import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.exception.NotInitializedException;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
@@ -195,8 +195,8 @@ public class SinkLibrary extends JavaPlugin {
         getCustomLogger().info("Saving players...");
         for (Player p : BukkitUtil.getOnlinePlayers()) {
             SinkUser user = getUser(p);
-            if (user.getPlayerConfiguration().exists()) {
-                user.getPlayerConfiguration().save();
+            if (user.getConfiguration().exists()) {
+                user.getConfiguration().save();
             }
         }
         getCustomLogger().debug("Disabled.");
@@ -204,7 +204,6 @@ public class SinkLibrary extends JavaPlugin {
             getCustomLogger().getFileWriter().close();
         } catch (Exception ignored) {
         }
-        System.gc();
     }
 
     public HashMap<String, Command> getCommands() {
@@ -439,7 +438,7 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         SinkUser user = getUser(player);
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
             return;
@@ -501,7 +500,7 @@ public class SinkLibrary extends JavaPlugin {
         if (user == null) {
             return;
         }
-        user.getPlayerConfiguration().save();
+        user.getConfiguration().save();
         onlineUsers.remove(p);
     }
 

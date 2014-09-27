@@ -44,17 +44,6 @@ public class Settings extends ConfigurationBase {
         addDefault("Updater.Enabled", true, "Enable Updater");
         addDefault("Updater.UpdateType", "default");
 
-        addDefault("SinkIRC.Nickname", "SinkIRCBot", "IRC Bot Nickname");
-        addDefault("SinkIRC.Server.Address", "irc.example.com");
-        addDefault("SinkIRC.Server.PasswordEnabled", false);
-        addDefault("SinkIRC.Server.Password", "", "Server password, leave empty if there no password");
-        addDefault("SinkIRC.Server.Port", 6667, "IRC Server port");
-        addDefault("SinkIRC.Channel", "#ServerName", "IRC Channel");
-        addDefault("SinkIRC.Authentification.Enabled", false, "Enable Authentification");
-        addDefault("SinkIRC.Authentification.AuthBot", "NickServ", "Name of the authbot");
-        addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
-                   "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
-
         addDefault("SinkAntiSpam.BlacklistedWordsCheck.Enabled", true);
 
         List<String> defaultBlackList = new ArrayList<>();
@@ -71,7 +60,7 @@ public class Settings extends ConfigurationBase {
         addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Domains", defaultDomainWiteList);
 
         addDefault("SinkAntiSpam.IPCheck.Enabled", true);
-
+        addDefault("SinkAntiSpam.AutoBanTime", 5);
         List<String> defaultExcludedCommands = new ArrayList<>();
         defaultExcludedCommands.add("msg");
         defaultExcludedCommands.add("tell");
@@ -81,31 +70,29 @@ public class Settings extends ConfigurationBase {
         addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
 
         addDefault("SinkChat.LocalChatRange", 50);
-        addDefault("SinkChat.Channels.Help.Prefix", "?");
-        addDefault("SinkChat.Channels.Shout.Prefix", "!");
-        addDefault("SinkChat.Channels.Trade.Prefix", "$");
-        addDefault("SinkChat.TownyEnabled", false);
+        addDefault("SinkChat.DefaultChatFormat", "&7[{CHANNEL}] [{RANK}] [{DISPLAYNAME}]&7:&f {MESSAGE}");
 
-        addDefault("SinkAFK.Broadcast.AFK", true);
-        addDefault("SinkAFK.Broadcast.Back", true);
-        addDefault("SinkAFK.Broadcast.IRC.AFK", false);
-        addDefault("SinkAFK.Broadcast.IRC.Back", false);
+        addDefault("SinkIRC.Username", "SinkIRCBot", "IRC Bot Nickname");
+        addDefault("SinkIRC.Server.Address", "irc.example.com");
+        addDefault("SinkIRC.Server.PasswordEnabled", false);
+        addDefault("SinkIRC.Server.Password", "", "Server password, leave empty if there no password");
+        addDefault("SinkIRC.Server.Port", 6667, "IRC Server port");
+        addDefault("SinkIRC.Channel", "#ServerName", "IRC Channel");
+        addDefault("SinkIRC.Authentification.Enabled", false, "Enable Authentification");
+        addDefault("SinkIRC.Authentification.AuthBot", "NickServ", "Name of the authbot");
+        addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
+                   "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
+
     }
 
     public Updater.UpdateType getUpdateType() {
         switch (((String) get("Updater.UpdateType")).toLowerCase()) {
             case "default":
-                return Updater.UpdateType.DEFAULT;
             case "download":
                 return Updater.UpdateType.DEFAULT;
             case "no_download":
-                return Updater.UpdateType.NO_DOWNLOAD;
-            case "notify":
-                return Updater.UpdateType.NO_DOWNLOAD;
             case "no_version_check":
-                return Updater.UpdateType.NO_VERSION_CHECK;
             case "off":
-                return Updater.UpdateType.NO_VERSION_CHECK;
             case "disabled":
                 return Updater.UpdateType.NO_VERSION_CHECK;
             default:
@@ -118,8 +105,8 @@ public class Settings extends ConfigurationBase {
     }
 
     public boolean isDisplayNamesEnabled() {
-        //return (boolean) get("General.DisplayNamesEnabled"); //TODO: Fix this
-        return false;
+        return (boolean) get("General.DisplayNamesEnabled"); //TODO: Fix this
+        //return false;
     }
 
     public List<String> getBlackListedWords() {
@@ -208,7 +195,11 @@ public class Settings extends ConfigurationBase {
         return (boolean) get("General.EnableDebug");
     }
 
-    public boolean isTownyEnabled() {
-        return (boolean) get("SinkChat.TownyEnabled");
+    public String getDefaultChatFormat() {
+        return (String) get("SinkChat.DefaultChatFormat");
+    }
+
+    public int getWarnAutoBanTime() {
+        return (int) get("SinkAntiSpam.AutoBanTime");
     }
 }

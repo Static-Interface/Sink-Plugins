@@ -18,12 +18,9 @@
 package de.static_interface.sinklibrary.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.configuration.ConfigurationBase;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class SinkReloadCommand extends Command {
@@ -43,26 +40,11 @@ public class SinkReloadCommand extends Command {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        String name;
-        LanguageConfiguration.getInstance().reload();
-        name = LanguageConfiguration.getInstance().getFile().getName();
+        sender.sendMessage(PREFIX + "Reloading...");
 
-        sender.sendMessage(PREFIX + "Reloaded " + name);
-
-        SinkLibrary.getInstance().getSettings().reload();
-        name = SinkLibrary.getInstance().getSettings().getFile().getName();
-        sender.sendMessage(PREFIX + "Reloaded " + name);
-
-        sender.sendMessage(PREFIX + "Reloading PlayerConfigurations...");
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(p);
-            user.getPlayerConfiguration().reload();
-        }
-
-        sender.sendMessage(PREFIX + "Reloading Plugins...");
-        for (Plugin p : SinkLibrary.getInstance().getRegisteredPlugins()) {
-            p.onDisable();
-            p.onEnable();
+        // Reload all configs
+        for (ConfigurationBase base : ConfigurationBase.getConfigs().values()) {
+            base.reload();
         }
 
         sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");

@@ -35,25 +35,25 @@ public class ChannelConfiguration extends ConfigurationBase {
         set("Channels.Help." + ChannelValues.CALLCHAR, "?");
         set("Channels.Help." + ChannelValues.ENABLED, true);
         set("Channels.Help." + ChannelValues.PERMISSION, "sinkchat.channel.help");
-        set("Channels.Help." + ChannelValues.PREFIX, "&7[&2Help&7]&f ");
         set("Channels.Help." + ChannelValues.SEND_TO_IRC, true);
         set("Channels.Help." + ChannelValues.RANGE, 0);
+        set("Channels.Help." + ChannelValues.FORMAT, "&7[&aHelp&7] &7[{RANK}] {DISPLAYNAME}&7:&f {MESSAGE}");
 
         set("Channels.Shout." + ChannelValues.DEFAULT, true);
         set("Channels.Shout." + ChannelValues.CALLCHAR, "!");
         set("Channels.Shout." + ChannelValues.ENABLED, true);
         set("Channels.Shout." + ChannelValues.PERMISSION, "sinkchat.channel.shout");
-        set("Channels.Shout." + ChannelValues.PREFIX, "&7[Shout]&f ");
         set("Channels.Shout." + ChannelValues.SEND_TO_IRC, true);
         set("Channels.Shout." + ChannelValues.RANGE, 0);
+        set("Channels.Shout." + ChannelValues.FORMAT, "&7[Shout] [{RANK}] {DISPLAYNAME}&7:&f {MESSAGE}");
 
         set("Channels.Trade." + ChannelValues.DEFAULT, true);
         set("Channels.Trade." + ChannelValues.CALLCHAR, "$");
         set("Channels.Trade." + ChannelValues.ENABLED, true);
         set("Channels.Trade." + ChannelValues.PERMISSION, "sinkchat.channel.trade");
-        set("Channels.Trade." + ChannelValues.PREFIX, "&7[&6Trade&7]&f ");
         set("Channels.Trade." + ChannelValues.SEND_TO_IRC, true);
         set("Channels.Trade." + ChannelValues.RANGE, 0);
+        set("Channels.Trade." + ChannelValues.FORMAT, "&7[&6Trade&7] &7[{RANK}] {DISPLAYNAME}&7:&f {MESSAGE}");
     }
 
     @Override

@@ -40,7 +40,7 @@ import de.static_interface.sinkcommands.listener.ScoreboardListener;
 import de.static_interface.sinkcommands.listener.VotekickListener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -80,7 +80,7 @@ public class SinkCommands extends JavaPlugin {
     @SuppressWarnings("deprecation")
     public static void refreshScoreboard(Player player) {
         SinkUser user = SinkLibrary.getInstance().getUser(player);
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
             return;
@@ -163,11 +163,10 @@ public class SinkCommands extends JavaPlugin {
 
         for (Player p : BukkitUtil.getOnlinePlayers()) {
             SinkUser user = SinkLibrary.getInstance().getUser(p);
-            PlayerConfiguration config = user.getPlayerConfiguration();
+            UserConfiguration config = user.getConfiguration();
             config.save();
         }
         SinkLibrary.getInstance().getCustomLogger().info("Done, disabled.");
-        System.gc();
     }
 
     private void registerEvents() {

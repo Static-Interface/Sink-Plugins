@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -37,7 +37,7 @@ public class SinkUser implements Comparable<SinkUser> {
     private Economy econ = null;
     private String playerName = null;
     private CommandSender sender = null;
-    private PlayerConfiguration config = null;
+    private UserConfiguration config = null;
     private UUID uuid = null;
 
     /**
@@ -135,12 +135,12 @@ public class SinkUser implements Comparable<SinkUser> {
     /**
      * @return The PlayerConfiguration of the Player
      */
-    public PlayerConfiguration getPlayerConfiguration() {
+    public UserConfiguration getConfiguration() {
         if (!isPlayer()) {
             throw new IllegalStateException("User is not a player");
         }
         if (config == null) {
-            config = new PlayerConfiguration(this);
+            config = new UserConfiguration(this);
         }
         return config;
     }
@@ -279,14 +279,14 @@ public class SinkUser implements Comparable<SinkUser> {
         if (!isOnline()) {
             return playerName;
         }
-        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled() || !getPlayerConfiguration().getHasDisplayName()) {
+        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled() || !getConfiguration().getHasDisplayName()) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
                 prefix = ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
             }
             return prefix + base.getDisplayName();
         } else {
-            return getPlayerConfiguration().getDisplayName();
+            return getConfiguration().getDisplayName();
         }
     }
 

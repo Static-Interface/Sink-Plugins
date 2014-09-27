@@ -53,11 +53,6 @@ public class FileUtil {
             return true;
         }
 
-        if (!file.mkdirs()) {
-            Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Directorys for file " + file + "!");
-            return false;
-        }
-
         try {
             return file.createNewFile();
         } catch (IOException ignored) {

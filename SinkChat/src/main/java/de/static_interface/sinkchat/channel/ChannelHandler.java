@@ -50,7 +50,7 @@ public class ChannelHandler {
      */
     public static Channel getChannelByName(String channelname) {
         for (Channel channel : registeredChannels.values()) {
-            if (channel.getName().equalsIgnoreCase(channelname) || channel.getPrefix().equalsIgnoreCase(channelname)) {
+            if (channel.getName().equalsIgnoreCase(channelname)) {
                 return channel;
             }
         }
@@ -72,7 +72,7 @@ public class ChannelHandler {
         for (Player p : Bukkit.getOnlinePlayers()) {
             SinkUser user = SinkLibrary.getInstance().getUser(p);
             if ((channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId())) {
-                user.sendMessage(ChannelCommand.PREFIX + String.format(m("SinkChat.DeletedChannel"), channel.getName()));
+                user.sendMessage(ChannelCommand.PREFIX + m("SinkChat.DeletedChannel", channel.getName()));
             }
         }
 
@@ -87,12 +87,10 @@ public class ChannelHandler {
 
         config.set(pathPrefix + ChannelValues.DEFAULT, true);
         config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());
-        config.set(pathPrefix + ChannelValues.ENABLED, channel.enabled);
+        config.set(pathPrefix + ChannelValues.ENABLED, channel.isEnabled());
         config.set(pathPrefix + ChannelValues.PERMISSION, channel.getPermission());
-        config.set(pathPrefix + ChannelValues.PREFIX, channel.getPrefix());
-        config.set(pathPrefix + ChannelValues.SEND_TO_IRC, channel.sendToIRC);
+        config.set(pathPrefix + ChannelValues.SEND_TO_IRC, channel.sendToIRC());
         config.set(pathPrefix + ChannelValues.RANGE, channel.getRange());
-        ;
     }
 
     /**

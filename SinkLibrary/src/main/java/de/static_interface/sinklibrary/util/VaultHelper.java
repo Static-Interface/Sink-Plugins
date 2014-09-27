@@ -34,7 +34,9 @@ public class VaultHelper {
     }
 
     public static boolean addBalance(OfflinePlayer account, double amount) {
-        if(amount == 0) return true;
+        if (amount == 0) {
+            return true;
+        }
 
         Economy economy = SinkLibrary.getInstance().getEconomy();
         double roundedAmount = MathUtil.round(amount);
@@ -58,6 +60,6 @@ public class VaultHelper {
     }
 
     public static String getCurrenyName() {
-        return  SinkLibrary.getInstance().getEconomy().currencyNamePlural();
+        return SinkLibrary.getInstance().getEconomy().currencyNamePlural();
     }
 }

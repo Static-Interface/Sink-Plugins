@@ -21,7 +21,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,7 +44,7 @@ public class SpyCommands {
             }
             Player player = user.getPlayer();
 
-            PlayerConfiguration config = user.getPlayerConfiguration();
+            UserConfiguration config = user.getConfiguration();
 
             if (config.isSpyEnabled()) {
                 player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyEnabled"));
@@ -68,7 +68,7 @@ public class SpyCommands {
             }
             Player player = user.getPlayer();
 
-            PlayerConfiguration config = user.getPlayerConfiguration();
+            UserConfiguration config = user.getConfiguration();
 
             if (!config.isSpyEnabled()) {
                 player.sendMessage(PREFIX + m("SinkChat.Commands.Spy.AlreadyDisabled"));

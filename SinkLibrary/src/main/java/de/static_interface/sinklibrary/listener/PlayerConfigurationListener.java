@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.listener;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,10 +30,10 @@ public class PlayerConfigurationListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SinkLibrary.getInstance().loadUser(event.getPlayer().getUniqueId());
+        SinkLibrary.getInstance().loadUser(event.getPlayer());
 
         SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
             config.init();

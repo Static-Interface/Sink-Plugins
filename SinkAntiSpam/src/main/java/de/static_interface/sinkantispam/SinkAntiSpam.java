@@ -40,10 +40,6 @@ public class SinkAntiSpam extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
     }
 
-    public void onDisable() {
-        System.gc();
-    }
-
     private boolean checkDependencies() {
         if (Bukkit.getPluginManager().getPlugin("SinkLibrary") == null) {
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");

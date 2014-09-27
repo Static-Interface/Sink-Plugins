@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.listener;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -29,7 +30,7 @@ public class IrcLinkListener implements Listener {
         if (SinkLibrary.getInstance().isSinkChatAvailable()) {
             return;
         }
-        String msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+        String msg = StringUtil.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
         SinkLibrary.getInstance().sendIrcMessage(msg);
     }
 }

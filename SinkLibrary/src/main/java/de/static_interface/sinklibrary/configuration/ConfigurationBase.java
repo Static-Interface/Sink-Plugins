@@ -32,6 +32,7 @@ import java.util.logging.Level;
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
 public abstract class ConfigurationBase {
 
+    private static HashMap<String, ConfigurationBase> configs = new HashMap<>();
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
@@ -56,6 +57,10 @@ public abstract class ConfigurationBase {
         if (init) {
             init();
         }
+    }
+
+    public static HashMap<String, ConfigurationBase> getConfigs() {
+        return configs;
     }
 
     /**
@@ -95,6 +100,7 @@ public abstract class ConfigurationBase {
                 onCreate();
             }
 
+            configs.put(yamlFile.getCanonicalPath(), this);
             save();
 
         } catch (InvalidConfigurationException e) {
@@ -127,9 +133,10 @@ public abstract class ConfigurationBase {
             boolean node;
             // The depth of the path. (number of words separated by periods - 1)
             int depth = 0;
-
             // Loop through the config lines
             for (String line : yamlContents) {
+                String whiteSpacePrefix = "";
+
                 // If the line is a node (and not something like a list value)
                 if (line.contains(": ") || (line.length() > 1 && line.charAt(line.length() - 1) == ':')) {
 
@@ -196,6 +203,9 @@ public abstract class ConfigurationBase {
                             //currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
                             currentPath += line.substring(whiteSpace, index);
                         }
+                        for (int i = 0; i < whiteSpace; i++) {
+                            whiteSpacePrefix += " ";
+                        }
                     }
 
                 } else {
@@ -206,7 +216,10 @@ public abstract class ConfigurationBase {
                     String comment = null;
                     if (!commentedPath) {
                         // If there's a comment for the current path, retrieve it and flag that path as already commented
-                        comment = comments.get(currentPath);
+                        if (comments.get(currentPath) != null) {
+                            // whiteSpaces for comments
+                            comment = whiteSpacePrefix + "# " + comments.get(currentPath);
+                        }
                     }
                     if (comment != null) {
                         // Add the comment to the beginning of the current line
@@ -273,7 +286,7 @@ public abstract class ConfigurationBase {
         }
 
         try {
-            writeToFile(getFile()); // Todo!
+            writeToFile(getFile());
         } catch (IOException e) {
             if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
                 SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
@@ -322,24 +335,26 @@ public abstract class ConfigurationBase {
         } catch (Exception e) {
             value = getDefault(path);
         }
-        String stringValue = String.valueOf(value);
 
-        // fix old configs
-        if (stringValue.contains("%s")) {
-            int i = 0;
-            String tmp = "";
-            for (String s : stringValue.split(" ")) {
-                if (tmp.equals("")) {
-                    tmp = s.replaceFirst("%s", "{" + i + "}");
-                } else {
-                    tmp += " " + s.replaceFirst("%s", "{" + i + "}");
+        if (value instanceof String) {
+            String stringValue = String.valueOf(value);
+
+            // fix old configs
+            if (stringValue.contains("%s")) {
+                int i = 0;
+                String tmp = "";
+                for (String s : stringValue.split(" ")) {
+                    if (tmp.equals("")) {
+                        tmp = s.replaceFirst("%\\s", "{" + i + "}");
+                    } else {
+                        tmp += " " + s.replaceFirst("%\\s", "{" + i + "}");
+                    }
+                    i++;
                 }
-                i++;
+                value = tmp;
+                set(path, value);
             }
-            value = tmp;
-            set(path, value);
         }
-
         return value;
     }
 

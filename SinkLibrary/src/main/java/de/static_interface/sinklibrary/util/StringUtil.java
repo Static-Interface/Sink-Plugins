@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -52,6 +53,18 @@ public class StringUtil {
     /**
      * Format a string
      * @param str Input String
+     * @param customPlaceholders Custom placeholders values (keys are the placeholders), dont use brackets on keys.
+     *                           Example: if equals "TEST" and value equals "Hello", all {TEST} instances will be replaced
+     *                           with "Hello"
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable HashMap<String, Object> customPlaceholders) {
+        return format(str, null, null, customPlaceholders, null);
+    }
+
+    /**
+     * Format a string
+     * @param str Input String
      * @param user If there is any user who's calling this, you can use placeholders like
      *             {NAME} (some of the placeholders works with offline users too)
      * @param userMessage Message from user (e.g. /say <message> -> userMessage should be  <message>)
@@ -59,6 +72,23 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable Object... paramValues) {
+        return format(str, user, userMessage, null, paramValues);
+    }
+
+    /**
+     * Format a string
+     * @param str Input String
+     * @param user If there is any user who's calling this, you can use placeholders like
+     *             {NAME} (some of the placeholders works with offline users too)
+     * @param userMessage Message from user (e.g. /say <message> -> userMessage should be  <message>)
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @param customPlaceholders Custom placeholders values (keys are the placeholders), dont use brackets on keys.
+     *                           Example: if equals "TEST" and value equals "Hello", all {TEST} instances will be replaced
+     *                           with "Hello"
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage,
+                                @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
@@ -83,11 +113,19 @@ public class StringUtil {
 
         str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
 
+        if (customPlaceholders != null) {
+            for (String placeHolder : customPlaceholders.keySet()) {
+                str = str.replaceAll("(?i)\\({" + placeHolder.toUpperCase() + ")\\}",
+                                     String.valueOf(customPlaceholders.get(placeHolder)));
+            }
+        }
+
         if (paramValues != null) {
             int i = 0;
             for (Object s : paramValues) {
                 str = str.replaceAll("\\{" + i + "\\}", String.valueOf(s));
                 i++;
+                str = str.replaceAll("%" + i + "\\$\\s", String.valueOf(s));
             }
         }
 

@@ -23,7 +23,7 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 
-public class PlayerConfiguration extends ConfigurationBase {
+public class UserConfiguration extends ConfigurationBase {
 
     public static final int REQUIRED_VERSION = 1;
 
@@ -31,18 +31,25 @@ public class PlayerConfiguration extends ConfigurationBase {
 
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
-     * Should be accessed via {@link de.static_interface.sinklibrary.SinkUser#getPlayerConfiguration()}
+     * Should be accessed via {@link de.static_interface.sinklibrary.SinkUser#getConfiguration()}
      *
      * @param user User
      */
-    public PlayerConfiguration(SinkUser user) {
-        super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players"), user.getUniqueId().toString() + ".yml"), false);
+    public UserConfiguration(SinkUser user) {
+        super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), user.getUniqueId().toString() + ".yml"), false);
         if (user.isConsole()) {
             throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
         }
 
+        File oldDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players");
+        File newDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "players");
+
+        if (oldDirectory.exists()) {
+            oldDirectory.renameTo(newDirectory);
+        }
+
         //Convert to UUID
-        File oldFile = new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players"), user.getName() + ".yml");
+        File oldFile = new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), user.getName() + ".yml");
         File uniqueFile = getFile();
 
         if (oldFile.exists()) {
@@ -55,7 +62,8 @@ public class PlayerConfiguration extends ConfigurationBase {
 
     @Override
     public void addDefaults() {
-        yamlConfiguration.options().header(String.format("This configuration saves and loads variables of players.%nDon't edit it."));
+        yamlConfiguration.options().header("This configuration saves and loads variables of players."
+                                           + "\n You shouldn't edit it.");
 
         addDefault("ConfigVersion", REQUIRED_VERSION);
         addDefault("LastKnownName", user.getName());

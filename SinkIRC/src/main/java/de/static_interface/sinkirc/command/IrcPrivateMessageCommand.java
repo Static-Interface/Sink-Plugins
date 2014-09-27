@@ -47,7 +47,7 @@ public class IrcPrivateMessageCommand implements CommandExecutor {
         }
 
         if (!IrcUtil.sendMessage(target, message)) {
-            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
+            sender.sendMessage(LanguageConfiguration.m("General.NotOnline", args[0]));
         } else {
             sender.sendMessage(ChatColor.GREEN + "Nachricht gesendet!");
         }

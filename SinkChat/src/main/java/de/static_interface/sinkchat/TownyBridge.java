@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkchat;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
@@ -123,14 +125,13 @@ public class TownyBridge {
     }
 
     /**
-     * Get Towny prefix of player
-     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it will throw exceptions
+     * Get nation tag prefix of player
+     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it may throw exceptions
      * when towny is not present</b></p>
      *
      * @param player Player
-     * @return {@code ChatColor.GRAY + "[" + "Nation Tag" + ChatColor.GRAY + "] "} (Nation Tag in gray brackets)
      */
-    public static String getTownyPrefix(Player player) {
+    public static String getNationTag(Player player) {
         Resident res = getResident(player.getName());
 
         if (res == null) {
@@ -159,6 +160,103 @@ public class TownyBridge {
             return "";
         }
 
-        return ChatColor.GRAY + "[" + ChatColor.stripColor(nation.getTag()) + ChatColor.GRAY + "] ";
+        return m("SinkChat.Prefix.Nation", ChatColor.stripColor(nation.getTag())) + ' ' + ChatColor.RESET;
+    }
+
+    /**
+     * Get nation prefix of player
+     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it may throw exceptions
+     * when towny is not present</b></p>
+     *
+     * @param player Player
+     */
+    public static String getNation(Player player) {
+        Resident res = getResident(player.getName());
+
+        if (res == null) {
+            return "";
+        }
+
+        Town town;
+
+        try {
+            town = res.getTown();
+        } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        if (town == null) {
+            return "";
+        }
+        if (!town.hasNation()) {
+            return "";
+        }
+
+        Nation nation;
+        try {
+            nation = town.getNation();
+        } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        return m("SinkChat.Prefix.Nation", ChatColor.stripColor(nation.getName())) + ' ' + ChatColor.RESET;
+    }
+
+    /**
+     * Get town tag prefix of player
+     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it may throw exceptions
+     * when towny is not present</b></p>
+     *
+     * @param player Player
+     */
+    public static String getTownTag(Player player) {
+        Resident res = getResident(player.getName());
+
+        if (res == null) {
+            return "";
+        }
+
+        Town town;
+
+        try {
+            town = res.getTown();
+        } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        if (town == null) {
+            return "";
+        }
+
+        return m("SinkChat.Prefix.Town", ChatColor.stripColor(town.getTag())) + ' ' + ChatColor.RESET;
+    }
+
+    /**
+     * Get town prefix of player
+     * <p><b>Use {@link SinkChat#isTownyAvailable()} before using this method! Or it may throw exceptions
+     * when towny is not present</b></p>
+     *
+     * @param player Player
+     */
+    public static String getTown(Player player) {
+        Resident res = getResident(player.getName());
+
+        if (res == null) {
+            return "";
+        }
+
+        Town town;
+
+        try {
+            town = res.getTown();
+        } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        if (town == null) {
+            return "";
+        }
+
+        return m("SinkChat.Prefix.Town", ChatColor.stripColor(town.getName())) + ' ' + ChatColor.RESET;
     }
 }

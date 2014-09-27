@@ -72,7 +72,7 @@ public class Logger {
             return;
         }
 
-        File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder() + File.separator + "SinkPlugins.log");
+        File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkPlugins.log");
         if (!failed && !logFile.exists()) // Prevent creating/checking every time
         {
             if (!FileUtil.createFile(logFile)) {

@@ -19,10 +19,10 @@ package de.static_interface.sinkchat;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class Util {
             boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")
                                                                               && !user.hasPermission("sinkchat.spy.bypass"));
 
-            PlayerConfiguration config = onlineUser.getPlayerConfiguration();
+            UserConfiguration config = onlineUser.getConfiguration();
 
             if (isInRange) {
                 p.sendMessage(message);
@@ -56,6 +56,6 @@ public class Util {
     }
 
     public static String getSpyPrefix() {
-        return ChatColor.GRAY + m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
+        return m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
     }
 }

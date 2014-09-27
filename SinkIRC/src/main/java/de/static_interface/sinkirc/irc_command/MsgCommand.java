@@ -42,7 +42,7 @@ public class MsgCommand extends IrcCommand {
         SinkUser target;
         target = SinkLibrary.getInstance().getUser(args[0]);
         if (!target.isOnline()) {
-            sender.sendMessage(LanguageConfiguration.m("General.NotOnline").replace("%s", args[0]));
+            sender.sendMessage(LanguageConfiguration.m("General.NotOnline", args[0]));
             return true;
         }
 

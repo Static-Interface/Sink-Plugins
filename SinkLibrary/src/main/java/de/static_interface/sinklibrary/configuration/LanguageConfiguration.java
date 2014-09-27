@@ -18,9 +18,12 @@
 package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 
 import java.io.File;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings(
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention",
@@ -49,7 +52,21 @@ public class LanguageConfiguration extends ConfigurationBase {
      * @return Language String
      */
     public static String m(String path) {
+        return m(path, null);
+    }
+
+    /**
+     * Get language as String from key
+     *
+     * @param path Path to language variable
+     * @param paramValues Varargs for {@link StringUtil#format(String, Object...)}
+     * @return Language String
+     */
+    public static String m(String path, @Nullable Object... paramValues) {
         String s = (String) getInstance().get(path);
+        if (paramValues != null) {
+            s = StringUtil.format(s, paramValues);
+        }
         s = s.replace("\\n", System.lineSeparator());
         return ChatColor.translateAlternateColorCodes('&', s);
     }
@@ -57,26 +74,26 @@ public class LanguageConfiguration extends ConfigurationBase {
     @Override
     public void addDefaults() {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
-        addDefault("General.NotOnline", "&c%s is not online!");
+        addDefault("General.NotOnline", "&c{0} is not online!");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
         addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!");
 
-        addDefault("SinkChat.Commands.Nick.OtherChanged", "%s's name is now %s!");
-        addDefault("SinkChat.Commands.Nick.SelfChanged", "Your name is now %s!");
+        addDefault("SinkChat.Commands.Nick.OtherChanged", "{0}'s name is now {1}!");
+        addDefault("SinkChat.Commands.Nick.SelfChanged", "Your name is now {0}!");
         addDefault("SinkChat.Commands.Nick.IllegalNickname", "Illegal nickname!");
         addDefault("SinkChat.Commands.Nick.TooLong", "Nickname is too long!");
         addDefault("SinkChat.Commands.Nick.Used", "Nickname is already used by someone other!");
 
-        addDefault("SinkChat.Commands.Channel.PlayerJoins", "You joined the %s channel.");
-        addDefault("SinkChat.Commands.Channel.PlayerLeaves", "You left the %s channel.");
+        addDefault("SinkChat.Commands.Channel.PlayerJoins", "You joined the {0} channel.");
+        addDefault("SinkChat.Commands.Channel.PlayerLeaves", "You left the {0} channel.");
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
-        addDefault("SinkChat.Commands.Channel.ChannelUnknown", "%s is an unknown channel.");
+        addDefault("SinkChat.Commands.Channel.ChannelUnknown", "{0} is an unknown channel.");
         addDefault("SinkChat.Commands.Channel.Enabled", "&aenabled");
         addDefault("SinKChat.Commands.Channel.Disabled", "&cdisabled");
-        addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel %s already exists.");
-        addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel %s was successfully created.");
-        addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel %s was successfully deleted.");
-        addDefault("SinkChat.Commands.Channel.List", "These channels are available: %s");
+        addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel {0} already exists.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel {0} was successfully created.");
+        addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel {0} was successfully deleted.");
+        addDefault("SinkChat.Commands.Channel.List", "These channels are available: {0}");
         addDefault("SinkChat.Commands.Channel.Part", "You have the following channels enabled:");
         addDefault("SinkChat.Commands.Channel.Help", "These commands are available:");
 
@@ -109,12 +126,13 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkChat.Channels.Private.Channels", "&bAvailable channels: %s");
         */
 
-        addDefault("SinkChat.Prefix.Channel", "&a[Channel]");
-        addDefault("SinkChat.Prefix.Nick", "&2[Nick]");
         addDefault("SinkChat.Prefix.Spy", "&7[Spy]");
-        addDefault("SinkChat.Prefix.Local", "&7[Local]");
+        addDefault("SinkChat.Prefix.Town", "&7[&6{0}&7]");
+        addDefault("SinkChat.Prefix.Local", "&7Local");
+        addDefault("SinkChat.Prefix.Channel", "&7[{0}]");
+
         addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
-        addDefault("SinkChat.DeletedChannel", "The channel %s has been deleted.");
+        addDefault("SinkChat.DeletedChannel", "The channel %{0} has been deleted.");
         addDefault("SinkChat.AlreadyDisabled", "&4This channel has already been disabled.");
         addDefault("SinkChat.EnabledChannel", "&4This channel has been enabled.");
         addDefault("SinkChat.AlreadyEnabled", "&4This channel has already been enabled.");
@@ -123,18 +141,18 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
         addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");
         addDefault("Permissions.General", "&4You don't have permissions to do that.");
-        addDefault("Permissions.SinkChat.Channel", "&4You may not use the %s channel.");
+        addDefault("Permissions.SinkChat.Channel", "&4You may not use the {0} channel.");
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");
 
         addDefault("SinkAntiSpam.Prefix", "&4[SinkAntiSpam]");
-        addDefault("SinkAntiSpam.Warn", "%s&4 has been warned by %s: %s (%s/%s)");
-        addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: %s");
-        addDefault("SinkAntiSpam.Reasons.IP", "&cTried to write IP: &9&l&n%s");
-        addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n%s");
+        addDefault("SinkAntiSpam.Warn", "{0}&4 has been warned by {1}: {2} ({3}/{4})");
+        addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: {0}");
+        addDefault("SinkAntiSpam.Reasons.IP", "&cTried to write IP: &9&l&n{0}");
+        addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n{0}");
         addDefault("SinkAntiSpam.ReplaceDomain", "google.com");
         addDefault("SinkAntiSpam.ReplaceIP", "127.0.0.1");
         addDefault("SinkAntiSpam.WarnSelf", "&4You can't warn yourself!");
-        addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned for 5 minutes"); // Todo: make time configurable
+        addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned for {0} minutes");
         addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
 
         /*

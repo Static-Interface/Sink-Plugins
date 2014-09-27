@@ -19,10 +19,10 @@ package de.static_interface.sinkchat.command;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.configuration.PlayerConfiguration;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 public class NickCommand implements CommandExecutor {
 
-    public static final String PREFIX = m("SinkChat.Prefix.Nick") + ' ' + ChatColor.RESET;
+    public static final String PREFIX = ChatColor.GREEN + "[Nick]" + ' ' + ChatColor.RESET;
     private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z_0-9" + ChatColor.COLOR_CHAR + "]+$");
 
     @Override
@@ -61,13 +61,13 @@ public class NickCommand implements CommandExecutor {
 
             newDisplayName = ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET;
             if (target == null) {
-                sender.sendMessage(PREFIX + String.format(m("General.NotOnline"), args[0]));
+                sender.sendMessage(PREFIX + m("General.NotOnline", args[0]));
                 return true;
             }
 
             if (setDisplayName(target, newDisplayName, sender)) {
                 user = SinkLibrary.getInstance().getUser(target);
-                sender.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Nick.OtherChanged"), playerName, user.getDisplayName()));
+                sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.OtherChanged", playerName, user.getDisplayName()));
             }
             return true;
         }
@@ -78,7 +78,7 @@ public class NickCommand implements CommandExecutor {
         newDisplayName = ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[0]) + ChatColor.RESET;
         Player player = user.getPlayer();
         if (setDisplayName(player, newDisplayName, sender)) {
-            sender.sendMessage(PREFIX + String.format(m("SinkChat.Commands.Nick.SelfChanged"), newDisplayName));
+            sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.SelfChanged", newDisplayName));
         }
         return true;
     }
@@ -118,7 +118,7 @@ public class NickCommand implements CommandExecutor {
             newDisplayName = user.getPrefix() + newDisplayName;
         }
 
-        PlayerConfiguration config = user.getPlayerConfiguration();
+        UserConfiguration config = user.getConfiguration();
         config.setDisplayName(newDisplayName);
         config.setHasDisplayName(true);
 

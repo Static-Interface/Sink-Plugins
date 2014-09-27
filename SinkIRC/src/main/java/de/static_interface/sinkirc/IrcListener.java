@@ -17,7 +17,6 @@
 
 package de.static_interface.sinkirc;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.event.IrcJoinEvent;
@@ -28,6 +27,7 @@ import de.static_interface.sinklibrary.event.IrcPrivateMessageEvent;
 import de.static_interface.sinklibrary.event.IrcQuitEvent;
 import de.static_interface.sinklibrary.event.IrcReceiveMessageEvent;
 import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -157,7 +157,7 @@ public class IrcListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onIrcReceiveMessage(IrcReceiveMessageEvent event) {
         SinkLibrary.getInstance().getCustomLogger().debug("onIrcReceiveMessage: user: " + event.getUser().getNick() + ", channel: "
-                                            + event.getChannel().getName() + ", message: " + event.getMessage());
+                                                          + event.getChannel().getName() + ", message: " + event.getMessage());
         String label = event.getMessage();
         Channel channel = event.getChannel();
 

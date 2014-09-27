@@ -60,7 +60,7 @@ public class WarnCommand extends Command {
         }
         Player target = (BukkitUtil.getPlayer(args[0]));
         if (target == null) {
-            sender.sendMessage(PREFIX + String.format(m("General.NotOnline"), args[0]));
+            sender.sendMessage(PREFIX + m("General.NotOnline", args[0]));
             return true;
         }
         if (target.getName().equals(sender.getName())) {

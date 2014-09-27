@@ -26,4 +26,5 @@ public class ChannelValues {
     public static final String PREFIX = "Prefix";
     public static final String SEND_TO_IRC = "SendToIRC";
     public static final String RANGE = "Range";
+    public static final String FORMAT = "Format";
 }

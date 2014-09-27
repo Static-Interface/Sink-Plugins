@@ -19,9 +19,9 @@ package de.static_interface.sinkcommands.command;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

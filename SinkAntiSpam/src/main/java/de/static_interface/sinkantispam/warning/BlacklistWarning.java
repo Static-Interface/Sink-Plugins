@@ -19,9 +19,11 @@ package de.static_interface.sinkantispam.warning;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
+import de.static_interface.sinklibrary.util.StringUtil;
+
 public class BlacklistWarning extends Warning {
 
     public BlacklistWarning(String message) {
-        super(String.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), Warning.SYSTEM);
+        super(StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), Warning.SYSTEM);
     }
 }

@@ -18,8 +18,8 @@
 package de.static_interface.sinkcommands;
 
 import de.static_interface.sinkcommands.command.LagCommand;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 
 public class LagTimer implements Runnable {
