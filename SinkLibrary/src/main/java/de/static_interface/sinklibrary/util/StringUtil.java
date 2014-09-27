@@ -113,6 +113,29 @@ public class StringUtil {
 
         str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
 
+        str = str.replaceAll("(?i)\\{AQUA\\}", ChatColor.AQUA.toString());
+        str = str.replaceAll("(?i)\\{BLACK\\}", ChatColor.BLACK.toString());
+        str = str.replaceAll("(?i)\\{BOLD\\}", ChatColor.BOLD.toString());
+        str = str.replaceAll("(?i)\\{BLUE\\}", ChatColor.BLUE.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)AQUA\\}", ChatColor.DARK_AQUA.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)BLUE\\}", ChatColor.DARK_BLUE.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)GRAY\\}", ChatColor.DARK_GRAY.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)GREEN\\}", ChatColor.DARK_GREEN.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)PURPLE\\}", ChatColor.DARK_PURPLE.toString());
+        str = str.replaceAll("(?i)\\{DARK(_|\\s)RED\\}", ChatColor.DARK_RED.toString());
+        str = str.replaceAll("(?i)\\{GOLD\\}", ChatColor.GOLD.toString());
+        str = str.replaceAll("(?i)\\{GRAY\\}", ChatColor.GRAY.toString());
+        str = str.replaceAll("(?i)\\{GREEN\\}", ChatColor.GREEN.toString());
+        str = str.replaceAll("(?i)\\{ITALIC\\}", ChatColor.ITALIC.toString());
+        str = str.replaceAll("(?i)\\{LIGHT(_|\\s)PURPLE\\}", ChatColor.LIGHT_PURPLE.toString());
+        str = str.replaceAll("(?i)\\{MAGIC\\}", ChatColor.MAGIC.toString());
+        str = str.replaceAll("(?i)\\{RED\\}", ChatColor.RED.toString());
+        str = str.replaceAll("(?i)\\{RESET\\}", ChatColor.RESET.toString());
+        str = str.replaceAll("(?i)\\{STRIKETHROUGH\\}", ChatColor.STRIKETHROUGH.toString());
+        str = str.replaceAll("(?i)\\{UNDERLINE\\}", ChatColor.UNDERLINE.toString());
+        str = str.replaceAll("(?i)\\{WHITE\\}", ChatColor.WHITE.toString());
+        str = str.replaceAll("(?i)\\{YELLOW\\}", ChatColor.YELLOW.toString());
+
         if (customPlaceholders != null) {
             for (String placeHolder : customPlaceholders.keySet()) {
                 str = str.replaceAll("(?i)\\({" + placeHolder.toUpperCase() + ")\\}",
