@@ -20,7 +20,7 @@ package de.static_interface.sinkchat.listener;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkchat.SinkChat;
-import de.static_interface.sinkchat.TownyBridge;
+import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
@@ -83,13 +83,12 @@ public class ChatListener implements Listener {
 
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.isTownyAvailable()) {
-            customParams.put("NATIONTAG", TownyBridge.getNationTag(event.getPlayer()));
-            customParams.put("TOWN(Y)?TAG", TownyBridge.getTownTag(event.getPlayer()));
-            customParams.put("TOWN(Y)?", TownyBridge.getTown(event.getPlayer()));
-            customParams.put("NATION", TownyBridge.getNation(event.getPlayer()));
+            customParams.put("NATIONTAG", TownyHelper.getNationTag(event.getPlayer()));
+            customParams.put("TOWN(Y)?TAG", TownyHelper.getTownTag(event.getPlayer()));
+            customParams.put("TOWN(Y)?", TownyHelper.getTown(event.getPlayer()));
+            customParams.put("NATION", TownyHelper.getNation(event.getPlayer()));
         }
-
-        customParams.put("{CHANNEL}", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
+        customParams.put("CHANNEL", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
 
         String format = SinkLibrary.getInstance().getSettings().getDefaultChatFormat();
 

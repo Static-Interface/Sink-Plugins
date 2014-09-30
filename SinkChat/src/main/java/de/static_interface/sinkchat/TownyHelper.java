@@ -29,7 +29,7 @@ import de.static_interface.sinklibrary.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TownyBridge {
+public class TownyHelper {
 
     public static String getFormattedTownName(Town town, boolean onlyCapital) {
         if (town.isCapital()) {
@@ -160,6 +160,10 @@ public class TownyBridge {
             return "";
         }
 
+        if (nation == null) {
+            return "";
+        }
+
         return m("SinkChat.Prefix.Nation", ChatColor.stripColor(nation.getTag())) + ' ' + ChatColor.RESET;
     }
 
@@ -196,6 +200,10 @@ public class TownyBridge {
         try {
             nation = town.getNation();
         } catch (NotRegisteredException ignored) {
+            return "";
+        }
+
+        if (nation == null) {
             return "";
         }
 

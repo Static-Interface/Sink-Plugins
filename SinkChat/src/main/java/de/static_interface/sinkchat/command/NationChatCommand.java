@@ -23,7 +23,7 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
-import de.static_interface.sinkchat.TownyBridge;
+import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
@@ -45,7 +45,7 @@ public class NationChatCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        Resident resident = TownyBridge.getResident(player.getName());
+        Resident resident = TownyHelper.getResident(player.getName());
 
         if (!resident.hasTown()) {
             player.sendMessage(m("SinkChat.Towny.NotInTown"));
@@ -79,9 +79,9 @@ public class NationChatCommand implements CommandExecutor {
 
         msg = msg.trim();
 
-        String prefixName = TownyBridge.getFormattedResidentName(resident, false, true);
+        String prefixName = TownyHelper.getFormattedResidentName(resident, false, true);
 
-        String townPrefix = ChatColor.GREEN + "[" + TownyBridge.getFormattedTownName(town, true) + "] ";
+        String townPrefix = ChatColor.GREEN + "[" + TownyHelper.getFormattedTownName(town, true) + "] ";
 
         String
                 formattedMessage =

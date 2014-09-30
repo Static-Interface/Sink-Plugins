@@ -20,7 +20,7 @@ package de.static_interface.sinkchat.channel;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkchat.SinkChat;
-import de.static_interface.sinkchat.TownyBridge;
+import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
@@ -126,10 +126,10 @@ public class Channel {
 
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.isTownyAvailable()) {
-            customParams.put("NationTag", TownyBridge.getNationTag(user.getPlayer()));
-            customParams.put("Town(y)?Tag", TownyBridge.getTownTag(user.getPlayer()));
-            customParams.put("Town(y)?", TownyBridge.getTown(user.getPlayer()));
-            customParams.put("Nation", TownyBridge.getNation(user.getPlayer()));
+            customParams.put("NationTag", TownyHelper.getNationTag(user.getPlayer()));
+            customParams.put("Town(y)?Tag", TownyHelper.getTownTag(user.getPlayer()));
+            customParams.put("Town(y)?", TownyHelper.getTown(user.getPlayer()));
+            customParams.put("Nation", TownyHelper.getNation(user.getPlayer()));
         }
 
         user.sendDebugMessage("Format: " + getFormat());

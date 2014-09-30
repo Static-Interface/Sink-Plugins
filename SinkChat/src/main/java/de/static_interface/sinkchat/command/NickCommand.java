@@ -101,6 +101,8 @@ public class NickCommand implements CommandExecutor {
             newDisplayName = user.getDefaultDisplayName();
         }
 
+        newDisplayName = user.getPrefix() + newDisplayName;
+
         for (Player onlinePlayer : BukkitUtil.getOnlinePlayers()) {
             if (target.equals(onlinePlayer)) {
                 continue;
@@ -114,15 +116,11 @@ public class NickCommand implements CommandExecutor {
             }
         }
 
-        if (SinkLibrary.getInstance().isChatAvailable()) {
-            newDisplayName = user.getPrefix() + newDisplayName;
-        }
-
         UserConfiguration config = user.getConfiguration();
         config.setDisplayName(newDisplayName);
         config.setHasDisplayName(true);
 
-        SinkLibrary.getInstance().refreshDisplayName(user.getPlayer());
+        SinkLibrary.getInstance().onRefreshDisplayName(user.getPlayer());
         return true;
     }
 }

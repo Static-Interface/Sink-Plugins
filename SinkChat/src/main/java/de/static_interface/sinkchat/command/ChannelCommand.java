@@ -33,7 +33,7 @@ public class ChannelCommand extends Command {
 
     public static final String PREFIX = ChatColor.GREEN + "[Channel]" + ' ' + ChatColor.RESET;
     private static final String enabled = "SinkChat.Commands.Channel.Enabled",
-            disabled = "SinKChat.Commands.Channel.Disabled";
+            disabled = "SinkChat.Commands.Channel.Disabled";
 
     public ChannelCommand(Plugin plugin) {
         super(plugin);
