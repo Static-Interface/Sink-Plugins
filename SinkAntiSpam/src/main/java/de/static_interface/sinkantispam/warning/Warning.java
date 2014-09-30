@@ -17,23 +17,30 @@
 
 package de.static_interface.sinkantispam.warning;
 
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.SinkUser;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 public class Warning {
 
     public static String SYSTEM = ChatColor.DARK_RED + "System";
     private final String reason;
+    private final UUID warnerUuid;
     private final String warnedBy;
     private final boolean autoWarning;
+    private final int id;
 
-    public Warning(String reason, String warnedBy) {
-        this(reason, warnedBy, true);
-    }
-
-    public Warning(String reason, String warnedBy, boolean autoWarning) {
+    public Warning(String reason, String warnedBy, @Nullable UUID warnerUuid, int id, boolean autoWarning) {
         this.reason = reason;
         this.warnedBy = warnedBy;
         this.autoWarning = autoWarning;
+        this.warnerUuid = warnerUuid;
+        this.id = id;
     }
 
     public String getReason() {
@@ -46,5 +53,20 @@ public class Warning {
 
     public boolean isAutoWarning() {
         return autoWarning;
+    }
+
+    @Nullable
+    public SinkUser getWarner() {
+        if (autoWarning) {
+            return SinkLibrary.getInstance().getUser(Bukkit.getConsoleSender());
+        }
+        if (warnerUuid == null) {
+            return null;
+        }
+        return SinkLibrary.getInstance().getUser(warnerUuid);
+    }
+
+    public int getId() {
+        return id;
     }
 }

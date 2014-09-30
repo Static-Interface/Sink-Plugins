@@ -17,6 +17,8 @@
 
 package de.static_interface.sinklibrary.listener;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
@@ -45,7 +47,12 @@ public class UserConfigurationListener implements Listener {
         }
 
         event.setResult(PlayerLoginEvent.Result.KICK_BANNED);
-        event.setKickMessage(result.getReason());
+        String timeLeft = "";
+        if (result.getUnbanTime() > 0) {
+            long t = System.currentTimeMillis() - result.getUnbanTime();
+            timeLeft = " " + m("General.TimeLeft", t / 1000 * 60);
+        }
+        event.setKickMessage(result.getReason() + timeLeft);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

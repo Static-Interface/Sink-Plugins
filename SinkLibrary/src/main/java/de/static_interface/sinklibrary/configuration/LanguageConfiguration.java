@@ -77,6 +77,7 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("General.NotOnline", "&c{0} is not online!");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
         addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!");
+        addDefault("General.TimeLeft", "&4Time Left: {0}");
 
         addDefault("SinkChat.Commands.Nick.OtherChanged", "{0}'s name is now {1}!");
         addDefault("SinkChat.Commands.Nick.SelfChanged", "Your name is now {0}!");
@@ -153,7 +154,7 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkAntiSpam.ReplaceDomain", "google.com");
         addDefault("SinkAntiSpam.ReplaceIP", "127.0.0.1");
         addDefault("SinkAntiSpam.WarnSelf", "&4You can't warn yourself!");
-        addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned for {0} minutes");
+        addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned by SinkAntiSpam");
         addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
 
         /*

@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.util.StringUtil;
 
 public class DomainWarning extends Warning {
 
-    public DomainWarning(String domain) {
-        super(StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), Warning.SYSTEM);
+    public DomainWarning(String domain, int id) {
+        super(StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), Warning.SYSTEM, null, id, true);
     }
 }

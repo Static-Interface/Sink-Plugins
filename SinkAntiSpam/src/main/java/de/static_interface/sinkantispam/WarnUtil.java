@@ -19,35 +19,34 @@ package de.static_interface.sinkantispam;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
+import com.google.gson.Gson;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class WarnUtil {
 
-    static HashMap<UUID, Long> bannedPlayers = new HashMap<>();
-    static HashMap<UUID, List<Warning>> warnings = new HashMap<>();
+    public static String WARNINGS_PATH = "SinkAntiSpam.Warnings";
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
     public static void warnPlayer(Player player, Warning warning) {
-        List<Warning> tmp = warnings.get(player.getUniqueId());
+        SinkUser user = SinkLibrary.getInstance().getUser(player);
+        List<Warning> tmp = getWarnings(SinkLibrary.getInstance().getUser(player));
         if (tmp == null) {
             tmp = new ArrayList<>();
         }
         tmp.add(warning);
-        warnings.put(player.getUniqueId(), tmp);
+        setWarnings(user, tmp);
 
         String message = prefix + m("SinkAntiSpam.Warn", SinkLibrary.getInstance().getUser(player).getDisplayName(),
-                                    warning.getWarnedBy(), warning.getReason(), tmp.size(), getMaxWarnings());
-        SinkUser user = SinkLibrary.getInstance().getUser(player);
+                                    warning.getWarnedBy(), warning.getReason(), (tmp.size() % 5) + 1, getMaxWarnings());
         String perm;
         if (warning.isAutoWarning()) {
             perm = "sinkantispam.autowarnmessage";
@@ -56,29 +55,49 @@ public class WarnUtil {
             perm = "sinkantispam.warnmessage";
             BukkitUtil.broadcast(message, perm, true);
         }
+
         if (!user.hasPermission(perm)) {
-            player.sendMessage(message);
+            user.sendMessage(message);
         }
 
-        if (tmp.size() >= getMaxWarnings()) {
-            UUID uuid = player.getUniqueId();
+        if (tmp.size() % getMaxWarnings() == 0) {
             player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-            tempBanPlayer(player.getUniqueId(),
-                          System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000);
-            warnings.put(uuid, new ArrayList<Warning>()); // Reset warnings
+            long bantime = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
+            user.ban(m("SinkAntiSpam.AutoBan"), bantime);
         }
     }
 
-    private static void tempBanPlayer(UUID uniqueId, long unbanTimestamp) {
-        bannedPlayers.put(uniqueId, unbanTimestamp);
+    public static void setWarnings(SinkUser user, List<Warning> deserializedWarnings) {
+        UserConfiguration config = user.getConfiguration();
+        Gson gson = new Gson();
+        List<String> serializedWarnings = new ArrayList<>();
+        for (Warning warning : deserializedWarnings) {
+            serializedWarnings.add(gson.toJson(warning));
+        }
+        config.set(WARNINGS_PATH, serializedWarnings);
     }
 
-    public static boolean isBanned(UUID uniqueId) {
-        Long unbantimeStamp = bannedPlayers.get(uniqueId);
-        return unbantimeStamp != null && unbantimeStamp < System.currentTimeMillis();
+    public static List<Warning> getWarnings(SinkUser user) {
+        UserConfiguration config = user.getConfiguration();
+        List<Warning> deserializedWarnings = new ArrayList<>();
+        List<String> serializedWarnings = config.getYamlConfiguration().getStringList(WARNINGS_PATH);
+        if (serializedWarnings == null) {
+            setWarnings(user, deserializedWarnings);
+            return deserializedWarnings;
+        }
+
+        Gson gson = new Gson();
+        for (String json : serializedWarnings) {
+            deserializedWarnings.add(gson.fromJson(json, Warning.class));
+        }
+        return deserializedWarnings;
+    }
+
+    public static int getWarningId(SinkUser user) {
+        return getWarnings(user).size() + 1;
     }
 
     public static int getMaxWarnings() {
-        return 5;
+        return SinkLibrary.getInstance().getSettings().getMaxWarnings();
     }
 }

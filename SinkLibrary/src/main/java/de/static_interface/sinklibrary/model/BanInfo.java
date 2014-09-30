@@ -32,7 +32,8 @@ public class BanInfo {
     }
 
     public boolean isBanned() {
-        return isBanned && (unbanTime > 0 && unbanTime < System.currentTimeMillis());
+        // -1 == perma banned
+        return isBanned && (unbanTime == -1 || unbanTime < System.currentTimeMillis());
     }
 
     public long getBanTime() {

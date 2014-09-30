@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.util.StringUtil;
 
 public class IpWarning extends Warning {
 
-    public IpWarning(String ip) {
-        super(StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), Warning.SYSTEM);
+    public IpWarning(String ip, int id) {
+        super(StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), Warning.SYSTEM, null, id, true);
     }
 }

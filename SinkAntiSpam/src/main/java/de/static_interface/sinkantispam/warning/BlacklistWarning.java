@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.util.StringUtil;
 
 public class BlacklistWarning extends Warning {
 
-    public BlacklistWarning(String message) {
-        super(StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), Warning.SYSTEM);
+    public BlacklistWarning(String message, int id) {
+        super(StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), Warning.SYSTEM, null, id, true);
     }
 }

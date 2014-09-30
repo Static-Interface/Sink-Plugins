@@ -32,7 +32,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.List;
@@ -69,7 +68,7 @@ public class SinkAntiSpamListener implements Listener {
                 String
                         warnMessage =
                         message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
-                WarnUtil.warnPlayer(player, new BlacklistWarning(warnMessage));
+                WarnUtil.warnPlayer(player, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CANCEL);
                 String tmp = "";
                 for (int i = 0; i < blacklistWord.length(); i++) {
@@ -88,7 +87,7 @@ public class SinkAntiSpamListener implements Listener {
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
-                WarnUtil.warnPlayer(player, new IpWarning(ip));
+                WarnUtil.warnPlayer(player, new IpWarning(ip, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CENSOR);
                 result.setCensoredMessage(message.replace(ip, m("SinkAntiSpam.ReplaceIP")));
                 return result;
@@ -104,7 +103,7 @@ public class SinkAntiSpamListener implements Listener {
             if (containsWord(domain, whiteListDomains) != null) {
                 return result;
             }
-            WarnUtil.warnPlayer(player, new DomainWarning(domain));
+            WarnUtil.warnPlayer(player, new DomainWarning(domain, WarnUtil.getWarningId(user)));
             result.setResultcode(WarnResult.CENSOR);
             result.setCensoredMessage(message.replace(domain, m("SinkAntiSpam.ReplaceDomain")));
             return result;
@@ -122,14 +121,6 @@ public class SinkAntiSpamListener implements Listener {
             }
         }
         return null;
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (WarnUtil.isBanned(event.getUniqueId())) {
-            long timeLeft = System.currentTimeMillis() - WarnUtil.bannedPlayers.get(event.getUniqueId());
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, m("SinkAntiSpam.AutoBan", timeLeft / 1000 * 60));
-        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
