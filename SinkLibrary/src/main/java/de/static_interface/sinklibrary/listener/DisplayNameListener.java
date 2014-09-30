@@ -27,7 +27,7 @@ public class DisplayNameListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SinkLibrary.getInstance().refreshDisplayName(event.getPlayer());
+        SinkLibrary.getInstance().onRefreshDisplayName(event.getPlayer());
     }
 
     /*

@@ -111,7 +111,9 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
         }
 
-        str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
+        if (SinkLibrary.getInstance().isEconomyAvailable()) {
+            str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
+        }
 
         str = str.replaceAll("(?i)\\{AQUA\\}", ChatColor.AQUA.toString());
         str = str.replaceAll("(?i)\\{BLACK\\}", ChatColor.BLACK.toString());
@@ -138,7 +140,7 @@ public class StringUtil {
 
         if (customPlaceholders != null) {
             for (String placeHolder : customPlaceholders.keySet()) {
-                str = str.replaceAll("(?i)\\({" + placeHolder.toUpperCase() + ")\\}",
+                str = str.replaceAll("(?i)(\\{" + placeHolder.toUpperCase() + "\\})",
                                      String.valueOf(customPlaceholders.get(placeHolder)));
             }
         }
@@ -156,10 +158,30 @@ public class StringUtil {
 
         // Don't translate color on these placeholders:
         if (userMessage != null) {
-            str = str.replaceAll("(?i)\\{MESSAGE\\}", userMessage);
+            str = str.replaceAll("(?i)\\{MESSAGE\\}", stripRegex(userMessage));
         }
 
         return str;
+    }
+
+    public static String stripRegex(String s) {
+        s = s.replace("\\", "\\\\");
+        s = s.replace(".", "\\.");
+        s = s.replace("^", "\\^");
+        s = s.replace("$", "\\$");
+        s = s.replace("*", "\\*");
+        s = s.replace("+", "\\+");
+        s = s.replace("?", "\\?");
+        s = s.replace("(", "\\(");
+        s = s.replace(")", "\\)");
+        s = s.replace("[", "\\[");
+        s = s.replace("{", "\\{");
+        s = s.replace("|", "\\|");
+        s = s.replace("-", "\\-");
+        s = s.replace("]", "\\]");
+        s = s.replace("}", "\\}");
+
+        return s;
     }
 
     /**

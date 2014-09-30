@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
+import de.static_interface.sinklibrary.model.BanInfo;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.VaultHelper;
 import net.milkbowl.vault.economy.Economy;
@@ -30,6 +31,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 public class SinkUser implements Comparable<SinkUser> {
 
@@ -49,7 +52,7 @@ public class SinkUser implements Comparable<SinkUser> {
      */
     SinkUser(CommandSender sender) {
         this.sender = sender;
-        initUser(sender.getName());
+        initUser(sender.getName(), true);
     }
 
     /**
@@ -59,11 +62,11 @@ public class SinkUser implements Comparable<SinkUser> {
      */
     SinkUser(UUID uuid) {
         this.uuid = uuid;
-        initUser(Bukkit.getOfflinePlayer(uuid).getName());
+        initUser(Bukkit.getOfflinePlayer(uuid).getName(), false);
     }
 
-    public void initUser(String player) {
-        if (player.equalsIgnoreCase("console")) {
+    private void initUser(String player, boolean isConsole) {
+        if (isConsole) {
             sender = Bukkit.getConsoleSender();
             base = null;
             econ = SinkLibrary.getInstance().getEconomy();
@@ -212,16 +215,8 @@ public class SinkUser implements Comparable<SinkUser> {
         if (isConsole() || !isOnline()) {
             return playerName;
         }
-        try {
-            if (SinkLibrary.getInstance().isChatAvailable()) {
-                String playerPrefix = getPrefix();
-                return playerPrefix + playerName + ChatColor.RESET;
-            }
-        } catch (Exception ignored) {
-        }
 
-        String prefix = base.isOp() ? ChatColor.RED.toString() : ChatColor.WHITE.toString();
-        return prefix + playerName + ChatColor.RESET;
+        return getPrefix() + playerName + ChatColor.RESET;
     }
 
     /**
@@ -308,6 +303,7 @@ public class SinkUser implements Comparable<SinkUser> {
     /**
      * @return The unique ID of the user
      */
+    @Nullable
     public UUID getUniqueId() {
         return uuid;
     }
@@ -330,5 +326,21 @@ public class SinkUser implements Comparable<SinkUser> {
     @Override
     public int compareTo(SinkUser o) {
         return getName().toLowerCase().compareTo(o.getName().toLowerCase());
+    }
+
+    public void ban(String reason, long unbantime) {
+        getConfiguration().setBanned(true);
+        getConfiguration().setBanTime(System.currentTimeMillis());
+        getConfiguration().setUnbanTime(unbantime);
+        getConfiguration().setBanReason(reason);
+    }
+
+    public void unban() {
+        getConfiguration().setBanned(false);
+    }
+
+    public BanInfo getBanInfo() {
+        return new BanInfo(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getUnbanTime(),
+                           getConfiguration().getBanReason());
     }
 }

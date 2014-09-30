@@ -72,6 +72,11 @@ public class UserConfiguration extends ConfigurationBase {
         addDefault("SpyEnabled", true);
         addDefault("Nick.HasDisplayName", false);
         addDefault("Nick.DisplayName", user.getDefaultDisplayName());
+
+        addDefault("BanInfo.IsBanned", false);
+        addDefault("BanInfo.BanTime", 0);
+        addDefault("BanInfo.UnbanTime", 0);
+        addDefault("BanInfo.Reason", "");
     }
 
     /**
@@ -141,5 +146,37 @@ public class UserConfiguration extends ConfigurationBase {
      */
     public void setHasDisplayName(boolean value) {
         set("Nick.HasDisplayName", value);
+    }
+
+    public boolean isBanned() {
+        return (boolean) get("BanInfo.IsBanned");
+    }
+
+    public void setBanned(boolean b) {
+        set("BanInfo.IsBanned", b);
+    }
+
+    public String getBanReason() {
+        return (String) get("BanInfo.Reason");
+    }
+
+    public void setBanReason(String reason) {
+        set("BanInfo.Reason", reason);
+    }
+
+    public long getBanTime() {
+        return (Long) get("BanInfo.BanTime");
+    }
+
+    public void setBanTime(long bantime) {
+        set("BanInfo.BanTime", bantime);
+    }
+
+    public long getUnbanTime() {
+        return (Long) get("BanInfo.UnbanTime");
+    }
+
+    public void setUnbanTime(long unbantime) {
+        set("BanInfo.UnbanTime", unbantime);
     }
 }

@@ -89,7 +89,7 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkChat.Commands.Channel.NoChannelGiven", "You must write the name of the channel!");
         addDefault("SinkChat.Commands.Channel.ChannelUnknown", "{0} is an unknown channel.");
         addDefault("SinkChat.Commands.Channel.Enabled", "&aenabled");
-        addDefault("SinKChat.Commands.Channel.Disabled", "&cdisabled");
+        addDefault("SinkChat.Commands.Channel.Disabled", "&cdisabled");
         addDefault("SinkChat.Commands.Channel.ChannelAlreadyExists", "The channel {0} already exists.");
         addDefault("SinkChat.Commands.Channel.SuccessfullyCreated", "The channel {0} was successfully created.");
         addDefault("SinkChat.Commands.Channel.SuccessfullyDeleted", "The channel {0} was successfully deleted.");
@@ -130,6 +130,7 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkChat.Prefix.Town", "&7[&6{0}&7]");
         addDefault("SinkChat.Prefix.Local", "&7Local");
         addDefault("SinkChat.Prefix.Channel", "&7[{0}]");
+        addDefault("SinkChat.Prefix.Nation", "&7[&6{0}&7]");
 
         addDefault("SinkChat.DisabledChannel", "&4This channel has been disabled");
         addDefault("SinkChat.DeletedChannel", "The channel %{0} has been deleted.");

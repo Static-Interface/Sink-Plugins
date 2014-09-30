@@ -59,6 +59,19 @@ public class VaultHelper {
         return addBalance(Bukkit.getOfflinePlayer(account), amount);
     }
 
+    public static boolean isAccountAvailable(String account) {
+        Economy economy = SinkLibrary.getInstance().getEconomy();
+        return economy.hasAccount(account);
+    }
+
+    public static void createAccount(String account) {
+        if (isAccountAvailable(account)) {
+            return;
+        }
+        Economy economy = SinkLibrary.getInstance().getEconomy();
+        economy.createPlayerAccount(Bukkit.getOfflinePlayer(account));
+    }
+
     public static String getCurrenyName() {
         return SinkLibrary.getInstance().getEconomy().currencyNamePlural();
     }

@@ -29,7 +29,7 @@ import de.static_interface.sinklibrary.exception.NotInitializedException;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
-import de.static_interface.sinklibrary.listener.PlayerConfigurationListener;
+import de.static_interface.sinklibrary.listener.UserConfigurationListener;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -106,7 +106,8 @@ public class SinkLibrary extends JavaPlugin {
         commandAliases = new HashMap<>();
 
         // Init language
-        LanguageConfiguration languageConfiguration = new LanguageConfiguration();
+        LanguageConfiguration languageConfiguration =
+                new LanguageConfiguration();
         languageConfiguration.init();
 
         // Init Settings
@@ -135,10 +136,6 @@ public class SinkLibrary extends JavaPlugin {
             if (!setupPermissions()) {
                 getCustomLogger().warning("Permissions Plugin not found. Disabling permissions features.");
                 permissionsAvailable = false;
-            }
-
-            for (Player p : BukkitUtil.getOnlinePlayers()) {
-                refreshDisplayName(p);
             }
         }
 
@@ -171,8 +168,7 @@ public class SinkLibrary extends JavaPlugin {
 
         // Init players (reload etc)
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            refreshDisplayName(p);
-            getUser(p.getUniqueId());
+            onRefreshDisplayName(p);
         }
 
         sinkChatAvailable = Bukkit.getPluginManager().getPlugin("SinkChat") != null;
@@ -432,7 +428,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param player Player that needs to refresh DisplayName
      */
-    public void refreshDisplayName(Player player) {
+    public void onRefreshDisplayName(Player player) {
         if (!settings.isDisplayNamesEnabled()) {
             return;
         }
@@ -446,28 +442,21 @@ public class SinkLibrary extends JavaPlugin {
 
         String displayName = user.getDisplayName();
 
-        if (displayName == null || displayName.equals("null") || displayName.isEmpty() || !config.getHasDisplayName()) {
+        if (displayName == null || (displayName.equals(user.getDefaultDisplayName()) && config.getHasDisplayName())
+            || displayName.equals("null") || displayName.isEmpty() || !
+                config.getHasDisplayName()) {
             displayName = user.getDefaultDisplayName();
             config.setDisplayName(displayName);
-            player.setDisplayName(displayName.substring(0, 15));
-            config.setDisplayName(displayName);
-            config.setHasDisplayName(false);
-            return;
-        }
-
-        if (displayName.equals(user.getDefaultDisplayName())) {
-            config.setDisplayName("");
             config.setHasDisplayName(false);
         }
-        player.setDisplayName(displayName);
-        player.setPlayerListName(displayName.substring(0, 15));
-    }
 
-    /**
-     * @return Plugins which are registered through {@link SinkLibrary#registerPlugin(org.bukkit.plugin.java.JavaPlugin)}
-     */
-    public List<JavaPlugin> getRegisteredPlugins() {
-        return registeredPlugins;
+        player.setCustomName(displayName);
+        config.setDisplayName(displayName);
+
+        if (displayName.length() > 16) {
+            displayName = displayName.substring(0, 16);
+        }
+        player.setPlayerListName(displayName);
     }
 
     /**
@@ -606,7 +595,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new PlayerConfigurationListener(), this);
+        Bukkit.getPluginManager().registerEvents(new UserConfigurationListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplayNameListener(), this);
     }
 

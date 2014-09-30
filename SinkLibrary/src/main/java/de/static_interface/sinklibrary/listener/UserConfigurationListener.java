@@ -20,16 +20,17 @@ package de.static_interface.sinklibrary.listener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.model.BanInfo;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerConfigurationListener implements Listener {
+public class UserConfigurationListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerLogin(PlayerLoginEvent event) {
         SinkLibrary.getInstance().loadUser(event.getPlayer());
 
         SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
@@ -38,6 +39,13 @@ public class PlayerConfigurationListener implements Listener {
         if (!config.exists()) {
             config.init();
         }
+        BanInfo result = user.getBanInfo();
+        if (!result.isBanned()) {
+            return;
+        }
+
+        event.setResult(PlayerLoginEvent.Result.KICK_BANNED);
+        event.setKickMessage(result.getReason());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

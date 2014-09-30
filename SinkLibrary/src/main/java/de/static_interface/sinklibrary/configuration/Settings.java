@@ -67,10 +67,12 @@ public class Settings extends ConfigurationBase {
         defaultExcludedCommands.add("m");
         defaultExcludedCommands.add("whisper");
         defaultExcludedCommands.add("t");
+
         addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
+        addDefault("SinkAntiSpam.MaxWarnings", 5);
 
         addDefault("SinkChat.LocalChatRange", 50);
-        addDefault("SinkChat.DefaultChatFormat", "&7[{CHANNEL}] [{RANK}] [{DISPLAYNAME}]&7:&f {MESSAGE}");
+        addDefault("SinkChat.DefaultChatFormat", "&7{CHANNEL} [{RANK}] {DISPLAYNAME}&7:&f {MESSAGE}");
 
         addDefault("SinkIRC.Username", "SinkIRCBot", "IRC Bot Nickname");
         addDefault("SinkIRC.Server.Address", "irc.example.com");
@@ -201,5 +203,9 @@ public class Settings extends ConfigurationBase {
 
     public int getWarnAutoBanTime() {
         return (int) get("SinkAntiSpam.AutoBanTime");
+    }
+
+    public int getMaxWarnings() {
+        return (int) get("SinkAntiSpam.MaxWarnings");
     }
 }
