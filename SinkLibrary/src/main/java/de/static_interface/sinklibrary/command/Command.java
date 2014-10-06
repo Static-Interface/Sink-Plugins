@@ -48,8 +48,6 @@ public abstract class Command implements CommandExecutor {
         return false;
     }
 
-    ;
-
     public boolean isIrcOnly() {
         return false;
     }

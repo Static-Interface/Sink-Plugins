@@ -115,10 +115,11 @@ public class UserConfiguration extends ConfigurationBase {
      * @return Custom Display Name of Player
      */
     public String getDisplayName() {
-        if (!getHasDisplayName()) {
+        Object configName = get("Nick.DisplayName");
+        if (!getHasDisplayName() || configName == null) {
             return user.getDefaultDisplayName();
         }
-        return (String) get("Nick.DisplayName");
+        return (String) configName;
     }
 
     /**
@@ -165,7 +166,7 @@ public class UserConfiguration extends ConfigurationBase {
     }
 
     public long getBanTime() {
-        return (Long) get("BanInfo.BanTime");
+        return Long.parseLong(String.valueOf(get("BanInfo.BanTime")));
     }
 
     public void setBanTime(long bantime) {
@@ -173,7 +174,7 @@ public class UserConfiguration extends ConfigurationBase {
     }
 
     public long getUnbanTime() {
-        return (Long) get("BanInfo.UnbanTime");
+        return Long.parseLong(String.valueOf(get("BanInfo.UnbanTime")));
     }
 
     public void setUnbanTime(long unbantime) {

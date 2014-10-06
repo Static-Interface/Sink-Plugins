@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.model.BanInfo;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.VaultHelper;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -52,7 +51,7 @@ public class SinkUser implements Comparable<SinkUser> {
      */
     SinkUser(CommandSender sender) {
         this.sender = sender;
-        initUser(sender.getName(), true);
+        initUser(null, true);
     }
 
     /**
@@ -62,10 +61,10 @@ public class SinkUser implements Comparable<SinkUser> {
      */
     SinkUser(UUID uuid) {
         this.uuid = uuid;
-        initUser(Bukkit.getOfflinePlayer(uuid).getName(), false);
+        initUser(uuid, false);
     }
 
-    private void initUser(String player, boolean isConsole) {
+    private void initUser(UUID uuid, boolean isConsole) {
         if (isConsole) {
             sender = Bukkit.getConsoleSender();
             base = null;
@@ -73,17 +72,20 @@ public class SinkUser implements Comparable<SinkUser> {
             playerName = "Console";
             return;
         }
-        base = BukkitUtil.getPlayer(player);
         econ = SinkLibrary.getInstance().getEconomy();
-        playerName = player;
+
+        base = Bukkit.getPlayer(uuid);
+        playerName = base != null ? base.getName() : Bukkit.getOfflinePlayer(uuid).getName();
+
+        if (playerName == null) {
+            SinkLibrary.getInstance().getCustomLogger().warning("Couldn't get player name from UUID: " + uuid.toString());
+        }
         if (base == null) {
-            uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             return;
         }
         if (sender == null) {
             sender = base;
         }
-        uuid = base.getUniqueId();
     }
 
     /**
@@ -320,7 +322,7 @@ public class SinkUser implements Comparable<SinkUser> {
     }
 
     public boolean isPlayer() {
-        return base != null || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
+        return base != null;
     }
 
     @Override

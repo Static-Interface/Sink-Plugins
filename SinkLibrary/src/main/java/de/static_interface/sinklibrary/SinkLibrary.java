@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.command.Command;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
+import de.static_interface.sinklibrary.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
@@ -37,6 +38,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -56,6 +58,7 @@ import java.util.logging.Level;
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
+    public static final int API_VERSION = 1;
     private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
     private boolean sinkChatAvailable;
@@ -78,6 +81,7 @@ public class SinkLibrary extends JavaPlugin {
     private boolean initalized;
     private HashMap<String, Command> commandAliases;
     private HashMap<String, Command> commands;
+    private TabCompleter tabCompleter;
 
     /**
      * Get the instance of this plugin
@@ -104,6 +108,7 @@ public class SinkLibrary extends JavaPlugin {
         timer = new TpsTimer();
         commands = new HashMap<>();
         commandAliases = new HashMap<>();
+        tabCompleter = new SinkTabCompleter();
 
         // Init language
         LanguageConfiguration languageConfiguration =
@@ -524,6 +529,7 @@ public class SinkLibrary extends JavaPlugin {
                 PluginCommand cmd = Bukkit.getPluginCommand(name);
                 if (cmd != null) {
                     cmd.setExecutor(command);
+                    cmd.setTabCompleter(getDefaultTabCompleter());
                     for (String alias : cmd.getAliases()) // Register alias commands
                     {
                         alias = alias.toLowerCase();
@@ -541,6 +547,10 @@ public class SinkLibrary extends JavaPlugin {
 
         commandAliases.put(name, command);
         commands.put(name, command);
+    }
+
+    public TabCompleter getDefaultTabCompleter() {
+        return tabCompleter;
     }
 
     public Command getCustomCommand(String name) {
