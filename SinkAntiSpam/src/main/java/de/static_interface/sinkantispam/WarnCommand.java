@@ -23,7 +23,7 @@ import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -60,6 +60,7 @@ public class WarnCommand extends Command {
             sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Player] [Reason]");
             return false;
         }
+
         Player target = (BukkitUtil.getPlayer(args[0]));
         if (target == null) {
             sender.sendMessage(PREFIX + m("General.NotOnline", args[0]));
@@ -81,8 +82,10 @@ public class WarnCommand extends Command {
         }
 
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
-        String name = (sender instanceof IrcCommandEvent) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
-        WarnUtil.warnPlayer(target, new Warning(reason, name, user.getUniqueId(), WarnUtil.getWarningId(user), false));
+        String name = (sender instanceof IrcCommandSender) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
+        SinkUser targetUser = SinkLibrary.getInstance().getUser(target);
+
+        WarnUtil.warnPlayer(targetUser, new Warning(reason, name, user.getUniqueId(), WarnUtil.getWarningId(targetUser), false));
         return true;
     }
 }

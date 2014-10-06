@@ -26,27 +26,27 @@ import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class WarnUtil {
 
-    public static String WARNINGS_PATH = "SinkAntiSpam.Warnings";
+    public static String WARNINGS_PATH = "Warnings";
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
-    public static void warnPlayer(Player player, Warning warning) {
-        SinkUser user = SinkLibrary.getInstance().getUser(player);
-        List<Warning> tmp = getWarnings(SinkLibrary.getInstance().getUser(player));
+    public static void warnPlayer(SinkUser target, Warning warning) {
+        List<Warning> tmp = getWarnings(target);
         if (tmp == null) {
             tmp = new ArrayList<>();
         }
         tmp.add(warning);
-        setWarnings(user, tmp);
+        setWarnings(target, tmp);
 
-        String message = prefix + m("SinkAntiSpam.Warn", SinkLibrary.getInstance().getUser(player).getDisplayName(),
-                                    warning.getWarnedBy(), warning.getReason(), (tmp.size() % 5) + 1, getMaxWarnings());
+        int i = tmp.size() % getMaxWarnings() == 0 ? getMaxWarnings() : tmp.size() % getMaxWarnings();
+        String message = prefix + m("SinkAntiSpam.Warn", target.getDisplayName(),
+                                    warning.getWarnerDisplayName(), warning.getReason(), i, getMaxWarnings());
         String perm;
         if (warning.isAutoWarning()) {
             perm = "sinkantispam.autowarnmessage";
@@ -56,14 +56,14 @@ public class WarnUtil {
             BukkitUtil.broadcast(message, perm, true);
         }
 
-        if (!user.hasPermission(perm)) {
-            user.sendMessage(message);
+        if (!target.hasPermission(perm)) {
+            target.sendMessage(message);
         }
 
-        if (tmp.size() % getMaxWarnings() == 0) {
-            player.kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
+        if (i == 5) {
+            target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
             long bantime = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
-            user.ban(m("SinkAntiSpam.AutoBan"), bantime);
+            target.ban(m("SinkAntiSpam.AutoBan"), bantime);
         }
     }
 
@@ -83,13 +83,14 @@ public class WarnUtil {
         List<String> serializedWarnings = config.getYamlConfiguration().getStringList(WARNINGS_PATH);
         if (serializedWarnings == null) {
             setWarnings(user, deserializedWarnings);
-            return deserializedWarnings;
+        } else {
+            Gson gson = new Gson();
+            for (String json : serializedWarnings) {
+                deserializedWarnings.add(gson.fromJson(json, Warning.class));
+            }
         }
-
-        Gson gson = new Gson();
-        for (String json : serializedWarnings) {
-            deserializedWarnings.add(gson.fromJson(json, Warning.class));
-        }
+        Collections.sort(deserializedWarnings);
+        //return fixWarningsIds(deserializedWarnings);
         return deserializedWarnings;
     }
 
@@ -100,4 +101,17 @@ public class WarnUtil {
     public static int getMaxWarnings() {
         return SinkLibrary.getInstance().getSettings().getMaxWarnings();
     }
+
+    //public static List<Warning> fixWarningsIds(List<Warning> warnings) {
+    //    List<Warning> fixedWarnings = new ArrayList<>();
+    //    int id = 1;
+    //
+    //    for(Warning warning : warnings) {
+    //        warning.setId(id);
+    //        fixedWarnings.add(warning);
+    //        id++;
+    //    }
+    //
+    //    return fixedWarnings;
+    //}
 }

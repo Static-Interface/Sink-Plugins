@@ -26,14 +26,15 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class Warning {
+public class Warning implements Comparable<Warning> {
 
     public static String SYSTEM = ChatColor.DARK_RED + "System";
     private final String reason;
     private final UUID warnerUuid;
     private final String warnedBy;
     private final boolean autoWarning;
-    private final int id;
+    private final long warnTime;
+    private int id;
 
     public Warning(String reason, String warnedBy, @Nullable UUID warnerUuid, int id, boolean autoWarning) {
         this.reason = reason;
@@ -41,13 +42,18 @@ public class Warning {
         this.autoWarning = autoWarning;
         this.warnerUuid = warnerUuid;
         this.id = id;
+        warnTime = System.currentTimeMillis();
     }
 
     public String getReason() {
         return reason;
     }
 
-    public String getWarnedBy() {
+    public String getWarnerDisplayName() {
+        if (getWarner() != null) {
+            return getWarner().getDisplayName();
+        }
+
         return warnedBy;
     }
 
@@ -68,5 +74,23 @@ public class Warning {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int compareTo(Warning o) {
+        if (o.getWarnTime() > warnTime) {
+            return -1;
+        } else if (o.getWarnTime() < warnTime) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public long getWarnTime() {
+        return warnTime;
     }
 }

@@ -68,7 +68,7 @@ public class SinkAntiSpamListener implements Listener {
                 String
                         warnMessage =
                         message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
-                WarnUtil.warnPlayer(player, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
+                WarnUtil.warnPlayer(user, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CANCEL);
                 String tmp = "";
                 for (int i = 0; i < blacklistWord.length(); i++) {
@@ -87,7 +87,7 @@ public class SinkAntiSpamListener implements Listener {
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
-                WarnUtil.warnPlayer(player, new IpWarning(ip, WarnUtil.getWarningId(user)));
+                WarnUtil.warnPlayer(user, new IpWarning(ip, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CENSOR);
                 result.setCensoredMessage(message.replace(ip, m("SinkAntiSpam.ReplaceIP")));
                 return result;
@@ -103,7 +103,7 @@ public class SinkAntiSpamListener implements Listener {
             if (containsWord(domain, whiteListDomains) != null) {
                 return result;
             }
-            WarnUtil.warnPlayer(player, new DomainWarning(domain, WarnUtil.getWarningId(user)));
+            WarnUtil.warnPlayer(user, new DomainWarning(domain, WarnUtil.getWarningId(user)));
             result.setResultcode(WarnResult.CENSOR);
             result.setCensoredMessage(message.replace(domain, m("SinkAntiSpam.ReplaceDomain")));
             return result;
