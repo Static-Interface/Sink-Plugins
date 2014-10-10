@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 
@@ -28,7 +29,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings(
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention",
          "StaticMethodNamingConvention"})
-public class LanguageConfiguration extends ConfigurationBase {
+public class LanguageConfiguration extends Configuration {
 
     public static final int REQUIRED_VERSION = 1;
     private static LanguageConfiguration instance;
@@ -76,8 +77,12 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
         addDefault("General.NotOnline", "&c{0} is not online!");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
-        addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!");
+
+        addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!"); // Deprecated
+        addDefault("General.TooFewArguments", "&4Too few arguments!");
+
         addDefault("General.TimeLeft", "&4Time Left: {0}");
+        addDefault("General.Me", "Me");
 
         addDefault("SinkChat.Commands.Nick.OtherChanged", "{0}'s name is now {1}!");
         addDefault("SinkChat.Commands.Nick.SelfChanged", "Your name is now {0}!");
@@ -142,8 +147,8 @@ public class LanguageConfiguration extends ConfigurationBase {
         addDefault("SinkChat.Towny.NotInTown", "&4Error:&c You are not a resident of any town");
         addDefault("SinkChat.Towny.NotInNation", "&4Error:&c You or your town is not a member any nation");
         addDefault("SinkChat.Towny.NoArguments", "&4Error:&c You need to specify a message!");
+
         addDefault("Permissions.General", "&4You don't have permissions to do that.");
-        addDefault("Permissions.SinkChat.Channel", "&4You may not use the {0} channel.");
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");
 
         addDefault("SinkAntiSpam.Prefix", "&4[SinkAntiSpam]");

@@ -18,11 +18,11 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinkirc.IrcUtil;
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class SetCommand extends Command {
+public class SetCommand extends SinkCommand {
 
     public SetCommand(Plugin plugin) {
         super(plugin);

@@ -18,7 +18,8 @@
 package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.pircbotx.Channel;
@@ -26,10 +27,14 @@ import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class IrcUtil {
 
     private static String commandPrefix = "~";
+    private static List<Channel> loadedChannels = new ArrayList<>();
 
     public static boolean isOp(User user) {
         return SinkIRC.getMainChannel().isOp(user);
@@ -88,9 +93,10 @@ public class IrcUtil {
         return input;
     }
 
+    @Nullable
     public static User getUser(Channel channel, String name) {
         SinkLibrary.getInstance().getCustomLogger().debug("Searching IRC user: " + name);
-        ArrayList<User> matchedUsers = new ArrayList<>();
+        List<User> matchedUsers = new ArrayList<>();
         for (User user : channel.getUsers()) {
             if (user.getNick().startsWith(name)) {
                 matchedUsers.add(user);
@@ -107,13 +113,20 @@ public class IrcUtil {
         return null;
     }
 
+    @Nullable
     public static Channel getChannel(String name) {
         for (Channel channel : SinkIRC.getIrcBot().getUserBot().getChannels()) {
             if (channel.getName().equalsIgnoreCase(name)) {
+                if (loadedChannels.contains(channel)) {
+                    return channel;
+                }
+                for (User user : channel.getUsers()) {
+                    SinkLibrary.getInstance().loadIrcUser(user);
+                }
+                loadedChannels.add(channel);
                 return channel;
             }
         }
-
         return null;
     }
 
@@ -146,6 +159,10 @@ public class IrcUtil {
     }
 
     public static void handleCommand(String command, String[] args, String source, User user, String label) {
+        if (StringUtil.isStringEmptyOrNull(command)) {
+            return;
+        }
+
         SinkLibrary.getInstance().getCustomLogger().debug("handleCommand: " + label);
         if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);

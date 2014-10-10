@@ -17,10 +17,11 @@
 
 package de.static_interface.sinklibrary.listener;
 
+import de.static_interface.sinklibrary.SinkIrcUser;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.event.IrcCommandEvent;
-import de.static_interface.sinklibrary.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -40,21 +41,16 @@ public class IrcCommandListener implements Listener {
 
         SinkLibrary.getInstance().getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
                                                           + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
-
         if (!executeCommand(user, command, source, label, args)) {
             SinkLibrary.getInstance().sendIrcMessage(user.getNick() + ": Unknown command: " + command, source);
-            event.setCancelled(true); // Debug
         }
     }
 
     private boolean executeCommand(User user, String command, String source, String label, String[] args) {
         //Todo add events
-        IrcCommandSender sender = new IrcCommandSender(user, source);
-        Command cmd = SinkLibrary.getInstance().getCustomCommand(command);
-        if (cmd == null || cmd.isPlayerOnly()) {
-            return false;
-        }
-        cmd.onCommand(sender, null, label, args);
-        return true;
+        SinkIrcUser ircUser = SinkLibrary.getInstance().getIrcUser(user);
+        IrcCommandSender sender = new IrcCommandSender(ircUser, source);
+        SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
+        return !(cmd == null || cmd.isPlayerOnly()) && cmd.onCommand(sender, null, label, args);
     }
 }

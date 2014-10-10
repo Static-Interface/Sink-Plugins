@@ -15,14 +15,14 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
 import org.pircbotx.PircBotX;
 import org.pircbotx.snapshot.ChannelSnapshot;
 import org.pircbotx.snapshot.UserChannelDaoSnapshot;
 import org.pircbotx.snapshot.UserSnapshot;
 
-public class IrcPartEvent extends IrcEventBase {
+public class IrcPartEvent extends IrcEvent {
 
     private final UserSnapshot user;
     private final ChannelSnapshot channel;

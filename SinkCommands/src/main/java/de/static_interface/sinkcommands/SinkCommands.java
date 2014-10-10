@@ -126,7 +126,6 @@ public class SinkCommands extends JavaPlugin {
         if (!initialized) {
             registerEvents();
             registerCommands();
-            SinkLibrary.getInstance().registerPlugin(this);
             initialized = true;
         }
 
@@ -201,5 +200,8 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("rawuser", new RawCommands.RawUserCommand(this));
         SinkLibrary.getInstance().registerCommand("gup", new GupCommand(this));
         SinkLibrary.getInstance().registerCommand("sudo", new SudoCommand(this));
+
+        // Todo:
+        //SinkLibrary.getInstance().registerCommand("message", new MessageCommand(this));
     }
 }

@@ -15,8 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.sender;
+package de.static_interface.sinklibrary.api.sender;
 
+import de.static_interface.sinklibrary.SinkIrcUser;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
@@ -34,18 +35,15 @@ import java.util.Set;
 
 public class IrcCommandSender implements CommandSender {
 
-    User base;
+    SinkIrcUser user;
     String source;
     volatile boolean useNotice = false;
 
-    public IrcCommandSender(User base, String source) {
-        if (base == null) {
-            throw new IllegalArgumentException("base may not be null");
-        }
-        if (source == null) {
-            throw new IllegalArgumentException("source may not be null");
-        }
-        this.base = base;
+    /**
+     * INTERNAL CONSTRUCTOR
+     */
+    public IrcCommandSender(SinkIrcUser user, String source) {
+        this.user = user;
         this.source = source;
         this.useNotice = false;
     }
@@ -62,8 +60,8 @@ public class IrcCommandSender implements CommandSender {
         return source;
     }
 
-    public User getUser() {
-        return base;
+    public SinkIrcUser getUser() {
+        return user;
     }
 
     private void sendNotice(String msg) {
@@ -73,7 +71,7 @@ public class IrcCommandSender implements CommandSender {
             Method method = c.getMethod("getIrcBot");
             method.setAccessible(true);
             bot = (PircBotX) method.invoke(null);
-            bot.sendIRC().notice(base.getNick(), msg);
+            bot.sendIRC().notice(user.getName(), msg);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,7 +83,7 @@ public class IrcCommandSender implements CommandSender {
             sendNotice(msg);
             return;
         }
-        SinkLibrary.getInstance().sendIrcMessage(base.getNick() + ": " + msg, source);
+        user.sendMessage(msg, source);
     }
 
     @Override
@@ -98,10 +96,10 @@ public class IrcCommandSender implements CommandSender {
             }
 
             if (first) {
-                msg = base.getNick() + ": " + msg;
+                msg = user.getName() + ": " + msg;
                 first = false;
             }
-            SinkLibrary.getInstance().sendIrcMessage(msg, source);
+            sendMessage(msg);
         }
     }
 
@@ -112,7 +110,7 @@ public class IrcCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return base.getNick();
+        return user.getName();
     }
 
     @Override
@@ -179,13 +177,13 @@ public class IrcCommandSender implements CommandSender {
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
             Method method = c.getMethod("isOp", User.class);
             method.setAccessible(true);
-            value = (boolean) method.invoke(null, base);
+            value = (boolean) method.invoke(null, user.getBase());
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
-        SinkLibrary.getInstance().getCustomLogger().debug("isOp(): " + value + " for user: " + base.getNick());
+        SinkLibrary.getInstance().getCustomLogger().debug("Reflection invoke test: isOp(): " + value + " for user: " + user.getName());
         return value;
     }
 
@@ -196,7 +194,7 @@ public class IrcCommandSender implements CommandSender {
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
             Method method = c.getMethod("setOp", User.class, Boolean.class);
             method.setAccessible(true);
-            method.invoke(null, base, value);
+            method.invoke(null, user.getBase(), value);
         } catch (Exception e) {
             e.printStackTrace();
         }

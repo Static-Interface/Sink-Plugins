@@ -19,13 +19,14 @@ package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.Updater;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class Settings extends ConfigurationBase {
+public class Settings extends Configuration {
 
     public static final int REQUIRED_VERSION = 1;
 

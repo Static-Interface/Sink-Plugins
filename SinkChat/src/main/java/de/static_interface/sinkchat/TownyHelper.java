@@ -51,7 +51,7 @@ public class TownyHelper {
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank) {
         SinkUser user = SinkLibrary.getInstance().getUser(resident.getName()); // TODO: GET UUID FROM NAME
 
-        String color = user.getPrefix().replace(ChatColor.stripColor(user.getPrefix()), ""); //very bad
+        String color = user.getChatPrefix().replace(ChatColor.stripColor(user.getChatPrefix()), ""); //very bad
 
         String prefixName = color + user.getName();
 

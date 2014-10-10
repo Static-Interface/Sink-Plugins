@@ -19,14 +19,14 @@ package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.event.IrcJoinEvent;
-import de.static_interface.sinklibrary.event.IrcKickEvent;
-import de.static_interface.sinklibrary.event.IrcNickChangeEvent;
-import de.static_interface.sinklibrary.event.IrcPartEvent;
-import de.static_interface.sinklibrary.event.IrcPrivateMessageEvent;
-import de.static_interface.sinklibrary.event.IrcQuitEvent;
-import de.static_interface.sinklibrary.event.IrcReceiveMessageEvent;
-import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.api.event.IrcJoinEvent;
+import de.static_interface.sinklibrary.api.event.IrcKickEvent;
+import de.static_interface.sinklibrary.api.event.IrcNickChangeEvent;
+import de.static_interface.sinklibrary.api.event.IrcPartEvent;
+import de.static_interface.sinklibrary.api.event.IrcPrivateMessageEvent;
+import de.static_interface.sinklibrary.api.event.IrcQuitEvent;
+import de.static_interface.sinklibrary.api.event.IrcReceiveMessageEvent;
+import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -140,6 +140,10 @@ public class IrcListener implements Listener {
         List<String> tmp = new ArrayList<>(Arrays.asList(args));
         tmp.remove(cmd);
         args = tmp.toArray(new String[tmp.size()]);
+
+        if (event.getMessage().trim().equals(IrcUtil.getCommandPrefix())) {
+            return; // no command
+        }
         IrcUtil.handleCommand(cmd, args, event.getUser().getNick(), event.getUser(), event.getMessage());
     }
 
@@ -160,16 +164,6 @@ public class IrcListener implements Listener {
                                                           + event.getChannel().getName() + ", message: " + event.getMessage());
         String label = event.getMessage();
         Channel channel = event.getChannel();
-
-        if ((label.toLowerCase().contains("hello") || label.toLowerCase().contains("hi") ||
-             label.toLowerCase().contains("huhu") || label.toLowerCase().contains("hallo") ||
-             label.toLowerCase().contains("moin") || label.toLowerCase().contains("morgen"))
-            && (label.toLowerCase().contains(SinkIRC.getIrcBot().getNick() + ' ')
-                || label.toLowerCase().contains(SinkIRC.getIrcBot().getNick())
-                || label.toLowerCase().contains(' ' + SinkIRC.getIrcBot().getNick() + ' '))) {
-            IrcUtil.sendMessage(channel, "Hallo, " + event.getUser().getNick());
-            return;
-        }
 
         if (!label.toLowerCase().startsWith(IrcUtil.getCommandPrefix())) {
             return;

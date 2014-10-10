@@ -101,7 +101,7 @@ public class NickCommand implements CommandExecutor {
             newDisplayName = user.getDefaultDisplayName();
         }
 
-        newDisplayName = user.getPrefix() + newDisplayName;
+        newDisplayName = user.getChatPrefix() + newDisplayName;
 
         for (Player onlinePlayer : BukkitUtil.getOnlinePlayers()) {
             if (target.equals(onlinePlayer)) {

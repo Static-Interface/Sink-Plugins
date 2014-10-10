@@ -22,15 +22,15 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class WarnCommand extends Command {
+public class WarnCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.RED + "[Warn] " + ChatColor.RESET;
 

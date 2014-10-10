@@ -18,7 +18,7 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinkirc.IrcUtil;
-import de.static_interface.sinklibrary.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -48,7 +48,7 @@ public class SayCommand extends IrcCommand {
 
         String messageWithPrefix;
         messageWithPrefix =
-                IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + IrcUtil.getFormattedName(sender.getUser()) + ChatColor.GRAY + ": "
+                IRC_PREFIX + ChatColor.GRAY + '[' + source + "] " + IrcUtil.getFormattedName(sender.getUser().getBase()) + ChatColor.GRAY + ": "
                 + ChatColor.WHITE + label.replaceFirst("say", "");
 
         BukkitUtil.broadcastMessage(messageWithPrefix);

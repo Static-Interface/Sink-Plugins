@@ -63,7 +63,6 @@ public class SinkChat extends JavaPlugin {
             registerEvents();
             registerCommands();
             registerChannels();
-            SinkLibrary.getInstance().registerPlugin(this);
             initialized = true;
         }
     }

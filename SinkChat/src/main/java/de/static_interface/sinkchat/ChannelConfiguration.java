@@ -19,11 +19,11 @@ package de.static_interface.sinkchat;
 
 import de.static_interface.sinkchat.channel.ChannelValues;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.configuration.ConfigurationBase;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 
 import java.io.File;
 
-public class ChannelConfiguration extends ConfigurationBase {
+public class ChannelConfiguration extends Configuration {
 
     public ChannelConfiguration() {
         super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "ChatChannels.yml"), true);

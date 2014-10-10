@@ -18,11 +18,11 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinkirc.IrcListener;
-import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.bukkit.plugin.Plugin;
 
-public abstract class IrcCommand extends Command {
+public abstract class IrcCommand extends SinkCommand {
 
     protected static final String IRC_PREFIX = IrcListener.IRC_PREFIX;
 

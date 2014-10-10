@@ -17,16 +17,16 @@
 
 package de.static_interface.sinkcommands.command;
 
-import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.sender.FakeConsoleCommandSender;
-import de.static_interface.sinklibrary.sender.FakePlayerCommandSender;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.sender.FakeConsoleCommandSender;
+import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class SudoCommand extends Command {
+public class SudoCommand extends SinkCommand {
 
     public SudoCommand(Plugin plugin) {
         super(plugin);

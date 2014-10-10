@@ -23,13 +23,13 @@ import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class ChannelCommand extends Command {
+public class ChannelCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.GREEN + "[Channel]" + ' ' + ChatColor.RESET;
     private static final String enabled = "SinkChat.Commands.Channel.Enabled",

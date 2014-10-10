@@ -19,7 +19,7 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
@@ -28,7 +28,7 @@ import org.bukkit.plugin.Plugin;
 
 public class RawCommands {
 
-    public static class RawCommand extends Command {
+    public static class RawCommand extends SinkCommand {
 
         public RawCommand(Plugin plugin) {
             super(plugin);
@@ -49,7 +49,7 @@ public class RawCommands {
         }
     }
 
-    public static class RawUserCommand extends Command {
+    public static class RawUserCommand extends SinkCommand {
 
         public RawUserCommand(Plugin plugin) {
             super(plugin);

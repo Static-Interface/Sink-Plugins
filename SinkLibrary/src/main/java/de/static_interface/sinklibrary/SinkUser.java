@@ -17,11 +17,13 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.api.user.IUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
-import de.static_interface.sinklibrary.model.BanInfo;
-import de.static_interface.sinklibrary.util.VaultHelper;
+import de.static_interface.sinklibrary.api.model.BanData;
+import de.static_interface.sinklibrary.util.VaultBridge;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +35,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class SinkUser implements Comparable<SinkUser> {
+public class SinkUser implements IUser, Comparable<SinkUser> {
 
     private Player base = null;
     private Economy econ = null;
@@ -104,7 +106,7 @@ public class SinkUser implements Comparable<SinkUser> {
                 player = Bukkit.getOfflinePlayer(uuid);
             }
         }
-        return VaultHelper.getBalance(player);
+        return VaultBridge.getBalance(player);
     }
 
     /**
@@ -121,7 +123,7 @@ public class SinkUser implements Comparable<SinkUser> {
                 player = Bukkit.getOfflinePlayer(uuid);
             }
         }
-        return VaultHelper.addBalance(player, amount);
+        return VaultBridge.addBalance(player, amount);
     }
 
     private void validateEconomy() {
@@ -155,6 +157,17 @@ public class SinkUser implements Comparable<SinkUser> {
      */
     public CommandSender getSender() {
         return sender;
+    }
+
+    @Override
+    public boolean hasPermission(SinkCommand command) {
+        String permission = command.getPermission();
+        return permission == null || hasPermission(command.getPermission());
+    }
+
+    @Override
+    public boolean isOp() {
+        return base.isOp();
     }
 
     /**
@@ -218,21 +231,34 @@ public class SinkUser implements Comparable<SinkUser> {
             return playerName;
         }
 
-        return getPrefix() + playerName + ChatColor.RESET;
+        return getChatPrefix() + playerName + ChatColor.RESET;
     }
 
     /**
-     * Get Prefix
+     * Get Chat prefix
      *
-     * @return Player prefix
+     * @return Player chat prefix
+     * @deprecated use {@link #getChatPrefix()} instead
      * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
      */
+    @Deprecated
     public String getPrefix() {
+        return getChatPrefix();
+    }
+
+    /**
+     * Get Chat prefix
+     *
+     * @return Player chat prefix
+     * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
+     */
+    public String getChatPrefix() {
         if (!SinkLibrary.getInstance().isChatAvailable()) {
             return base.isOp() ? ChatColor.DARK_RED.toString() : ChatColor.WHITE.toString();
         }
         return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
     }
+
 
     /**
      * Get players name (useful for offline player usage)
@@ -341,8 +367,13 @@ public class SinkUser implements Comparable<SinkUser> {
         getConfiguration().setBanned(false);
     }
 
-    public BanInfo getBanInfo() {
-        return new BanInfo(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getUnbanTime(),
+    public BanData getBanInfo() {
+        return new BanData(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getUnbanTime(),
                            getConfiguration().getBanReason());
+    }
+
+    @Override
+    public String getIdentifierString() {
+        return getUniqueId().toString();
     }
 }

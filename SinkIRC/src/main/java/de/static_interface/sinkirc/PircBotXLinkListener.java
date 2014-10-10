@@ -17,19 +17,22 @@
 
 package de.static_interface.sinkirc;
 
-import de.static_interface.sinklibrary.event.IrcJoinEvent;
-import de.static_interface.sinklibrary.event.IrcKickEvent;
-import de.static_interface.sinklibrary.event.IrcNickChangeEvent;
-import de.static_interface.sinklibrary.event.IrcPartEvent;
-import de.static_interface.sinklibrary.event.IrcPrivateMessageEvent;
-import de.static_interface.sinklibrary.event.IrcQuitEvent;
-import de.static_interface.sinklibrary.event.IrcReceiveMessageEvent;
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.event.IrcJoinEvent;
+import de.static_interface.sinklibrary.api.event.IrcKickEvent;
+import de.static_interface.sinklibrary.api.event.IrcModeEvent;
+import de.static_interface.sinklibrary.api.event.IrcNickChangeEvent;
+import de.static_interface.sinklibrary.api.event.IrcPartEvent;
+import de.static_interface.sinklibrary.api.event.IrcPrivateMessageEvent;
+import de.static_interface.sinklibrary.api.event.IrcQuitEvent;
+import de.static_interface.sinklibrary.api.event.IrcReceiveMessageEvent;
 import org.bukkit.Bukkit;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.KickEvent;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.ModeEvent;
 import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.PartEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
@@ -45,24 +48,38 @@ public class PircBotXLinkListener extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onJoin(JoinEvent<PircBotX> event) {
+        SinkLibrary.getInstance().loadIrcUser(event.getUser());
+
         IrcJoinEvent bukkitEvent = new IrcJoinEvent(event.getUser(), event.getChannel(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
+    public void onMode(ModeEvent<PircBotX> event) {
+        IrcModeEvent bukkitEvent = new IrcModeEvent(event.getUser(), event.getChannel(), event.getMode(), event.getModeParsed(), event.getBot());
+        Bukkit.getPluginManager().callEvent(bukkitEvent);
+    }
+
+    @Override
     public void onPart(PartEvent<PircBotX> event) {
+        SinkLibrary.getInstance().unloadIrcUser(event.getUser());
+
         IrcPartEvent bukkitEvent = new IrcPartEvent(event.getUser(), event.getChannel(), event.getReason(), event.getDaoSnapshot(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
     public void onKick(KickEvent<PircBotX> event) {
+        SinkLibrary.getInstance().unloadIrcUser(event.getUser());
+
         IrcKickEvent bukkitEvent = new IrcKickEvent(event.getUser(), event.getRecipient(), event.getChannel(), event.getReason(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
 
     @Override
     public void onQuit(QuitEvent<PircBotX> event) {
+        SinkLibrary.getInstance().unloadIrcUser(event.getUser());
+
         IrcQuitEvent bukkitEvent = new IrcQuitEvent(event.getUser(), event.getReason(), event.getDaoSnapshot(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }

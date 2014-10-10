@@ -15,42 +15,36 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
-import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
+import org.pircbotx.snapshot.UserChannelDaoSnapshot;
+import org.pircbotx.snapshot.UserSnapshot;
 
-public class IrcKickEvent extends IrcEventBase {
+public class IrcQuitEvent extends IrcEvent {
 
-    private final User user;
-    private final User recipient;
-    private final Channel channel;
+    private final UserSnapshot user;
     private final String reason;
+    private final UserChannelDaoSnapshot daoSnapshot;
     private final PircBotX bot;
 
-    public IrcKickEvent(User user, User recipient, Channel channel, String reason, PircBotX bot) {
+    public IrcQuitEvent(UserSnapshot user, String reason, UserChannelDaoSnapshot daoSnapshot, PircBotX bot) {
         this.user = user;
-        this.recipient = recipient;
-        this.channel = channel;
         this.reason = reason;
+        this.daoSnapshot = daoSnapshot;
         this.bot = bot;
     }
 
-    public User getUser() {
+    public UserSnapshot getUser() {
         return user;
-    }
-
-    public User getRecipient() {
-        return recipient;
-    }
-
-    public Channel getChannel() {
-        return channel;
     }
 
     public String getReason() {
         return reason;
+    }
+
+    public UserChannelDaoSnapshot getDaoSnapshot() {
+        return daoSnapshot;
     }
 
     @Override

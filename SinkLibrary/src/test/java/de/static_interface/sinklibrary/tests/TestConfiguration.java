@@ -17,14 +17,14 @@
 
 package de.static_interface.sinklibrary.tests;
 
-import de.static_interface.sinklibrary.configuration.ConfigurationBase;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TestConfiguration extends ConfigurationBase {
+public class TestConfiguration extends Configuration {
 
     public HashMap<String, Object> defaultTestValues = new HashMap<>();
 

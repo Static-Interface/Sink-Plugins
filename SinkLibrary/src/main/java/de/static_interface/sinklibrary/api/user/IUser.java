@@ -15,13 +15,37 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.sender;
+package de.static_interface.sinklibrary.api.user;
 
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.command.CommandSender;
 
-public interface FakeSender extends CommandSender {
+public interface IUser {
 
-    CommandSender getBase();
+    String getName();
 
-    CommandSender getFaker();
+    String getDisplayName();
+
+    Configuration getConfiguration();
+
+    String getIdentifierString();
+
+    CommandSender getSender();
+
+    boolean hasPermission(SinkCommand command);
+
+    boolean isOp();
+
+    String getPrimaryGroup();
+
+    String getChatPrefix();
+
+    boolean isConsole();
+
+    void sendMessage(String msg);
+
+    void sendDebugMessage(String msg);
+
+    boolean isPlayer();
 }

@@ -15,7 +15,7 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.configuration;
+package de.static_interface.sinklibrary.api.configuration;
 
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -30,9 +30,9 @@ import java.util.logging.Level;
 
 @SuppressWarnings(
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
-public abstract class ConfigurationBase {
+public abstract class Configuration {
 
-    private static HashMap<String, ConfigurationBase> configs = new HashMap<>();
+    private static HashMap<String, Configuration> configs = new HashMap<>();
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
@@ -42,7 +42,7 @@ public abstract class ConfigurationBase {
      * Create a new configuration
      * @param file Configurations YAML file (will be created if doesn't exist)
      */
-    public ConfigurationBase(File file) {
+    public Configuration(File file) {
         yamlFile = file;
     }
 
@@ -52,14 +52,14 @@ public abstract class ConfigurationBase {
      * @param file   Configurations YAML file (will be created if doesn't exist)
      * @param init If true, the config file will be created if it doesn't exists
      */
-    public ConfigurationBase(File file, boolean init) {
+    public Configuration(File file, boolean init) {
         yamlFile = file;
         if (init) {
             init();
         }
     }
 
-    public static HashMap<String, ConfigurationBase> getConfigs() {
+    public static HashMap<String, Configuration> getConfigs() {
         return configs;
     }
 

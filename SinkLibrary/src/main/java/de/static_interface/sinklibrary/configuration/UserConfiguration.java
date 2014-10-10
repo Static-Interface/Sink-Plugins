@@ -19,11 +19,12 @@ package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.ChatColor;
 
 import java.io.File;
 
-public class UserConfiguration extends ConfigurationBase {
+public class UserConfiguration extends Configuration {
 
     public static final int REQUIRED_VERSION = 1;
 
@@ -31,7 +32,7 @@ public class UserConfiguration extends ConfigurationBase {
 
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
-     * Should be accessed via {@link de.static_interface.sinklibrary.SinkUser#getConfiguration()}
+     * Should be accessed via {@link SinkUser#getConfiguration()}
      *
      * @param user User
      */

@@ -15,23 +15,25 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcReceiveMessageEvent extends IrcEventBase {
+public class IrcKickEvent extends IrcEvent {
 
     private final User user;
+    private final User recipient;
     private final Channel channel;
-    private final String message;
+    private final String reason;
     private final PircBotX bot;
 
-    public IrcReceiveMessageEvent(User user, Channel channel, String message, PircBotX bot) {
+    public IrcKickEvent(User user, User recipient, Channel channel, String reason, PircBotX bot) {
         this.user = user;
+        this.recipient = recipient;
         this.channel = channel;
-        this.message = message;
+        this.reason = reason;
         this.bot = bot;
     }
 
@@ -39,12 +41,16 @@ public class IrcReceiveMessageEvent extends IrcEventBase {
         return user;
     }
 
+    public User getRecipient() {
+        return recipient;
+    }
+
     public Channel getChannel() {
         return channel;
     }
 
-    public String getMessage() {
-        return message;
+    public String getReason() {
+        return reason;
     }
 
     @Override

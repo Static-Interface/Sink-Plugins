@@ -15,16 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.model;
+package de.static_interface.sinklibrary.api.model;
 
-public class BanInfo {
+public class BanData {
 
     private final boolean isBanned;
     private final long banTime;
     private final long unbanTime;
     private final String reason;
 
-    public BanInfo(boolean isBanned, long banTime, long unbanTime, String reason) {
+    public BanData(boolean isBanned, long banTime, long unbanTime, String reason) {
         this.isBanned = isBanned;
         this.banTime = banTime;
         this.unbanTime = unbanTime;

@@ -17,15 +17,15 @@
 
 package de.static_interface.sinklibrary;
 
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
+import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
-import de.static_interface.sinklibrary.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
-import de.static_interface.sinklibrary.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.exception.NotInitializedException;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
@@ -43,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.pircbotx.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
@@ -71,16 +74,16 @@ public class SinkLibrary extends JavaPlugin {
     private File dataFolder;
     private String version;
     private Settings settings;
-    private List<JavaPlugin> registeredPlugins;
     private ConcurrentHashMap<Player, SinkUser> onlineUsers;
+    private ConcurrentHashMap<User, SinkIrcUser> onlineIrcUsers;
     private PluginDescriptionFile description;
     private boolean economyAvailable = true;
     private boolean permissionsAvailable = true;
     private boolean chatAvailable = true;
     private boolean vaultAvailable = false;
     private boolean initalized;
-    private HashMap<String, Command> commandAliases;
-    private HashMap<String, Command> commands;
+    private HashMap<String, SinkCommand> commandAliases;
+    private HashMap<String, SinkCommand> commands;
     private TabCompleter tabCompleter;
 
     /**
@@ -100,8 +103,8 @@ public class SinkLibrary extends JavaPlugin {
         instance = this;
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
-        registeredPlugins = new ArrayList<>();
         onlineUsers = new ConcurrentHashMap<>();
+        onlineIrcUsers = new ConcurrentHashMap<>();
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
@@ -207,7 +210,7 @@ public class SinkLibrary extends JavaPlugin {
         }
     }
 
-    public HashMap<String, Command> getCommands() {
+    public HashMap<String, SinkCommand> getCommands() {
         return commands;
     }
 
@@ -363,15 +366,6 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * Register a plugin
-     *
-     * @param plugin Class which extends {@link org.bukkit.plugin.java.JavaPlugin}
-     */
-    public void registerPlugin(JavaPlugin plugin) {
-        registeredPlugins.add(plugin);
-    }
-
-    /**
      * @param player Player
      * @return User instance of player
      */
@@ -464,6 +458,44 @@ public class SinkLibrary extends JavaPlugin {
         player.setPlayerListName(displayName);
     }
 
+    @Nullable
+    public SinkIrcUser getIrcUser(String nick) {
+        for (SinkIrcUser user : onlineIrcUsers.values()) {
+            if (user.getName().equals(nick)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public SinkIrcUser getIrcUser(User user) {
+        SinkIrcUser sUser = onlineIrcUsers.get(user);
+        if (sUser == null) {
+            throw new IllegalStateException("This shouln't happen");
+        }
+        return sUser;
+    }
+
+    public void loadIrcUser(User user) {
+        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.toString());
+        if (onlineIrcUsers.get(user) != null) {
+            return;
+        }
+
+        SinkIrcUser sUser = new SinkIrcUser(user);
+        onlineIrcUsers.put(user, sUser);
+    }
+
+    public void unloadIrcUser(User user) {
+        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.toString());
+        SinkIrcUser sUser = onlineIrcUsers.get(user);
+        if (sUser == null) {
+            return;
+        }
+        //user.getConfiguration().save(); // Todo
+        onlineIrcUsers.remove(user);
+    }
+
     /**
      * Unload an User
      * INTERNAL METHOD
@@ -522,7 +554,7 @@ public class SinkLibrary extends JavaPlugin {
         return logger;
     }
 
-    public void registerCommand(String name, Command command) {
+    public void registerCommand(String name, SinkCommand command) {
         name = name.toLowerCase();
         if (!command.isIrcOnly()) {
             try {
@@ -539,6 +571,8 @@ public class SinkLibrary extends JavaPlugin {
                         commandAliases.put(alias, command);
                     }
                     command.setUsage(cmd.getUsage());
+                    command.setPermission(cmd.getPermission());
+                    command.setPlugin(cmd.getPlugin());
                 }
             } catch (NullPointerException ignored) {
                 // do nothing because command may be an irc command which is not registered in the plugin.yml
@@ -553,8 +587,8 @@ public class SinkLibrary extends JavaPlugin {
         return tabCompleter;
     }
 
-    public Command getCustomCommand(String name) {
-        Command cmd;
+    public SinkCommand getCustomCommand(String name) {
+        SinkCommand cmd;
         cmd = commands.get(name.toLowerCase());
         if (cmd == null) {
             cmd = commandAliases.get(name.toLowerCase());

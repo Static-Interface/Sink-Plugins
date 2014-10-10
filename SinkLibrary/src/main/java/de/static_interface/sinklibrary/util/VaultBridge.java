@@ -23,7 +23,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-public class VaultHelper {
+public class VaultBridge {
 
     public static double getBalance(OfflinePlayer account) {
         return SinkLibrary.getInstance().getEconomy().getBalance(account.getName());

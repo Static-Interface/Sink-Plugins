@@ -18,13 +18,13 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinkcommands.SinkCommands;
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class GlobalmuteCommand extends Command {
+public class GlobalmuteCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_RED + "[GlobalMute] " + ChatColor.RESET;
 

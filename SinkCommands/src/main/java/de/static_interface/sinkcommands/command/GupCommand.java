@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkcommands.command;
 
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class GupCommand extends Command {
+public class GupCommand extends SinkCommand {
 
     public GupCommand(Plugin plugin) {
         super(plugin);

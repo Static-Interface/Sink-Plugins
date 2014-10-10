@@ -18,12 +18,13 @@
 package de.static_interface.sinklibrary.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.configuration.ConfigurationBase;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class SinkReloadCommand extends Command {
+public class SinkReloadCommand extends SinkCommand {
     //Todo: fix exceptions on reload
 
     private static String pluginName = SinkLibrary.getInstance().getPluginName();
@@ -43,7 +44,7 @@ public class SinkReloadCommand extends Command {
         sender.sendMessage(PREFIX + "Reloading...");
 
         // Reload all configs
-        for (ConfigurationBase base : ConfigurationBase.getConfigs().values()) {
+        for (Configuration base : Configuration.getConfigs().values()) {
             base.reload();
         }
 

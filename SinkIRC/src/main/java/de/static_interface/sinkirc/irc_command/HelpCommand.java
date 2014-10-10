@@ -18,8 +18,8 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.command.Command;
-import de.static_interface.sinklibrary.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -34,7 +34,7 @@ public class HelpCommand extends IrcCommand {
         IrcCommandSender sender = (IrcCommandSender) cs;
         String cmds = "";
         for (String cmdName : SinkLibrary.getInstance().getCommands().keySet()) {
-            Command cmd = SinkLibrary.getInstance().getCommands().get(cmdName);
+            SinkCommand cmd = SinkLibrary.getInstance().getCommands().get(cmdName);
             if (!cmd.isPlayerOnly()) {
                 if (cmds.equals("")) {
                     cmds = cmdName;

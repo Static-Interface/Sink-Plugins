@@ -37,7 +37,20 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, Player player, @Nullable String userMessage, @Nullable Object... paramValues) {
-        return format(str, SinkLibrary.getInstance().getUser(player), userMessage, paramValues);
+        return format(str, SinkLibrary.getInstance().getUser(player), userMessage, null, paramValues);
+    }
+
+    /**
+     * Format a string
+     * @param str Input String
+     * @param user If there is any user who's calling this, you can use placeholders like
+     *             {NAME} (some of the placeholders works with offline users too)
+     * @param target If there is a target player (e.g. /msg <target>), you can use placeholders for that target too
+     * @param userMessage Message from user (e.g. /say <message> -> <message> would be userMessage)
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable String userMessage, @Nullable SinkUser user, @Nullable SinkUser target) {
+        return format(str, user, target, userMessage, null, null);
     }
 
     /**
@@ -59,7 +72,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable HashMap<String, Object> customPlaceholders) {
-        return format(str, null, null, customPlaceholders, null);
+        return format(str, (SinkUser) null, null, customPlaceholders, null, null);
     }
 
     /**
@@ -72,7 +85,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage, @Nullable Object... paramValues) {
-        return format(str, user, userMessage, null, paramValues);
+        return format(str, user, null, userMessage, null, paramValues);
     }
 
     /**
@@ -89,12 +102,31 @@ public class StringUtil {
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage,
                                 @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
+        return format(str, user, null, userMessage, customPlaceholders, paramValues);
+    }
+
+
+    /**
+     * Format a string
+     * @param str Input String
+     * @param user If there is any user who's calling this, you can use placeholders like
+     *             {NAME} (some of the placeholders works with offline users too)
+     * @param target If there is a target player (e.g. /msg <target>), you can use placeholders for that target too
+     * @param userMessage Message from user (e.g. /say <message> -> userMessage should be  <message>)
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @param customPlaceholders Custom placeholders values (keys are the placeholders), dont use brackets on keys.
+     *                           Example: if equals "TEST" and value equals "Hello", all {TEST} instances will be replaced
+     *                           with "Hello"
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable SinkUser user, @Nullable SinkUser target, @Nullable String userMessage,
+                                @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
             str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(user.getBalance()));
             str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
-            str = str.replaceAll("(?i)\\{PREFIX\\}", user.getPrefix());
+            str = str.replaceAll("(?i)\\{PREFIX\\}", user.getChatPrefix());
         }
 
         if (user != null && user.getPlayer() != null) {
@@ -111,8 +143,30 @@ public class StringUtil {
             str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
         }
 
+        if (target != null) {
+            str = str.replaceAll("(?i)\\{(T(ARGET)?(NAME)|TARGET)\\}", target.getName());
+            str = str.replaceAll("(?i)\\{T(ARGET)?(DISPLAYNAME|FORMATTEDNAME)\\}", target.getDisplayName());
+            str = str.replaceAll("(?i)\\{T(ARGET)?(BALANCE|MONEY)\\}", String.valueOf(target.getBalance()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(RANK|GROUP)\\}", target.getPrimaryGroup());
+            str = str.replaceAll("(?i)\\{T(ARGET)?PREFIX\\}", target.getChatPrefix());
+        }
+
+        if (target != null && target.getPlayer() != null) {
+            str = str.replaceAll("(?i)\\{T(ARGET)?X\\}", String.valueOf(target.getPlayer().getLocation().getX()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?Y\\}", String.valueOf(target.getPlayer().getLocation().getY()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?Z\\}", String.valueOf(target.getPlayer().getLocation().getZ()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?LEVEL\\}", String.valueOf(target.getPlayer().getLevel()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(E)?XP(ERIENCE)?\\}", String.valueOf(target.getPlayer().getExp()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(target.getPlayer().getTotalExperience()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(FOOD|FOODLEVEL)\\}", String.valueOf(target.getPlayer().getFoodLevel()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(GAMEMODE|GM)\\}", target.getPlayer().getGameMode().name());
+            str = str.replaceAll("(?i)\\{T(ARGET)?HEALTH\\}", String.valueOf(target.getPlayer().getHealth()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?MAXHEALTH}", String.valueOf(target.getPlayer().getMaxHealth()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?WORLD\\}", target.getPlayer().getWorld().getName());
+        }
+
         if (SinkLibrary.getInstance().isEconomyAvailable()) {
-            str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultHelper.getCurrenyName());
+            str = str.replaceAll("(?i)\\{CURRENCY\\}", VaultBridge.getCurrenyName());
         }
 
         str = str.replaceAll("(?i)\\{AQUA\\}", ChatColor.AQUA.toString());

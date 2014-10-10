@@ -22,7 +22,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
-import de.static_interface.sinklibrary.model.BanInfo;
+import de.static_interface.sinklibrary.api.model.BanData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,7 +41,7 @@ public class UserConfigurationListener implements Listener {
         if (!config.exists()) {
             config.init();
         }
-        BanInfo result = user.getBanInfo();
+        BanData result = user.getBanInfo();
         if (!result.isBanned()) {
             return;
         }

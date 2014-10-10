@@ -86,14 +86,10 @@ public class SinkIRC extends JavaPlugin {
                     if (SinkLibrary.getInstance().getSettings().isIRCAuthentificationEnabled()) {
                         ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIRCAuthBot(),
                                                  SinkLibrary.getInstance().getSettings().getIRCAuthMessage());
-                        try {
-                            Thread.sleep(1000); //Todo
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIRCChannel());
+                        Thread.sleep(1000); //Todo
                     }
-                } catch (IOException | IrcException e) {
+                    ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIRCChannel());
+                } catch (IOException | IrcException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -113,7 +109,6 @@ public class SinkIRC extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("list", new ListCommand(this));
         SinkLibrary.getInstance().registerCommand("set", new SetCommand(this));
 
-        SinkLibrary.getInstance().registerPlugin(this);
         initialized = true;
     }
 

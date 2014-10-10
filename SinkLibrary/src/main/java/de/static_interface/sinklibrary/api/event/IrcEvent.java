@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.pircbotx.PircBotX;
 
-public abstract class IrcEventBase extends Event implements Cancellable {
+public abstract class IrcEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     boolean cancelled;

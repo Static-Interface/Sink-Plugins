@@ -18,14 +18,14 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.command.Command;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.text.DecimalFormat;
 
-public class LagCommand extends Command {
+public class LagCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
 

@@ -15,21 +15,26 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
+import com.google.common.collect.ImmutableList;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcJoinEvent extends IrcEventBase {
+public class IrcModeEvent extends IrcEvent {
 
     private final User user;
     private final Channel channel;
+    private final String mode;
+    private final ImmutableList<String> modeParsed;
     private final PircBotX bot;
 
-    public IrcJoinEvent(User user, Channel channel, PircBotX bot) {
+    public IrcModeEvent(User user, Channel channel, String mode, ImmutableList<String> modeParsed, PircBotX bot) {
         this.user = user;
         this.channel = channel;
+        this.mode = mode;
+        this.modeParsed = modeParsed;
         this.bot = bot;
     }
 
@@ -39,6 +44,14 @@ public class IrcJoinEvent extends IrcEventBase {
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public ImmutableList<String> getModeParsed() {
+        return modeParsed;
     }
 
     @Override

@@ -15,12 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.event;
+package de.static_interface.sinklibrary.api.event;
 
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public class IrcCommandEvent extends IrcEventBase {
+public class IrcCommandEvent extends IrcEvent {
 
     private final PircBotX bot;
     private String source;
