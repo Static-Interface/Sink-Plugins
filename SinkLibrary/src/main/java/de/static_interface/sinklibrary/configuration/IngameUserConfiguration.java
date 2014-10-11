@@ -24,7 +24,7 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 
-public class UserConfiguration extends Configuration {
+public class IngameUserConfiguration extends Configuration {
 
     public static final int REQUIRED_VERSION = 1;
 
@@ -36,7 +36,7 @@ public class UserConfiguration extends Configuration {
      *
      * @param user User
      */
-    public UserConfiguration(IngameUser user) {
+    public IngameUserConfiguration(IngameUser user) {
         super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), user.getUniqueId().toString() + ".yml"), false);
 
         File oldDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players");

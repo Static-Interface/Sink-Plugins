@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -123,7 +123,7 @@ public class NickCommand extends SinkCommand {
             }
         }
 
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
         config.setDisplayName(newDisplayName);
         config.setHasDisplayName(true);
 

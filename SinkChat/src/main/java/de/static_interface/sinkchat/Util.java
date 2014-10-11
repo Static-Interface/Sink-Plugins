@@ -21,7 +21,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,7 +45,7 @@ public class Util {
             boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")
                                                                               && !user.hasPermission("sinkchat.spy.bypass"));
 
-            UserConfiguration config = onlineUser.getConfiguration();
+            IngameUserConfiguration config = onlineUser.getConfiguration();
 
             if (isInRange) {
                 p.sendMessage(message);

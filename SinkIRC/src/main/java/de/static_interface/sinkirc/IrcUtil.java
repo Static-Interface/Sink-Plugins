@@ -18,7 +18,9 @@
 package de.static_interface.sinkirc;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -169,7 +171,18 @@ public class IrcUtil {
         } else {
             label = ChatColor.stripColor(label);
         }
-        IrcCommandEvent event = new IrcCommandEvent(source, user, command, label, args, SinkIRC.getIrcBot());
+        IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user), source);
+
+        SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
+
+        boolean isQueryCommand = !source.startsWith("#");
+
+        if (cmd != null && (!isQueryCommand && cmd.isIrcQueryOnly())) {
+            sender.sendMessage("This command is only available via query");
+            return;
+        }
+
+        IrcCommandEvent event = new IrcCommandEvent(sender, cmd, label, args, SinkIRC.getIrcBot());
         Bukkit.getPluginManager().callEvent(event);
     }
 

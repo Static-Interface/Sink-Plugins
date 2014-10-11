@@ -39,6 +39,11 @@ public class IrcUserProvider extends SinkUserProvider {
     }
 
     @Override
+    public String getCommandArgsSuffix() {
+        return "_IRC";
+    }
+
+    @Override
     @Nullable
     public SinkUser getUserInstance(CommandSender sender) {
         for (SinkUser user : instances.values()) {
@@ -49,6 +54,7 @@ public class IrcUserProvider extends SinkUserProvider {
         return null;
     }
 
+    @Override
     @Nullable
     public SinkUser getUserInstance(String nick) {
         for (SinkUser user : instances.values()) {
@@ -59,6 +65,7 @@ public class IrcUserProvider extends SinkUserProvider {
         return null;
     }
 
+    @Override
     public Collection<SinkUser> getUserInstances() {
         return instances.values();
     }
@@ -81,7 +88,7 @@ public class IrcUserProvider extends SinkUserProvider {
             return;
         }
 
-        IrcUser sUser = new IrcUser(user);
+        IrcUser sUser = new IrcUser(user, this);
         instances.put(user, sUser);
     }
 

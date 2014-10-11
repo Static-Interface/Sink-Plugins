@@ -23,7 +23,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.MathUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -59,7 +59,7 @@ public class SinkDebugCommand extends SinkCommand {
                 String player = args[1];
                 String path = args[2];
                 IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
-                UserConfiguration config = user.getConfiguration();
+                IngameUserConfiguration config = user.getConfiguration();
                 sender.sendMessage(PREFIX + "Output: " + config.getYamlConfiguration().getString(path));
                 break;
             }
@@ -75,7 +75,7 @@ public class SinkDebugCommand extends SinkCommand {
                 Object value = replaceValue(args[3]);
 
                 IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
-                UserConfiguration config = user.getConfiguration();
+                IngameUserConfiguration config = user.getConfiguration();
                 config.set(path, value);
                 sender.sendMessage(PREFIX + "Done");
                 break;

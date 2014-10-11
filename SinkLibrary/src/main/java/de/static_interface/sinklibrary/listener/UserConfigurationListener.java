@@ -21,7 +21,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.api.model.BanData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,7 +36,7 @@ public class UserConfigurationListener implements Listener {
         SinkLibrary.getInstance().loadUser(event.getPlayer());
 
         IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
             config.init();

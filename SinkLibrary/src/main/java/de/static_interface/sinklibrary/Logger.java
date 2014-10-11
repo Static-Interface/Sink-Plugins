@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.util.DebugUtil;
 import de.static_interface.sinklibrary.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -117,7 +118,7 @@ public class Logger {
 
     public void debug(String message) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            log(Level.INFO, "[DEBUG] " + message);
+            log(Level.INFO, "[Debug] " + DebugUtil.getCallerCallerClassName() + ".class: " + message);
         }
     }
 

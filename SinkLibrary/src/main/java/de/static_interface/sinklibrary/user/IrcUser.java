@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -35,7 +36,8 @@ public class IrcUser extends SinkUser {
     private boolean online;
     private IrcCommandSender sender;
 
-    public IrcUser(User base) {
+    public IrcUser(User base, SinkUserProvider provider) {
+        super(provider);
         this.base = base;
         online = true;
         sender = new IrcCommandSender(this, null);
@@ -121,14 +123,14 @@ public class IrcUser extends SinkUser {
 
     @Override
     public void sendMessage(String msg) {
-        SinkLibrary.getInstance().sendIrcMessage(base.getNick() + ": " + msg);
+        SinkLibrary.getInstance().sendIrcMessage(msg, getName());
     }
 
     public void sendMessage(String msg, boolean privateMessage) {
-        if (!privateMessage) {
+        if (privateMessage) {
             sendMessage(msg);
         } else {
-            SinkLibrary.getInstance().sendIrcMessage(msg, getName());
+            SinkLibrary.getInstance().sendIrcMessage(getDisplayName() + ": " + msg);
         }
     }
 

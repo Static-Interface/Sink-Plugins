@@ -17,9 +17,10 @@
 
 package de.static_interface.sinklibrary.util;
 
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.ConsoleUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -128,7 +129,11 @@ public class StringUtil {
             if (user instanceof IngameUser) {
                 str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(((IngameUser) user).getBalance()));
             }
-            str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
+            if (!(user instanceof ConsoleUser)) {
+                str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
+            } else {
+                str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", "");
+            }
             str = str.replaceAll("(?i)\\{PREFIX\\}", user.getChatPrefix());
         }
 
@@ -153,7 +158,13 @@ public class StringUtil {
             if (target instanceof IngameUser) {
                 str = str.replaceAll("(?i)\\{T(ARGET)?(BALANCE|MONEY)\\}", String.valueOf(((IngameUser) target).getBalance()));
             }
-            str = str.replaceAll("(?i)\\{T(ARGET)?(RANK|GROUP)\\}", target.getPrimaryGroup());
+
+            if (!(target instanceof ConsoleUser)) {
+                str = str.replaceAll("(?i)\\{T(ARGET)?(RANK|GROUP)\\}", target.getPrimaryGroup());
+            } else {
+                str = str.replaceAll("(?i)\\{T(ARGET)?(RANK|GROUP)\\}", "");
+            }
+
             str = str.replaceAll("(?i)\\{T(ARGET)?PREFIX\\}", target.getChatPrefix());
         }
 

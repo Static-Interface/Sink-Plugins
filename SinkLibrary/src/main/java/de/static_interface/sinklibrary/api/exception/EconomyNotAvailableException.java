@@ -15,15 +15,11 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.exception;
+package de.static_interface.sinklibrary.api.exception;
 
-public class NotInitializedException extends RuntimeException {
+public class EconomyNotAvailableException extends RuntimeException {
 
-    public NotInitializedException(String s) {
-        super(s);
-    }
-
-    public NotInitializedException() {
-        super("SinkLibrary is not initialized!");
+    public EconomyNotAvailableException() {
+        super("Economy is not available!");
     }
 }

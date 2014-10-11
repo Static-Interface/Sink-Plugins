@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary.user;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,11 +30,28 @@ import javax.annotation.Nullable;
 
 public class IngameUserProvider extends SinkUserProvider {
 
+    @Nullable
+    @Override
+    public SinkUser getUserInstance(String name) {
+        Player p = Bukkit.getPlayer(name);
+        if (p != null) {
+            return getUserInstance(p);
+        }
+
+        OfflinePlayer of = Bukkit.getOfflinePlayer(name);
+        return getUserInstance(of.getUniqueId());
+    }
+
     @Override
     @Nullable
     public SinkUser newInstance(CommandSender sender) {
         Player p = (Player) sender;
-        return new IngameUser(p.getUniqueId());
+        return new IngameUser(p.getUniqueId(), this);
+    }
+
+    @Override
+    public String getCommandArgsSuffix() {
+        return "";
     }
 
     public SinkUser getUserInstance(UUID uuid) {
@@ -42,6 +60,6 @@ public class IngameUserProvider extends SinkUserProvider {
             return getUserInstance(p);
         }
 
-        return new IngameUser(uuid);
+        return new IngameUser(uuid, this);
     }
 }

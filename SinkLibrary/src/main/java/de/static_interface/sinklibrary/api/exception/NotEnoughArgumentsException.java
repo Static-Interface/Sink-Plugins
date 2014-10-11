@@ -15,8 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.exception;
+package de.static_interface.sinklibrary.api.exception;
 
-public class UserOfflineException extends RuntimeException {
+public class NotEnoughArgumentsException extends RuntimeException {
 
+    public NotEnoughArgumentsException() {
+        super("");
+    }
+
+    public NotEnoughArgumentsException(final String string) {
+        super(string);
+    }
+
+    public NotEnoughArgumentsException(final Throwable ex) {
+        super("", ex);
+    }
 }

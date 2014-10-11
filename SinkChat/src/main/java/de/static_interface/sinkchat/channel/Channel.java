@@ -24,7 +24,7 @@ import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -99,7 +99,7 @@ public class Channel {
     public boolean enabledForPlayer(UUID uuid) {
         String enabledPath = "Channels." + getName() + ".Enabled";
         IngameUser user = SinkLibrary.getInstance().getUser(uuid);
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
         try {
             return (boolean) config.get(enabledPath, true);
         } catch (NullPointerException ignored) {
@@ -110,7 +110,7 @@ public class Channel {
     public void setEnabledForPlayer(UUID uuid, boolean setEnabled) {
         String enabledPath = "Channels." + getName() + ".Enabled";
         IngameUser user = SinkLibrary.getInstance().getUser(uuid);
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
         config.set(enabledPath, setEnabled);
     }
 

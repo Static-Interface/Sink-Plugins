@@ -15,11 +15,11 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.exception;
+package de.static_interface.sinklibrary.api.exception;
 
-public class EconomyNotAvailableException extends RuntimeException {
+public class ChatNotAvailableException extends RuntimeException {
 
-    public EconomyNotAvailableException() {
-        super("Economy is not available!");
+    public ChatNotAvailableException() {
+        super("Chat is not available!");
     }
 }

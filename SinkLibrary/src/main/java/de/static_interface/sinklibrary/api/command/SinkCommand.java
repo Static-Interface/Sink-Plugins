@@ -21,9 +21,9 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
-import de.static_interface.sinklibrary.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.exception.UserNotFoundException;
-import de.static_interface.sinklibrary.exception.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -62,6 +62,14 @@ public abstract class SinkCommand implements CommandExecutor {
 
     public boolean isIrcOpOnly() {
         return false;
+    }
+
+    public boolean isIrcQueryOnly() {
+        return false;
+    }
+
+    public boolean includeIrcUsersInTabCompleter() {
+        return true;
     }
 
     @Unstable

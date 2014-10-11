@@ -21,8 +21,8 @@ import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -65,6 +65,11 @@ public class MessageCommands {
         }
 
         @Override
+        public boolean isIrcQueryOnly() {
+            return true;
+        }
+
+        @Override
         protected boolean onExecute(CommandSender sender, String label, String[] args) {
             if (args.length < 2 || args[0].trim().length() < 2 || args[1].trim().isEmpty()) {
                 throw new NotEnoughArgumentsException();
@@ -89,6 +94,11 @@ public class MessageCommands {
 
         public ReplyCommand(Plugin plugin) {
             super(plugin);
+        }
+
+        @Override
+        public boolean isIrcQueryOnly() {
+            return true;
         }
 
         @Override

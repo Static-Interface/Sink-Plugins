@@ -15,11 +15,15 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.exception;
+package de.static_interface.sinklibrary.api.exception;
 
-public class ChatNotAvailableException extends RuntimeException {
+public class NotInitializedException extends RuntimeException {
 
-    public ChatNotAvailableException() {
-        super("Chat is not available!");
+    public NotInitializedException(String s) {
+        super(s);
+    }
+
+    public NotInitializedException() {
+        super("SinkLibrary is not initialized!");
     }
 }

@@ -20,11 +20,22 @@ package de.static_interface.sinklibrary.api.user;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.util.DebugUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-public abstract class SinkUser {
+public abstract class SinkUser implements Comparable<SinkUser> {
+
+    SinkUserProvider provider;
+
+    public SinkUser(SinkUserProvider provider) {
+        this.provider = provider;
+    }
+
+    public SinkUserProvider getProvider() {
+        return provider;
+    }
 
     public abstract String getName();
 
@@ -52,8 +63,14 @@ public abstract class SinkUser {
 
     public void sendDebugMessage(String msg) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + msg);
+            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
+                        + DebugUtil.getCallerCallerClassName() + ".class: " + ChatColor.RESET + msg);
         }
+    }
+
+    @Override
+    public int compareTo(SinkUser o) {
+        return getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 
     public abstract boolean isOnline();

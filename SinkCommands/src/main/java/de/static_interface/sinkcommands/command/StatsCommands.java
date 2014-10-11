@@ -21,7 +21,7 @@ import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -47,7 +47,7 @@ public class StatsCommands {
             IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
             Player player = user.getPlayer();
 
-            UserConfiguration config = user.getConfiguration();
+            IngameUserConfiguration config = user.getConfiguration();
 
             if (config.isStatsEnabled()) {
                 player.sendMessage(PREFIX + ChatColor.RED + "Die Statistiken sind schon aktiviert!");
@@ -77,7 +77,7 @@ public class StatsCommands {
             IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
             Player player = user.getPlayer();
 
-            UserConfiguration config = user.getConfiguration();
+            IngameUserConfiguration config = user.getConfiguration();
 
             if (!config.isStatsEnabled()) {
                 player.sendMessage(PREFIX + ChatColor.RED + "Die Statistiken sind schon deaktiviert!");

@@ -17,7 +17,6 @@
 
 package de.static_interface.sinklibrary.listener;
 
-import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
@@ -25,32 +24,21 @@ import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.pircbotx.User;
-
-import java.util.Arrays;
 
 public class IrcCommandListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onCommand(IrcCommandEvent event) {
-        User user = event.getUser();
-        String command = event.getCommand();
-        String source = event.getSource();
+        IrcCommandSender sender = event.getCommandSender();
+        SinkCommand command = event.getCommand();
         String label = event.getLabel();
         String[] args = event.getArgs();
 
-        SinkLibrary.getInstance().getCustomLogger().debug("Executing IRC command: " + command + ", source: " + source
-                                                          + ", label: " + label + ", args:" + Arrays.toString(args) + ", user: " + user);
-        if (!executeCommand(user, command, source, label, args)) {
-            SinkLibrary.getInstance().sendIrcMessage(user.getNick() + ": Unknown command: " + command, source);
+        if (command == null || command.isPlayerOnly()) {
+            SinkLibrary.getInstance().sendIrcMessage(sender.getUser().getDisplayName() + ": Unknown command: " + command);
+            return;
         }
-    }
 
-    private boolean executeCommand(User user, String command, String source, String label, String[] args) {
-        //Todo add events
-        IrcUser ircUser = SinkLibrary.getInstance().getIrcUser(user);
-        IrcCommandSender sender = new IrcCommandSender(ircUser, source);
-        SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
-        return !(cmd == null || cmd.isPlayerOnly()) && cmd.onCommand(sender, null, label, args);
+        command.onCommand(sender, null, label, args);
     }
 }

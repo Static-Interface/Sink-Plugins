@@ -21,11 +21,12 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.Identifiable;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
-import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
-import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
+import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.api.model.BanData;
-import de.static_interface.sinklibrary.exception.UserOfflineException;
+import de.static_interface.sinklibrary.api.exception.UserOfflineException;
 import de.static_interface.sinklibrary.util.VaultBridge;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -39,12 +40,12 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class IngameUser extends SinkUser implements Comparable<IngameUser>, Identifiable {
+public class IngameUser extends SinkUser implements Identifiable {
 
     private Player base = null;
     private Economy econ = null;
     private String playerName = null;
-    private UserConfiguration config = null;
+    private IngameUserConfiguration config = null;
     private UUID uuid = null;
 
     /**
@@ -54,7 +55,8 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      *
      * @param player Base Player
      */
-    IngameUser(Player player) {
+    IngameUser(Player player, SinkUserProvider provider) {
+        super(provider);
         this.uuid = player.getUniqueId();
         initUser(player);
     }
@@ -64,7 +66,8 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      *
      * @param uuid UUID of user
      */
-    IngameUser(UUID uuid) {
+    IngameUser(UUID uuid, SinkUserProvider provider) {
+        super(provider);
         this.uuid = uuid;
         base = Bukkit.getPlayer(uuid);
         initUser(base);
@@ -84,7 +87,7 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      * Get current money of player
      *
      * @return Money of player
-     * @throws de.static_interface.sinklibrary.exception.EconomyNotAvailableException if economy is not available.
+     * @throws de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException if economy is not available.
      */
     public double getBalance() {
         validateEconomy();
@@ -130,9 +133,9 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
     /**
      * @return The PlayerConfiguration of the Player
      */
-    public UserConfiguration getConfiguration() {
+    public IngameUserConfiguration getConfiguration() {
         if (config == null) {
-            config = new UserConfiguration(this);
+            config = new IngameUserConfiguration(this);
         }
         return config;
     }
@@ -197,7 +200,7 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      * Get user's primary group.
      *
      * @return Primary Group
-     * @throws de.static_interface.sinklibrary.exception.PermissionsNotAvailableException if permissions are not available
+     * @throws de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException if permissions are not available
      */
     public String getPrimaryGroup() {
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
@@ -223,7 +226,7 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      *
      * @return Player chat prefix
      * @deprecated use {@link #getChatPrefix()} instead
-     * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
+     * @throws de.static_interface.sinklibrary.api.exception.ChatNotAvailableException if chat is not available
      */
     @Deprecated
     public String getPrefix() {
@@ -234,7 +237,7 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
      * Get Chat prefix
      *
      * @return Player chat prefix
-     * @throws de.static_interface.sinklibrary.exception.ChatNotAvailableException if chat is not available
+     * @throws de.static_interface.sinklibrary.api.exception.ChatNotAvailableException if chat is not available
      */
     public String getChatPrefix() {
         if (!SinkLibrary.getInstance().isChatAvailable()) {
@@ -301,11 +304,6 @@ public class IngameUser extends SinkUser implements Comparable<IngameUser>, Iden
     @Nullable
     public UUID getUniqueId() {
         return uuid;
-    }
-
-    @Override
-    public int compareTo(IngameUser o) {
-        return getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 
     public void ban(String reason, long unbantime) {

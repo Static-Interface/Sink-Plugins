@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -30,7 +31,8 @@ public class ConsoleUser extends SinkUser {
 
     private ConsoleCommandSender sender;
 
-    public ConsoleUser(ConsoleCommandSender sender) {
+    public ConsoleUser(ConsoleCommandSender sender, SinkUserProvider provider) {
+        super(provider);
         this.sender = sender;
     }
 

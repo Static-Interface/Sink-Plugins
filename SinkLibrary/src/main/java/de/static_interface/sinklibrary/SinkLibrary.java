@@ -20,16 +20,16 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
-import de.static_interface.sinklibrary.exception.NotInitializedException;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
@@ -41,6 +41,7 @@ import de.static_interface.sinklibrary.user.IngameUserProvider;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.user.IrcUserProvider;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -48,7 +49,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -90,7 +90,6 @@ public class SinkLibrary extends JavaPlugin {
     private boolean initalized;
     private HashMap<String, SinkCommand> commandAliases;
     private HashMap<String, SinkCommand> commands;
-    private TabCompleter tabCompleter;
     private HashMap<Class<? extends CommandSender>, SinkUserProvider> userImplementations;
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
@@ -119,7 +118,6 @@ public class SinkLibrary extends JavaPlugin {
         timer = new TpsTimer();
         commands = new HashMap<>();
         commandAliases = new HashMap<>();
-        tabCompleter = new SinkTabCompleter();
         userImplementations = new HashMap<>();
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
@@ -404,9 +402,15 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nullable
     public SinkUser getUser(String name) {
-        if (name.startsWith("IRC_")) {
-            name = name.replaceFirst("IRC_", "");
-            return getIrcUser(name);
+        for (SinkUserProvider provider : userImplementations.values()) {
+            String suffix = provider.getCommandArgsSuffix();
+            if (suffix.equals("")) {
+                continue;
+            }
+            if (name.endsWith(suffix)) {
+                name = name.replaceFirst(StringUtil.stripRegex(suffix), "");
+                return provider.getUserInstance(name);
+            }
         }
 
         return getIngameUser(name);
@@ -463,7 +467,7 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         IngameUser user = getUser(player);
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
             return;
@@ -550,16 +554,23 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * Get all online players
-     *
      * @return Online players as Users
-     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and {@link #getUser(Player)} instead
      */
-    @Deprecated
     public Collection<IngameUser> getOnlineUsers() {
         Collection<IngameUser> users = new ArrayList<>();
         for (SinkUser user : ingameUserProvider.getUserInstances()) {
             users.add((IngameUser) user);
+        }
+        return users;
+    }
+
+    /**
+     * @return Online IRC users as Users
+     */
+    public Collection<IrcUser> getOnlineIrcUsers() {
+        Collection<IrcUser> users = new ArrayList<>();
+        for (SinkUser user : ircUserProvider.getUserInstances()) {
+            users.add((IrcUser) user);
         }
         return users;
     }
@@ -575,7 +586,7 @@ public class SinkLibrary extends JavaPlugin {
                 PluginCommand cmd = Bukkit.getPluginCommand(name);
                 if (cmd != null) {
                     cmd.setExecutor(command);
-                    cmd.setTabCompleter(getDefaultTabCompleter());
+                    cmd.setTabCompleter(new SinkTabCompleter(command.includeIrcUsersInTabCompleter()));
                     for (String alias : cmd.getAliases()) // Register alias commands
                     {
                         alias = alias.toLowerCase();
@@ -595,10 +606,6 @@ public class SinkLibrary extends JavaPlugin {
 
         commandAliases.put(name, command);
         commands.put(name, command);
-    }
-
-    public TabCompleter getDefaultTabCompleter() {
-        return tabCompleter;
     }
 
     public SinkCommand getCustomCommand(String name) {

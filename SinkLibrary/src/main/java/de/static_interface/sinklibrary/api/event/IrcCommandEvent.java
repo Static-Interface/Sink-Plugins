@@ -17,49 +17,24 @@
 
 package de.static_interface.sinklibrary.api.event;
 
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
 
 public class IrcCommandEvent extends IrcEvent {
 
-    private final PircBotX bot;
-    private String source;
-    private User user;
-    private String command;
+    private PircBotX bot;
+    private IrcCommandSender sender;
+    private SinkCommand command;
     private String label;
     private String[] args;
 
-    public IrcCommandEvent(String source, User user, String command, String label, String[] args, PircBotX bot) {
-        this.source = source;
-        this.user = user;
-        this.command = command;
+    public IrcCommandEvent(IrcCommandSender sender, SinkCommand cmd, String label, String[] args, PircBotX bot) {
+        this.sender = sender;
+        this.command = cmd;
         this.label = label;
         this.args = args;
         this.bot = bot;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
     }
 
     public String getLabel() {
@@ -81,5 +56,21 @@ public class IrcCommandEvent extends IrcEvent {
     @Override
     public PircBotX getBot() {
         return bot;
+    }
+
+    public IrcCommandSender getCommandSender() {
+        return sender;
+    }
+
+    public void setCommandSender(IrcCommandSender sender) {
+        this.sender = sender;
+    }
+
+    public SinkCommand getCommand() {
+        return command;
+    }
+
+    public void setCommand(SinkCommand command) {
+        this.command = command;
     }
 }

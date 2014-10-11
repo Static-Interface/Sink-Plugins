@@ -18,52 +18,84 @@
 package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class SinkTabCompleter implements TabCompleter {
 
+    private final boolean includeIrcUsers;
+
+    public SinkTabCompleter(boolean includeIrcUsers) {
+        this.includeIrcUsers = includeIrcUsers;
+    }
+
     @Override
-    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command cmd, String label,
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String label,
                                       String[] args) {
         List<String> result = new ArrayList<>();
-        HashMap<UUID, String> tmp = new HashMap<>();
+        HashMap<SinkUser, String> tmp = new HashMap<>();
+        String s = args[args.length - 1];
 
-        SinkLibrary.getInstance().getCustomLogger()
-                .debug("onTabComplete: sender: " + sender.getName() + ", cmd: " + cmd.getName() + ", label: " + label + ", args: " + StringUtil
-                        .formatArrayToString(
-                                args, ", "));
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getUser(p);
-            String name = user.getName();
-            String displayName = ChatColor.stripColor(user.getDisplayName());
-            UUID uuid = user.getUniqueId();
+        List<SinkUser> users = new ArrayList<>();
+        for (IngameUser user : SinkLibrary.getInstance().getOnlineUsers()) {
+            users.add(user);
+        }
+
+        if (includeIrcUsers) {
+            for (IrcUser user : SinkLibrary.getInstance().getOnlineIrcUsers()) {
+                users.add(user);
+            }
+        }
+
+        SinkLibrary.getInstance().getCustomLogger().debug("onTabComplete: sender: " + sender.getName() +
+                                                          ", cmd: " + cmd.getName() + ", label: " + label + ", s: " + s + ", args: " + StringUtil
+                .formatArrayToString(
+                        args, ", "));
+
+        for (SinkUser user : users) {
+            String name = user.getName() + user.getProvider().getCommandArgsSuffix();
+            String displayName = user.getDisplayName();
+
+            boolean hasDisplayname = false;
+            if (!StringUtil.isStringEmptyOrNull(displayName)) {
+                hasDisplayname = true;
+                displayName = ChatColor.stripColor(displayName) + user.getProvider().getCommandArgsSuffix();
+            }
 
             // only add one entry per user
-            if (tmp.get(uuid) != null) {
-                SinkLibrary.getInstance().getCustomLogger().debug("Skipping user " + user.getName() + ": user already added: " + tmp.get(uuid));
+            if (tmp.keySet().contains(user) || (hasDisplayname && tmp.values().contains(displayName))
+                || tmp.values().contains(name)) {
                 continue;
             }
 
             // check if alias starts with displayname, if not, check if starts with default name
-            if (StringUtil.isStringEmptyOrNull(label) || displayName.startsWith(label)
-                || user.getName().startsWith(label)) {
-                SinkLibrary.getInstance().getCustomLogger().debug("Adding value: " + name);
-                tmp.put(uuid, name);
+            if (!StringUtil.isStringEmptyOrNull(s)) {
+                if (hasDisplayname && displayName.startsWith(s)) {
+                    tmp.put(user, displayName);
+                    continue;
+                }
+
+                if (user.getName().startsWith(s)) {
+                    tmp.put(user, name);
+                }
+            } else {
+                tmp.put(user, displayName);
             }
         }
 
         result.addAll(tmp.values());
+        Collections.sort(result);
         return result;
     }
 }

@@ -22,6 +22,8 @@ import org.bukkit.command.CommandSender;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.annotation.Nullable;
+
 public abstract class SinkUserProvider {
 
     public HashMap<CommandSender, SinkUser> instances;
@@ -37,6 +39,9 @@ public abstract class SinkUserProvider {
 
         return instances.get(sender);
     }
+
+    @Nullable
+    public abstract SinkUser getUserInstance(String name);
 
     public Collection<SinkUser> getUserInstances() {
         return instances.values();
@@ -68,4 +73,6 @@ public abstract class SinkUserProvider {
         }
         return false;
     }
+
+    public abstract String getCommandArgsSuffix();
 }

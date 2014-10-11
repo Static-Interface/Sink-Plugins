@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.UserConfiguration;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 
@@ -68,7 +68,7 @@ public class WarnUtil {
     }
 
     public static void setWarnings(IngameUser user, List<Warning> deserializedWarnings) {
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
         Gson gson = new Gson();
         List<String> serializedWarnings = new ArrayList<>();
         for (Warning warning : deserializedWarnings) {
@@ -78,7 +78,7 @@ public class WarnUtil {
     }
 
     public static List<Warning> getWarnings(IngameUser user) {
-        UserConfiguration config = user.getConfiguration();
+        IngameUserConfiguration config = user.getConfiguration();
         List<Warning> deserializedWarnings = new ArrayList<>();
         List<String> serializedWarnings = config.getYamlConfiguration().getStringList(WARNINGS_PATH);
         if (serializedWarnings == null) {
