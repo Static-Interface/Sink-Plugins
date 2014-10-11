@@ -91,6 +91,9 @@ public class BukkitUtil {
         return Bukkit.getOfflinePlayer(name).getUniqueId();
     }
 
+    public static String getNameByUniqueId(UUID uuid) {
+        return Bukkit.getOfflinePlayer(uuid).getName();
+    }
     /**
      * @param sender Command Sender
      * @return If {@link org.bukkit.command.CommandSender CommandSnder} is instance of {@link org.bukkit.command.ConsoleCommandSender ConsoleCommandSender},
