@@ -87,10 +87,15 @@ public class SinkChat extends JavaPlugin {
         }
     }
 
+
     private boolean checkDependencies() {
         if (Bukkit.getPluginManager().getPlugin("SinkLibrary") == null) {
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
             Bukkit.getPluginManager().disablePlugin(this);
+            return false;
+        }
+
+        if (!SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this)) {
             return false;
         }
 

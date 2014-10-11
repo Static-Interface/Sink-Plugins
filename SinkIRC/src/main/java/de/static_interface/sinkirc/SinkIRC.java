@@ -116,7 +116,7 @@ public class SinkIRC extends JavaPlugin {
             return false;
         }
 
-        return true;
+        return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
     }
 
     @Override

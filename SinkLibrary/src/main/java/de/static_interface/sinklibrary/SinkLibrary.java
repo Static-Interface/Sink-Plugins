@@ -50,6 +50,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,7 +70,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
-    public static final int API_VERSION = 2;
+    public static final int API_VERSION = 1;
     private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
     private boolean sinkChatAvailable;
@@ -105,6 +106,17 @@ public class SinkLibrary extends JavaPlugin {
             throw new NotInitializedException("SinkLibrary is not initalized");
         }
         return instance;
+    }
+
+    public boolean validateApiVersion(int compileVersion, Plugin plugin) {
+        if (compileVersion < getApiVersion()) {
+            getCustomLogger().warn("Plugin: " + plugin.getName() + " is not up-to-date! (API version mismatch)");
+            getCustomLogger().warn("Please update " + plugin.getName() + " to the latest version or ask the author to update it");
+            getCustomLogger().debug(plugin.getName() + " API Version: " + compileVersion + ", current version: " + getApiVersion());
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return false;
+        }
+        return true;
     }
 
     public void onEnable() {
@@ -206,6 +218,10 @@ public class SinkLibrary extends JavaPlugin {
                 Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
             }
         }
+    }
+
+    public int getApiVersion() {
+        return API_VERSION;
     }
 
     public void onDisable() {

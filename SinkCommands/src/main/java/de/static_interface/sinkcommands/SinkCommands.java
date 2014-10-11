@@ -19,6 +19,7 @@ package de.static_interface.sinkcommands;
 
 import static de.static_interface.sinklibrary.Constants.TICK;
 
+import com.earth2me.essentials.Essentials;
 import de.static_interface.sinkcommands.command.ClearCommand;
 import de.static_interface.sinkcommands.command.CountdownCommand;
 import de.static_interface.sinkcommands.command.DrugCommand;
@@ -40,8 +41,8 @@ import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinkcommands.listener.ScoreboardListener;
 import de.static_interface.sinkcommands.listener.VotekickListener;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,6 +64,7 @@ public class SinkCommands extends JavaPlugin {
     public static boolean globalmuteEnabled;
 
     private static boolean initialized = false;
+    private com.earth2me.essentials.Essentials essentialsPlugin;
 
     /**
      * Refresh Scoreboard for all players
@@ -140,15 +142,21 @@ public class SinkCommands extends JavaPlugin {
     }
 
     private boolean checkDependencies() {
-        Plugin sinkLibrary = Bukkit.getPluginManager().getPlugin("SinkLibrary");
-
-        if (sinkLibrary == null) {
+        if (Bukkit.getPluginManager().getPlugin("SinkLibrary") == null) {
             getLogger().log(Level.WARNING, "This Plugin requires SinkLibrary!");
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
 
-        return true;
+        Plugin tmp = Bukkit.getPluginManager().getPlugin("Essentials");
+        if (tmp != null && tmp instanceof com.earth2me.essentials.Essentials) {
+            essentialsPlugin = (com.earth2me.essentials.Essentials) tmp;
+        } else {
+            essentialsPlugin = null;
+            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Essentials not found. Disabling Essentials features");
+        }
+
+        return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
     }
 
     @Override
@@ -205,5 +213,9 @@ public class SinkCommands extends JavaPlugin {
 
         SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this));
         SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this));
+    }
+
+    public Essentials getEssentialsPlugin() {
+        return essentialsPlugin;
     }
 }

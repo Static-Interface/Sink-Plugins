@@ -46,6 +46,6 @@ public class SinkAntiSpam extends JavaPlugin {
             return false;
         }
 
-        return true;
+        return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
     }
 }
