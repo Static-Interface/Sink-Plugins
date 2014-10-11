@@ -72,7 +72,7 @@ public class IrcListener implements Listener {
             reason = "!";
         }
         SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
-        IrcUtil.sendMessage(SinkIRC.getMainChannel(), user.getDisplayName() + ChatColor.RESET + " has been kicked" + reason);
+        IrcUtil.sendMessage(SinkIRC.getMainChannel().getName(), user.getDisplayName() + ChatColor.RESET + " has been kicked" + reason);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
