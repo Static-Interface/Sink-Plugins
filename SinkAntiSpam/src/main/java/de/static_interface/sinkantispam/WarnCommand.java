@@ -91,7 +91,7 @@ public class WarnCommand extends SinkCommand {
             uuid = ((Identifiable) user).getUniqueId();
         }
         String name = (sender instanceof IrcCommandSender) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
-        IngameUser targetUser = SinkLibrary.getInstance().getUser(target);
+        IngameUser targetUser = SinkLibrary.getInstance().getIngameUser(target);
 
         WarnUtil.warnPlayer(targetUser, new Warning(reason, name, uuid, WarnUtil.getWarningId(targetUser), false));
         return true;

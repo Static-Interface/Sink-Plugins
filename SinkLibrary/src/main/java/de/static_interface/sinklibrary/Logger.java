@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.api.logger.SinkLogger;
 import de.static_interface.sinklibrary.util.DebugUtil;
 import de.static_interface.sinklibrary.util.FileUtil;
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ import java.util.Date;
 import java.util.logging.Level;
 
 @SuppressWarnings("InstanceMethodNamingConvention")
-public class Logger {
+public class Logger implements SinkLogger {
 
     boolean failed = false;
     FileWriter fileWriter = null;
@@ -42,6 +43,7 @@ public class Logger {
     protected Logger() {
     }
 
+    @Override
     public void log(Level level, String message) {
         try {
             logToFile(level, ChatColor.stripColor(message));
@@ -52,6 +54,7 @@ public class Logger {
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message));
     }
 
+    @Override
     public void log(Level level, String message, Throwable throwable) {
         try {
             logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", throwable));
@@ -104,25 +107,29 @@ public class Logger {
         }
     }
 
+    @Override
     public void severe(String message) {
         log(Level.SEVERE, message);
     }
 
+    @Override
     public void info(String message) {
         log(Level.INFO, message);
     }
 
-    public void warning(String message) {
+    @Override
+    public void warn(String message) {
         log(Level.WARNING, message);
     }
 
+    @Override
     public void debug(String message) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             log(Level.INFO, "[Debug] " + DebugUtil.getCallerCallerClassName() + ".class: " + message);
         }
     }
 
-    FileWriter getFileWriter() {
+    protected FileWriter getFileWriter() {
         return fileWriter;
     }
 }

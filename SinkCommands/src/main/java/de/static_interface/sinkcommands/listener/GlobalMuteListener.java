@@ -30,7 +30,7 @@ public class GlobalMuteListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         if (SinkCommands.globalmuteEnabled && !user.hasPermission("sinkcommands.globalmute.bypass")) {
             event.getPlayer().sendMessage(GlobalmuteCommand.PREFIX + "Du kannst nicht schreiben wenn der globale Mute aktiviert ist.");
             event.setCancelled(true);

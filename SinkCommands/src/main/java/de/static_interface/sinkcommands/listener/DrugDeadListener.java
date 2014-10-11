@@ -33,7 +33,7 @@ public class DrugDeadListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (event.getEntity().equals(DrugCommand.lastPlayer) && event.getEntityType() == EntityType.PLAYER) {
-            IngameUser user = SinkLibrary.getInstance().getUser(event.getEntity());
+            IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getEntity());
             event.setDeathMessage(ChatColor.RED + user.getDisplayName() + ChatColor.RESET + " nahm zu viele Drogen und ist gestorben.");
             DrugCommand.lastPlayer.removePotionEffect(PotionEffectType.BLINDNESS);
             DrugCommand.lastPlayer.removePotionEffect(PotionEffectType.CONFUSION);

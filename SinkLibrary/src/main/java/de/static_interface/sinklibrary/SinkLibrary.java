@@ -139,7 +139,7 @@ public class SinkLibrary extends JavaPlugin {
         getCustomLogger().log(Level.INFO, "Loading...");
         // Check optional dependencies
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            getCustomLogger().warning("Vault Plugin not found. Disabling economy and some permission features.");
+            getCustomLogger().warn("Vault Plugin not found. Disabling economy and some permission features.");
             permissionsAvailable = false;
             economyAvailable = false;
             chatAvailable = false;
@@ -152,11 +152,11 @@ public class SinkLibrary extends JavaPlugin {
             }
 
             if (!setupEcononmy()) {
-                getCustomLogger().warning("Economy Plugin not found. Disabling economy features.");
+                getCustomLogger().warn("Economy Plugin not found. Disabling economy features.");
                 economyAvailable = false;
             }
             if (!setupPermissions()) {
-                getCustomLogger().warning("Permissions Plugin not found. Disabling permissions features.");
+                getCustomLogger().warn("Permissions Plugin not found. Disabling permissions features.");
                 permissionsAvailable = false;
             }
         }
@@ -212,7 +212,7 @@ public class SinkLibrary extends JavaPlugin {
         getCustomLogger().log(Level.INFO, "Disabling...");
         getCustomLogger().info("Saving players...");
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            IngameUser user = getUser(p);
+            IngameUser user = getIngameUser(p);
             if (user.getConfiguration().exists()) {
                 user.getConfiguration().save();
             }
@@ -319,17 +319,6 @@ public class SinkLibrary extends JavaPlugin {
      * Send Message to IRC via SinkIRC Plugin to the default channel.
      *
      * @param message Message to send
-     * @deprecated use {@link #sendIrcMessage(String)} instead
-     */
-    @Deprecated
-    public boolean sendIRCMessage(String message) {
-        return sendIrcMessage(message);
-    }
-
-    /**
-     * Send Message to IRC via SinkIRC Plugin to the default channel.
-     *
-     * @param message Message to send
      */
     public boolean sendIrcMessage(String message) {
         return sendIrcMessage(message, null);
@@ -381,27 +370,79 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * @param player Player
-     * @return User instance of player
+     * @return User instance of the player
      */
-    public IngameUser getUser(Player player) {
-        return (IngameUser) getUser((CommandSender) player);
+    public IngameUser getIngameUser(Player player) {
+        return (IngameUser) getUser(player);
     }
 
     /**
-     * @param playerName Name of Player
+     * @param playerName Name of the player
      * @return User instance
      */
     public IngameUser getIngameUser(String playerName) {
+        Player p = BukkitUtil.getPlayer(playerName);
+        if (p != null) {
+            return getIngameUser(p);
+        }
         UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
-        return getUser(uuid);
+        return getIngameUser(uuid);
     }
 
     /**
-     * @param name Name of the target (e.g. use IRC_<name> prefix to target irc users)
+     * @param playerName Exact name of the player
+     * @return User instance
+     */
+    public IngameUser getIngameUserExact(String playerName) {
+        Player p = Bukkit.getPlayerExact(playerName);
+        if (p != null) {
+            return getIngameUser(p);
+        }
+        UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
+        return getIngameUser(uuid);
+    }
+
+    /**
+     * @param name Name of the target user (e.g. use <name>_IRC suffix to target irc users)
      * @return User instance of the target
      */
     @Nullable
     public SinkUser getUser(String name) {
+        boolean hasSuffix = false;
+        for (SinkUserProvider provider : userImplementations.values()) {
+            String suffix = provider.getCommandArgsSuffix();
+            if (suffix.equals("")) {
+                continue;
+            }
+            if (name.endsWith(suffix)) {
+                hasSuffix = true;
+            }
+
+            for (IrcUser user : getOnlineIrcUsers()) {
+                if (user.getName().startsWith(name) && name.endsWith(suffix)) {
+                    name = user.getName();
+                    return provider.getUserInstance(name);
+                }
+            }
+        }
+        if (hasSuffix) {
+            return null;
+        }
+
+        if (name.equalsIgnoreCase("console")) {
+            return getConsoleUser();
+        }
+
+        return getIngameUser(name);
+    }
+
+    /**
+     * @param name Exact name of the target (e.g. use <name>_IRC prefix to target irc users)
+     * @return User instance of the target
+     */
+    @Nullable
+    public SinkUser getUserExact(String name) {
+
         for (SinkUserProvider provider : userImplementations.values()) {
             String suffix = provider.getCommandArgsSuffix();
             if (suffix.equals("")) {
@@ -413,10 +454,14 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
 
-        return getIngameUser(name);
+        if (name.equalsIgnoreCase("console")) {
+            return getConsoleUser();
+        }
+
+        return getIngameUserExact(name);
     }
 
-    public IngameUser getUser(UUID uuid) {
+    public IngameUser getIngameUser(UUID uuid) {
         return (IngameUser) ingameUserProvider.getUserInstance(uuid);
     }
 
@@ -466,7 +511,7 @@ public class SinkLibrary extends JavaPlugin {
             return;
         }
 
-        IngameUser user = getUser(player);
+        IngameUser user = getIngameUser(player);
         IngameUserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {

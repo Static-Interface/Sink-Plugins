@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.sender.FakeConsoleCommandSender;
 import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,7 +51,7 @@ public class SudoCommand extends SinkCommand {
             fakeSender = new FakeConsoleCommandSender
                     (Bukkit.getConsoleSender(), sender);
         } else {
-            Player p = Bukkit.getPlayer(target);
+            Player p = BukkitUtil.getPlayer(target);
             if (p == null) {
                 sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");
                 return true;

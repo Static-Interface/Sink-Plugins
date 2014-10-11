@@ -68,7 +68,7 @@ public class Warning implements Comparable<Warning> {
         if (warnerUuid == null) {
             return null;
         }
-        return SinkLibrary.getInstance().getUser(warnerUuid);
+        return SinkLibrary.getInstance().getIngameUser(warnerUuid);
     }
 
     public int getId() {

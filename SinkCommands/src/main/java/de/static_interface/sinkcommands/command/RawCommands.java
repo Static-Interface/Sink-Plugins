@@ -17,11 +17,10 @@
 
 package de.static_interface.sinkcommands.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
@@ -70,7 +69,7 @@ public class RawCommands {
             IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
 
             if (!target.isOnline()) {
-                sender.sendMessage(m("General.NotOnline", target.getName()));
+                throw new UserNotFoundException(args[0]);
             }
 
             String message = "";

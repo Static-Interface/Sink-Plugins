@@ -49,7 +49,7 @@ public class TownyHelper {
      * @return Formatted name of the resident
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank) {
-        IngameUser user = SinkLibrary.getInstance().getIngameUser(resident.getName()); // TODO: GET UUID FROM NAME
+        IngameUser user = SinkLibrary.getInstance().getIngameUserExact(resident.getName());
 
         String color = user.getChatPrefix().replace(ChatColor.stripColor(user.getChatPrefix()), ""); //very bad
 

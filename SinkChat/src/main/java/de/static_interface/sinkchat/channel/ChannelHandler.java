@@ -24,7 +24,7 @@ import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.command.ChannelCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
-import org.bukkit.Bukkit;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -69,8 +69,8 @@ public class ChannelHandler {
             return false;
         }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getUser(p);
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
+            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
             if ((channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId())) {
                 user.sendMessage(ChannelCommand.PREFIX + m("SinkChat.DeletedChannel", channel.getName()));
             }

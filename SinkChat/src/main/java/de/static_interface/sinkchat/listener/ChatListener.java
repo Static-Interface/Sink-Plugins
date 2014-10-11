@@ -54,7 +54,7 @@ public class ChatListener implements Listener {
             return;
         }
 
-        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         String message = event.getMessage();
 
         user.sendDebugMessage("message: " + message);
@@ -111,7 +111,7 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         if (user.hasPermission("sinkchat.color")) {
             event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }

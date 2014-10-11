@@ -98,7 +98,7 @@ public class Channel {
 
     public boolean enabledForPlayer(UUID uuid) {
         String enabledPath = "Channels." + getName() + ".Enabled";
-        IngameUser user = SinkLibrary.getInstance().getUser(uuid);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(uuid);
         IngameUserConfiguration config = user.getConfiguration();
         try {
             return (boolean) config.get(enabledPath, true);
@@ -109,7 +109,7 @@ public class Channel {
 
     public void setEnabledForPlayer(UUID uuid, boolean setEnabled) {
         String enabledPath = "Channels." + getName() + ".Enabled";
-        IngameUser user = SinkLibrary.getInstance().getUser(uuid);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(uuid);
         IngameUserConfiguration config = user.getConfiguration();
         config.set(enabledPath, setEnabled);
     }

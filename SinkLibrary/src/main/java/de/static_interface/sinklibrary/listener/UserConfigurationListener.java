@@ -35,7 +35,7 @@ public class UserConfigurationListener implements Listener {
     public void onPlayerLogin(PlayerLoginEvent event) {
         SinkLibrary.getInstance().loadUser(event.getPlayer());
 
-        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         IngameUserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {

@@ -48,24 +48,6 @@ public class IngameUser extends SinkUser implements Identifiable {
     private IngameUserConfiguration config = null;
     private UUID uuid = null;
 
-    /**
-     * Get User instance by player's name
-     * <p>
-     * <b>Use {@link #IngameUser(java.util.UUID)} for offline players</b>
-     *
-     * @param player Base Player
-     */
-    IngameUser(Player player, SinkUserProvider provider) {
-        super(provider);
-        this.uuid = player.getUniqueId();
-        initUser(player);
-    }
-
-    /**
-     * Get an user by UUID
-     *
-     * @param uuid UUID of user
-     */
     IngameUser(UUID uuid, SinkUserProvider provider) {
         super(provider);
         this.uuid = uuid;
@@ -79,7 +61,7 @@ public class IngameUser extends SinkUser implements Identifiable {
         playerName = base != null ? base.getName() : Bukkit.getOfflinePlayer(uuid).getName();
 
         if (playerName == null) {
-            SinkLibrary.getInstance().getCustomLogger().warning("Couldn't get player name from UUID: " + uuid.toString());
+            SinkLibrary.getInstance().getCustomLogger().warn("Couldn't get player name from UUID: " + uuid.toString());
         }
     }
 
@@ -268,9 +250,7 @@ public class IngameUser extends SinkUser implements Identifiable {
     }
 
     /**
-     * @return If {@link org.bukkit.command.CommandSender CommandSnder} is instance of {@link org.bukkit.command.ConsoleCommandSender ConsoleCommandSender},
-     * it will return "Console" in {@link org.bukkit.ChatColor#RED RED}, if sender is instance of
-     * {@link org.bukkit.entity.Player Player}, it will return player's {@link org.bukkit.entity.Player#getDisplayName() DisplayName}
+     * @return Player's custom displayname
      */
     public String getDisplayName() {
         if (!isOnline()) {
@@ -321,5 +301,4 @@ public class IngameUser extends SinkUser implements Identifiable {
         return new BanData(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getUnbanTime(),
                            getConfiguration().getBanReason());
     }
-
 }

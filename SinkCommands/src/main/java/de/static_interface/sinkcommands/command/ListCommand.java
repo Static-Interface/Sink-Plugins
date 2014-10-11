@@ -49,8 +49,8 @@ public class ListCommand implements CommandExecutor {
         List<Player> onlineUsers = BukkitUtil.getOnlinePlayers();
         out.add("");
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getUser(p);
+        for (Player p : BukkitUtil.getOnlinePlayers()) {
+            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
             String userGroup;
 
             if (SinkLibrary.getInstance().isPermissionsAvailable()) {

@@ -39,7 +39,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, Player player, @Nullable String userMessage, @Nullable Object... paramValues) {
-        return format(str, SinkLibrary.getInstance().getUser(player), userMessage, null, paramValues);
+        return format(str, SinkLibrary.getInstance().getIngameUser(player), userMessage, null, paramValues);
     }
 
     /**

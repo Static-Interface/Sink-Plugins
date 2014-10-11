@@ -76,7 +76,7 @@ public class NickCommand extends SinkCommand {
             }
 
             if (setDisplayName(target, newDisplayName, sender)) {
-                user = SinkLibrary.getInstance().getUser(target);
+                user = SinkLibrary.getInstance().getIngameUser(target);
                 sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.OtherChanged", playerName, user.getDisplayName()));
             }
             return true;
@@ -92,7 +92,7 @@ public class NickCommand extends SinkCommand {
 
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean setDisplayName(Player target, String newDisplayName, CommandSender sender) {
-        IngameUser user = SinkLibrary.getInstance().getUser(target);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if (!NICKNAME_PATTERN.matcher(cleanDisplayName).matches()) {
             sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.IllegalNickname"));

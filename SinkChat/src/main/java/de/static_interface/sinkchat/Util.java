@@ -39,7 +39,7 @@ public class Util {
             Location loc = p.getLocation();
             boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
 
-            IngameUser onlineUser = SinkLibrary.getInstance().getUser(p);
+            IngameUser onlineUser = SinkLibrary.getInstance().getIngameUser(p);
 
             // Check for spy
             boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")

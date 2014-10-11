@@ -265,7 +265,7 @@ public class Updater {
             zipFile.delete();
 
         } catch (IOException ex) {
-            SinkLibrary.getInstance().getCustomLogger().warning("The auto-updater tried to unzip a new update file, but was unsuccessful.");
+            SinkLibrary.getInstance().getCustomLogger().warn("The auto-updater tried to unzip a new update file, but was unsuccessful.");
             result = Updater.UpdateResult.FAIL_DOWNLOAD;
             ex.printStackTrace();
         }
@@ -294,8 +294,8 @@ public class Updater {
                 }
             } else {
                 // The file's name did not contain the string 'vVersion'
-                SinkLibrary.getInstance().getCustomLogger().warning("Couldn't get latest version of plugin.");
-                SinkLibrary.getInstance().getCustomLogger().warning("Please notify the author of this error.");
+                SinkLibrary.getInstance().getCustomLogger().warn("Couldn't get latest version of plugin.");
+                SinkLibrary.getInstance().getCustomLogger().warn("Please notify the author of this error.");
                 result = Updater.UpdateResult.FAIL_NOVERSION;
                 return false;
             }
@@ -345,7 +345,7 @@ public class Updater {
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
             if (array.size() == 0) {
-                SinkLibrary.getInstance().getCustomLogger().warning("The updater could not find any files for the project id " + id);
+                SinkLibrary.getInstance().getCustomLogger().warn("The updater could not find any files for the project id " + id);
                 result = UpdateResult.FAIL_BADID;
                 return false;
             }
@@ -358,12 +358,12 @@ public class Updater {
             return true;
         } catch (final IOException e) {
             if (e.getMessage().contains("HTTP response code: 403")) {
-                SinkLibrary.getInstance().getCustomLogger().warning("dev.bukkit.org rejected the API key provided in plugins/Updater/config.yml");
-                SinkLibrary.getInstance().getCustomLogger().warning("Please double-check your configuration to ensure it is correct.");
+                SinkLibrary.getInstance().getCustomLogger().warn("dev.bukkit.org rejected the API key provided in plugins/Updater/config.yml");
+                SinkLibrary.getInstance().getCustomLogger().warn("Please double-check your configuration to ensure it is correct.");
                 result = UpdateResult.FAIL_APIKEY;
             } else {
-                SinkLibrary.getInstance().getCustomLogger().warning("The updater could not contact dev.bukkit.org for updating.");
-                SinkLibrary.getInstance().getCustomLogger().warning(
+                SinkLibrary.getInstance().getCustomLogger().warn("The updater could not contact dev.bukkit.org for updating.");
+                SinkLibrary.getInstance().getCustomLogger().warn(
                         "If you have not recently modified your configuration and this is the first time you are seeing this message, the site may be experiencing temporary downtime.");
                 result = UpdateResult.FAIL_DBO;
             }

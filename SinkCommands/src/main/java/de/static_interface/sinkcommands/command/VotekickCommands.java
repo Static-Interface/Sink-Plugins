@@ -160,7 +160,7 @@ public class VotekickCommands {
             if (!user.hasPermission("sinkcommands.votekick.staff")) {
                 int i = 0;
                 for (Player p : BukkitUtil.getOnlinePlayers()) {
-                    IngameUser onlinePlayer = SinkLibrary.getInstance().getUser(p);
+                    IngameUser onlinePlayer = SinkLibrary.getInstance().getIngameUser(p);
                     if (!onlinePlayer.hasPermission("sinkcommands.votekick.staff")) {
                         i++;
                         break;
@@ -177,7 +177,7 @@ public class VotekickCommands {
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
-            IngameUser targetUser = SinkLibrary.getInstance().getUser(targetPlayer);
+            IngameUser targetUser = SinkLibrary.getInstance().getIngameUser(targetPlayer);
             target = targetUser.getDisplayName();
             if (targetPlayer.equals(sender)) {
                 sender.sendMessage(PREFIX + "Du kannst nicht einen Votekick gegen dich selbst starten!");

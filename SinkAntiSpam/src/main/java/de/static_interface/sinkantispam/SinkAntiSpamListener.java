@@ -53,7 +53,7 @@ public class SinkAntiSpamListener implements Listener {
     public static WarnResult checkMessage(Player player, String message) {
         WarnResult result = new WarnResult();
         result.setResultcode(WarnResult.PASS);
-        IngameUser user = SinkLibrary.getInstance().getUser(player);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
 
         if (user.hasPermission("sinkcommands.bypass")) {
             return result;

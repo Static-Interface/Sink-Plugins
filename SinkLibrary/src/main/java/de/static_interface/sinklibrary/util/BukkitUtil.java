@@ -66,28 +66,25 @@ public class BukkitUtil {
      */
     @Nullable
     public static Player getPlayer(String name) {
-        List<Player> matchedPlayers = new ArrayList<>();
+        List<String> matchedPlayers = new ArrayList<>();
         for (Player player : BukkitUtil.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().contains(name.toLowerCase())) {
-                matchedPlayers.add(player);
+            if (player.getName().toLowerCase().startsWith(name.toLowerCase())) {
+                matchedPlayers.add(player.getName());
             }
         }
 
         Player exactPlayer = Bukkit.getPlayerExact(name);
-        if (matchedPlayers.toArray().length > 1 && exactPlayer != null) {
+        Collections.sort(matchedPlayers);
+
+        if (exactPlayer != null) {
             return exactPlayer;
         } else {
             try {
-                return matchedPlayers.get(0);
+                return Bukkit.getPlayer(matchedPlayers.get(0));
             } catch (Exception ignored) {
                 return null;
             }
         }
-    }
-
-    @Deprecated
-    public static UUID getUUIDByName(String name) {
-        return getUniqueIdByName(name);
     }
 
     public static UUID getUniqueIdByName(String name) {
@@ -149,7 +146,7 @@ public class BukkitUtil {
      */
     public static void broadcast(String message, String permission, boolean sendIRC) {
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getUser(p);
+            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
             if (!user.hasPermission(permission)) {
                 continue;
             }

@@ -58,7 +58,7 @@ public class SinkDebugCommand extends SinkCommand {
                 }
                 String player = args[1];
                 String path = args[2];
-                IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
+                IngameUser user = SinkLibrary.getInstance().getIngameUserExact(player);
                 IngameUserConfiguration config = user.getConfiguration();
                 sender.sendMessage(PREFIX + "Output: " + config.getYamlConfiguration().getString(path));
                 break;
@@ -74,7 +74,7 @@ public class SinkDebugCommand extends SinkCommand {
                 String path = args[2];
                 Object value = replaceValue(args[3]);
 
-                IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
+                IngameUser user = SinkLibrary.getInstance().getIngameUserExact(player);
                 IngameUserConfiguration config = user.getConfiguration();
                 config.set(path, value);
                 sender.sendMessage(PREFIX + "Done");
@@ -88,7 +88,7 @@ public class SinkDebugCommand extends SinkCommand {
                 }
                 String player = args[1];
                 String permission = args[2];
-                IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
+                IngameUser user = SinkLibrary.getInstance().getIngameUserExact(player);
                 sender.sendMessage(PREFIX + "Output: " + user.hasPermission(permission));
                 break;
 
