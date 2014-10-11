@@ -18,8 +18,7 @@
 package de.static_interface.sinkantispam.warning;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
-import org.bukkit.Bukkit;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.ChatColor;
 
 import java.util.UUID;
@@ -64,7 +63,7 @@ public class Warning implements Comparable<Warning> {
     @Nullable
     public SinkUser getWarner() {
         if (autoWarning) {
-            return SinkLibrary.getInstance().getUser(Bukkit.getConsoleSender());
+            return SinkLibrary.getInstance().getConsoleUser();
         }
         if (warnerUuid == null) {
             return null;

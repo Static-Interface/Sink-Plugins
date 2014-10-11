@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary.listener;
 
-import de.static_interface.sinklibrary.SinkIrcUser;
+import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
@@ -48,7 +48,7 @@ public class IrcCommandListener implements Listener {
 
     private boolean executeCommand(User user, String command, String source, String label, String[] args) {
         //Todo add events
-        SinkIrcUser ircUser = SinkLibrary.getInstance().getIrcUser(user);
+        IrcUser ircUser = SinkLibrary.getInstance().getIrcUser(user);
         IrcCommandSender sender = new IrcCommandSender(ircUser, source);
         SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
         return !(cmd == null || cmd.isPlayerOnly()) && cmd.onCommand(sender, null, label, args);

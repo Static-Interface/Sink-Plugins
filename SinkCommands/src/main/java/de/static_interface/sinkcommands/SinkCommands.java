@@ -26,6 +26,7 @@ import de.static_interface.sinkcommands.command.GlobalmuteCommand;
 import de.static_interface.sinkcommands.command.GupCommand;
 import de.static_interface.sinkcommands.command.LagCommand;
 import de.static_interface.sinkcommands.command.ListCommand;
+import de.static_interface.sinkcommands.command.MessageCommands;
 import de.static_interface.sinkcommands.command.MilkCommand;
 import de.static_interface.sinkcommands.command.NewbiechatCommand;
 import de.static_interface.sinkcommands.command.RawCommands;
@@ -39,7 +40,7 @@ import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinkcommands.listener.ScoreboardListener;
 import de.static_interface.sinkcommands.listener.VotekickListener;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
@@ -79,7 +80,7 @@ public class SinkCommands extends JavaPlugin {
      */
     @SuppressWarnings("deprecation")
     public static void refreshScoreboard(Player player) {
-        SinkUser user = SinkLibrary.getInstance().getUser(player);
+        IngameUser user = SinkLibrary.getInstance().getUser(player);
         UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
@@ -161,7 +162,7 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().getCustomLogger().info("Saving player configurations...");
 
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(p);
+            IngameUser user = SinkLibrary.getInstance().getUser(p);
             UserConfiguration config = user.getConfiguration();
             config.save();
         }
@@ -177,7 +178,7 @@ public class SinkCommands extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("drug").setExecutor(new DrugCommand());
+
         getCommand("milk").setExecutor(new MilkCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
@@ -187,12 +188,13 @@ public class SinkCommands extends JavaPlugin {
         getCommand("votestatus").setExecutor(new VotekickCommands.VotestatusCommand());
         getCommand("endvote").setExecutor(new VotekickCommands.EndvoteCommand(this));
         getCommand("votekickunban").setExecutor(new VotekickCommands.VotekickunbanCommand());
-        getCommand("rename").setExecutor(new RenameCommand());
-        getCommand("clear").setExecutor(new ClearCommand());
-        getCommand("enablestats").setExecutor(new StatsCommands.EnableStatsCommand());
-        getCommand("disablestats").setExecutor(new StatsCommands.DisableStatsCommand());
         getCommand("list").setExecutor(new ListCommand());
 
+        SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));
+        SinkLibrary.getInstance().registerCommand("clear", new ClearCommand(this));
+        SinkLibrary.getInstance().registerCommand("enablestats", new StatsCommands.EnableStatsCommand(this));
+        SinkLibrary.getInstance().registerCommand("disablestats", new StatsCommands.DisableStatsCommand(this));
+        SinkLibrary.getInstance().registerCommand("drug", new DrugCommand(this));
         SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this));
         SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this));
         SinkLibrary.getInstance().registerCommand("lag", new LagCommand(this));
@@ -201,7 +203,7 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("gup", new GupCommand(this));
         SinkLibrary.getInstance().registerCommand("sudo", new SudoCommand(this));
 
-        // Todo:
-        //SinkLibrary.getInstance().registerCommand("message", new MessageCommand(this));
+        SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this));
+        SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this));
     }
 }

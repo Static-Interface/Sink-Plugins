@@ -15,87 +15,83 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary;
+package de.static_interface.sinklibrary.user;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.user.IUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.pircbotx.User;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.permissions.Permission;
 
-public class SinkIrcUser implements IUser {
+public class ConsoleUser extends SinkUser {
 
-    private User base;
+    private ConsoleCommandSender sender;
 
-    public SinkIrcUser(User base) {
-        this.base = base;
+    public ConsoleUser(ConsoleCommandSender sender) {
+        this.sender = sender;
     }
 
+    @Override
     public String getName() {
-        return base.getNick();
+        return "Console";
     }
 
     @Override
     public String getDisplayName() {
-        throw new RuntimeException("Not supported yet"); //Todo
+        return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
     }
 
     @Override
     public Configuration getConfiguration() {
-        throw new RuntimeException("Not supported yet"); //Todo
-    }
-
-    @Override
-    public String getIdentifierString() {
-        return base.getNick() + ":" + base.getRealName();
+        throw new UnsupportedOperationException("Console can't have configurations yet");
     }
 
     @Override
     public CommandSender getSender() {
-        return null; // todo
+        return sender;
     }
 
     @Override
     public boolean hasPermission(SinkCommand command) {
-        return (command.isIrcOnly() && isOp()) || !command.isIrcOpOnly();
+        return true;
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return true;
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        return true;
     }
 
     @Override
     public boolean isOp() {
-        throw new RuntimeException("Not supported yet"); //Todo
+        return true;
+    }
+
+    @Override
+    public void setOp(boolean value) {
+        // do nothing
     }
 
     @Override
     public String getPrimaryGroup() {
-        return isOp() ? "OP" : "Default";
+        throw new UnsupportedOperationException("Console can't have a group");
     }
 
     @Override
     public String getChatPrefix() {
-        return isOp() ? ChatColor.DARK_RED.toString() : ChatColor.DARK_AQUA.toString();
-    }
-
-    @Override
-    public boolean isConsole() {
-        return false;
+        return ChatColor.DARK_RED.toString();
     }
 
     @Override
     public void sendMessage(String msg) {
-        SinkLibrary.getInstance().sendIrcMessage(base.getNick() + ": " + msg);
-    }
-
-    public void sendMessage(String msg, boolean privateMessage) {
-        if (!privateMessage) {
-            sendMessage(msg);
-        } else {
-            SinkLibrary.getInstance().sendIrcMessage(msg, getName());
-        }
-    }
-
-    public void sendMessage(String msg, String target) {
-        SinkLibrary.getInstance().sendIrcMessage(getName() + ": " + msg, target);
+        getSender().sendMessage(msg);
     }
 
     @Override
@@ -106,11 +102,7 @@ public class SinkIrcUser implements IUser {
     }
 
     @Override
-    public boolean isPlayer() {
-        return false;
-    }
-
-    public User getBase() {
-        return base;
+    public boolean isOnline() {
+        return true;
     }
 }

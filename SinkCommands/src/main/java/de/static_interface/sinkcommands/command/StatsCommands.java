@@ -19,28 +19,32 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class StatsCommands {
 
     public static String PREFIX = ChatColor.DARK_GREEN + "[Statistiken] " + ChatColor.RESET;
 
-    public static class EnableStatsCommand implements CommandExecutor {
+    public static class EnableStatsCommand extends SinkCommand {
+
+        public EnableStatsCommand(Plugin plugin) {
+            super(plugin);
+        }
 
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        public boolean isPlayerOnly() {
+            return true;
+        }
 
-            if (user.isConsole()) {
-                sender.sendMessage("This command is only ingame available.");
-                return true;
-            }
+        @Override
+        public boolean onExecute(CommandSender sender, String label, String[] args) {
+            IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
             Player player = user.getPlayer();
 
             UserConfiguration config = user.getConfiguration();
@@ -57,16 +61,20 @@ public class StatsCommands {
         }
     }
 
-    public static class DisableStatsCommand implements CommandExecutor {
+    public static class DisableStatsCommand extends SinkCommand {
+
+        public DisableStatsCommand(Plugin plugin) {
+            super(plugin);
+        }
 
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        public boolean isPlayerOnly() {
+            return true;
+        }
 
-            if (user.isConsole()) {
-                sender.sendMessage("This command is only ingame available.");
-                return true;
-            }
+        @Override
+        public boolean onExecute(CommandSender sender, String label, String[] args) {
+            IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
             Player player = user.getPlayer();
 
             UserConfiguration config = user.getConfiguration();

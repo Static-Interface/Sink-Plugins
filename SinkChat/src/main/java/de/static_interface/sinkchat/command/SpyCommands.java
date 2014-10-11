@@ -20,28 +20,33 @@ package de.static_interface.sinkchat.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class SpyCommands {
 
     public static final String PREFIX = m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
 
-    public static class EnableSpyCommand implements CommandExecutor {
+    public static class EnableSpyCommand extends SinkCommand {
+
+        public EnableSpyCommand(Plugin plugin) {
+            super(plugin);
+        }
 
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        public boolean isPlayerOnly() {
+            return true;
+        }
 
-            if (user.isConsole()) {
-                sender.sendMessage(m("General.ConsoleNotAvailable"));
-                return true;
-            }
+        @Override
+        protected boolean onExecute(CommandSender sender, String label, String[] args) {
+            IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
+
             Player player = user.getPlayer();
 
             UserConfiguration config = user.getConfiguration();
@@ -57,15 +62,20 @@ public class SpyCommands {
         }
     }
 
-    public static class DisablSpyCommand implements CommandExecutor {
+    public static class DisablSpyCommand extends SinkCommand {
+
+        public DisablSpyCommand(Plugin plugin) {
+            super(plugin);
+        }
 
         @Override
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-            SinkUser user = SinkLibrary.getInstance().getUser(sender);
-            if (user.isConsole()) {
-                sender.sendMessage(m("General.ConsoleNotAvailable"));
-                return true;
-            }
+        public boolean isPlayerOnly() {
+            return true;
+        }
+
+        @Override
+        public boolean onExecute(CommandSender sender, String label, String[] args) {
+            IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
             Player player = user.getPlayer();
 
             UserConfiguration config = user.getConfiguration();

@@ -17,8 +17,10 @@
 
 package de.static_interface.sinkcommands.command;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -65,10 +67,10 @@ public class RawCommands {
             if (args.length < 1) {
                 return false;
             }
-            SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
+            IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
 
             if (!target.isOnline()) {
-                sender.sendMessage(ChatColor.RED + "User ist nicht online!");
+                sender.sendMessage(m("General.NotOnline", target.getName()));
             }
 
             String message = "";

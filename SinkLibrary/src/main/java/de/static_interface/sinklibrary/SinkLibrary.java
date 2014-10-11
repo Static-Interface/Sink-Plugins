@@ -20,6 +20,9 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
@@ -31,12 +34,19 @@ import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
 import de.static_interface.sinklibrary.listener.UserConfigurationListener;
+import de.static_interface.sinklibrary.user.ConsoleUser;
+import de.static_interface.sinklibrary.user.ConsoleUserProvider;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.user.IngameUserProvider;
+import de.static_interface.sinklibrary.user.IrcUser;
+import de.static_interface.sinklibrary.user.IrcUserProvider;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
@@ -49,11 +59,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import javax.annotation.Nullable;
@@ -61,7 +69,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
-    public static final int API_VERSION = 1;
+    public static final int API_VERSION = 2;
     private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
     private boolean sinkChatAvailable;
@@ -74,8 +82,6 @@ public class SinkLibrary extends JavaPlugin {
     private File dataFolder;
     private String version;
     private Settings settings;
-    private ConcurrentHashMap<Player, SinkUser> onlineUsers;
-    private ConcurrentHashMap<User, SinkIrcUser> onlineIrcUsers;
     private PluginDescriptionFile description;
     private boolean economyAvailable = true;
     private boolean permissionsAvailable = true;
@@ -85,6 +91,10 @@ public class SinkLibrary extends JavaPlugin {
     private HashMap<String, SinkCommand> commandAliases;
     private HashMap<String, SinkCommand> commands;
     private TabCompleter tabCompleter;
+    private HashMap<Class<? extends CommandSender>, SinkUserProvider> userImplementations;
+    private IngameUserProvider ingameUserProvider;
+    private IrcUserProvider ircUserProvider;
+    private ConsoleUserProvider consoleUserProvider;
 
     /**
      * Get the instance of this plugin
@@ -103,8 +113,6 @@ public class SinkLibrary extends JavaPlugin {
         instance = this;
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
-        onlineUsers = new ConcurrentHashMap<>();
-        onlineIrcUsers = new ConcurrentHashMap<>();
         description = getDescription();
         dataFolder = getDataFolder();
         logger = new Logger();
@@ -112,6 +120,14 @@ public class SinkLibrary extends JavaPlugin {
         commands = new HashMap<>();
         commandAliases = new HashMap<>();
         tabCompleter = new SinkTabCompleter();
+        userImplementations = new HashMap<>();
+        ingameUserProvider = new IngameUserProvider();
+        consoleUserProvider = new ConsoleUserProvider();
+        ircUserProvider = new IrcUserProvider();
+
+        registerUserImplementation(Player.class, ingameUserProvider);
+        registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
+        registerUserImplementation(IrcCommandSender.class, ircUserProvider);
 
         // Init language
         LanguageConfiguration languageConfiguration =
@@ -198,7 +214,7 @@ public class SinkLibrary extends JavaPlugin {
         getCustomLogger().log(Level.INFO, "Disabling...");
         getCustomLogger().info("Saving players...");
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = getUser(p);
+            IngameUser user = getUser(p);
             if (user.getConfiguration().exists()) {
                 user.getConfiguration().save();
             }
@@ -369,49 +385,63 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player
      * @return User instance of player
      */
-    public SinkUser getUser(Player player) {
-        return getUser(player.getUniqueId());
+    public IngameUser getUser(Player player) {
+        return (IngameUser) getUser((CommandSender) player);
     }
 
     /**
      * @param playerName Name of Player
      * @return User instance
-     * @deprecated use {@link #getUser(java.util.UUID)} instead
      */
-    @Deprecated
-    public SinkUser getUser(String playerName) {
-        Player p = Bukkit.getPlayer(playerName);
-        if (p != null && p.isOnline()) {
-            return getUser(p);
-        }
+    public IngameUser getIngameUser(String playerName) {
         UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
         return getUser(uuid);
     }
 
-    public SinkUser getUser(UUID uuid) {
-        Player p = Bukkit.getPlayer(uuid);
-        SinkUser user = null;
-        if (p != null) {
-            user = onlineUsers.get(p);
+    /**
+     * @param name Name of the target (e.g. use IRC_<name> prefix to target irc users)
+     * @return User instance of the target
+     */
+    @Nullable
+    public SinkUser getUser(String name) {
+        if (name.startsWith("IRC_")) {
+            name = name.replaceFirst("IRC_", "");
+            return getIrcUser(name);
         }
-        if (user == null) {
-            user = new SinkUser(uuid);
-        }
-        return user;
+
+        return getIngameUser(name);
+    }
+
+    public IngameUser getUser(UUID uuid) {
+        return (IngameUser) ingameUserProvider.getUserInstance(uuid);
     }
 
     /**
      * @param sender Command Sender
-     * @return User instance
+     * @return IUser instance of sender, e.g. if sender is {@link ConsoleCommandSender}, it will return {@link ConsoleUser}.
+     *         <br/> May return null if there is no default implementation
      */
+    @Nullable
     public SinkUser getUser(CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            return new SinkUser(sender);
+        //Todo: Replace with SinkUserProviders
+
+        for (Class<? extends CommandSender> implClass : userImplementations.keySet()) {
+            if (implClass.isInstance(sender)) {
+                return userImplementations.get(implClass).getUserInstance(sender);
+            }
         }
 
-        Player player = (Player) sender;
-        return getUser(player.getUniqueId());
+        //Todo: add default implementation for not supported CommandSenders
+        return null;
     }
+
+    /**
+     * Register an own implementation of {@link SinkUser} for a {@link CommandSender}
+     */
+    public void registerUserImplementation(Class<? extends CommandSender> sender, SinkUserProvider provider) {
+        userImplementations.put(sender, provider);
+    }
+
 
     /**
      * Get Version of SinkLibrary
@@ -432,7 +462,7 @@ public class SinkLibrary extends JavaPlugin {
             return;
         }
 
-        SinkUser user = getUser(player);
+        IngameUser user = getUser(player);
         UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {
@@ -459,41 +489,20 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     @Nullable
-    public SinkIrcUser getIrcUser(String nick) {
-        for (SinkIrcUser user : onlineIrcUsers.values()) {
-            if (user.getName().equals(nick)) {
-                return user;
-            }
-        }
-        return null;
+    public IrcUser getIrcUser(String nick) {
+        return (IrcUser) ircUserProvider.getUserInstance(nick);
     }
 
-    public SinkIrcUser getIrcUser(User user) {
-        SinkIrcUser sUser = onlineIrcUsers.get(user);
-        if (sUser == null) {
-            throw new IllegalStateException("This shouln't happen");
-        }
-        return sUser;
+    public IrcUser getIrcUser(User user) {
+        return (IrcUser) ircUserProvider.getUserInstance(user);
     }
 
     public void loadIrcUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.toString());
-        if (onlineIrcUsers.get(user) != null) {
-            return;
-        }
-
-        SinkIrcUser sUser = new SinkIrcUser(user);
-        onlineIrcUsers.put(user, sUser);
+        ircUserProvider.loadUser(user);
     }
 
     public void unloadIrcUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.toString());
-        SinkIrcUser sUser = onlineIrcUsers.get(user);
-        if (sUser == null) {
-            return;
-        }
-        //user.getConfiguration().save(); // Todo
-        onlineIrcUsers.remove(user);
+        ircUserProvider.unloadUser(user);
     }
 
     /**
@@ -505,10 +514,11 @@ public class SinkLibrary extends JavaPlugin {
      */
     public void loadUser(Player p) {
         // If user is already loaded or offline, return
-        if (p == null || !p.isOnline() || onlineUsers.get(p) != null) {
+        if (p == null || !p.isOnline()) {
             return;
         }
-        onlineUsers.put(p, new SinkUser(p));
+
+        ingameUserProvider.loadUser(p);
     }
 
     /**
@@ -519,15 +529,15 @@ public class SinkLibrary extends JavaPlugin {
      */
     public void unloadUser(UUID uuid) {
         Player p = Bukkit.getPlayer(uuid);
-        SinkUser user = null;
+        IngameUser user = null;
         if (p != null) {
-            user = onlineUsers.get(p);
+            user = (IngameUser) ingameUserProvider.getUserInstance(uuid);
         }
         if (user == null) {
             return;
         }
         user.getConfiguration().save();
-        onlineUsers.remove(p);
+        ingameUserProvider.unloadUser(user);
     }
 
     /**
@@ -543,11 +553,15 @@ public class SinkLibrary extends JavaPlugin {
      * Get all online players
      *
      * @return Online players as Users
-     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and {@link #getUser(Player)} intead
+     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and {@link #getUser(Player)} instead
      */
     @Deprecated
-    public Collection<SinkUser> getOnlineUsers() {
-        return Collections.unmodifiableCollection(onlineUsers.values());
+    public Collection<IngameUser> getOnlineUsers() {
+        Collection<IngameUser> users = new ArrayList<>();
+        for (SinkUser user : ingameUserProvider.getUserInstances()) {
+            users.add((IngameUser) user);
+        }
+        return users;
     }
 
     public Logger getCustomLogger() {
@@ -651,5 +665,9 @@ public class SinkLibrary extends JavaPlugin {
 
     public boolean isSinkChatAvailable() {
         return sinkChatAvailable;
+    }
+
+    public ConsoleUser getConsoleUser() {
+        return (ConsoleUser) consoleUserProvider.getUserInstance(Bukkit.getConsoleSender());
     }
 }

@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,27 +36,33 @@ public class SinkTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command cmd, String label,
                                       String[] args) {
+        List<String> result = new ArrayList<>();
         HashMap<UUID, String> tmp = new HashMap<>();
 
+        SinkLibrary.getInstance().getCustomLogger()
+                .debug("onTabComplete: sender: " + sender.getName() + ", cmd: " + cmd.getName() + ", label: " + label + ", args: " + StringUtil
+                        .formatArrayToString(
+                                args, ", "));
         for (Player p : Bukkit.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(p);
+            IngameUser user = SinkLibrary.getInstance().getUser(p);
             String name = user.getName();
             String displayName = ChatColor.stripColor(user.getDisplayName());
             UUID uuid = user.getUniqueId();
 
             // only add one entry per user
             if (tmp.get(uuid) != null) {
+                SinkLibrary.getInstance().getCustomLogger().debug("Skipping user " + user.getName() + ": user already added: " + tmp.get(uuid));
                 continue;
             }
 
             // check if alias starts with displayname, if not, check if starts with default name
             if (StringUtil.isStringEmptyOrNull(label) || displayName.startsWith(label)
                 || user.getName().startsWith(label)) {
+                SinkLibrary.getInstance().getCustomLogger().debug("Adding value: " + name);
                 tmp.put(uuid, name);
             }
         }
 
-        List<String> result = new ArrayList<>();
         result.addAll(tmp.values());
         return result;
     }

@@ -15,37 +15,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.api.user;
+package de.static_interface.sinklibrary.exception;
 
-import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.configuration.Configuration;
-import org.bukkit.command.CommandSender;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-public interface IUser {
+public class UserNotFoundException extends RuntimeException {
 
-    String getName();
+    private String name;
 
-    String getDisplayName();
+    public UserNotFoundException() {
+    }
 
-    Configuration getConfiguration();
+    public UserNotFoundException(String name) {
+        this.name = name;
+    }
 
-    String getIdentifierString();
-
-    CommandSender getSender();
-
-    boolean hasPermission(SinkCommand command);
-
-    boolean isOp();
-
-    String getPrimaryGroup();
-
-    String getChatPrefix();
-
-    boolean isConsole();
-
-    void sendMessage(String msg);
-
-    void sendDebugMessage(String msg);
-
-    boolean isPlayer();
+    @Override
+    public String getMessage() {
+        if (name == null) {
+            return m("General.UserNotFound");
+        }
+        return m("General.NotOnline", name);
+    }
 }

@@ -18,8 +18,9 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -108,7 +109,7 @@ public class BukkitUtil {
             return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
         }
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
-        return user.getDisplayName() + ChatColor.RESET;
+        return user.getDisplayName();
     }
 
     /**
@@ -148,7 +149,7 @@ public class BukkitUtil {
      */
     public static void broadcast(String message, String permission, boolean sendIRC) {
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(p);
+            IngameUser user = SinkLibrary.getInstance().getUser(p);
             if (!user.hasPermission(permission)) {
                 continue;
             }

@@ -20,7 +20,8 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -159,7 +160,7 @@ public class VotekickCommands {
             if (!user.hasPermission("sinkcommands.votekick.staff")) {
                 int i = 0;
                 for (Player p : BukkitUtil.getOnlinePlayers()) {
-                    SinkUser onlinePlayer = SinkLibrary.getInstance().getUser(p);
+                    IngameUser onlinePlayer = SinkLibrary.getInstance().getUser(p);
                     if (!onlinePlayer.hasPermission("sinkcommands.votekick.staff")) {
                         i++;
                         break;
@@ -176,7 +177,7 @@ public class VotekickCommands {
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
-            SinkUser targetUser = SinkLibrary.getInstance().getUser(targetPlayer);
+            IngameUser targetUser = SinkLibrary.getInstance().getUser(targetPlayer);
             target = targetUser.getDisplayName();
             if (targetPlayer.equals(sender)) {
                 sender.sendMessage(PREFIX + "Du kannst nicht einen Votekick gegen dich selbst starten!");

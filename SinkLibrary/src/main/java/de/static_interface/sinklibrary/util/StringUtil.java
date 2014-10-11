@@ -17,8 +17,9 @@
 
 package de.static_interface.sinklibrary.util;
 
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -124,45 +125,51 @@ public class StringUtil {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
-            str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(user.getBalance()));
+            if (user instanceof IngameUser) {
+                str = str.replaceAll("(?i)\\{(BALANCE|MONEY)\\}", String.valueOf(((IngameUser) user).getBalance()));
+            }
             str = str.replaceAll("(?i)\\{(RANK|GROUP)\\}", user.getPrimaryGroup());
             str = str.replaceAll("(?i)\\{PREFIX\\}", user.getChatPrefix());
         }
 
-        if (user != null && user.getPlayer() != null) {
-            str = str.replaceAll("(?i)\\{X\\}", String.valueOf(user.getPlayer().getLocation().getX()));
-            str = str.replaceAll("(?i)\\{Y\\}", String.valueOf(user.getPlayer().getLocation().getY()));
-            str = str.replaceAll("(?i)\\{Z\\}", String.valueOf(user.getPlayer().getLocation().getZ()));
-            str = str.replaceAll("(?i)\\{LEVEL\\}", String.valueOf(user.getPlayer().getLevel()));
-            str = str.replaceAll("(?i)\\{(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getExp()));
-            str = str.replaceAll("(?i)\\{TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(user.getPlayer().getTotalExperience()));
-            str = str.replaceAll("(?i)\\{(FOOD|FOODLEVEL)\\}", String.valueOf(user.getPlayer().getFoodLevel()));
-            str = str.replaceAll("(?i)\\{(GAMEMODE|GM)\\}", user.getPlayer().getGameMode().name());
-            str = str.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(user.getPlayer().getHealth()));
-            str = str.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(user.getPlayer().getMaxHealth()));
-            str = str.replaceAll("(?i)\\{WORLD\\}", user.getPlayer().getWorld().getName());
+        if (user != null && user instanceof IngameUser && ((IngameUser) user).getPlayer() != null) {
+            Player p = ((IngameUser) user).getPlayer();
+            str = str.replaceAll("(?i)\\{X\\}", String.valueOf(p.getLocation().getX()));
+            str = str.replaceAll("(?i)\\{Y\\}", String.valueOf(p.getLocation().getY()));
+            str = str.replaceAll("(?i)\\{Z\\}", String.valueOf(p.getLocation().getZ()));
+            str = str.replaceAll("(?i)\\{LEVEL\\}", String.valueOf(p.getLevel()));
+            str = str.replaceAll("(?i)\\{(E)?XP(ERIENCE)?\\}", String.valueOf(p.getExp()));
+            str = str.replaceAll("(?i)\\{TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(p.getTotalExperience()));
+            str = str.replaceAll("(?i)\\{(FOOD|FOODLEVEL)\\}", String.valueOf(p.getFoodLevel()));
+            str = str.replaceAll("(?i)\\{(GAMEMODE|GM)\\}", p.getGameMode().name());
+            str = str.replaceAll("(?i)\\{HEALTH\\}", String.valueOf(p.getHealth()));
+            str = str.replaceAll("(?i)\\{MAXHEALTH}", String.valueOf(p.getMaxHealth()));
+            str = str.replaceAll("(?i)\\{WORLD\\}", p.getWorld().getName());
         }
 
         if (target != null) {
             str = str.replaceAll("(?i)\\{(T(ARGET)?(NAME)|TARGET)\\}", target.getName());
             str = str.replaceAll("(?i)\\{T(ARGET)?(DISPLAYNAME|FORMATTEDNAME)\\}", target.getDisplayName());
-            str = str.replaceAll("(?i)\\{T(ARGET)?(BALANCE|MONEY)\\}", String.valueOf(target.getBalance()));
+            if (target instanceof IngameUser) {
+                str = str.replaceAll("(?i)\\{T(ARGET)?(BALANCE|MONEY)\\}", String.valueOf(((IngameUser) target).getBalance()));
+            }
             str = str.replaceAll("(?i)\\{T(ARGET)?(RANK|GROUP)\\}", target.getPrimaryGroup());
             str = str.replaceAll("(?i)\\{T(ARGET)?PREFIX\\}", target.getChatPrefix());
         }
 
-        if (target != null && target.getPlayer() != null) {
-            str = str.replaceAll("(?i)\\{T(ARGET)?X\\}", String.valueOf(target.getPlayer().getLocation().getX()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?Y\\}", String.valueOf(target.getPlayer().getLocation().getY()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?Z\\}", String.valueOf(target.getPlayer().getLocation().getZ()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?LEVEL\\}", String.valueOf(target.getPlayer().getLevel()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?(E)?XP(ERIENCE)?\\}", String.valueOf(target.getPlayer().getExp()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(target.getPlayer().getTotalExperience()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?(FOOD|FOODLEVEL)\\}", String.valueOf(target.getPlayer().getFoodLevel()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?(GAMEMODE|GM)\\}", target.getPlayer().getGameMode().name());
-            str = str.replaceAll("(?i)\\{T(ARGET)?HEALTH\\}", String.valueOf(target.getPlayer().getHealth()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?MAXHEALTH}", String.valueOf(target.getPlayer().getMaxHealth()));
-            str = str.replaceAll("(?i)\\{T(ARGET)?WORLD\\}", target.getPlayer().getWorld().getName());
+        if (target != null && target instanceof IngameUser && ((IngameUser) target).getPlayer() != null) {
+            Player p = ((IngameUser) target).getPlayer();
+            str = str.replaceAll("(?i)\\{T(ARGET)?X\\}", String.valueOf(p.getLocation().getX()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?Y\\}", String.valueOf(p.getLocation().getY()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?Z\\}", String.valueOf(p.getLocation().getZ()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?LEVEL\\}", String.valueOf(p.getLevel()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(E)?XP(ERIENCE)?\\}", String.valueOf(p.getExp()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?TOTAL(E)?XP(ERIENCE)?\\}", String.valueOf(p.getTotalExperience()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(FOOD|FOODLEVEL)\\}", String.valueOf(p.getFoodLevel()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?(GAMEMODE|GM)\\}", p.getGameMode().name());
+            str = str.replaceAll("(?i)\\{T(ARGET)?HEALTH\\}", String.valueOf(p.getHealth()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?MAXHEALTH}", String.valueOf(p.getMaxHealth()));
+            str = str.replaceAll("(?i)\\{T(ARGET)?WORLD\\}", p.getWorld().getName());
         }
 
         if (SinkLibrary.getInstance().isEconomyAvailable()) {
@@ -212,7 +219,7 @@ public class StringUtil {
 
         // Don't translate color on these placeholders:
         if (userMessage != null) {
-            str = str.replaceAll("(?i)\\{MESSAGE\\}", stripRegex(userMessage));
+            str = str.replaceAll("(?i)\\{(USER)?MESSAGE\\}", stripRegex(userMessage));
         }
 
         return str;
@@ -319,6 +326,6 @@ public class StringUtil {
     }
 
     public static boolean isStringEmptyOrNull(String s) {
-        return s == null || s.trim().length() == 0;
+        return s == null || s.trim().length() == 0 || s.trim().isEmpty();
     }
 }

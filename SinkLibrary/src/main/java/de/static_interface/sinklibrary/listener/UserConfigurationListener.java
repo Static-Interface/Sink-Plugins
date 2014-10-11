@@ -20,7 +20,7 @@ package de.static_interface.sinklibrary.listener;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.api.model.BanData;
 import org.bukkit.event.EventHandler;
@@ -35,7 +35,7 @@ public class UserConfigurationListener implements Listener {
     public void onPlayerLogin(PlayerLoginEvent event) {
         SinkLibrary.getInstance().loadUser(event.getPlayer());
 
-        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
         UserConfiguration config = user.getConfiguration();
 
         if (!config.exists()) {

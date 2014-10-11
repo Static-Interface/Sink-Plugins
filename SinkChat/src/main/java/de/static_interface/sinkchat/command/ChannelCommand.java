@@ -22,12 +22,15 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+
+import java.util.UUID;
 
 public class ChannelCommand extends SinkCommand {
 
@@ -61,11 +64,16 @@ public class ChannelCommand extends SinkCommand {
         user.sendMessage(PREFIX + label + " part <channel>");
         user.sendMessage(PREFIX + label + " list");
         user.sendMessage(PREFIX + label + " participating");
-        if (user.hasPermission("sinkchat.channel.admin") || user.getPlayer().isOp()) {
+        if (user.hasPermission("sinkchat.channel.admin") || user.isOp()) {
             //Red because this can cause serious problems.
             user.sendMessage(PREFIX + label + ChatColor.RED + " delete <channel>" + ChatColor.RESET);
             user.sendMessage(PREFIX + label + ChatColor.RED + " add <channel>" + ChatColor.RESET);
         }
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
+        return true;
     }
 
     @Override
@@ -75,6 +83,7 @@ public class ChannelCommand extends SinkCommand {
             return true;
         } else {
             SinkUser user = SinkLibrary.getInstance().getUser(sender);
+            UUID uuid = ((Identifiable) user).getUniqueId();
             switch (args[0].toLowerCase()) {
                 case "join":
                     if (args.length < 2) {
@@ -96,11 +105,11 @@ public class ChannelCommand extends SinkCommand {
                             user.sendMessage(m("Permissions.SinkChat.Channel", channel.getName()));
                             return true;
                         }
-                        if (channel.enabledForPlayer(user.getUniqueId())) {
+                        if (channel.enabledForPlayer(uuid)) {
                             user.sendMessage(PREFIX + m("SinkChat.AlreadyEnabled"));
                             return true;
                         } else {
-                            channel.setEnabledForPlayer(user.getUniqueId(), true);
+                            channel.setEnabledForPlayer(uuid, true);
                             user.sendMessage(PREFIX + m("SinkChat.EnabledChannel"));
                             return true;
                         }
@@ -133,11 +142,11 @@ public class ChannelCommand extends SinkCommand {
                         user.sendMessage(PREFIX + m("SinkChat.Commands.Channel.ChannelUnknown", args[1]));
                         return true;
                     }
-                    if (!channel.enabledForPlayer(user.getUniqueId())) {
+                    if (!channel.enabledForPlayer(uuid)) {
                         user.sendMessage(PREFIX + m("SinkChat.AlreadyDisabled"));
                         return true;
                     } else {
-                        channel.setEnabledForPlayer(user.getUniqueId(), false);
+                        channel.setEnabledForPlayer(uuid, false);
                         user.sendMessage(PREFIX + m("SinkChat.DisabledChannel"));
                         return true;
                     }
@@ -151,7 +160,7 @@ public class ChannelCommand extends SinkCommand {
                     for (Channel c : ChannelHandler.getRegisteredChannels().values()) {
                         channels =
                                 channels + StringUtil.format("{0} {1}: {2} – {3}%n", PREFIX, c.getName(), c.getCallCode(),
-                                                             (c.enabledForPlayer(user.getUniqueId()) ? m(enabled) : m(disabled)));
+                                                             (c.enabledForPlayer(uuid) ? m(enabled) : m(disabled)));
                     }
 
                     user.sendMessage(PREFIX + m("SinkChat.Commands.Channel.List", channels));
@@ -164,7 +173,7 @@ public class ChannelCommand extends SinkCommand {
                     String enabledChannels = "";
 
                     for (Channel c : ChannelHandler.getRegisteredChannels().values()) {
-                        if (c.enabledForPlayer(user.getUniqueId())) {
+                        if (c.enabledForPlayer(uuid)) {
                             enabledChannels = enabledChannels + c.getName() + " ";
                         }
                     }
@@ -227,10 +236,5 @@ public class ChannelCommand extends SinkCommand {
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
     }
 }

@@ -48,7 +48,14 @@ public class TestConfiguration extends Configuration {
         testList.add(0.1);
         defaultTestValues.put("Default.List", testList);
 
+        int i = 1;
         for (String s : defaultTestValues.keySet()) {
+            if (i % 3 == 0) {
+                addDefault(s, defaultTestValues.get(s), "This is comment #" + i);
+                i++;
+                continue;
+            }
+
             addDefault(s, defaultTestValues.get(s));
         }
     }

@@ -17,8 +17,7 @@
 
 package de.static_interface.sinklibrary.api.sender;
 
-import de.static_interface.sinklibrary.SinkIrcUser;
-import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.user.IrcUser;
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -28,21 +27,20 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
 
 import java.lang.reflect.Method;
 import java.util.Set;
 
 public class IrcCommandSender implements CommandSender {
 
-    SinkIrcUser user;
+    IrcUser user;
     String source;
     volatile boolean useNotice = false;
 
     /**
      * INTERNAL CONSTRUCTOR
      */
-    public IrcCommandSender(SinkIrcUser user, String source) {
+    public IrcCommandSender(IrcUser user, String source) {
         this.user = user;
         this.source = source;
         this.useNotice = false;
@@ -60,7 +58,7 @@ public class IrcCommandSender implements CommandSender {
         return source;
     }
 
-    public SinkIrcUser getUser() {
+    public IrcUser getUser() {
         return user;
     }
 
@@ -83,7 +81,11 @@ public class IrcCommandSender implements CommandSender {
             sendNotice(msg);
             return;
         }
-        user.sendMessage(msg, source);
+        if (source == null) {
+            user.sendMessage(msg);
+        } else {
+            user.sendMessage(msg, source);
+        }
     }
 
     @Override
@@ -171,32 +173,11 @@ public class IrcCommandSender implements CommandSender {
 
     @Override
     public boolean isOp() {
-        boolean value;
-        try {
-            //User reflection because we can't add SinkIRC as dependency
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("isOp", User.class);
-            method.setAccessible(true);
-            value = (boolean) method.invoke(null, user.getBase());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        SinkLibrary.getInstance().getCustomLogger().debug("Reflection invoke test: isOp(): " + value + " for user: " + user.getName());
-        return value;
+        return user.isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        try {
-            //User reflection because we can't add SinkIRC as dependency
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("setOp", User.class, Boolean.class);
-            method.setAccessible(true);
-            method.invoke(null, user.getBase(), value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        user.setOp(value);
     }
 }

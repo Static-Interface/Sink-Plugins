@@ -20,7 +20,7 @@ package de.static_interface.sinkcommands.listener;
 import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinkcommands.command.GlobalmuteCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,7 +30,7 @@ public class GlobalMuteListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
         if (SinkCommands.globalmuteEnabled && !user.hasPermission("sinkcommands.globalmute.bypass")) {
             event.getPlayer().sendMessage(GlobalmuteCommand.PREFIX + "Du kannst nicht schreiben wenn der globale Mute aktiviert ist.");
             event.setCancelled(true);

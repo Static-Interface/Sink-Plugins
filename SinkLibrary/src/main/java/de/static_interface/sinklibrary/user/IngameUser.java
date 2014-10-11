@@ -15,14 +15,17 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary;
+package de.static_interface.sinklibrary.user;
 
-import de.static_interface.sinklibrary.api.user.IUser;
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.api.model.BanData;
+import de.static_interface.sinklibrary.exception.UserOfflineException;
 import de.static_interface.sinklibrary.util.VaultBridge;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -30,30 +33,30 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class SinkUser implements IUser, Comparable<SinkUser> {
+public class IngameUser extends SinkUser implements Comparable<IngameUser>, Identifiable {
 
     private Player base = null;
     private Economy econ = null;
     private String playerName = null;
-    private CommandSender sender = null;
     private UserConfiguration config = null;
     private UUID uuid = null;
 
     /**
      * Get User instance by player's name
      * <p>
-     * <b>Use {@link #SinkUser(java.util.UUID)} for offline players</b>
+     * <b>Use {@link #IngameUser(java.util.UUID)} for offline players</b>
      *
-     * @param sender Sender
+     * @param player Base Player
      */
-    SinkUser(CommandSender sender) {
-        this.sender = sender;
-        initUser(null, true);
+    IngameUser(Player player) {
+        this.uuid = player.getUniqueId();
+        initUser(player);
     }
 
     /**
@@ -61,32 +64,19 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      *
      * @param uuid UUID of user
      */
-    SinkUser(UUID uuid) {
+    IngameUser(UUID uuid) {
         this.uuid = uuid;
-        initUser(uuid, false);
+        base = Bukkit.getPlayer(uuid);
+        initUser(base);
     }
 
-    private void initUser(UUID uuid, boolean isConsole) {
-        if (isConsole) {
-            sender = Bukkit.getConsoleSender();
-            base = null;
-            econ = SinkLibrary.getInstance().getEconomy();
-            playerName = "Console";
-            return;
-        }
+    private void initUser(Player player) {
+        base = player;
         econ = SinkLibrary.getInstance().getEconomy();
-
-        base = Bukkit.getPlayer(uuid);
         playerName = base != null ? base.getName() : Bukkit.getOfflinePlayer(uuid).getName();
 
         if (playerName == null) {
             SinkLibrary.getInstance().getCustomLogger().warning("Couldn't get player name from UUID: " + uuid.toString());
-        }
-        if (base == null) {
-            return;
-        }
-        if (sender == null) {
-            sender = base;
         }
     }
 
@@ -102,8 +92,9 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
         OfflinePlayer player = base;
 
         if (player == null) {
+            player = Bukkit.getOfflinePlayer(uuid);
             if (player == null) {
-                player = Bukkit.getOfflinePlayer(uuid);
+                throw new UserOfflineException();
             }
         }
         return VaultBridge.getBalance(player);
@@ -119,18 +110,15 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
         OfflinePlayer player = base;
 
         if (player == null) {
+            player = Bukkit.getOfflinePlayer(uuid);
             if (player == null) {
-                player = Bukkit.getOfflinePlayer(uuid);
+                throw new UserOfflineException();
             }
         }
         return VaultBridge.addBalance(player, amount);
     }
 
     private void validateEconomy() {
-        if (isConsole()) {
-            throw new NullPointerException("User is console, cannot get Player instance!");
-        }
-
         if (!SinkLibrary.getInstance().isEconomyAvailable()) {
             throw new EconomyNotAvailableException();
         }
@@ -143,9 +131,6 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @return The PlayerConfiguration of the Player
      */
     public UserConfiguration getConfiguration() {
-        if (!isPlayer()) {
-            throw new IllegalStateException("User is not a player");
-        }
         if (config == null) {
             config = new UserConfiguration(this);
         }
@@ -156,7 +141,7 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @return CommandSender
      */
     public CommandSender getSender() {
-        return sender;
+        return base;
     }
 
     @Override
@@ -170,15 +155,17 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
         return base.isOp();
     }
 
+    @Override
+    public void setOp(boolean value) {
+        base.setOp(value);
+    }
+
     /**
      * Get Player instance
      *
      * @return Player
      */
     public Player getPlayer() {
-        if (isConsole()) {
-            throw new NullPointerException("User is console!");
-        }
         return base;
     }
 
@@ -187,11 +174,7 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @return True if the player has the permission specified by parameter.
      */
     public boolean hasPermission(String permission) {
-        //Todo: fix this for offline usage
-        if (isConsole()) {
-            return true;
-        }
-
+        //Todo: fix this for offline usage?
         if (!isOnline()) {
             throw new RuntimeException("This may be only used for online players!");
         }
@@ -205,6 +188,11 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
         //}
     }
 
+    @Override
+    public boolean hasPermission(Permission permission) {
+        return base.hasPermission(permission);
+    }
+
     /**
      * Get user's primary group.
      *
@@ -212,10 +200,6 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @throws de.static_interface.sinklibrary.exception.PermissionsNotAvailableException if permissions are not available
      */
     public String getPrimaryGroup() {
-        if (isConsole()) {
-            throw new IllegalArgumentException("User is console!");
-        }
-
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
             throw new PermissionsNotAvailableException();
         }
@@ -227,7 +211,7 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @return Display Name with Permission Prefix or Op/non-Op Prefix
      */
     public String getDefaultDisplayName() {
-        if (isConsole() || !isOnline()) {
+        if (!isOnline()) {
             return playerName;
         }
 
@@ -273,9 +257,6 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      * @return True if player is online and does not equals null
      */
     public boolean isOnline() {
-        if (isConsole()) {
-            return true;
-        }
         if (base == null) {
             base = Bukkit.getPlayer(uuid);
         }
@@ -284,21 +265,11 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
     }
 
     /**
-     * @return True if User is Console
-     */
-    public boolean isConsole() {
-        return sender != null && (sender.equals(Bukkit.getConsoleSender()));
-    }
-
-    /**
      * @return If {@link org.bukkit.command.CommandSender CommandSnder} is instance of {@link org.bukkit.command.ConsoleCommandSender ConsoleCommandSender},
      * it will return "Console" in {@link org.bukkit.ChatColor#RED RED}, if sender is instance of
      * {@link org.bukkit.entity.Player Player}, it will return player's {@link org.bukkit.entity.Player#getDisplayName() DisplayName}
      */
     public String getDisplayName() {
-        if (isConsole()) {
-            return ChatColor.RED + "Console" + ChatColor.RESET;
-        }
         if (!isOnline()) {
             return playerName;
         }
@@ -320,11 +291,7 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
      */
     public void sendMessage(String message) {
         if (isOnline()) {
-            if (!isPlayer()) {
-                sender.sendMessage(message);
-            } else {
-                base.sendMessage(message);
-            }
+            base.sendMessage(message);
         }
     }
 
@@ -336,23 +303,8 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
         return uuid;
     }
 
-    /**
-     * Sends the message if debugging is enabled in the config
-     *
-     * @param message Message to be displayed
-     */
-    public void sendDebugMessage(String message) {
-        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + message);
-        }
-    }
-
-    public boolean isPlayer() {
-        return base != null;
-    }
-
     @Override
-    public int compareTo(SinkUser o) {
+    public int compareTo(IngameUser o) {
         return getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 
@@ -372,8 +324,4 @@ public class SinkUser implements IUser, Comparable<SinkUser> {
                            getConfiguration().getBanReason());
     }
 
-    @Override
-    public String getIdentifierString() {
-        return getUniqueId().toString();
-    }
 }

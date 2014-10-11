@@ -29,8 +29,6 @@ public class SinkVersionCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[SinkLibrary] " + ChatColor.RESET;
 
-    Plugin plugin;
-
     public SinkVersionCommand(Plugin plugin) {
         super(plugin);
     }

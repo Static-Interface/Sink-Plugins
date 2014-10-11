@@ -20,7 +20,8 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -72,8 +73,8 @@ public class MilkCommand implements CommandExecutor {
             return true;
         }
 
-        if (!user.isConsole()) {
-            if (!user.getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others")) {
+        if (user instanceof IngameUser) {
+            if (!((IngameUser) user).getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others")) {
                 sender.sendMessage(m("Permissions.General"));
                 return true;
             }

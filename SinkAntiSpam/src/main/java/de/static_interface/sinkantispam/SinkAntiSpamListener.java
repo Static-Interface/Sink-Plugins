@@ -25,7 +25,7 @@ import de.static_interface.sinkantispam.warning.BlacklistWarning;
 import de.static_interface.sinkantispam.warning.DomainWarning;
 import de.static_interface.sinkantispam.warning.IpWarning;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +53,7 @@ public class SinkAntiSpamListener implements Listener {
     public static WarnResult checkMessage(Player player, String message) {
         WarnResult result = new WarnResult();
         result.setResultcode(WarnResult.PASS);
-        SinkUser user = SinkLibrary.getInstance().getUser(player);
+        IngameUser user = SinkLibrary.getInstance().getUser(player);
 
         if (user.hasPermission("sinkcommands.bypass")) {
             return result;

@@ -20,29 +20,33 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.Constants.TICK;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class DrugCommand implements CommandExecutor {
+public class DrugCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Drogen] " + ChatColor.RESET;
 
     public static Player lastPlayer;
 
+    public DrugCommand(Plugin plugin) {
+        super(plugin);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        SinkUser user = SinkLibrary.getInstance().getUser(sender);
-        if (user.isConsole()) {
-            sender.sendMessage("Dieser Befehl kann nur von einem Spieler genutzt werden.");
-            return true;
-        }
+    public boolean isPlayerOnly() {
+        return true;
+    }
+
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
+        IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
 
         Player player = user.getPlayer();
 

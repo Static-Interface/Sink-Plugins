@@ -20,24 +20,34 @@ package de.static_interface.sinkchat.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.UserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.regex.Pattern;
 
-public class NickCommand implements CommandExecutor {
+public class NickCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.GREEN + "[Nick]" + ' ' + ChatColor.RESET;
     private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z_0-9" + ChatColor.COLOR_CHAR + "]+$");
 
+    public NickCommand(Plugin plugin) {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean isPlayerOnly() {
+        return true;
+    }
+
+    @Override
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled()) {
             sender.sendMessage(PREFIX + "DisplayNames have been disabled in the config.");
             return true;
@@ -71,12 +81,9 @@ public class NickCommand implements CommandExecutor {
             }
             return true;
         }
-        if (user.isConsole()) {
-            sender.sendMessage(m("General.ConsoleNotAvailable"));
-            return true;
-        }
+
         newDisplayName = ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[0]) + ChatColor.RESET;
-        Player player = user.getPlayer();
+        Player player = ((IngameUser) user).getPlayer();
         if (setDisplayName(player, newDisplayName, sender)) {
             sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.SelfChanged", newDisplayName));
         }
@@ -85,7 +92,7 @@ public class NickCommand implements CommandExecutor {
 
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean setDisplayName(Player target, String newDisplayName, CommandSender sender) {
-        SinkUser user = SinkLibrary.getInstance().getUser(target);
+        IngameUser user = SinkLibrary.getInstance().getUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if (!NICKNAME_PATTERN.matcher(cleanDisplayName).matches()) {
             sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.IllegalNickname"));

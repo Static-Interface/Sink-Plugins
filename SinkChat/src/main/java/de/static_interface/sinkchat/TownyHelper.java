@@ -25,7 +25,7 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -49,7 +49,7 @@ public class TownyHelper {
      * @return Formatted name of the resident
      */
     public static String getFormattedResidentName(Resident resident, boolean includeTownRank, boolean includeNationRank) {
-        SinkUser user = SinkLibrary.getInstance().getUser(resident.getName()); // TODO: GET UUID FROM NAME
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(resident.getName()); // TODO: GET UUID FROM NAME
 
         String color = user.getChatPrefix().replace(ChatColor.stripColor(user.getChatPrefix()), ""); //very bad
 

@@ -21,14 +21,18 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.UUID;
 
 public class WarnCommand extends SinkCommand {
 
@@ -82,10 +86,14 @@ public class WarnCommand extends SinkCommand {
         }
 
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        UUID uuid = null;
+        if (user instanceof Identifiable) {
+            uuid = ((Identifiable) user).getUniqueId();
+        }
         String name = (sender instanceof IrcCommandSender) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
-        SinkUser targetUser = SinkLibrary.getInstance().getUser(target);
+        IngameUser targetUser = SinkLibrary.getInstance().getUser(target);
 
-        WarnUtil.warnPlayer(targetUser, new Warning(reason, name, user.getUniqueId(), WarnUtil.getWarningId(targetUser), false));
+        WarnUtil.warnPlayer(targetUser, new Warning(reason, name, uuid, WarnUtil.getWarningId(targetUser), false));
         return true;
     }
 }

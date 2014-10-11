@@ -15,17 +15,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.exception;
+package de.static_interface.sinklibrary.user;
 
-public class PlayerNotFoundException extends RuntimeException {
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-    private String name;
+import java.util.UUID;
 
-    public PlayerNotFoundException(String name) {
-        this.name = name;
+import javax.annotation.Nullable;
+
+public class IngameUserProvider extends SinkUserProvider {
+
+    @Override
+    @Nullable
+    public SinkUser newInstance(CommandSender sender) {
+        Player p = (Player) sender;
+        return new IngameUser(p.getUniqueId());
     }
 
-    public String getName() {
-        return name;
+    public SinkUser getUserInstance(UUID uuid) {
+        Player p = Bukkit.getPlayer(uuid);
+        if (p != null) {
+            return getUserInstance(p);
+        }
+
+        return new IngameUser(uuid);
     }
 }

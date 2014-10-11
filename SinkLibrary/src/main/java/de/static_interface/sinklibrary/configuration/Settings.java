@@ -86,6 +86,8 @@ public class Settings extends Configuration {
         addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
                    "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
 
+        addDefault("SinkCommands.Message.MessageReceived", "&7[{TARGETIRCPREFIX} {DISPLAYNAME} &7-> &6Me&7]&r {USERMESSAGE}");
+        addDefault("SinkCommands.Message.MessageSend", "&7[&6Me &7-> {TARGETIRCPREFIX} {TARGETDISPLAYNAME}&7]&r {USERMESSAGE}");
     }
 
     public Updater.UpdateType getUpdateType() {
@@ -208,5 +210,13 @@ public class Settings extends Configuration {
 
     public int getMaxWarnings() {
         return (int) get("SinkAntiSpam.MaxWarnings");
+    }
+
+    public String getMessageReceivedFormat() {
+        return (String) get("SinkCommands.Message.MessageReceived");
+    }
+
+    public String getMessageSendFormat() {
+        return (String) get("SinkCommands.Message.MessageSend");
     }
 }

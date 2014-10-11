@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+script: mvn clean install
+install: true
+notifications:
+  irc:
+    channels:
+      - "irc.adventuria.eu#dev"
+    on_success: change
+    on_failure: always
+    skip_join: true

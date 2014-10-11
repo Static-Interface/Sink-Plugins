@@ -22,7 +22,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.exception.PlayerNotFoundException;
+import de.static_interface.sinklibrary.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.exception.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -124,8 +124,8 @@ public abstract class SinkCommand implements CommandExecutor {
             return;
         }
 
-        if (exception instanceof PlayerNotFoundException) {
-            sender.sendMessage(m("General.NotOnline", ((PlayerNotFoundException) exception).getName()));
+        if (exception instanceof UserNotFoundException) {
+            sender.sendMessage(exception.getMessage());
             return;
         }
 

@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.ChatColor;
 
@@ -28,19 +28,16 @@ public class UserConfiguration extends Configuration {
 
     public static final int REQUIRED_VERSION = 1;
 
-    private SinkUser user = null;
+    private IngameUser user = null;
 
     /**
      * Stores Player Informations and Settings in PlayerConfiguration YAML Files.
-     * Should be accessed via {@link SinkUser#getConfiguration()}
+     * Should be accessed via {@link IngameUser#getConfiguration()}
      *
      * @param user User
      */
-    public UserConfiguration(SinkUser user) {
+    public UserConfiguration(IngameUser user) {
         super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), user.getUniqueId().toString() + ".yml"), false);
-        if (user.isConsole()) {
-            throw new RuntimeException("User is Console, cannot create PlayerConfiguration!");
-        }
 
         File oldDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players");
         File newDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "players");

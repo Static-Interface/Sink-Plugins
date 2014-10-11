@@ -1,7 +1,7 @@
 name: SinkLibrary
 version: ${project.version}
 description: Library required for Sink Plugins. This does nothing without a plugin that uses it.
-author: Trojaner
+author: [Trojaner, _ShadowRaven_]
 website: http://static-interface.de
 main: de.static_interface.sinklibrary.SinkLibrary
 soft-depend: [Vault]

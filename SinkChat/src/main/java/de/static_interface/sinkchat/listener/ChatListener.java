@@ -25,7 +25,7 @@ import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,7 +54,7 @@ public class ChatListener implements Listener {
             return;
         }
 
-        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
         String message = event.getMessage();
 
         user.sendDebugMessage("message: " + message);
@@ -111,7 +111,7 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        SinkUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
+        IngameUser user = SinkLibrary.getInstance().getUser(event.getPlayer());
         if (user.hasPermission("sinkchat.color")) {
             event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }

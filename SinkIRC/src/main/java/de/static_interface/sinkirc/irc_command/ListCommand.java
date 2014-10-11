@@ -18,7 +18,7 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,7 +47,7 @@ public class ListCommand extends IrcCommand {
 
         boolean firstPlayer = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(player);
+            IngameUser user = SinkLibrary.getInstance().getUser(player);
             if (firstPlayer) {
                 onlineMessage += user.getDisplayName();
                 firstPlayer = false;

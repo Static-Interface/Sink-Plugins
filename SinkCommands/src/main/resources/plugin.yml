@@ -107,6 +107,16 @@ commands:
     description: Execute commands as other players
     permission: sinkcommands.sudo
 
+  message:
+    description: Send messages to other users
+    permission: sinkcommands.message
+    aliases: [tell, msg, m, whisper]
+
+  reply:
+    description: Reply to the latest message
+    permission: sinkcommands.message
+    aliases: r
+
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
@@ -119,6 +129,7 @@ permissions:
       sinkcommands.freeze: true
       sinkcommands.globalmute: true
       sinkcommands.teamchat: true
+      sinkcommands.message: true
       sinkcommands.teamchat.color: true
       sinkcommands.newbiechat: true
       sinkcommands.newbiechat.color: true
@@ -143,6 +154,10 @@ permissions:
   sinkcommands.sudo:
     description: Allows to use sudo
     default: op
+
+  sinkcommands.message:
+    description: Allows to send messages
+    default: true
 
   sinkcommands.milk.*:
     description: Allows to use all milk commands

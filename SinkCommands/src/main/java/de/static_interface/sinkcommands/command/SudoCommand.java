@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.sender.FakeConsoleCommandSender;
 import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -57,15 +58,7 @@ public class SudoCommand extends SinkCommand {
             fakeSender = new FakePlayerCommandSender(p, sender);
         }
 
-        String commandLine = "";
-        for (int i = 1; i < args.length; i++) {
-            if (commandLine.equals("")) {
-                commandLine = args[i];
-                continue;
-            }
-            commandLine += " " + args[i];
-        }
-
+        String commandLine = StringUtil.formatArrayToString(args, " ", 1);
         Bukkit.dispatchCommand(fakeSender, commandLine);
         return true;
     }

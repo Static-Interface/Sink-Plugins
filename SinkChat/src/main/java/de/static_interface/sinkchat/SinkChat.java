@@ -110,10 +110,11 @@ public class SinkChat extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("nick").setExecutor(new NickCommand());
-        getCommand("enablespy").setExecutor(new SpyCommands.EnableSpyCommand());
-        getCommand("disablespy").setExecutor(new SpyCommands.DisablSpyCommand());
+        SinkLibrary.getInstance().registerCommand("nick", new NickCommand(this));
+        SinkLibrary.getInstance().registerCommand("enablespy", new SpyCommands.EnableSpyCommand(this));
+        SinkLibrary.getInstance().registerCommand("disablespy", new SpyCommands.DisablSpyCommand(this));
         SinkLibrary.getInstance().registerCommand("channel", new ChannelCommand(this));
+
         if (towny != null) {
             getCommand("nationchat").setExecutor(new NationChatCommand());
             getCommand("townchat").setExecutor(new TownChatCommand());

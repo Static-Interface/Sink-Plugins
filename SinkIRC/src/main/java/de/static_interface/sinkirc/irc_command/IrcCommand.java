@@ -44,8 +44,8 @@ public abstract class IrcCommand extends SinkCommand {
         assert sender instanceof IrcCommandSender;
 
         IrcCommandSender ircSender = (IrcCommandSender) sender;
-
-        return !ircSender.getSource().startsWith("#");
+        String source = ircSender.getSource();
+        return source != null && !ircSender.getSource().startsWith("#"); //todo: may be a bad way
     }
 }
 

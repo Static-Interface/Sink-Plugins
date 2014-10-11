@@ -18,7 +18,7 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
@@ -45,12 +45,12 @@ public class ListCommand implements CommandExecutor {
                 (com.earth2me.essentials.Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 
         List<String> out = new ArrayList<>(); // Output Message
-        HashMap<String, List<SinkUser>> groupUsers = new HashMap<>(); // group - list of users in group
+        HashMap<String, List<IngameUser>> groupUsers = new HashMap<>(); // group - list of users in group
         List<Player> onlineUsers = BukkitUtil.getOnlinePlayers();
         out.add("");
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            SinkUser user = SinkLibrary.getInstance().getUser(p);
+            IngameUser user = SinkLibrary.getInstance().getUser(p);
             String userGroup;
 
             if (SinkLibrary.getInstance().isPermissionsAvailable()) {
@@ -59,7 +59,7 @@ public class ListCommand implements CommandExecutor {
                 userGroup = user.getPlayer().isOp() ? "OP" : "Default";
             }
 
-            List<SinkUser> users = groupUsers.get(userGroup);
+            List<IngameUser> users = groupUsers.get(userGroup);
             if (users == null) {
                 users = new ArrayList<>();
             }
@@ -73,10 +73,10 @@ public class ListCommand implements CommandExecutor {
         SortedSet<String> sortedGroups = new TreeSet<>(groupUsers.keySet());
         int vanishUsers = 0;
         for (String group : sortedGroups) {
-            List<SinkUser> users = groupUsers.get(group);
+            List<IngameUser> users = groupUsers.get(group);
             String tmp = "";
             int groupUserCount = 0;
-            for (SinkUser user : users) {
+            for (IngameUser user : users) {
                 String prefix = "";
                 if (essentials != null) {
                     com.earth2me.essentials.User essUser = essentials.getUser(user.getPlayer());

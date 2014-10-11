@@ -20,7 +20,7 @@ package de.static_interface.sinkirc.command;
 import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
