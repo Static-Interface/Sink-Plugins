@@ -18,15 +18,15 @@
 package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.user.Identifiable;
-import de.static_interface.sinklibrary.api.user.SinkUserProvider;
-import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
-import de.static_interface.sinklibrary.api.model.BanData;
 import de.static_interface.sinklibrary.api.exception.UserOfflineException;
+import de.static_interface.sinklibrary.api.model.BanData;
+import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.VaultBridge;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -37,8 +37,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 public class IngameUser extends SinkUser implements Identifiable {
 
@@ -276,7 +274,6 @@ public class IngameUser extends SinkUser implements Identifiable {
     /**
      * @return The unique ID of the user
      */
-    @Nullable
     public UUID getUniqueId() {
         return uuid;
     }
