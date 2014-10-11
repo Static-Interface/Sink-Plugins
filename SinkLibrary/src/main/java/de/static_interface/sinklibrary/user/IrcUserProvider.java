@@ -84,7 +84,7 @@ public class IrcUserProvider extends SinkUserProvider {
     }
 
     public void loadUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.toString());
+        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.getNick());
         if (getUserInstance(user) != null) {
             return;
         }
@@ -94,14 +94,14 @@ public class IrcUserProvider extends SinkUserProvider {
     }
 
     public void unloadUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.toString());
+        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.getNick());
         IrcUser sUser = (IrcUser) getUserInstance(user);
 
         if (sUser == null) {
             return;
         }
         sUser.setOnline(false);
-        //user.getConfiguration().save(); // Todo
+        //user.getConfiguration().save(); // Todo?
         instances.remove(user);
     }
 

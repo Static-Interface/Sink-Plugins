@@ -124,7 +124,7 @@ public class SinkIRC extends JavaPlugin {
         if (ircBot != null) {
             ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
         }
-        if (!ircThread.isInterrupted()) {
+        if (ircThread != null && !ircThread.isInterrupted()) {
             ircThread.interrupt();
         }
         ircThread = null;
