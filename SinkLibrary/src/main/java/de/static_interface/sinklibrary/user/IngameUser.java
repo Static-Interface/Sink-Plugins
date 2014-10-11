@@ -52,11 +52,6 @@ public class IngameUser extends SinkUser implements Identifiable {
         super(provider);
         this.uuid = uuid;
         base = Bukkit.getPlayer(uuid);
-        initUser(base);
-    }
-
-    private void initUser(Player player) {
-        base = player;
         econ = SinkLibrary.getInstance().getEconomy();
         playerName = base != null ? base.getName() : Bukkit.getOfflinePlayer(uuid).getName();
 

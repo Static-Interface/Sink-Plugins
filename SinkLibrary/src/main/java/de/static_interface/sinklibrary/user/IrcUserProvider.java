@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.pircbotx.User;
 
@@ -58,7 +59,7 @@ public class IrcUserProvider extends SinkUserProvider {
     @Nullable
     public SinkUser getUserInstance(String nick) {
         for (SinkUser user : instances.values()) {
-            if (user.getName().equals(nick)) {
+            if (user.getName().equals(nick) || ChatColor.stripColor(user.getDisplayName()).equals(nick)) {
                 return user;
             }
         }

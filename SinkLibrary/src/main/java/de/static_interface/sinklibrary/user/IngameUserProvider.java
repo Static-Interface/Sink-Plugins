@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary.user;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,9 +34,10 @@ public class IngameUserProvider extends SinkUserProvider {
     @Nullable
     @Override
     public SinkUser getUserInstance(String name) {
-        Player p = Bukkit.getPlayer(name);
-        if (p != null) {
-            return getUserInstance(p);
+        for (SinkUser u : instances.values()) {
+            if (u.getName().equals(name) || ChatColor.stripColor(u.getDisplayName()).equals(name)) {
+                return u;
+            }
         }
 
         OfflinePlayer of = Bukkit.getOfflinePlayer(name);

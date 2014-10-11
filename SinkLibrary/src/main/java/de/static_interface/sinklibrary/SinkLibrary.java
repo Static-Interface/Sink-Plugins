@@ -393,15 +393,15 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * @param playerName Name of the player
+     * @param partialPlayerName Name of the player
      * @return User instance
      */
-    public IngameUser getIngameUser(String playerName) {
-        Player p = BukkitUtil.getPlayer(playerName);
+    public IngameUser getIngameUser(String partialPlayerName) {
+        Player p = BukkitUtil.getPlayer(partialPlayerName);
         if (p != null) {
             return getIngameUser(p);
         }
-        UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
+        UUID uuid = BukkitUtil.getUniqueIdByName(partialPlayerName);
         return getIngameUser(uuid);
     }
 
@@ -419,25 +419,24 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * @param name Name of the target user (e.g. use <name>_IRC suffix to target irc users)
+     * @param partialName Name of the target user (e.g. use <name>_IRC suffix to target irc users)
      * @return User instance of the target
      */
     @Nullable
-    public SinkUser getUser(String name) {
+    public SinkUser getUser(String partialName) {
         boolean hasSuffix = false;
         for (SinkUserProvider provider : userImplementations.values()) {
             String suffix = provider.getCommandArgsSuffix();
             if (suffix.equals("")) {
                 continue;
             }
-            if (name.endsWith(suffix)) {
+            if (partialName.endsWith(suffix)) {
                 hasSuffix = true;
             }
 
             for (IrcUser user : getOnlineIrcUsers()) {
-                if (user.getName().startsWith(name) && name.endsWith(suffix)) {
-                    name = user.getName();
-                    return provider.getUserInstance(name);
+                if (user.getName().startsWith(partialName.replaceFirst(StringUtil.stripRegex(suffix), "")) && hasSuffix) {
+                    return user;
                 }
             }
         }
@@ -445,11 +444,11 @@ public class SinkLibrary extends JavaPlugin {
             return null;
         }
 
-        if (name.equalsIgnoreCase("console")) {
+        if (partialName.equalsIgnoreCase("console")) {
             return getConsoleUser();
         }
 
-        return getIngameUser(name);
+        return getIngameUser(partialName);
     }
 
     /**
