@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary.api.sender;
 
 import de.static_interface.sinklibrary.user.IrcUser;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -41,6 +42,8 @@ public class IrcCommandSender implements CommandSender {
      * INTERNAL CONSTRUCTOR
      */
     public IrcCommandSender(IrcUser user, String source) {
+        Validate.notNull(user);
+        Validate.notNull(source);
         this.user = user;
         this.source = source;
         this.useNotice = false;

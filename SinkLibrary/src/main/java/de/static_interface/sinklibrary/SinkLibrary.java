@@ -58,6 +58,9 @@ import org.pircbotx.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,6 +74,7 @@ import javax.annotation.Nullable;
 public class SinkLibrary extends JavaPlugin {
 
     public static final int API_VERSION = 1;
+    public static File LIB_FOLDER;
     private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
     private boolean sinkChatAvailable;
@@ -80,7 +84,6 @@ public class SinkLibrary extends JavaPlugin {
     private Economy econ;
     private Permission perm;
     private Chat chat;
-    private File dataFolder;
     private String version;
     private Settings settings;
     private PluginDescriptionFile description;
@@ -125,7 +128,6 @@ public class SinkLibrary extends JavaPlugin {
         version = getDescription().getVersion();
         tmpBannedPlayers = new ArrayList<>();
         description = getDescription();
-        dataFolder = getDataFolder();
         logger = new Logger();
         timer = new TpsTimer();
         commands = new HashMap<>();
@@ -134,6 +136,12 @@ public class SinkLibrary extends JavaPlugin {
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
+
+        LIB_FOLDER = new File(getCustomDataFolder(), "libs");
+
+        if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
+            SinkLibrary.getInstance().getCustomLogger().severe("Coudln't create lib directory");
+        }
 
         registerUserImplementation(Player.class, ingameUserProvider);
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
@@ -218,6 +226,48 @@ public class SinkLibrary extends JavaPlugin {
                 Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
             }
         }
+
+        loadLibs();
+    }
+
+    public ClassLoader getClazzLoader() {
+        return getClassLoader();
+    }
+
+    private void loadLibs() {
+        try {
+            File[] files = LIB_FOLDER.listFiles();
+            if (files != null) {
+                int i = 0;
+                for (File file : files) {
+                    if (file.getName().endsWith(".jar")) {
+                        getLogger().info("SinkLibrary: Loading java library: " + file.getName());
+                        addUrlToClasspath(file.toURL());
+                        i++;
+                    }
+
+                    //if(file.getName().endsWith(".so") ||file.getName().endsWith("dll"))
+                    //{
+                    //    getLogger().info("SinkScripts: Loading native library: " + file.getName());
+                    //    System.loadLibrary(file.getCanonicalPath());
+                    //    i++;
+                    //}
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addUrlToClasspath(URL url) throws Exception {
+        URLClassLoader classLoader
+                = (URLClassLoader) getClassLoader();
+        Class clazz = URLClassLoader.class;
+
+        // Use reflection
+        Method method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
+        method.setAccessible(true);
+        method.invoke(classLoader, url);
     }
 
     public int getApiVersion() {
@@ -325,10 +375,8 @@ public class SinkLibrary extends JavaPlugin {
         if (pluginName == null) {
             throw new NullPointerException("getPluginName() returned null");
         }
-        if (dataFolder == null) {
-            throw new NullPointerException("dataFolder is null");
-        }
-        return new File(dataFolder.getAbsolutePath().replace(pluginName, "SinkPlugins"));
+
+        return new File(getDataFolder().getAbsolutePath().replace(pluginName, "SinkPlugins"));
     }
 
     /**
