@@ -17,19 +17,17 @@
 
 package de.static_interface.sinklibrary.user;
 
-import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import javax.annotation.Nullable;
 
-public class ConsoleUserProvider extends SinkUserProvider {
+public class ConsoleUserProvider extends SinkUserProvider<ConsoleCommandSender, ConsoleUser> {
 
     @Nullable
     @Override
-    public SinkUser getUserInstance(String name) {
+    public ConsoleUser getUserInstance(String name) {
         if (name.equalsIgnoreCase("console")) {
             return getUserInstance(Bukkit.getConsoleSender());
         }
@@ -37,8 +35,8 @@ public class ConsoleUserProvider extends SinkUserProvider {
     }
 
     @Override
-    public SinkUser newInstance(CommandSender sender) {
-        return new ConsoleUser((ConsoleCommandSender) sender, this);
+    public ConsoleUser newInstance(ConsoleCommandSender sender) {
+        return new ConsoleUser(sender, this);
     }
 
     @Override

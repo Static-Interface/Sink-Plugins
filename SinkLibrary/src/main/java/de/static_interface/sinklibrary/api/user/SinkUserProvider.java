@@ -17,60 +17,96 @@
 
 package de.static_interface.sinklibrary.api.user;
 
-import org.bukkit.command.CommandSender;
-
+import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
-public abstract class SinkUserProvider {
+public abstract class SinkUserProvider<K, E extends SinkUser<K>> {
 
-    public HashMap<CommandSender, SinkUser> instances;
+    private final Class<E> implType;
+    private final Class<K> baseType;
+
+    public HashMap<K, E> instances;
 
     public SinkUserProvider() {
         instances = new HashMap<>();
+        this.baseType = (Class<K>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+        this.implType = (Class<E>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
-    public SinkUser getUserInstance(CommandSender sender) {
-        if (instances.get(sender) == null) {
-            loadUser(sender);
+    public Class<E> getImplementationClass() {
+        return implType;
+    }
+
+    public Class<K> getBaseClass() {
+        return baseType;
+    }
+
+    public E getUserInstance(K base) {
+        if (instances.get(base) == null) {
+            loadUser(base);
         }
 
-        return instances.get(sender);
+        return instances.get(base);
     }
 
     @Nullable
-    public abstract SinkUser getUserInstance(String name);
+    public abstract E getUserInstance(String name);
 
-    public Collection<SinkUser> getUserInstances() {
+    public Collection<E> getUserInstances() {
         return instances.values();
     }
 
     /**
      * Load an user
-     * @param sender Base of User
+     * @param base Base of User
      * @return True if successfully created a new instance, false if already loaded
      */
-    public boolean loadUser(CommandSender sender) {
-        if (instances.get(sender) != null) {
+    public boolean loadUser(K base) {
+        if (instances.get(base) != null) {
             return false;
         }
-        instances.put(sender, newInstance(sender));
+        instances.put(base, newInstance(base));
         return true;
     }
 
-    public abstract SinkUser newInstance(CommandSender sender);
+    public E newInstance(K base) {
+        try {
+            Constructor<E> ctor = getImplementationClass().getConstructor(getBaseClass(), SinkUserProvider.class);
+            return ctor.newInstance(base, this);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public boolean unloadUser(SinkUser user) {
-        for (CommandSender sender : instances.keySet()) {
-            SinkUser value = instances.get(sender);
+    public boolean unloadUser(E user) {
+        for (K base : instances.keySet()) {
+            E value = instances.get(base);
 
             if (value == user) {
-                instances.remove(sender);
+                if (user.getConfiguration() != null) {
+                    user.getConfiguration().save();
+                }
+                instances.remove(base);
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean unloadUser(K base) {
+        for (K k : instances.keySet()) {
+            if (k == base) {
+                instances.remove(base);
+                return true;
+            }
+        }
+
         return false;
     }
 

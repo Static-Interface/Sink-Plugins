@@ -94,7 +94,7 @@ public class SinkLibrary extends JavaPlugin {
     private boolean initalized;
     private HashMap<String, SinkCommand> commandAliases;
     private HashMap<String, SinkCommand> commands;
-    private HashMap<Class<? extends CommandSender>, SinkUserProvider> userImplementations;
+    private HashMap<Class<?>, SinkUserProvider> userImplementations;
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
     private ConsoleUserProvider consoleUserProvider;
@@ -147,7 +147,7 @@ public class SinkLibrary extends JavaPlugin {
 
         registerUserImplementation(Player.class, ingameUserProvider);
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
-        registerUserImplementation(IrcCommandSender.class, ircUserProvider);
+        registerUserImplementation(User.class, ircUserProvider);
 
         // Init language
         LanguageConfiguration languageConfiguration =
@@ -531,21 +531,23 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public IngameUser getIngameUser(UUID uuid) {
-        return (IngameUser) ingameUserProvider.getUserInstance(uuid);
+        return ingameUserProvider.getUserInstance(uuid);
     }
 
     /**
-     * @param sender Command Sender
+     * @param base Base of the User
      * @return IUser instance of sender, e.g. if sender is {@link ConsoleCommandSender}, it will return {@link ConsoleUser}.
      *         <br/> May return null if there is no default implementation
      */
     @Nullable
-    public SinkUser getUser(CommandSender sender) {
-        //Todo: Replace with SinkUserProviders
+    public SinkUser getUser(Object base) {
+        if (base instanceof IrcCommandSender) {
+            base = ((IrcCommandSender) base).getUser().getBase();
+        }
 
-        for (Class<? extends CommandSender> implClass : userImplementations.keySet()) {
-            if (implClass.isInstance(sender)) {
-                return userImplementations.get(implClass).getUserInstance(sender);
+        for (Class<?> implClass : userImplementations.keySet()) {
+            if (implClass.isInstance(base)) {
+                return userImplementations.get(implClass).getUserInstance(base);
             }
         }
 
@@ -556,8 +558,8 @@ public class SinkLibrary extends JavaPlugin {
     /**
      * Register an own implementation of {@link SinkUser} for a {@link CommandSender}
      */
-    public void registerUserImplementation(Class<? extends CommandSender> sender, SinkUserProvider provider) {
-        userImplementations.put(sender, provider);
+    public void registerUserImplementation(Class<?> base, SinkUserProvider provider) {
+        userImplementations.put(base, provider);
     }
 
 
@@ -608,11 +610,11 @@ public class SinkLibrary extends JavaPlugin {
 
     @Nullable
     public IrcUser getIrcUser(String nick) {
-        return (IrcUser) ircUserProvider.getUserInstance(nick);
+        return ircUserProvider.getUserInstance(nick);
     }
 
     public IrcUser getIrcUser(User user) {
-        return (IrcUser) ircUserProvider.getUserInstance(user);
+        return ircUserProvider.getUserInstance(user);
     }
 
     public void loadIrcUser(User user) {
@@ -649,7 +651,7 @@ public class SinkLibrary extends JavaPlugin {
         Player p = Bukkit.getPlayer(uuid);
         IngameUser user = null;
         if (p != null) {
-            user = (IngameUser) ingameUserProvider.getUserInstance(uuid);
+            user = ingameUserProvider.getUserInstance(uuid);
         }
         if (user == null) {
             return;
@@ -789,6 +791,6 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public ConsoleUser getConsoleUser() {
-        return (ConsoleUser) consoleUserProvider.getUserInstance(Bukkit.getConsoleSender());
+        return consoleUserProvider.getUserInstance(Bukkit.getConsoleSender());
     }
 }

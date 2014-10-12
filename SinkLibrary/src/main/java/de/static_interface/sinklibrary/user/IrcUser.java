@@ -30,14 +30,14 @@ import org.pircbotx.User;
 
 import java.lang.reflect.Method;
 
-public class IrcUser extends SinkUser {
+public class IrcUser extends SinkUser<User> {
 
     private User base;
     private boolean online;
     private IrcCommandSender sender;
 
     public IrcUser(User base, SinkUserProvider provider) {
-        super(provider);
+        super(base, provider);
         this.base = base;
         online = true;
         sender = new IrcCommandSender(this, null);
@@ -57,7 +57,7 @@ public class IrcUser extends SinkUser {
 
     @Override
     public Configuration getConfiguration() {
-        throw new RuntimeException("Not supported (yet?)"); //Todo
+        return null;
     }
 
     @Override
@@ -147,6 +147,7 @@ public class IrcUser extends SinkUser {
         online = value;
     }
 
+    @Override
     public User getBase() {
         return base;
     }

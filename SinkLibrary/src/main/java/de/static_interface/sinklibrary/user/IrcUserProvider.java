@@ -17,28 +17,13 @@
 
 package de.static_interface.sinklibrary.user;
 
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
-import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.pircbotx.User;
-
-import java.util.Collection;
-import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
-public class IrcUserProvider extends SinkUserProvider {
-
-    HashMap<User, SinkUser> instances = new HashMap<>();
-
-    @Override
-    public SinkUser newInstance(CommandSender sender) {
-        return ((IrcCommandSender) sender).getUser();
-    }
-
+public class IrcUserProvider extends SinkUserProvider<User, IrcUser> {
     @Override
     public String getCommandArgsSuffix() {
         return "_IRC";
@@ -46,19 +31,8 @@ public class IrcUserProvider extends SinkUserProvider {
 
     @Override
     @Nullable
-    public SinkUser getUserInstance(CommandSender sender) {
-        for (SinkUser user : instances.values()) {
-            if (user == ((IrcCommandSender) sender).getUser()) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public SinkUser getUserInstance(String nick) {
-        for (SinkUser user : instances.values()) {
+    public IrcUser getUserInstance(String nick) {
+        for (IrcUser user : instances.values()) {
             if (user.getName().equals(nick) || ChatColor.stripColor(user.getDisplayName()).equals(nick)) {
                 return user;
             }
@@ -67,54 +41,12 @@ public class IrcUserProvider extends SinkUserProvider {
     }
 
     @Override
-    public Collection<SinkUser> getUserInstances() {
-        return instances.values();
+    public IrcUser newInstance(User base) {
+        return new IrcUser(base, this);
     }
 
     @Override
-    public boolean loadUser(CommandSender sender) {
-        loadUser(((IrcCommandSender) sender).getUser().getBase());
-        return true; // todo
-    }
-
-    @Override
-    public boolean unloadUser(SinkUser user) {
-        unloadUser(((IrcUser) user).getBase());
-        return true; // todo
-    }
-
-    public void loadUser(User user) {
-        if (getUserInstance(user) != null) {
-            return;
-        }
-
-        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.getNick());
-
-        IrcUser sUser = new IrcUser(user, this);
-        instances.put(user, sUser);
-    }
-
-    public void unloadUser(User user) {
-        IrcUser sUser = (IrcUser) getUserInstance(user);
-
-        if (sUser == null) {
-            return;
-        }
-
-        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.getNick());
-
-        sUser.setOnline(false);
-        //user.getConfiguration().save(); // Todo?
-        instances.remove(user);
-    }
-
-    @Nullable
-    public SinkUser getUserInstance(User user) {
-        for (User pircBotUser : instances.keySet()) {
-            if (pircBotUser.getNick().equals(user.getNick()) && pircBotUser.getRealName().equals(user.getRealName())) {
-                return instances.get(pircBotUser);
-            }
-        }
-        return null;
+    public boolean unloadUser(IrcUser user) {
+        return unloadUser(user.getBase());
     }
 }

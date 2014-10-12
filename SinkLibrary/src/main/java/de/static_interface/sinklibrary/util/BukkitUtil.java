@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -94,6 +95,7 @@ public class BukkitUtil {
     public static String getNameByUniqueId(UUID uuid) {
         return Bukkit.getOfflinePlayer(uuid).getName();
     }
+
     /**
      * @param sender Command Sender
      * @return If {@link org.bukkit.command.CommandSender CommandSnder} is instance of {@link org.bukkit.command.ConsoleCommandSender ConsoleCommandSender},
@@ -159,5 +161,9 @@ public class BukkitUtil {
         if (sendIRC) {
             SinkLibrary.getInstance().sendIrcMessage(message);
         }
+    }
+
+    public static World getMainWorld() {
+        return Bukkit.getWorlds().get(0);
     }
 }

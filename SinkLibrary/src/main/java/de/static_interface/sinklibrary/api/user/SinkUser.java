@@ -25,12 +25,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-public abstract class SinkUser implements Comparable<SinkUser> {
+public abstract class SinkUser<T> implements Comparable<SinkUser> {
 
     SinkUserProvider provider;
+    private T base;
 
-    public SinkUser(SinkUserProvider provider) {
+    public SinkUser(T base, SinkUserProvider provider) {
         this.provider = provider;
+        this.base = base;
+    }
+
+    public T getBase() {
+        return base;
     }
 
     public SinkUserProvider getProvider() {
@@ -43,6 +49,7 @@ public abstract class SinkUser implements Comparable<SinkUser> {
 
     public abstract Configuration getConfiguration();
 
+    @Deprecated
     public abstract CommandSender getSender();
 
     public abstract boolean hasPermission(SinkCommand command);

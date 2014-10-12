@@ -21,15 +21,13 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
-import de.static_interface.sinklibrary.api.exception.UserOfflineException;
 import de.static_interface.sinklibrary.api.model.BanData;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.VaultBridge;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -38,24 +36,29 @@ import org.bukkit.permissions.Permission;
 
 import java.util.UUID;
 
-public class IngameUser extends SinkUser implements Identifiable {
+import javax.annotation.Nullable;
 
-    private Player base = null;
-    private Economy econ = null;
+public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable {
+
+    private Player player = null;
+    private OfflinePlayer base = null;
     private String playerName = null;
     private IngameUserConfiguration config = null;
-    private UUID uuid = null;
 
-    IngameUser(UUID uuid, SinkUserProvider provider) {
-        super(provider);
-        this.uuid = uuid;
-        base = Bukkit.getPlayer(uuid);
-        econ = SinkLibrary.getInstance().getEconomy();
-        playerName = base != null ? base.getName() : Bukkit.getOfflinePlayer(uuid).getName();
+    IngameUser(OfflinePlayer base, SinkUserProvider provider) {
+        super(base, provider);
+        this.base = base;
+        player = base.getPlayer();
+        playerName = base.getName();
 
         if (playerName == null) {
-            SinkLibrary.getInstance().getCustomLogger().warn("Couldn't get player name from UUID: " + uuid.toString());
+            SinkLibrary.getInstance().getCustomLogger().warn("Couldn't get player name from UUID: " + base.getUniqueId().toString());
         }
+    }
+
+    @Override
+    public OfflinePlayer getBase() {
+        return base;
     }
 
     /**
@@ -66,16 +69,7 @@ public class IngameUser extends SinkUser implements Identifiable {
      */
     public double getBalance() {
         validateEconomy();
-
-        OfflinePlayer player = base;
-
-        if (player == null) {
-            player = Bukkit.getOfflinePlayer(uuid);
-            if (player == null) {
-                throw new UserOfflineException();
-            }
-        }
-        return VaultBridge.getBalance(player);
+        return VaultBridge.getBalance(getBase());
     }
 
     /**
@@ -85,24 +79,14 @@ public class IngameUser extends SinkUser implements Identifiable {
      * @return true if successful
      */
     public boolean addBalance(double amount) {
-        OfflinePlayer player = base;
-
-        if (player == null) {
-            player = Bukkit.getOfflinePlayer(uuid);
-            if (player == null) {
-                throw new UserOfflineException();
-            }
-        }
-        return VaultBridge.addBalance(player, amount);
+        validateEconomy();
+        return VaultBridge.addBalance(getBase(), amount);
     }
 
     private void validateEconomy() {
         if (!SinkLibrary.getInstance().isEconomyAvailable()) {
             throw new EconomyNotAvailableException();
         }
-
-        assert econ != null;
-        assert base != null;
     }
 
     /**
@@ -119,7 +103,7 @@ public class IngameUser extends SinkUser implements Identifiable {
      * @return CommandSender
      */
     public CommandSender getSender() {
-        return base;
+        return getPlayer();
     }
 
     @Override
@@ -130,12 +114,12 @@ public class IngameUser extends SinkUser implements Identifiable {
 
     @Override
     public boolean isOp() {
-        return base.isOp();
+        return getBase().isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        base.setOp(value);
+        getBase().setOp(value);
     }
 
     /**
@@ -143,8 +127,9 @@ public class IngameUser extends SinkUser implements Identifiable {
      *
      * @return Player
      */
+    @Nullable
     public Player getPlayer() {
-        return base;
+        return player;
     }
 
     /**
@@ -162,13 +147,13 @@ public class IngameUser extends SinkUser implements Identifiable {
         //}
         //else
         //{
-        return base.hasPermission(permission);
+        return player.hasPermission(permission);
         //}
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return base.hasPermission(permission);
+        return player.hasPermission(permission);
     }
 
     /**
@@ -181,7 +166,7 @@ public class IngameUser extends SinkUser implements Identifiable {
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
             throw new PermissionsNotAvailableException();
         }
-        return SinkLibrary.getInstance().getPermissions().getPrimaryGroup(base);
+        return SinkLibrary.getInstance().getPermissions().getPrimaryGroup(BukkitUtil.getMainWorld().getName(), base);
     }
 
 
@@ -218,7 +203,8 @@ public class IngameUser extends SinkUser implements Identifiable {
         if (!SinkLibrary.getInstance().isChatAvailable()) {
             return base.isOp() ? ChatColor.DARK_RED.toString() : ChatColor.WHITE.toString();
         }
-        return ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
+        return ChatColor
+                .translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(BukkitUtil.getMainWorld().getName(), base));
     }
 
 
@@ -235,11 +221,7 @@ public class IngameUser extends SinkUser implements Identifiable {
      * @return True if player is online and does not equals null
      */
     public boolean isOnline() {
-        if (base == null) {
-            base = Bukkit.getPlayer(uuid);
-        }
-        return base != null && base.isOnline();
-
+        return base.isOnline();
     }
 
     /**
@@ -252,9 +234,11 @@ public class IngameUser extends SinkUser implements Identifiable {
         if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled() || !getConfiguration().getHasDisplayName()) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
-                prefix = ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat().getPlayerPrefix(base));
+                prefix =
+                        ChatColor.translateAlternateColorCodes('&', SinkLibrary.getInstance().getChat()
+                                .getPlayerPrefix(BukkitUtil.getMainWorld().getName(), base));
             }
-            return prefix + base.getDisplayName();
+            return prefix + player.getDisplayName();
         } else {
             return getConfiguration().getDisplayName();
         }
@@ -267,7 +251,7 @@ public class IngameUser extends SinkUser implements Identifiable {
      */
     public void sendMessage(String message) {
         if (isOnline()) {
-            base.sendMessage(message);
+            player.sendMessage(message);
         }
     }
 
@@ -275,7 +259,7 @@ public class IngameUser extends SinkUser implements Identifiable {
      * @return The unique ID of the user
      */
     public UUID getUniqueId() {
-        return uuid;
+        return base.getUniqueId();
     }
 
     public void ban(String reason, long unbantime) {

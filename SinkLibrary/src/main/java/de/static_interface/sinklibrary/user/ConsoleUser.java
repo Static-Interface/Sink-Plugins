@@ -27,12 +27,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.Permission;
 
-public class ConsoleUser extends SinkUser {
+public class ConsoleUser extends SinkUser<ConsoleCommandSender> {
 
     private ConsoleCommandSender sender;
 
     public ConsoleUser(ConsoleCommandSender sender, SinkUserProvider provider) {
-        super(provider);
+        super(sender, provider);
         this.sender = sender;
     }
 
@@ -48,10 +48,11 @@ public class ConsoleUser extends SinkUser {
 
     @Override
     public Configuration getConfiguration() {
-        throw new UnsupportedOperationException("Console can't have configurations yet");
+        return null;
     }
 
     @Override
+    @Deprecated
     public CommandSender getSender() {
         return sender;
     }

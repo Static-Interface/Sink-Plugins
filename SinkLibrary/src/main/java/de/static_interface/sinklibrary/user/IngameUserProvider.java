@@ -17,24 +17,22 @@
 
 package de.static_interface.sinklibrary.user;
 
-import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class IngameUserProvider extends SinkUserProvider {
+public class IngameUserProvider extends SinkUserProvider<OfflinePlayer, IngameUser> {
 
     @Nullable
     @Override
-    public SinkUser getUserInstance(String name) {
-        for (SinkUser u : instances.values()) {
+    public IngameUser getUserInstance(String name) {
+        for (IngameUser u : instances.values()) {
             if (u.getName().equals(name) || ChatColor.stripColor(u.getDisplayName()).equals(name)) {
                 return u;
             }
@@ -46,9 +44,9 @@ public class IngameUserProvider extends SinkUserProvider {
 
     @Override
     @Nullable
-    public SinkUser newInstance(CommandSender sender) {
+    public IngameUser newInstance(OfflinePlayer sender) {
         Player p = (Player) sender;
-        return new IngameUser(p.getUniqueId(), this);
+        return new IngameUser(p, this);
     }
 
     @Override
@@ -56,12 +54,12 @@ public class IngameUserProvider extends SinkUserProvider {
         return "";
     }
 
-    public SinkUser getUserInstance(UUID uuid) {
+    public IngameUser getUserInstance(UUID uuid) {
         Player p = Bukkit.getPlayer(uuid);
         if (p != null) {
             return getUserInstance(p);
         }
 
-        return new IngameUser(uuid, this);
+        return new IngameUser(Bukkit.getOfflinePlayer(uuid), this);
     }
 }
