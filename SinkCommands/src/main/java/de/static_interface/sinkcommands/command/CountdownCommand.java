@@ -31,11 +31,7 @@ public class CountdownCommand extends SinkCommand {
 
     public CountdownCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

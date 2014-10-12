@@ -26,16 +26,8 @@ public class ExecCommand extends IrcCommand {
 
     public ExecCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
-    }
-
-    @Override
-    public boolean useNotices() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
+        getCommandOptions().setUseNotices(true);
     }
 
     @Override

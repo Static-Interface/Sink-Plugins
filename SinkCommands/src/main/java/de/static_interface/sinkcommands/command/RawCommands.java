@@ -33,11 +33,7 @@ public class RawCommands {
 
         public RawCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isIrcOpOnly() {
-            return true;
+            getCommandOptions().setIrcOpOnly(true);
         }
 
         @Override
@@ -54,11 +50,7 @@ public class RawCommands {
 
         public RawUserCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isIrcOpOnly() {
-            return true;
+            getCommandOptions().setIrcOpOnly(true);
         }
 
         @Override

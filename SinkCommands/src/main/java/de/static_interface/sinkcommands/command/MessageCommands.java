@@ -62,11 +62,8 @@ public class MessageCommands {
 
         public MessageCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isIrcQueryOnly() {
-            return true;
+            getTabCompleterOptions().setIncludeIrcUsers(true);
+            getCommandOptions().setIrcQueryOnly(true);
         }
 
         @Override
@@ -94,11 +91,7 @@ public class MessageCommands {
 
         public ReplyCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isIrcQueryOnly() {
-            return true;
+            getCommandOptions().setIrcQueryOnly(true);
         }
 
         @Override

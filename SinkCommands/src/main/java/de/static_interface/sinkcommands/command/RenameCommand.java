@@ -35,11 +35,7 @@ public class RenameCommand extends SinkCommand {
 
     public RenameCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
+        getCommandOptions().setPlayerOnly(true);
     }
 
     @Override

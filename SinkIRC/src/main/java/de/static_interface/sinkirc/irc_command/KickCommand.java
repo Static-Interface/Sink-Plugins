@@ -30,11 +30,7 @@ public class KickCommand extends IrcCommand {
     public KickCommand(Plugin plugin) {
         super(plugin);
         setUsage("Usage: " + IrcUtil.getCommandPrefix() + "kick <player> <reason>");
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

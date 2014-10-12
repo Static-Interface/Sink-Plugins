@@ -32,11 +32,7 @@ public class SudoCommand extends SinkCommand {
 
     public SudoCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

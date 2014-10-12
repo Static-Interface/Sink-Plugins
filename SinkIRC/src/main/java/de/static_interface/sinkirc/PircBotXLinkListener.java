@@ -42,6 +42,8 @@ public class PircBotXLinkListener extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) {
+        SinkLibrary.getInstance().loadIrcUser(event.getUser());
+
         IrcReceiveMessageEvent bukkitEvent = new IrcReceiveMessageEvent(event.getUser(), event.getChannel(), event.getMessage(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
@@ -56,6 +58,8 @@ public class PircBotXLinkListener extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMode(ModeEvent<PircBotX> event) {
+        SinkLibrary.getInstance().loadIrcUser(event.getUser());
+
         IrcModeEvent bukkitEvent = new IrcModeEvent(event.getUser(), event.getChannel(), event.getMode(), event.getModeParsed(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }
@@ -92,6 +96,8 @@ public class PircBotXLinkListener extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onPrivateMessage(PrivateMessageEvent<PircBotX> event) {
+        SinkLibrary.getInstance().loadIrcUser(event.getUser());
+
         IrcPrivateMessageEvent bukkitEvent = new IrcPrivateMessageEvent(event.getUser(), event.getMessage(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }

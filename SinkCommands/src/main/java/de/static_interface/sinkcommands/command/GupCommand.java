@@ -30,11 +30,7 @@ public class GupCommand extends SinkCommand {
 
     public GupCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
+        getCommandOptions().setPlayerOnly(true);
     }
 
     @Override

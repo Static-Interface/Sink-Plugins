@@ -187,7 +187,6 @@ public class SinkCommands extends JavaPlugin {
 
     private void registerCommands() {
 
-        getCommand("milk").setExecutor(new MilkCommand());
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
         getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
@@ -198,6 +197,7 @@ public class SinkCommands extends JavaPlugin {
         getCommand("votekickunban").setExecutor(new VotekickCommands.VotekickunbanCommand());
         getCommand("list").setExecutor(new ListCommand());
 
+        SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));
         SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));
         SinkLibrary.getInstance().registerCommand("clear", new ClearCommand(this));
         SinkLibrary.getInstance().registerCommand("enablestats", new StatsCommands.EnableStatsCommand(this));

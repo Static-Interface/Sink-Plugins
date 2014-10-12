@@ -84,22 +84,25 @@ public class IrcUserProvider extends SinkUserProvider {
     }
 
     public void loadUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.getNick());
         if (getUserInstance(user) != null) {
             return;
         }
+
+        SinkLibrary.getInstance().getCustomLogger().debug("Loading user: " + user.getNick());
 
         IrcUser sUser = new IrcUser(user, this);
         instances.put(user, sUser);
     }
 
     public void unloadUser(User user) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.getNick());
         IrcUser sUser = (IrcUser) getUserInstance(user);
 
         if (sUser == null) {
             return;
         }
+
+        SinkLibrary.getInstance().getCustomLogger().debug("Unloading user: " + user.getNick());
+
         sUser.setOnline(false);
         //user.getConfiguration().save(); // Todo?
         instances.remove(user);

@@ -34,22 +34,30 @@ import java.util.List;
 
 public class SinkTabCompleter implements TabCompleter {
 
-    private final boolean includeIrcUsers;
-
-    public SinkTabCompleter(boolean includeIrcUsers) {
-        this.includeIrcUsers = includeIrcUsers;
-    }
-
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label,
                                       String[] args) {
         List<String> result = new ArrayList<>();
+
+        SinkCommand command = SinkLibrary.getInstance().getCustomCommand(cmd.getName());
+
+        SinkTabCompleterOptions options = command.getTabCompleterOptions();
+        boolean includeIngameUsers = options.includeIngameUsers();
+        boolean includeIrcUsers = options.includeIrcUsers();
+        boolean includeSuffix = options.includeSuffix();
+
+        if (!includeIngameUsers && !includeIrcUsers) {
+            return result;
+        }
+
+        List<SinkUser> users = new ArrayList<>();
         HashMap<SinkUser, String> tmp = new HashMap<>();
         String s = args[args.length - 1];
 
-        List<SinkUser> users = new ArrayList<>();
-        for (IngameUser user : SinkLibrary.getInstance().getOnlineUsers()) {
-            users.add(user);
+        if (includeIngameUsers) {
+            for (IngameUser user : SinkLibrary.getInstance().getOnlineUsers()) {
+                users.add(user);
+            }
         }
 
         if (includeIrcUsers) {
@@ -64,13 +72,23 @@ public class SinkTabCompleter implements TabCompleter {
                         args, ", "));
 
         for (SinkUser user : users) {
-            String name = user.getName() + user.getProvider().getCommandArgsSuffix();
-            String displayName = user.getDisplayName();
+            String name;
+            if (includeSuffix) {
+                name = user.getDisplayName();
+            } else {
+                name = user.getName();
+            }
+
+            String displayName = user.getDisplayName() == null ? "" : user.getDisplayName();
+            if (includeSuffix) {
+                displayName = ChatColor.stripColor(displayName) + user.getProvider().getCommandArgsSuffix();
+            } else {
+                displayName = ChatColor.stripColor(displayName);
+            }
 
             boolean hasDisplayname = false;
-            if (!StringUtil.isStringEmptyOrNull(displayName)) {
+            if (!StringUtil.isStringEmptyOrNull(displayName.replace(user.getProvider().getCommandArgsSuffix(), ""))) {
                 hasDisplayname = true;
-                displayName = ChatColor.stripColor(displayName) + user.getProvider().getCommandArgsSuffix();
             }
 
             // only add one entry per user

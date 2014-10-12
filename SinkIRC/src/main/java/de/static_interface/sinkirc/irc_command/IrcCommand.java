@@ -28,16 +28,7 @@ public abstract class IrcCommand extends SinkCommand {
 
     public IrcCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOnly() {
-        return true;
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return false;
+        getCommandOptions().setIrcOnly(true);
     }
 
     public boolean isQueryCommand() {

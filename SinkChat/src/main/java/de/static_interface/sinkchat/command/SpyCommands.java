@@ -36,11 +36,7 @@ public class SpyCommands {
 
         public EnableSpyCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isPlayerOnly() {
-            return true;
+            getCommandOptions().setPlayerOnly(true);
         }
 
         @Override
@@ -66,11 +62,7 @@ public class SpyCommands {
 
         public DisablSpyCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isPlayerOnly() {
-            return true;
+            getCommandOptions().setPlayerOnly(true);
         }
 
         @Override

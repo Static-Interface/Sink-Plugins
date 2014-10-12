@@ -40,21 +40,7 @@ public class WarnCommand extends SinkCommand {
 
     public WarnCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOnly() {
-        return false;
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return false;
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

@@ -35,11 +35,7 @@ public class StatsCommands {
 
         public EnableStatsCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isPlayerOnly() {
-            return true;
+            getCommandOptions().setPlayerOnly(true);
         }
 
         @Override
@@ -65,11 +61,7 @@ public class StatsCommands {
 
         public DisableStatsCommand(Plugin plugin) {
             super(plugin);
-        }
-
-        @Override
-        public boolean isPlayerOnly() {
-            return true;
+            getCommandOptions().setPlayerOnly(true);
         }
 
         @Override

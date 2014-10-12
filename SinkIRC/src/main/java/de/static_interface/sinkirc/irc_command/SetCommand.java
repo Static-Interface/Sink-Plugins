@@ -27,11 +27,7 @@ public class SetCommand extends SinkCommand {
     public SetCommand(Plugin plugin) {
         super(plugin);
         setUsage("Wrong usage! Usage: " + getCommandPrefix() + "set <option> <value>");
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

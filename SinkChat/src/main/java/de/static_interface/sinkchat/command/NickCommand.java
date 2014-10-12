@@ -39,11 +39,7 @@ public class NickCommand extends SinkCommand {
 
     public NickCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
+        getCommandOptions().setPlayerOnly(true);
     }
 
     @Override

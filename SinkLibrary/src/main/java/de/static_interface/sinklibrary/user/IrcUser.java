@@ -67,7 +67,7 @@ public class IrcUser extends SinkUser {
 
     @Override
     public boolean hasPermission(SinkCommand command) {
-        return (command.isIrcOnly() && isOp()) || !command.isIrcOpOnly();
+        return (command.getCommandOptions().isIrcOnly() && isOp()) || !command.getCommandOptions().isIrcOpOnly();
     }
 
     @Override

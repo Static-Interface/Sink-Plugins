@@ -20,36 +20,41 @@ package de.static_interface.sinkirc.command;
 import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.pircbotx.Channel;
 
-public class IrcKickCommand implements CommandExecutor {
+public class IrcKickCommand extends SinkCommand {
+
+    public IrcKickCommand(Plugin plugin) {
+        super(plugin);
+        getTabCompleterOptions().setIncludeIngameUsers(false);
+        getTabCompleterOptions().setIncludeIrcUsers(true);
+        getTabCompleterOptions().setIncludeSuffix(false);
+        getCommandOptions().setIrcOpOnly(true);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
 
         if (args.length < 1) {
             return false;
         }
 
-        String reason = "Kicked by " + user.getDisplayName() + " ingame";
+        String reason = StringUtil.formatArrayToString(args, " ", 1);
 
         String target = args[0];
 
-        if (args.length > 1) {
-            reason = reason + ", reason: ";
-            for (int i = 1; i < args.length; i++) {
-                reason += args[i] + ' ';
-            }
+        if (StringUtil.isStringEmptyOrNull(reason)) {
+            reason = "Kicked by " + user.getDisplayName();
         }
 
         Channel channel = SinkIRC.getIrcBot().getUserBot().getChannels().first();
         channel.send().kick(IrcUtil.getUser(channel, target), reason);
-
         return true;
     }
 }

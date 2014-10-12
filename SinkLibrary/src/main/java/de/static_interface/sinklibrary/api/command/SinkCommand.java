@@ -20,10 +20,9 @@ package de.static_interface.sinklibrary.api.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -37,6 +36,8 @@ import java.lang.reflect.Method;
 
 public abstract class SinkCommand implements CommandExecutor {
 
+    private static SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
+    private static SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(false, false, false, false, false);
     protected CommandSender sender;
     protected Plugin plugin;
     private String usage = null;
@@ -52,47 +53,26 @@ public abstract class SinkCommand implements CommandExecutor {
         return onPreExecute(sender, label, args);
     }
 
-    public boolean isPlayerOnly() {
-        return false;
+    public SinkTabCompleterOptions getTabCompleterOptions() {
+        return defaultTabOptions;
     }
 
-    public boolean isIrcOnly() {
-        return false;
-    }
-
-    public boolean isIrcOpOnly() {
-        return false;
-    }
-
-    public boolean isIrcQueryOnly() {
-        return false;
-    }
-
-    public boolean includeIrcUsersInTabCompleter() {
-        return true;
-    }
-
-    @Unstable
-    public boolean useNotices() {
-        return false;
+    public SinkCommandOptions getCommandOptions() {
+        return defaultCommandOptions;
     }
 
     protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args) {
-        if (isPlayerOnly() && isIrcOnly()) {
-            throw new IllegalStateException("Commands can't be IRC only & Player only ath the same time");
-        }
-
-        if (isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
+        if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
             throw new UnauthorizedAccessException();
         }
 
-        if (!(sender instanceof IrcCommandSender) && isIrcOnly()) {
+        if (!(sender instanceof IrcCommandSender) && getCommandOptions().isIrcOnly()) {
             return false;
-        } else if (!(sender instanceof Player) && isPlayerOnly()) {
+        } else if (!(sender instanceof Player) && getCommandOptions().isPlayerOnly()) {
             return false;
         }
         boolean defaultNotices = false;
-        if (useNotices() && sender instanceof IrcCommandSender) {
+        if (getCommandOptions().useNotices() && sender instanceof IrcCommandSender) {
             defaultNotices = ((IrcCommandSender) sender).getUseNotice();
             ((IrcCommandSender) sender).setUseNotice(true);
         }
@@ -112,7 +92,7 @@ public abstract class SinkCommand implements CommandExecutor {
             }
         });
 
-        if (useNotices() && sender instanceof IrcCommandSender) {
+        if (getCommandOptions().useNotices() && sender instanceof IrcCommandSender) {
             ((IrcCommandSender) sender).setUseNotice(defaultNotices);
         }
 

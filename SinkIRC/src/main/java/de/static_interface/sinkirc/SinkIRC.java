@@ -96,8 +96,7 @@ public class SinkIRC extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
-        getCommand("irckick").setExecutor(new IrcKickCommand());
-
+        SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this));
         SinkLibrary.getInstance().registerCommand("help", new HelpCommand(this));
         SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this));
         SinkLibrary.getInstance().registerCommand("say", new SayCommand(this));

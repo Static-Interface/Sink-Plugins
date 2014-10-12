@@ -37,11 +37,7 @@ public class SinkDebugCommand extends SinkCommand {
 
     public SinkDebugCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     public boolean onExecute(CommandSender sender, String label, String[] args) {

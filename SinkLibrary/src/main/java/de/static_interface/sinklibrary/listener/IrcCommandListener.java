@@ -34,7 +34,7 @@ public class IrcCommandListener implements Listener {
         String label = event.getLabel();
         String[] args = event.getArgs();
 
-        if (command == null || command.isPlayerOnly()) {
+        if (command == null || command.getCommandOptions().isPlayerOnly()) {
             SinkLibrary.getInstance().sendIrcMessage(sender.getUser().getDisplayName() + ": Unknown command: " + command);
             return;
         }

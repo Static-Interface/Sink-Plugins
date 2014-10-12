@@ -37,11 +37,7 @@ public class ClearCommand extends SinkCommand {
 
     public ClearCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
+        getCommandOptions().setPlayerOnly(true);
     }
 
     @Override

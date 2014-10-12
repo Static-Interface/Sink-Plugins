@@ -177,7 +177,7 @@ public class IrcUtil {
 
         boolean isQueryCommand = !source.startsWith("#");
 
-        if (cmd != null && (!isQueryCommand && cmd.isIrcQueryOnly())) {
+        if (cmd != null && (!isQueryCommand && cmd.getCommandOptions().isIrcQueryOnly())) {
             sender.sendMessage("This command is only available via query");
             return;
         }

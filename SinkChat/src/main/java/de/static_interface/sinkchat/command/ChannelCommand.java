@@ -40,6 +40,7 @@ public class ChannelCommand extends SinkCommand {
 
     public ChannelCommand(Plugin plugin) {
         super(plugin);
+        getCommandOptions().setPlayerOnly(true);
     }
 
     private static boolean isValidNumber(String string) {
@@ -69,11 +70,6 @@ public class ChannelCommand extends SinkCommand {
             user.sendMessage(PREFIX + label + ChatColor.RED + " delete <channel>" + ChatColor.RESET);
             user.sendMessage(PREFIX + label + ChatColor.RED + " add <channel>" + ChatColor.RESET);
         }
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return true;
     }
 
     @Override

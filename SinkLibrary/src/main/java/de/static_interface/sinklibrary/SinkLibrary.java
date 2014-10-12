@@ -73,7 +73,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
-    public static final int API_VERSION = 1;
+    public static final int API_VERSION = 2;
     public static File LIB_FOLDER;
     private static SinkLibrary instance;
     public List<String> tmpBannedPlayers;
@@ -98,6 +98,7 @@ public class SinkLibrary extends JavaPlugin {
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
     private ConsoleUserProvider consoleUserProvider;
+    private SinkTabCompleter defaultCompleter;
 
     /**
      * Get the instance of this plugin
@@ -133,10 +134,11 @@ public class SinkLibrary extends JavaPlugin {
         commands = new HashMap<>();
         commandAliases = new HashMap<>();
         userImplementations = new HashMap<>();
+        defaultCompleter = new SinkTabCompleter();
+
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
-
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
@@ -228,6 +230,10 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         loadLibs();
+    }
+
+    public SinkTabCompleter getDefaultTabCompleter() {
+        return defaultCompleter;
     }
 
     public ClassLoader getClazzLoader() {
@@ -689,12 +695,12 @@ public class SinkLibrary extends JavaPlugin {
 
     public void registerCommand(String name, SinkCommand command) {
         name = name.toLowerCase();
-        if (!command.isIrcOnly()) {
+        if (!command.getCommandOptions().isIrcOnly()) {
             try {
                 PluginCommand cmd = Bukkit.getPluginCommand(name);
                 if (cmd != null) {
                     cmd.setExecutor(command);
-                    cmd.setTabCompleter(new SinkTabCompleter(command.includeIrcUsersInTabCompleter()));
+                    cmd.setTabCompleter(getDefaultTabCompleter());
                     for (String alias : cmd.getAliases()) // Register alias commands
                     {
                         alias = alias.toLowerCase();

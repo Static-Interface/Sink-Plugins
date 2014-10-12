@@ -20,23 +20,27 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
-public class MilkCommand implements CommandExecutor {
+public class MilkCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
-    //Todo: convert to command
+
+    public MilkCommand(Plugin plugin) {
+        super(plugin);
+        getCommandOptions().setIrcOpOnly(true);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
         if (!user.hasPermission("sinkcommands.milk.all")) {
             sender.sendMessage(m("Permissions.General"));
@@ -73,12 +77,12 @@ public class MilkCommand implements CommandExecutor {
             return true;
         }
 
-        if (user instanceof IngameUser) {
-            if (!((IngameUser) user).getPlayer().equals(target) && user.hasPermission("sinkcommands.milk.others")) {
-                sender.sendMessage(m("Permissions.General"));
-                return true;
-            }
+        boolean equals = user instanceof IngameUser && ((IngameUser) user).getPlayer().equals(target);
+        if (!equals && user.hasPermission("sinkcommands.milk.others")) {
+            sender.sendMessage(m("Permissions.General"));
+            return true;
         }
+
         if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
             BukkitUtil.broadcast(
                     PREFIX + "Der Unsichtbarkeits Trank von " + target.getDisplayName() + " wurde durch " + BukkitUtil.getSenderName(sender)

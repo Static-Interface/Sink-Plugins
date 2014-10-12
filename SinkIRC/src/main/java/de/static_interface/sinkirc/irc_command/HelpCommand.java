@@ -35,7 +35,7 @@ public class HelpCommand extends IrcCommand {
         String cmds = "";
         for (String cmdName : SinkLibrary.getInstance().getCommands().keySet()) {
             SinkCommand cmd = SinkLibrary.getInstance().getCommands().get(cmdName);
-            if (!cmd.isPlayerOnly()) {
+            if (!cmd.getCommandOptions().isPlayerOnly()) {
                 if (cmds.equals("")) {
                     cmds = cmdName;
                     continue;

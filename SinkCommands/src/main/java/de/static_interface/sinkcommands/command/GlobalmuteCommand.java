@@ -30,11 +30,7 @@ public class GlobalmuteCommand extends SinkCommand {
 
     public GlobalmuteCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override

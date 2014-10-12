@@ -32,11 +32,7 @@ public class SinkReloadCommand extends SinkCommand {
 
     public SinkReloadCommand(Plugin plugin) {
         super(plugin);
-    }
-
-    @Override
-    public boolean isIrcOpOnly() {
-        return true;
+        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override
