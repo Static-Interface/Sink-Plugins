@@ -38,40 +38,49 @@ import java.util.logging.Level;
 
 public class SinkChat extends JavaPlugin {
 
-    private static boolean initialized = false;
-    private static Towny towny;
-    private static ChannelConfiguration channelconfigs = null;
+    private static SinkChat instance;
+    private Towny towny;
+    private ChannelConfiguration channelconfigs = null;
 
-    public static ChannelConfiguration getChannelConfigs() {
+    public static SinkChat getInstance() {
+        return instance;
+    }
+
+    public ChannelConfiguration getChannelConfigs() {
         return channelconfigs;
     }
 
-    public static boolean isTownyAvailable() {
+    public boolean isTownyAvailable() {
         return towny != null;
     }
 
-    public static Towny getTowny() {
+    public Towny getTowny() {
         return towny;
     }
 
+    @Override
     public void onEnable() {
         if (!checkDependencies()) {
             return;
         }
 
-        if (!initialized) {
-            registerEvents();
-            registerCommands();
-            registerChannels();
-            initialized = true;
-        }
+        instance = this;
+
+        registerEvents();
+        registerCommands();
+        registerChannels();
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
     }
 
     private void registerChannels() {
         channelconfigs = new ChannelConfiguration();
         YamlConfiguration yamlConfig = channelconfigs.getYamlConfiguration();
         ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
-        Channel channel = null;
+        Channel channel;
         for (String key : section.getKeys(false)) {
             String pathPrefix = "Channels." + key + ".";
 
@@ -104,7 +113,7 @@ public class SinkChat extends JavaPlugin {
             towny = (Towny) tmp;
         } else {
             towny = null;
-            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Towny not found. Disabling Towny Chat features");
+            getLogger().info("Towny not found. Disabling Towny Chat features");
         }
 
         return true;

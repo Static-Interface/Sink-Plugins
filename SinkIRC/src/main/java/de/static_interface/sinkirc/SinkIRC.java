@@ -38,16 +38,21 @@ import java.util.logging.Level;
 
 public class SinkIRC extends JavaPlugin {
 
-    static PircBotX ircBot;
-    static String mainChannel;
-    private static boolean initialized = false;
-    Thread ircThread;
+    private static SinkIRC instance;
+    private PircBotX ircBot;
+    private String mainChannel;
+    private boolean initialized = false;
+    private Thread ircThread;
 
-    public static PircBotX getIrcBot() {
+    public static SinkIRC getInstance() {
+        return instance;
+    }
+
+    public PircBotX getIrcBot() {
         return ircBot;
     }
 
-    public static Channel getMainChannel() {
+    public Channel getMainChannel() {
         return IrcUtil.getChannel(mainChannel);
     }
 
@@ -128,5 +133,6 @@ public class SinkIRC extends JavaPlugin {
         }
         ircThread = null;
         ircBot = null;
+        instance = null;
     }
 }

@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,7 +40,7 @@ public class IrcUtil {
     private static List<Channel> loadedChannels = new ArrayList<>();
 
     public static boolean isOp(User user) {
-        return SinkIRC.getMainChannel().isOp(user);
+        return SinkIRC.getInstance().getMainChannel().isOp(user);
     }
 
     public static void setOp(User user, boolean value) {
@@ -51,9 +52,9 @@ public class IrcUtil {
         }
 
         if (value) {
-            SinkIRC.getMainChannel().send().op(user);
+            SinkIRC.getInstance().getMainChannel().send().op(user);
         } else {
-            SinkIRC.getMainChannel().send().deOp(user);
+            SinkIRC.getInstance().getMainChannel().send().deOp(user);
         }
     }
 
@@ -97,7 +98,7 @@ public class IrcUtil {
 
     @Nullable
     public static User getUser(Channel channel, String name) {
-        SinkLibrary.getInstance().getCustomLogger().debug("Searching IRC user: " + name);
+        Debug.logMethodCall(channel.getName(), name);
         List<User> matchedUsers = new ArrayList<>();
         for (User user : channel.getUsers()) {
             if (user.getNick().startsWith(name)) {
@@ -111,13 +112,13 @@ public class IrcUtil {
         if (matchedUsers.size() > 0) {
             return matchedUsers.get(0);
         }
-        SinkLibrary.getInstance().getCustomLogger().debug("Couldn't find IRC user: " + name);
+        Debug.log("Couldn't find IRC user: " + name);
         return null;
     }
 
     @Nullable
     public static Channel getChannel(String name) {
-        for (Channel channel : SinkIRC.getIrcBot().getUserBot().getChannels()) {
+        for (Channel channel : SinkIRC.getInstance().getIrcBot().getUserBot().getChannels()) {
             if (channel.getName().equalsIgnoreCase(name)) {
                 if (loadedChannels.contains(channel)) {
                     return channel;
@@ -138,9 +139,9 @@ public class IrcUtil {
 
         try {
             if (target.startsWith("#")) {
-                SinkIRC.getIrcBot().sendIRC().message(target, message);
+                SinkIRC.getInstance().getIrcBot().sendIRC().message(target, message);
             } else {
-                getUser(SinkIRC.getMainChannel(), target).send().message(message);
+                getUser(SinkIRC.getInstance().getMainChannel(), target).send().message(message);
             }
             return true;
         } catch (Exception e) {
@@ -165,7 +166,7 @@ public class IrcUtil {
             return;
         }
 
-        SinkLibrary.getInstance().getCustomLogger().debug("handleCommand: " + label);
+        Debug.logMethodCall(label);
         if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);
         } else {
@@ -182,7 +183,7 @@ public class IrcUtil {
             return;
         }
 
-        IrcCommandEvent event = new IrcCommandEvent(sender, cmd, label, args, SinkIRC.getIrcBot());
+        IrcCommandEvent event = new IrcCommandEvent(sender, cmd, label, args, SinkIRC.getInstance().getIrcBot());
         Bukkit.getPluginManager().callEvent(event);
     }
 

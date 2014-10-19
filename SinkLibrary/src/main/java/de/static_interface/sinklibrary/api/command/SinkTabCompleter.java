@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
+import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -66,8 +67,8 @@ public class SinkTabCompleter implements TabCompleter {
             }
         }
 
-        SinkLibrary.getInstance().getCustomLogger().debug("onTabComplete: sender: " + sender.getName() +
-                                                          ", cmd: " + cmd.getName() + ", label: " + label + ", s: " + s + ", args: " + StringUtil
+        Debug.log("onTabComplete: sender: " + sender.getName() +
+                  ", cmd: " + cmd.getName() + ", label: " + label + ", s: " + s + ", args: " + StringUtil
                 .formatArrayToString(
                         args, ", "));
 

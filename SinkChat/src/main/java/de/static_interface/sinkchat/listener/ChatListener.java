@@ -45,7 +45,7 @@ public class ChatListener implements Listener {
         try {
             handleChat(event);
         } catch (RuntimeException e) {
-            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred:", e);
+            SinkChat.getInstance().getLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class ChatListener implements Listener {
         int range = SinkLibrary.getInstance().getSettings().getLocalChatRange();
 
         HashMap<String, Object> customParams = new HashMap<>();
-        if (SinkChat.isTownyAvailable()) {
+        if (SinkChat.getInstance().isTownyAvailable()) {
             customParams.put("NATIONTAG", TownyHelper.getNationTag(event.getPlayer()));
             customParams.put("TOWN(Y)?TAG", TownyHelper.getTownTag(event.getPlayer()));
             customParams.put("TOWN(Y)?", TownyHelper.getTown(event.getPlayer()));

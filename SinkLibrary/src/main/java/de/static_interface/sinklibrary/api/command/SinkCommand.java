@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException
 import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,6 +43,7 @@ public abstract class SinkCommand implements CommandExecutor {
     protected Plugin plugin;
     private String usage = null;
     private String permission;
+    private boolean onPreExecuteCalled = false;
 
     public SinkCommand(Plugin plugin) {
         this.plugin = plugin;
@@ -49,8 +51,14 @@ public abstract class SinkCommand implements CommandExecutor {
 
     @Override
     public final boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        Debug.log("Arguments: (" + sender.getName() + ", " + command.getLabel() + ", " + label + " [" +
+                  StringUtil.formatArrayToString(args, ", ") + "])");
         this.sender = sender;
-        return onPreExecute(sender, label, args);
+        boolean result = onPreExecute(sender, label, args);
+        if (!onPreExecuteCalled) {
+            throw new IllegalStateException(getClass().getName() + " did not call super.onPreExecute()");
+        }
+        return result;
     }
 
     public SinkTabCompleterOptions getTabCompleterOptions() {
@@ -62,15 +70,24 @@ public abstract class SinkCommand implements CommandExecutor {
     }
 
     protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args) {
+        onPreExecuteCalled = true;
+        Debug.logMethodCall(sender.getName(), label + " [" +
+                                              StringUtil.formatArrayToString(args, ", ") + "]");
         if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
             throw new UnauthorizedAccessException();
         }
 
         if (!(sender instanceof IrcCommandSender) && getCommandOptions().isIrcOnly()) {
-            return false;
-        } else if (!(sender instanceof Player) && getCommandOptions().isPlayerOnly()) {
+            Debug.log("isIrcOnly check failed: sender: " + sender.getClass().getSimpleName() + ", isIrcOnly: " + getCommandOptions().isIrcOnly());
             return false;
         }
+
+        if (!(sender instanceof Player) && getCommandOptions().isPlayerOnly()) {
+            Debug.log("isPlayerOnly check failed: sender: " + sender.getClass().getSimpleName() + ", isPlayerOnly: " + getCommandOptions()
+                    .isPlayerOnly());
+            return false;
+        }
+
         boolean defaultNotices = false;
         if (getCommandOptions().useNotices() && sender instanceof IrcCommandSender) {
             defaultNotices = ((IrcCommandSender) sender).getUseNotice();
@@ -83,6 +100,8 @@ public abstract class SinkCommand implements CommandExecutor {
                 Exception exception = null;
                 boolean success = false;
                 try {
+                    Debug.log("onExecute(" + sender.getName() + ", " + label + " [" +
+                              StringUtil.formatArrayToString(args, ", ") + "])");
                     success = onExecute(sender, label, args);
                 } catch (Exception e) {
                     exception = e;
@@ -102,6 +121,7 @@ public abstract class SinkCommand implements CommandExecutor {
     protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
     protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception, boolean success) {
+        Debug.logMethodCall(sender.getName(), label, " [" + StringUtil.formatArrayToString(args, ", ") + "]", exception, success);
         if (exception instanceof UnauthorizedAccessException) {
             sender.sendMessage(m("Permissions.General"));
             return;
@@ -118,6 +138,7 @@ public abstract class SinkCommand implements CommandExecutor {
         }
 
         if (exception != null) {
+            SinkLibrary.getInstance().getLogger().severe("Unexpected exception occurred: ");
             exception.printStackTrace();
             if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
                 sender.sendMessage(exception.getMessage());
@@ -138,7 +159,7 @@ public abstract class SinkCommand implements CommandExecutor {
         return "/";
     }
 
-    protected String getIrcCommandPrefix() {
+    private String getIrcCommandPrefix() {
         try {
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
             Method method = c.getMethod("getCommandPrefix", null);

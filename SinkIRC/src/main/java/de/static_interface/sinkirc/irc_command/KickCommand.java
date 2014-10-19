@@ -56,7 +56,7 @@ public class KickCommand extends IrcCommand {
             formattedReason = ".";
         }
         formattedReason = ChatColor.translateAlternateColorCodes('&', formattedReason);
-        final String finalReason = "kicked by " + sender + " from IRC" + formattedReason;
+        final String finalReason = "kicked by " + BukkitUtil.getSenderName(sender) + " from IRC" + formattedReason;
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {

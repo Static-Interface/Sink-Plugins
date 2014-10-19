@@ -18,23 +18,15 @@
 package de.static_interface.sinklibrary;
 
 import de.static_interface.sinklibrary.api.logger.SinkLogger;
-import de.static_interface.sinklibrary.util.DebugUtil;
-import de.static_interface.sinklibrary.util.FileUtil;
+import de.static_interface.sinklibrary.util.Debug;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 
 @SuppressWarnings("InstanceMethodNamingConvention")
 public class Logger implements SinkLogger {
-
-    boolean failed = false;
-    FileWriter fileWriter = null;
 
     /**
      * Protected constructor
@@ -45,66 +37,23 @@ public class Logger implements SinkLogger {
 
     @Override
     public void log(Level level, String message) {
-        try {
-            logToFile(level, ChatColor.stripColor(message));
-        } catch (Exception e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
-        }
-
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message));
     }
 
     @Override
     public void log(Level level, String message, Throwable throwable) {
         try {
-            logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", throwable));
+            String thr = ExceptionUtils.getStackTrace(throwable);
+            logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", thr));
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception occurred: ", e);
         }
         Bukkit.getLogger().log(level, ChatColor.translateAlternateColorCodes('§', message), throwable);
     }
 
+    @Deprecated
     public void logToFile(Level level, String message) {
-
-        boolean enabled;
-        try {
-            enabled = SinkLibrary.getInstance().getSettings().isLogEnabled();
-        } catch (Exception ignored) {
-            return;
-        }
-        if (!enabled) {
-            return;
-        }
-
-        File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkPlugins.log");
-        if (!failed && !logFile.exists()) // Prevent creating/checking every time
-        {
-            if (!FileUtil.createFile(logFile)) {
-                return;
-            }
-            failed = true;
-            return;
-        } else if (failed) {
-            return;
-        }
-        if (fileWriter == null) {
-            try {
-                fileWriter = new FileWriter(logFile, true);
-            } catch (IOException e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create FileWriter: ", e);
-                return;
-            }
-        }
-
-        String newLine = System.getProperty("line.separator");
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh:mm:ss");
-        String date = format.format(new Date());
-
-        try {
-            fileWriter.write('[' + date + ' ' + level.getName() + "]: " + message + newLine);
-        } catch (IOException ignored) {
-            //Do nothing...
-        }
+        Debug.logToFile(level, message);
     }
 
     @Override
@@ -123,13 +72,8 @@ public class Logger implements SinkLogger {
     }
 
     @Override
+    @Deprecated
     public void debug(String message) {
-        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            log(Level.INFO, "[Debug] " + DebugUtil.getCallerCallerClassName() + ".class: " + message);
-        }
-    }
-
-    protected FileWriter getFileWriter() {
-        return fileWriter;
+        Debug.log(message);
     }
 }

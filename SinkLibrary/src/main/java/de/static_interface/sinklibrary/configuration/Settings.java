@@ -31,7 +31,7 @@ public class Settings extends Configuration {
     public static final int REQUIRED_VERSION = 1;
 
     public Settings() {
-        super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Settings.yml"));
+        super(new File(SinkLibrary.getInstance().getCustomDataFolder(), "Settings.yml"), true);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class Settings extends Configuration {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
 
         addDefault("General.DisplayNamesEnabled", false, "Broken");
-        addDefault("General.EnableLog", true, "Use Log file?");
         addDefault("General.EnableDebug", false, "Provides more information, useful for bug reports etc");
+        addDefault("General.EnableLog", true, "Log debug to Debug.log (useful for debugging)?");
 
         addDefault("Updater.Enabled", true, "Enable Updater");
         addDefault("Updater.UpdateType", "default");
@@ -134,8 +134,8 @@ public class Settings extends Configuration {
             }
             return value;
         } catch (Exception e) {
-            SinkLibrary.getInstance().getCustomLogger()
-                    .log(Level.WARNING, yamlFile + ": Couldn't load value from path: " + path + ". Reason: " + e.getMessage());
+            SinkLibrary.getInstance().getLogger()
+                    .log(Level.WARNING, yamlFile + ": Couldn't load value for path: " + path, e);
             return new ArrayList<>();
         }
     }

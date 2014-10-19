@@ -29,16 +29,16 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SinkCommands.onRefreshScoreboard();
+        SinkCommands.getInstance().onRefreshScoreboard();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        SinkCommands.onRefreshScoreboard();
+        SinkCommands.getInstance().onRefreshScoreboard();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        SinkCommands.refreshScoreboard(event.getPlayer());
+        SinkCommands.getInstance().refreshScoreboard(event.getPlayer());
     }
 }

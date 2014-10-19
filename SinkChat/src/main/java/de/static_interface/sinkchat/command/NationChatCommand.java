@@ -23,8 +23,8 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
-import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -33,7 +33,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class NationChatCommand implements CommandExecutor {
 
@@ -115,7 +114,7 @@ public class NationChatCommand implements CommandExecutor {
             p.sendMessage(formattedMessage);
         }
 
-        SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, formattedMessage);
+        SinkChat.getInstance().getLogger().info(formattedMessage);
         return true;
     }
 }

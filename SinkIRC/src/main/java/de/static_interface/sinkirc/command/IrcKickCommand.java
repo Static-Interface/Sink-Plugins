@@ -53,7 +53,7 @@ public class IrcKickCommand extends SinkCommand {
             reason = "Kicked by " + user.getDisplayName();
         }
 
-        Channel channel = SinkIRC.getIrcBot().getUserBot().getChannels().first();
+        Channel channel = SinkIRC.getInstance().getIrcBot().getUserBot().getChannels().first();
         channel.send().kick(IrcUtil.getUser(channel, target), reason);
         return true;
     }

@@ -112,7 +112,7 @@ public class ListCommand implements CommandExecutor {
 
         if (SinkLibrary.getInstance().isIrcAvailable()) {
             HashMap<String, List<org.pircbotx.User>> ircGroupUsers = new HashMap<>(); // group - list of users in group
-            Collection<org.pircbotx.User> onlineIrcUsers = de.static_interface.sinkirc.SinkIRC.getMainChannel().getUsers();
+            Collection<org.pircbotx.User> onlineIrcUsers = de.static_interface.sinkirc.SinkIRC.getInstance().getMainChannel().getUsers();
             out.add("");
             out.add(ChatColor.GOLD + "Online IRC Benutzer: ");
             if (onlineIrcUsers.size() < 1) {
@@ -135,7 +135,7 @@ public class ListCommand implements CommandExecutor {
                     String tmp = "";
                     for (org.pircbotx.User user : users) {
                         String formattedNick = user.getNick();
-                        if (formattedNick.equals(de.static_interface.sinkirc.SinkIRC.getIrcBot().getNick())) {
+                        if (formattedNick.equals(de.static_interface.sinkirc.SinkIRC.getInstance().getIrcBot().getNick())) {
                             continue;
                         }
 

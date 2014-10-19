@@ -52,7 +52,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
         playerName = base.getName();
 
         if (playerName == null) {
-            SinkLibrary.getInstance().getCustomLogger().warn("Couldn't get player name from UUID: " + base.getUniqueId().toString());
+            SinkLibrary.getInstance().getLogger().warning("Couldn't get player name from UUID: " + base.getUniqueId().toString());
         }
     }
 

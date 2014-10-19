@@ -76,14 +76,14 @@ public class ChannelHandler {
             }
         }
 
-        SinkChat.getChannelConfigs().set("Channels." + channel.getName(), null);
+        SinkChat.getInstance().getChannelConfigs().set("Channels." + channel.getName(), null);
 
         return true;
     }
 
     private static void saveChannel(Channel channel) {
         String pathPrefix = "Channels." + channel.getName() + ".";
-        ChannelConfiguration config = SinkChat.getChannelConfigs();
+        ChannelConfiguration config = SinkChat.getInstance().getChannelConfigs();
 
         config.set(pathPrefix + ChannelValues.DEFAULT, true);
         config.set(pathPrefix + ChannelValues.CALLCHAR, channel.getCallCode());

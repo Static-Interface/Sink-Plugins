@@ -125,7 +125,7 @@ public class Channel {
         }
 
         HashMap<String, Object> customParams = new HashMap<>();
-        if (SinkChat.isTownyAvailable()) {
+        if (SinkChat.getInstance().isTownyAvailable()) {
             customParams.put("NationTag", TownyHelper.getNationTag(user.getPlayer()));
             customParams.put("Town(y)?Tag", TownyHelper.getTownTag(user.getPlayer()));
             customParams.put("Town(y)?", TownyHelper.getTown(user.getPlayer()));

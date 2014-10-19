@@ -116,7 +116,7 @@ public class TownyHelper {
      * @return null when resident not found or offline
      */
     public static Resident getResident(String name) {
-        for (Resident resident : SinkChat.getTowny().getTownyUniverse().getActiveResidents()) {
+        for (Resident resident : SinkChat.getInstance().getTowny().getTownyUniverse().getActiveResidents()) {
             if (resident.getName().equals(name)) {
                 return resident;
             }

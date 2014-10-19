@@ -61,15 +61,19 @@ import java.util.logging.Level;
 
 public class SinkCommands extends JavaPlugin {
 
-    public static boolean globalmuteEnabled;
-
-    private static boolean initialized = false;
+    private static SinkCommands instance;
+    private boolean globalmuteEnabled;
+    private boolean initialized = false;
     private com.earth2me.essentials.Essentials essentialsPlugin;
+
+    public static SinkCommands getInstance() {
+        return instance;
+    }
 
     /**
      * Refresh Scoreboard for all players
      */
-    public static void onRefreshScoreboard() {
+    public void onRefreshScoreboard() {
         for (Player p : BukkitUtil.getOnlinePlayers()) {
             refreshScoreboard(p);
         }
@@ -81,7 +85,7 @@ public class SinkCommands extends JavaPlugin {
      * @param player Refresh scoreboard for this player
      */
     @SuppressWarnings("deprecation")
-    public static void refreshScoreboard(Player player) {
+    public void refreshScoreboard(Player player) {
         IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
         IngameUserConfiguration config = user.getConfiguration();
 
@@ -123,6 +127,7 @@ public class SinkCommands extends JavaPlugin {
             return;
         }
 
+        instance = this;
         LagTimer lagTimer = new LagTimer();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
 
@@ -153,7 +158,7 @@ public class SinkCommands extends JavaPlugin {
             essentialsPlugin = (com.earth2me.essentials.Essentials) tmp;
         } else {
             essentialsPlugin = null;
-            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Essentials not found. Disabling Essentials features");
+            SinkCommands.getInstance().getLogger().info("Essentials not found. Disabling Essentials features");
         }
 
         return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
@@ -161,20 +166,7 @@ public class SinkCommands extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //for ( User user : DutyCommand.getPlayersInDuty() )
-        //{
-        //    user.sendMessage(DutyCommand.PREFIX + ChatColor.DARK_RED + LanguageConfiguration._("SinkDuty.Reload.ForceLeave"));
-        //    DutyCommand.endDuty(user);
-        //}
-
-        SinkLibrary.getInstance().getCustomLogger().info("Saving player configurations...");
-
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
-            IngameUserConfiguration config = user.getConfiguration();
-            config.save();
-        }
-        SinkLibrary.getInstance().getCustomLogger().info("Done, disabled.");
+        instance = null;
     }
 
     private void registerEvents() {
@@ -217,5 +209,13 @@ public class SinkCommands extends JavaPlugin {
 
     public Essentials getEssentialsPlugin() {
         return essentialsPlugin;
+    }
+
+    public boolean isGlobalmuteEnabled() {
+        return globalmuteEnabled;
+    }
+
+    public void setGlobalmuteEnabled(boolean globalmuteEnabled) {
+        this.globalmuteEnabled = globalmuteEnabled;
     }
 }

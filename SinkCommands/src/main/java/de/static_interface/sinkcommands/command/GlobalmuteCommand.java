@@ -35,9 +35,9 @@ public class GlobalmuteCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        SinkCommands.globalmuteEnabled = !SinkCommands.globalmuteEnabled;
+        SinkCommands.getInstance().setGlobalmuteEnabled(!SinkCommands.getInstance().isGlobalmuteEnabled());
 
-        if (SinkCommands.globalmuteEnabled) {
+        if (SinkCommands.getInstance().isGlobalmuteEnabled()) {
             if (args.length > 0) {
                 String reason = "";
                 for (String arg : args) {
@@ -53,7 +53,7 @@ public class GlobalmuteCommand extends SinkCommand {
                 BukkitUtil.broadcastMessage(
                         PREFIX + "Der global Mute wurde von " + BukkitUtil.getSenderName(sender) + " aktiviert. Alle Spieler sind jetzt stumm.");
             }
-            SinkCommands.globalmuteEnabled = true;
+            SinkCommands.getInstance().setGlobalmuteEnabled(true);
             return true;
         } else {
             BukkitUtil.broadcastMessage(PREFIX + "Der global Mute wurde von " + BukkitUtil.getSenderName(sender) + " deaktiviert.");

@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.util.Debug;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -94,7 +95,7 @@ public class IrcUser extends SinkUser<User> {
             return false;
         }
 
-        SinkLibrary.getInstance().getCustomLogger().debug("Reflection invoke test: isOp(): " + value + " for user: " + getName());
+        Debug.log("Reflection invoke test: isOp(): " + value + " for user: " + getName());
         return value;
     }
 

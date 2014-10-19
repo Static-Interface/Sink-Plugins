@@ -25,18 +25,26 @@ import java.util.logging.Level;
 
 public class SinkAntiSpam extends JavaPlugin {
 
-    private static boolean initialized = false;
+    private static SinkAntiSpam instance;
 
+    @Override
     public void onEnable() {
         if (!checkDependencies()) {
             return;
         }
-        if (!initialized) {
-            Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
-            initialized = true;
-        }
+        instance = this;
 
+        Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
+    }
+
+    public SinkAntiSpam getInstance() {
+        return instance;
     }
 
     private boolean checkDependencies() {

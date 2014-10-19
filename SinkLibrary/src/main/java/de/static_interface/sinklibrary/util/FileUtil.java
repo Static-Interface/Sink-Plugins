@@ -70,7 +70,7 @@ public class FileUtil {
      */
     public static void backupFile(File file, boolean notify) throws IOException {
         if (notify) {
-            SinkLibrary.getInstance().getCustomLogger().log(Level.INFO, "Creating backup of " + file + "...");
+            SinkLibrary.getInstance().getLogger().info("Creating backup of " + file + "...");
         }
 
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.YYYY-hh.mm");
@@ -81,7 +81,7 @@ public class FileUtil {
         try {
             Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
         } catch (IOException e) {
-            SinkLibrary.getInstance().getCustomLogger().log(Level.SEVERE, "Couldn't backup file: " + file.getAbsolutePath());
+            SinkLibrary.getInstance().getLogger().severe("Couldn't backup file: " + file.getAbsolutePath());
             throw e;
         }
     }
