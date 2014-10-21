@@ -146,10 +146,11 @@ public class SinkDebugCommand extends SinkCommand {
 
                 case "whoami": {
                     user.sendMessage("You are " + user.getDisplayName() + " (getName(): " + user.getName() + ")");
-                    user.sendMessage("isOp: " + user.isOp() + ", isOnline: " + user.isOnline() + ", group: " + user.getPrimaryGroup());
+                    user.sendMessage(
+                            "isOp: " + user.isOp() + ", isOnline: " + user.isOnline() + ", group: " + user.getPrimaryGroup() + ", sender class: "
+                            + user.getSender().getClass());
                     user.sendMessage("class: " + user.getClass().getSimpleName() + ".class" + ", provider class: " + user.getProvider().getClass()
-                            .getSimpleName());
-                    user.sendMessage("base: " + user.getBase().getClass().getSimpleName() + "(toString(): " + user.getBase().toString() + ")");
+                            .getSimpleName() + ", base class: " + user.getBase().getClass().getSimpleName());
 
                     return true;
                 }

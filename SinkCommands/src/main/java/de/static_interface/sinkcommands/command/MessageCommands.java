@@ -49,10 +49,18 @@ public class MessageCommands {
             customValues.put("IRC(PREFIX)?", "");
         }
 
-        executor.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+        if (executor instanceof IrcUser) {
+            ((IrcUser) executor).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
+        } else {
+            executor.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+        }
 
         format = SinkLibrary.getInstance().getSettings().getMessageReceivedFormat();
-        target.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+        if (target instanceof IrcUser) {
+            ((IrcUser) target).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
+        } else {
+            target.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+        }
 
         lastReplies.put(executor, target);
         lastReplies.put(target, executor);

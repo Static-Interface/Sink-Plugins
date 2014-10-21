@@ -104,14 +104,14 @@ public class IrcUser extends SinkUser<User> {
 
     @Override
     public void sendMessage(String msg) {
-        SinkLibrary.getInstance().sendIrcMessage(msg, getName());
+        SinkLibrary.getInstance().sendIrcMessage(getDisplayName() + ": " + msg);
     }
 
     public void sendMessage(String msg, boolean privateMessage) {
         if (privateMessage) {
-            sendMessage(msg);
+            SinkLibrary.getInstance().sendIrcMessage(msg, getName());
         } else {
-            SinkLibrary.getInstance().sendIrcMessage(getDisplayName() + ": " + msg);
+            sendMessage(msg);
         }
     }
 
