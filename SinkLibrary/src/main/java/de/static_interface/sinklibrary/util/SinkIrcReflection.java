@@ -51,8 +51,6 @@ public class SinkIrcReflection {
         } catch (Exception e) {
             throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
         }
-
-        Debug.log("Reflection invoke test: isOp(): " + value + " for user: " + user.getNick());
         return value;
     }
 

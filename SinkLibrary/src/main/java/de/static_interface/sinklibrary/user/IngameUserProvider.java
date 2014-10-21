@@ -50,7 +50,7 @@ public class IngameUserProvider extends SinkUserProvider<OfflinePlayer, IngameUs
     }
 
     @Override
-    public String getCommandArgsSuffix() {
+    public String getTabCompleterSuffix() {
         return "";
     }
 

@@ -71,6 +71,7 @@ public class MessageCommands {
         public MessageCommand(Plugin plugin) {
             super(plugin);
             getTabCompleterOptions().setIncludeIrcUsers(true);
+            getTabCompleterOptions().setIncludeSuffix(true);
             getCommandOptions().setIrcQueryOnly(true);
         }
 
@@ -80,7 +81,7 @@ public class MessageCommands {
                 throw new NotEnoughArgumentsException();
             }
 
-            SinkUser executor = SinkLibrary.getInstance().getUser(sender);
+            SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
             SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
             if (target == null || !target.isOnline()) {
@@ -108,7 +109,7 @@ public class MessageCommands {
                 throw new NotEnoughArgumentsException();
             }
 
-            SinkUser executor = SinkLibrary.getInstance().getUser(sender);
+            SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
             SinkUser target = lastReplies.get(executor);
 
             if (target == null || !target.isOnline()) {

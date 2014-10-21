@@ -33,72 +33,53 @@ import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Does not work correctly when reloading server
+ */
 @Unstable
 public class Debug {
 
-    private static final int CLIENT_CODE_STACK_INDEX;
     private static boolean failed = false;
     private static FileWriter fileWriter = null;
-
-    static {
-        // Finds out the index of "this code" in the returned stack trace - funny but it differs in JDK 1.5 and 1.6
-        int i = 0;
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            i++;
-            if (ste.getClassName().equals(Debug.class.getName())) {
-                break;
-            }
-        }
-        CLIENT_CODE_STACK_INDEX = i;
-    }
+    private static int STACK_INDEX = 4;
 
     /**
      * @return {@link Class} instance of the caller class
      */
     @Nonnull
+    @Nullable
     public static Class<?> getCallerClass() {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        String callerClassName = null;
-        for (int i = 1; i < stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(Debug.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
-                if (callerClassName == null) {
-                    callerClassName = ste.getClassName();
-                } else if (!callerClassName.equals(ste.getClassName())) {
-                    try {
-                        return Class.forName(ste.getClassName());
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
+        int index = STACK_INDEX;
+        try {
+            String name = stElements[index].getClassName();
+
+            if (name.equals("Logger")) {
+                index++; // fix for old Logger#debug calls
             }
+
+            return Class.forName(stElements[index].getClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     /**
-     * @param depth Depth <br/>
-     *        0 Method calling this method<br/>
-     *        1 Method calling the method which is calling this method<br/>
-     *        2 Method calling the method which is calling the method which is calling this method<br/>
-     *        ...
      * @return Name of the calling method
      */
     @Nonnull
+    @Nullable
     public static String getCallerMethodName() {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        String callerClassName = null;
-        for (int i = 1; i < stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(Debug.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
-                if (callerClassName == null) {
-                    callerClassName = ste.getClassName();
-                } else if (!callerClassName.equals(ste.getClassName())) {
-                    return ste.getMethodName();
-                }
-            }
+        int index = STACK_INDEX;
+
+        String name = stElements[index].getClassName();
+        if (name.equals("Logger")) {
+            index++; // fix for old Logger#debug calls
         }
-        return null;
+
+        return stElements[index].getMethodName();
     }
 
     public static void logMethodCall(@Nullable Object... arguments) {
@@ -142,7 +123,7 @@ public class Debug {
         }
 
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClass().getSimpleName() + "#" + getCallerMethodName() + ": " + message);
+            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClass().getSimpleName() + " #" + getCallerMethodName() + ": " + message);
         }
     }
 

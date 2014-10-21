@@ -72,23 +72,28 @@ public class SinkTabCompleter implements TabCompleter {
                 .formatArrayToString(
                         args, ", "));
 
+        Collections.sort(users);
         for (SinkUser user : users) {
-            String name;
+            String suffix = user.getProvider().getTabCompleterSuffix();
+
+            String name = user.getName();
+
             if (includeSuffix) {
-                name = user.getDisplayName();
-            } else {
-                name = user.getName();
+                name = name + suffix;
             }
 
             String displayName = user.getDisplayName() == null ? "" : user.getDisplayName();
+
             if (includeSuffix) {
-                displayName = ChatColor.stripColor(displayName) + user.getProvider().getCommandArgsSuffix();
+                displayName = ChatColor.stripColor(displayName) + suffix;
             } else {
                 displayName = ChatColor.stripColor(displayName);
             }
 
             boolean hasDisplayname = false;
-            if (!StringUtil.isStringEmptyOrNull(displayName.replace(user.getProvider().getCommandArgsSuffix(), ""))) {
+            displayName = displayName.replace(suffix, "");
+
+            if (!StringUtil.isStringEmptyOrNull(displayName)) {
                 hasDisplayname = true;
             }
 
@@ -114,7 +119,6 @@ public class SinkTabCompleter implements TabCompleter {
         }
 
         result.addAll(tmp.values());
-        Collections.sort(result);
         return result;
     }
 }

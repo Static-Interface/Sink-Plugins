@@ -110,5 +110,5 @@ public abstract class SinkUserProvider<K, E extends SinkUser<K>> {
         return false;
     }
 
-    public abstract String getCommandArgsSuffix();
+    public abstract String getTabCompleterSuffix();
 }

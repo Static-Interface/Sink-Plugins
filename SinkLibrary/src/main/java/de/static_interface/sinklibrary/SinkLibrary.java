@@ -487,7 +487,7 @@ public class SinkLibrary extends JavaPlugin {
 
         //Search for suffixes
         for (SinkUserProvider provider : userImplementations.values()) {
-            String suffix = provider.getCommandArgsSuffix();
+            String suffix = provider.getTabCompleterSuffix();
             if (suffix == null || suffix.equals("")) {
                 continue;
             }
@@ -522,7 +522,7 @@ public class SinkLibrary extends JavaPlugin {
     public SinkUser getUserExact(String name) {
 
         for (SinkUserProvider provider : userImplementations.values()) {
-            String suffix = provider.getCommandArgsSuffix();
+            String suffix = provider.getTabCompleterSuffix();
             if (suffix.equals("")) {
                 continue;
             }
@@ -560,12 +560,8 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         for (Class<?> implClass : userImplementations.keySet()) {
-            Debug.log("implClass: " + implClass.getName() + " base: " + base.getClass().getName());
-            Debug.log("implClass.isInstance(base): " + implClass.isInstance(base));
             if (implClass.isInstance(base)) {
-                SinkUser user = userImplementations.get(implClass).getUserInstance(base);
-                Debug.log("returning user: " + user.getClass().getName() + " (name: " + user.getName() + ")");
-                return user;
+                return userImplementations.get(implClass).getUserInstance(base);
             }
         }
 

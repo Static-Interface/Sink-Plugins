@@ -24,8 +24,9 @@ import org.pircbotx.User;
 import javax.annotation.Nullable;
 
 public class IrcUserProvider extends SinkUserProvider<User, IrcUser> {
+
     @Override
-    public String getCommandArgsSuffix() {
+    public String getTabCompleterSuffix() {
         return "_IRC";
     }
 

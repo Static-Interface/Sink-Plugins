@@ -156,39 +156,39 @@ public class Settings extends Configuration {
         return (int) get("SinkChat.LocalChatRange");
     }
 
-    public String getIRCBotUsername() {
+    public String getIrcBotUsername() {
         return (String) get("SinkIRC.Username");
     }
 
-    public String getIRCAddress() {
+    public String getIrcAddress() {
         return (String) get("SinkIRC.Server.Address");
     }
 
-    public boolean isIRCPasswordEnabled() {
+    public boolean isIrcPasswordEnabled() {
         return (boolean) get("SinkIRC.Server.PasswordEnabled");
     }
 
-    public String getIRCPassword() {
+    public String getIrcPassword() {
         return (String) get("SinkIRC.Server.Password");
     }
 
-    public int getIRCPort() {
+    public int getIrcPort() {
         return (int) get("SinkIRC.Server.Port");
     }
 
-    public String getIRCChannel() {
+    public String getIrcChannel() {
         return (String) get("SinkIRC.Channel");
     }
 
-    public boolean isIRCAuthentificationEnabled() {
+    public boolean isIrcAuthentificationEnabled() {
         return (boolean) get("SinkIRC.Authentification.Enabled");
     }
 
-    public String getIRCAuthBot() {
+    public String getIrcAuthBot() {
         return (String) get("SinkIRC.Authentification.AuthBot");
     }
 
-    public String getIRCAuthMessage() {
+    public String getIrcAuthMessage() {
         return (String) get("SinkIRC.Authentification.AuthMessage");
     }
 

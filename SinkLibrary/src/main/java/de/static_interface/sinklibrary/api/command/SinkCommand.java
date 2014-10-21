@@ -68,8 +68,6 @@ public abstract class SinkCommand implements CommandExecutor {
 
     protected boolean onPreExecute(final CommandSender sender, final String label, final String[] args) {
         onPreExecuteCalled = true;
-        Debug.logMethodCall(sender.getName(), label + " [" +
-                                              StringUtil.formatArrayToString(args, ", ") + "]");
         if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
             throw new UnauthorizedAccessException();
         }
@@ -118,7 +116,6 @@ public abstract class SinkCommand implements CommandExecutor {
     protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
     protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception, boolean success) {
-        Debug.logMethodCall(sender.getName(), label, " [" + StringUtil.formatArrayToString(args, ", ") + "]", exception, success);
         if (exception instanceof UnauthorizedAccessException) {
             sender.sendMessage(m("Permissions.General"));
             return;

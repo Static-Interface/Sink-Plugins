@@ -41,7 +41,7 @@ public class ConsoleUserProvider extends SinkUserProvider<ConsoleCommandSender, 
 
     @Override
     @Nullable
-    public String getCommandArgsSuffix() {
+    public String getTabCompleterSuffix() {
         return "";
     }
 }

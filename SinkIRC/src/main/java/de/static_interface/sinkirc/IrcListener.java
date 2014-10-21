@@ -96,8 +96,10 @@ public class IrcListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onIrcJoin(IrcJoinEvent event) {
         if (event.getUser().equals(SinkIRC.getInstance().getIrcBot().getUserBot())) {
+            Debug.log("Bot joined, skipping");
             return;
         }
+
         event.getChannel().send().message("Willkommen, " + event.getUser().getNick() + '!');
         BukkitUtil.broadcastMessage(
                 IRC_PREFIX + ChatColor.GRAY + '[' + event.getChannel().getName() + "] " + ChatColor.DARK_AQUA + event.getUser().getNick()
