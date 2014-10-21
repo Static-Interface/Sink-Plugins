@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.ChatColor;
 import org.pircbotx.User;
 
@@ -41,9 +42,45 @@ public class IrcUserProvider extends SinkUserProvider<User, IrcUser> {
         return null;
     }
 
+    public IrcUser newInstance(User base, String source) {
+        return new IrcUser(base, this, source);
+    }
+
+
+    public IrcUser getUserInstance(User base, String source) {
+        if (instances.get(base) == null) {
+            loadUser(base, source);
+        }
+
+        return instances.get(base);
+    }
+
+    @Override
+    public IrcUser getUserInstance(User base) {
+        throw new NotImplementedException("Use getUserInstance(User, Channel) instead");
+    }
+
+    /**
+     * Load an user
+     * @param base Base of User
+     * @return True if successfully created a new instance, false if already loaded
+     */
+    @Override
+    public boolean loadUser(User base) {
+        throw new NotImplementedException("Use loadUser(User, Channel) instead");
+    }
+
+    public boolean loadUser(User base, String source) {
+        if (instances.get(base) != null) {
+            return false;
+        }
+        instances.put(base, newInstance(base, source));
+        return true;
+    }
+
     @Override
     public IrcUser newInstance(User base) {
-        return new IrcUser(base, this);
+        throw new NotImplementedException("Use newInstance(User, Channel) instead");
     }
 
     @Override

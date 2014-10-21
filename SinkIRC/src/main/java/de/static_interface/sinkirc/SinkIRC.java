@@ -31,7 +31,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.JoinEvent;
@@ -43,6 +42,7 @@ import java.util.logging.Level;
 public class SinkIRC extends JavaPlugin {
 
     private static SinkIRC instance;
+    boolean threadStarted = false;
     private PircBotX ircBot;
     private String mainChannel;
     private boolean initialized = false;
@@ -72,6 +72,12 @@ public class SinkIRC extends JavaPlugin {
             @Override
             public void run() {
                 try {
+                    if (threadStarted) {
+                        return;
+                    }
+
+                    threadStarted = true;
+
                     mainChannel = SinkLibrary.getInstance().getSettings().getIrcChannel();
 
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
@@ -108,13 +114,13 @@ public class SinkIRC extends JavaPlugin {
                             }
 
                             if (event.getUser().getNick().equals(SinkLibrary.getInstance().getSettings().getIrcAuthBot())) {
-                                ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIrcChannel());
                                 break;
                             }
                         }
+                        ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIrcChannel());
                     }
 
-                    //wait for bot join to main channel
+                    //wait for bot join
                     while (true) {
                         JoinEvent event;
                         try {
@@ -126,10 +132,6 @@ public class SinkIRC extends JavaPlugin {
 
                         if (event.getUser().getNick().equals(getIrcBot().getNick()) &&
                             event.getChannel().getName().equals(getMainChannel().getName())) {
-
-                            for (User user : getMainChannel().getUsers()) {
-                                SinkLibrary.getInstance().loadIrcUser(user);
-                            }
                             break;
                         }
                     }

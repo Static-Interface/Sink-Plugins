@@ -134,7 +134,7 @@ public class SinkDebugCommand extends SinkCommand {
                 case "reloadusers": {
                     user.sendDebugMessage("Reloading IRC Users...");
                     for (User ircUser : SinkIrcReflection.getMainChannel().getUsers()) {
-                        SinkLibrary.getInstance().loadIrcUser(ircUser);
+                        SinkLibrary.getInstance().loadIrcUser(ircUser, SinkIrcReflection.getMainChannel().getName()); //?
                     }
 
                     user.sendDebugMessage("Reloading Ingame users...");

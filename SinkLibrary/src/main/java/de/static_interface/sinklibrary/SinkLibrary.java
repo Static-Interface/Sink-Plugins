@@ -623,17 +623,18 @@ public class SinkLibrary extends JavaPlugin {
         player.setPlayerListName(displayName);
     }
 
+
     @Nullable
     public IrcUser getIrcUser(String nick) {
         return ircUserProvider.getUserInstance(nick);
     }
 
-    public IrcUser getIrcUser(User user) {
-        return ircUserProvider.getUserInstance(user);
+    public IrcUser getIrcUser(User user, String source) {
+        return ircUserProvider.getUserInstance(user, source);
     }
 
-    public void loadIrcUser(User user) {
-        ircUserProvider.loadUser(user);
+    public void loadIrcUser(User user, String source) {
+        ircUserProvider.loadUser(user, source);
     }
 
     public void unloadIrcUser(User user) {

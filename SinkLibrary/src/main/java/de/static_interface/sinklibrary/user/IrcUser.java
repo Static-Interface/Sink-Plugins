@@ -38,11 +38,11 @@ public class IrcUser extends SinkUser<User> {
     private boolean online;
     private IrcCommandSender sender;
 
-    public IrcUser(@Nonnull User base, @Nonnull SinkUserProvider provider) {
+    public IrcUser(@Nonnull User base, @Nonnull SinkUserProvider provider, String source) {
         super(base, provider);
         this.base = base;
         online = true;
-        sender = new IrcCommandSender(this, SinkIrcReflection.getMainChannel().getName());
+        sender = new IrcCommandSender(this, source);
     }
 
     public String getName() {

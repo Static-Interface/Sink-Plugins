@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public class IrcUtil {
 
     private static String commandPrefix = "~";
-    private static List<Channel> loadedChannels = new ArrayList<>();
+    private static List<String> loadedChannels = new ArrayList<>();
 
     public static boolean isOp(User user) {
         return SinkIRC.getInstance().getMainChannel().isOp(user);
@@ -120,13 +120,15 @@ public class IrcUtil {
     public static Channel getChannel(String name) {
         for (Channel channel : SinkIRC.getInstance().getIrcBot().getUserBot().getChannels()) {
             if (channel.getName().equalsIgnoreCase(name)) {
-                if (loadedChannels.contains(channel)) {
+                if (loadedChannels.contains(channel.getName())) {
                     return channel;
                 }
-                //for (User user : channel.getUsers()) {
-                //    SinkLibrary.getInstance().loadIrcUser(user);
-                //}
-                loadedChannels.add(channel);
+
+                for (User user : channel.getUsers()) {
+                    SinkLibrary.getInstance().loadIrcUser(user, channel.getName());
+                }
+
+                loadedChannels.add(channel.getName());
                 return channel;
             }
         }
@@ -172,7 +174,7 @@ public class IrcUtil {
         } else {
             label = ChatColor.stripColor(label);
         }
-        IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user), source);
+        IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user, source), source);
 
         SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
 
@@ -198,6 +200,5 @@ public class IrcUtil {
         } else {
             return ChatColor.DARK_AQUA + user.getNick() + ChatColor.RESET;
         }
-
     }
 }
