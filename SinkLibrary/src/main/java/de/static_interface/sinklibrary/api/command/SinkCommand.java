@@ -25,6 +25,7 @@ import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,14 +34,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Method;
-
 public abstract class SinkCommand implements CommandExecutor {
 
-    private static SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
-    private static SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(false, false, false, false, false);
     protected CommandSender sender;
     protected Plugin plugin;
+    private SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
+    private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(false, false, false, false, false);
     private String usage = null;
     private String permission;
     private boolean onPreExecuteCalled = false;
@@ -51,8 +50,6 @@ public abstract class SinkCommand implements CommandExecutor {
 
     @Override
     public final boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
-        Debug.log("Arguments: (" + sender.getName() + ", " + command.getLabel() + ", " + label + " [" +
-                  StringUtil.formatArrayToString(args, ", ") + "])");
         this.sender = sender;
         boolean result = onPreExecute(sender, label, args);
         if (!onPreExecuteCalled) {
@@ -148,28 +145,15 @@ public abstract class SinkCommand implements CommandExecutor {
         }
 
         if (!success && !StringUtil.isStringEmptyOrNull(getUsage())) {
-            sender.sendMessage(getUsage());
+            sender.sendMessage(getUsage()); // todo: replace command prefix and <command> macro
         }
     }
 
     protected String getCommandPrefix() {
         if (sender instanceof IrcCommandSender) {
-            return getIrcCommandPrefix();
+            return SinkIrcReflection.getIrcCommandPrefix();
         }
         return "/";
-    }
-
-    private String getIrcCommandPrefix() {
-        try {
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("getCommandPrefix", null);
-            if (!method.isAccessible()) {
-                method.setAccessible(true);
-            }
-            return (String) method.invoke(null);
-        } catch (Exception e) {
-            throw new AssertionError(e);
-        }
     }
 
     public String getUsage() {

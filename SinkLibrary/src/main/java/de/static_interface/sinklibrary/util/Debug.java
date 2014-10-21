@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.annotation.Unstable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +33,7 @@ import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Unstable
 public class Debug {
 
     private static final int CLIENT_CODE_STACK_INDEX;
@@ -50,29 +52,28 @@ public class Debug {
         CLIENT_CODE_STACK_INDEX = i;
     }
 
-    public static Class<?> getCallerClass() {
-        return getCallerClass(1);
-    }
-
     /**
-     * @param depth Depth <br/>
-     *        0 Class calling this method<br/>
-     *        1 Class calling the class which is calling this method<br/>
-     *        2 Class calling the class which is calling the class which is calling this method<br/>
-     *        ...
      * @return {@link Class} instance of the caller class
      */
-    public static Class<?> getCallerClass(int depth) {
-        try {
-            return Class.forName(Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX + 1 + depth].getClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+    @Nonnull
+    public static Class<?> getCallerClass() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        String callerClassName = null;
+        for (int i = 1; i < stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(Debug.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
+                if (callerClassName == null) {
+                    callerClassName = ste.getClassName();
+                } else if (!callerClassName.equals(ste.getClassName())) {
+                    try {
+                        return Class.forName(ste.getClassName());
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-        return null; // Shouldn't happen
-    }
-
-    public static String getCallerMethodName() {
-        return getCallerMethodName(1);
+        return null;
     }
 
     /**
@@ -83,23 +84,45 @@ public class Debug {
      *        ...
      * @return Name of the calling method
      */
-    public static String getCallerMethodName(int depth) {
-        return Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX + 1 + depth].getMethodName();
+    @Nonnull
+    public static String getCallerMethodName() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        String callerClassName = null;
+        for (int i = 1; i < stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(Debug.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
+                if (callerClassName == null) {
+                    callerClassName = ste.getClassName();
+                } else if (!callerClassName.equals(ste.getClassName())) {
+                    return ste.getMethodName();
+                }
+            }
+        }
+        return null;
     }
 
-    public static void log(String message) {
+    public static void logMethodCall(@Nullable Object... arguments) {
+        String args = "";
+        if (arguments != null) {
+            args = StringUtil.formatArrayToString(arguments, ", ");
+        }
+        args = "(" + args + ")";
+        logInternal(Level.INFO, args, null);
+    }
+
+    public static void log(@Nonnull String message) {
         logInternal(Level.INFO, message, null);
     }
 
-    public static void log(Level level, String message) {
+    public static void log(@Nonnull Level level, @Nonnull String message) {
         logInternal(level, message, null);
     }
 
-    public static void log(Throwable throwable) {
+    public static void log(@Nonnull Throwable throwable) {
         logInternal(Level.SEVERE, "Unexpected Exception occurred: ", throwable);
     }
 
-    public static void log(String message, Throwable throwable) {
+    public static void log(@Nonnull String message, @Nonnull Throwable throwable) {
         logInternal(Level.SEVERE, message, throwable);
     }
 
@@ -115,21 +138,15 @@ public class Debug {
             String thr = ExceptionUtils.getStackTrace(throwable);
             logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", thr));
         } else {
-            logToFile(level, String.format(ChatColor.stripColor(message)));
+            logToFile(level, ChatColor.stripColor(message));
         }
 
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClass(2).getSimpleName() + "#" + getCallerMethodName(2) + ": " + message);
+            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClass().getSimpleName() + "#" + getCallerMethodName() + ": " + message);
         }
     }
 
-    public static void logMethodCall(Object... arguments) {
-        String args = StringUtil.formatArrayToString(arguments, ", ");
-        args = "(" + args + ")";
-        logInternal(Level.INFO, args, null);
-    }
-
-    public static void logToFile(Level level, String message) {
+    public static void logToFile(@Nonnull Level level, @Nonnull String message) {
         boolean enabled;
         try {
             enabled = SinkLibrary.getInstance().getSettings().isLogEnabled();
@@ -172,6 +189,7 @@ public class Debug {
         }
     }
 
+    @Nonnull
     public static FileWriter getDebugLogFileWriter() {
         return fileWriter;
     }

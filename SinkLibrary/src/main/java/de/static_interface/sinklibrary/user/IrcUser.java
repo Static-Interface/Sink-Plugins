@@ -24,12 +24,13 @@ import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.pircbotx.User;
 
-import java.lang.reflect.Method;
+import javax.annotation.Nonnull;
 
 public class IrcUser extends SinkUser<User> {
 
@@ -37,11 +38,11 @@ public class IrcUser extends SinkUser<User> {
     private boolean online;
     private IrcCommandSender sender;
 
-    public IrcUser(User base, SinkUserProvider provider) {
+    public IrcUser(@Nonnull User base, @Nonnull SinkUserProvider provider) {
         super(base, provider);
         this.base = base;
         online = true;
-        sender = new IrcCommandSender(this, null);
+        sender = new IrcCommandSender(this, SinkIrcReflection.getMainChannel().getName());
     }
 
     public String getName() {
@@ -83,33 +84,12 @@ public class IrcUser extends SinkUser<User> {
 
     @Override
     public boolean isOp() {
-        boolean value;
-        try {
-            //Use reflection because we can't add SinkIRC as dependency
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("isOp", User.class);
-            method.setAccessible(true);
-            value = (boolean) method.invoke(null, getBase());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        Debug.log("Reflection invoke test: isOp(): " + value + " for user: " + getName());
-        return value;
+        return SinkIrcReflection.isIrcOp(getBase());
     }
 
     @Override
     public void setOp(boolean value) {
-        try {
-            //Use reflection because we can't add SinkIRC as dependency
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("setOp", User.class, Boolean.class);
-            method.setAccessible(true);
-            method.invoke(null, getBase(), value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SinkIrcReflection.setOp(getBase(), value);
     }
 
     @Override
@@ -137,6 +117,14 @@ public class IrcUser extends SinkUser<User> {
 
     public void sendMessage(String msg, String target) {
         SinkLibrary.getInstance().sendIrcMessage(getName() + ": " + msg, target);
+    }
+
+    @Override
+    public void sendDebugMessage(String msg) {
+        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
+                        + Debug.getCallerClass().getSimpleName() + "#" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg, false);
+        }
     }
 
     @Override

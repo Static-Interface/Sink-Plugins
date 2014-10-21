@@ -132,10 +132,8 @@ public class Channel {
             customParams.put("Nation", TownyHelper.getNation(user.getPlayer()));
         }
 
-        user.sendDebugMessage("Format: " + getFormat());
         String formattedMessage = StringUtil.format(getFormat(), user,
                                                     message.substring(callCode.length()), customParams, null);
-        user.sendDebugMessage("Formatted Message: " + formattedMessage);
         if (getRange() > 0) {
             Util.sendMessage(user, formattedMessage, getRange());
         } else {

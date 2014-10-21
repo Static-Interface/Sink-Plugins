@@ -123,9 +123,9 @@ public class IrcUtil {
                 if (loadedChannels.contains(channel)) {
                     return channel;
                 }
-                for (User user : channel.getUsers()) {
-                    SinkLibrary.getInstance().loadIrcUser(user);
-                }
+                //for (User user : channel.getUsers()) {
+                //    SinkLibrary.getInstance().loadIrcUser(user);
+                //}
                 loadedChannels.add(channel);
                 return channel;
             }
@@ -177,6 +177,11 @@ public class IrcUtil {
         SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
 
         boolean isQueryCommand = !source.startsWith("#");
+
+        if (cmd == null || cmd.getCommandOptions().isPlayerOnly()) {
+            SinkLibrary.getInstance().sendIrcMessage(sender.getUser().getDisplayName() + ": Unknown command: " + command);
+            return;
+        }
 
         if (cmd != null && (!isQueryCommand && cmd.getCommandOptions().isIrcQueryOnly())) {
             sender.sendMessage("This command is only available via query");

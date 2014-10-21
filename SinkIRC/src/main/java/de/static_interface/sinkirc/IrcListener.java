@@ -29,6 +29,7 @@ import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -88,9 +89,7 @@ public class IrcListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onIrcSendMessage(IrcSendMessageEvent event) {
         String target = event.getTarget();
-        if (target == null) {
-            target = SinkIRC.getInstance().getMainChannel().getName();
-        }
+        Validate.notNull(target);
         IrcUtil.sendMessage(target, event.getMessage());
     }
 

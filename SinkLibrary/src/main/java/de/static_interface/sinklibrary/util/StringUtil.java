@@ -289,6 +289,10 @@ public class StringUtil {
      * @return e.g. If input = {"s1", "s2", "s3" } and character = " & " it will return "s1 & s2 & s3"
      */
     public static String formatArrayToString(Object[] input, @Nullable String character, int startIndex, int endIndex) {
+        if (input == null || input.length == 0) {
+            return "";
+        }
+
         if (startIndex < 0) {
             throw new IllegalArgumentException("startIndex can't be less than 0 !");
         }
@@ -304,6 +308,9 @@ public class StringUtil {
         for (int i = startIndex; i < endIndex; i++) {
             if (tmp.equals("")) {
                 tmp = input[i].toString();
+                continue;
+            }
+            if (input[i] == null) {
                 continue;
             }
             tmp += character + input[i].toString();

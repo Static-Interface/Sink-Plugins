@@ -17,7 +17,6 @@
 
 package de.static_interface.sinklibrary.listener;
 
-import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
@@ -33,11 +32,6 @@ public class IrcCommandListener implements Listener {
         SinkCommand command = event.getCommand();
         String label = event.getLabel();
         String[] args = event.getArgs();
-
-        if (command == null || command.getCommandOptions().isPlayerOnly()) {
-            SinkLibrary.getInstance().sendIrcMessage(sender.getUser().getDisplayName() + ": Unknown command: " + command);
-            return;
-        }
 
         command.onCommand(sender, null, label, args);
     }

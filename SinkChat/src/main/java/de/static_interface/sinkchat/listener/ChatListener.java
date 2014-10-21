@@ -57,8 +57,6 @@ public class ChatListener implements Listener {
         IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         String message = event.getMessage();
 
-        user.sendDebugMessage("message: " + message);
-
         if (user.hasPermission("sinkchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
@@ -70,7 +68,6 @@ public class ChatListener implements Listener {
                 if (!channel.enabledForPlayer(event.getPlayer().getUniqueId())) {
                     continue;
                 }
-                user.sendDebugMessage("Channel: " + channel.getName());
                 if (channel.sendMessage(user, message)) {
                     event.setCancelled(true);
                     return;
@@ -92,10 +89,8 @@ public class ChatListener implements Listener {
 
         String format = SinkLibrary.getInstance().getSettings().getDefaultChatFormat();
 
-        user.sendDebugMessage("Format: " + format);
         String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1%\\s");
         eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2%\\s");
-        user.sendDebugMessage("Event Format: " + format);
         event.setFormat(eventFormat);
         String formattedMessage = StringUtil.format(format, user, message, customParams);
 

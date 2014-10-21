@@ -62,6 +62,8 @@ public class SinkIRC extends JavaPlugin {
             return;
         }
 
+        instance = this;
+
         ircThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -89,10 +91,9 @@ public class SinkIRC extends JavaPlugin {
                     if (SinkLibrary.getInstance().getSettings().isIRCAuthentificationEnabled()) {
                         ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIRCAuthBot(),
                                                  SinkLibrary.getInstance().getSettings().getIRCAuthMessage());
-                        Thread.sleep(1000); //Todo
                     }
                     ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIRCChannel());
-                } catch (IOException | IrcException | InterruptedException e) {
+                } catch (IOException | IrcException e) {
                     e.printStackTrace();
                 }
             }

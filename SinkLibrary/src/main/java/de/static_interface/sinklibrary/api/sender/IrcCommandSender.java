@@ -18,8 +18,9 @@
 package de.static_interface.sinklibrary.api.sender;
 
 import de.static_interface.sinklibrary.user.IrcUser;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.Validate;
+import de.static_interface.sinklibrary.util.SinkIrcReflection;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -27,9 +28,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-import org.pircbotx.PircBotX;
 
-import java.lang.reflect.Method;
 import java.util.Set;
 
 public class IrcCommandSender implements CommandSender {
@@ -67,12 +66,7 @@ public class IrcCommandSender implements CommandSender {
 
     private void sendNotice(String msg) {
         try {
-            PircBotX bot;
-            Class<?> c = Class.forName("de.static_interface.sinkirc.SinkIRC");
-            Method method = c.getMethod("getIrcBot");
-            method.setAccessible(true);
-            bot = (PircBotX) method.invoke(null);
-            bot.sendIRC().notice(user.getName(), msg);
+            SinkIrcReflection.getPircBotX().sendIRC().notice(user.getName(), msg);
         } catch (Exception e) {
             e.printStackTrace();
         }

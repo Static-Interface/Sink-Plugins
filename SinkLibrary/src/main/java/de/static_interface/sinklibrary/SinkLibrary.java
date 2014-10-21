@@ -42,6 +42,7 @@ import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.user.IrcUserProvider;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
@@ -393,8 +395,8 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      */
-    public boolean sendIrcMessage(String message) {
-        return sendIrcMessage(message, null);
+    public boolean sendIrcMessage(@Nonnull String message) {
+        return sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
     }
 
     /**
@@ -404,14 +406,14 @@ public class SinkLibrary extends JavaPlugin {
      * @param target Target user/channel, use null for default channel
      * @return true if successfully sended, false if event got cancelled or irc is not available
      */
-    public boolean sendIrcMessage(String message, String target) {
+    public boolean sendIrcMessage(@Nonnull String message, @Nonnull String target) {
         if (!ircAvailable) {
             return false;
         }
         Debug.log("Firing new IRCSendMessageEvent(\"" + message + "\")");
         IrcSendMessageEvent event = new IrcSendMessageEvent(message, target);
         Bukkit.getPluginManager().callEvent(event);
-        return event.isCancelled();
+        return !event.isCancelled();
     }
 
     /**
@@ -715,27 +717,35 @@ public class SinkLibrary extends JavaPlugin {
 
     public void registerCommand(String name, SinkCommand command) {
         name = name.toLowerCase();
+        Debug.logMethodCall(name, command);
         if (!command.getCommandOptions().isIrcOnly()) {
             try {
                 PluginCommand cmd = Bukkit.getPluginCommand(name);
-                if (cmd != null) {
-                    cmd.setExecutor(command);
-                    cmd.setTabCompleter(getDefaultTabCompleter());
-                    for (String alias : cmd.getAliases()) // Register alias commands
-                    {
-                        alias = alias.toLowerCase();
-                        if (alias.equals(name)) {
-                            continue;
-                        }
-                        commandAliases.put(alias, command);
-                    }
-                    command.setUsage(cmd.getUsage());
-                    command.setPermission(cmd.getPermission());
-                    command.setPlugin(cmd.getPlugin());
+                if (cmd == null) {
+                    Debug.log(Level.WARNING, "Command is not registerd in plugin.yml file");
+                    return;
                 }
+
+                Debug.log("Bukkit Command instance found: " + cmd.toString());
+
+                cmd.setExecutor(command);
+                cmd.setTabCompleter(getDefaultTabCompleter());
+                for (String alias : cmd.getAliases()) // Register alias commands
+                {
+                    alias = alias.toLowerCase();
+                    if (alias.equals(name)) {
+                        continue;
+                    }
+                    commandAliases.put(alias, command);
+                }
+                command.setUsage(cmd.getUsage());
+                command.setPermission(cmd.getPermission());
+                command.setPlugin(cmd.getPlugin());
             } catch (NullPointerException ignored) {
                 // do nothing because command may be an irc command which is not registered in the plugin.yml
             }
+        } else {
+            Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
 
         commandAliases.put(name, command);

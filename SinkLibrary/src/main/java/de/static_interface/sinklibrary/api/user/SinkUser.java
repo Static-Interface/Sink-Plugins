@@ -21,7 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.Debug;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -75,7 +75,7 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
     public void sendDebugMessage(String msg) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
-                        + Debug.getCallerClass() + ".class: " + ChatColor.RESET + msg);
+                        + Debug.getCallerClass().getSimpleName() + "#" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg);
         }
     }
 
