@@ -31,6 +31,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 public class IrcCommandSender implements CommandSender {
 
     IrcUser user;
@@ -40,7 +42,7 @@ public class IrcCommandSender implements CommandSender {
     /**
      * INTERNAL CONSTRUCTOR
      */
-    public IrcCommandSender(IrcUser user, String source) {
+    public IrcCommandSender(@Nonnull IrcUser user, @Nonnull String source) {
         Validate.notNull(user);
         Validate.notNull(source);
         this.user = user;
@@ -87,17 +89,12 @@ public class IrcCommandSender implements CommandSender {
 
     @Override
     public synchronized void sendMessage(String[] msgs) {
-        boolean first = true;
         for (String msg : msgs) {
             if (useNotice) {
                 sendNotice(msg);
                 continue;
             }
 
-            if (first) {
-                msg = user.getName() + ": " + msg;
-                first = false;
-            }
             sendMessage(msg);
         }
     }

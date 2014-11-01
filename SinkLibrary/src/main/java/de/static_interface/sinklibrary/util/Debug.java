@@ -52,9 +52,8 @@ public class Debug {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
         int index = STACK_INDEX;
         try {
-            String name = stElements[index].getClassName();
-
-            if (name.equals("Logger")) {
+            String className = stElements[index].getClassName();
+            if (className.equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
                 index++; // fix for old Logger#debug calls
             }
 
@@ -74,8 +73,8 @@ public class Debug {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
         int index = STACK_INDEX;
 
-        String name = stElements[index].getClassName();
-        if (name.equals("Logger")) {
+        String className = stElements[index].getClassName();
+        if (className.equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
             index++; // fix for old Logger#debug calls
         }
 

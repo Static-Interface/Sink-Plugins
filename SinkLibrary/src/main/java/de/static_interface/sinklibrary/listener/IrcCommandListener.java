@@ -17,9 +17,14 @@
 
 package de.static_interface.sinklibrary.listener;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
+import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,7 +37,18 @@ public class IrcCommandListener implements Listener {
         SinkCommand command = event.getCommand();
         String label = event.getLabel();
         String[] args = event.getArgs();
-
-        command.onCommand(sender, null, label, args);
+        String rawCmd = label.split(" ")[0];
+        if (command == null || command.getCommandOptions().isPlayerOnly()) {
+            sender.sendMessage("Unknown command: " + rawCmd);
+            return;
+        }
+        try {
+            command.onCommand(sender, Bukkit.getPluginCommand(rawCmd), label, args);
+        } catch (UnauthorizedAccessException exception) {
+            sender.sendMessage(m("Permissions.General"));
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "An error occurred. Please check the console");
+            e.printStackTrace();
+        }
     }
 }

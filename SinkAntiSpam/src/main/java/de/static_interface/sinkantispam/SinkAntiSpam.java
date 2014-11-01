@@ -36,6 +36,7 @@ public class SinkAntiSpam extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
+        SinkLibrary.getInstance().registerCommand("listwarns", new ListWarnsCommand(this));
     }
 
     @Override

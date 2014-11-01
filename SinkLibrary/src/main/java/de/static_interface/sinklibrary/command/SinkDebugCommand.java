@@ -26,14 +26,10 @@ import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.MathUtil;
-import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.pircbotx.User;
 
 public class SinkDebugCommand extends SinkCommand {
 
@@ -47,11 +43,6 @@ public class SinkDebugCommand extends SinkCommand {
     }
 
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (!SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            sender.sendMessage(ChatColor.RED + "Debug disabled in config");
-            return true;
-        }
-
         if (args.length < 1) {
             return false;
         }
@@ -131,19 +122,6 @@ public class SinkDebugCommand extends SinkCommand {
                     }
                 }
 
-                case "reloadusers": {
-                    user.sendDebugMessage("Reloading IRC Users...");
-                    for (User ircUser : SinkIrcReflection.getMainChannel().getUsers()) {
-                        SinkLibrary.getInstance().loadIrcUser(ircUser, SinkIrcReflection.getMainChannel().getName()); //?
-                    }
-
-                    user.sendDebugMessage("Reloading Ingame users...");
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        SinkLibrary.getInstance().loadUser(player);
-                    }
-                    return true;
-                }
-
                 case "whoami": {
                     user.sendMessage("You are " + user.getDisplayName() + " (getName(): " + user.getName() + ")");
                     user.sendMessage(
@@ -156,7 +134,7 @@ public class SinkDebugCommand extends SinkCommand {
                 }
 
                 default: {
-                    sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, backuplanguage, isop, testop, reloadusers");
+                    sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, backuplanguage, isop, testop, whoami");
                 }
             }
         } catch (Exception e) {

@@ -9,7 +9,12 @@ soft-depend: [SinkLibrary]
 commands:
  warn:
    description: Warn a player
-   permission: sinkcommands.warn
+   permission: sinkantispam.warn
+
+ listwarns:
+   description: List a players warns
+   permission: sinkantispam.listwarns
+   usage: "/listwarns [target]"
 
 permissions:
  sinkantispam.*:
@@ -19,12 +24,17 @@ permissions:
      sinkantispam.warnmessage: true
      sinkantispam.bypass: true
      sinkantispam.warn: true
+     sinkantispam.listwarns: true
 
  sinkantispam.warn:
     description: Allows to warn players
     default: op
     children:
       sinkantispam.warn.message: true
+
+ sinkantispam.listwarns:
+    description: Allows to list warnings of a players
+    default: true
 
  sinkantispam.bypass:
     description: Allows to bypass SinkAntiSpam

@@ -18,6 +18,8 @@
 package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -32,14 +34,15 @@ public class IngameUserProvider extends SinkUserProvider<OfflinePlayer, IngameUs
     @Nullable
     @Override
     public IngameUser getUserInstance(String name) {
+        Validate.notNull(name);
         for (IngameUser u : instances.values()) {
-            if (u.getName().equals(name) || ChatColor.stripColor(u.getDisplayName()).equals(name)) {
+            if (ChatColor.stripColor(u.getName().trim()).equals(ChatColor.stripColor(name.trim()))
+                || (u.getDisplayName() != null && ChatColor.stripColor(u.getDisplayName().trim()).equals(name.trim()))) {
                 return u;
             }
         }
 
-        OfflinePlayer of = Bukkit.getOfflinePlayer(name);
-        return getUserInstance(of.getUniqueId());
+        return getUserInstance(BukkitUtil.getUniqueIdByName(name));
     }
 
     @Override

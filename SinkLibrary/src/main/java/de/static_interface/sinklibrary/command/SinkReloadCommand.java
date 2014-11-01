@@ -20,9 +20,13 @@ package de.static_interface.sinklibrary.command;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.util.SinkIrcReflection;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.pircbotx.User;
 
 public class SinkReloadCommand extends SinkCommand {
     //Todo: fix exceptions on reload
@@ -37,13 +41,26 @@ public class SinkReloadCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(PREFIX + "Reloading...");
+        sender.sendMessage(PREFIX + "Reloading Configs...");
 
         // Reload all configs
         for (Configuration base : Configuration.getConfigs().values()) {
             base.reload();
         }
 
+        sender.sendMessage(PREFIX + "Reloading Users...");
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SinkLibrary.getInstance().unloadUser(player.getUniqueId());
+            SinkLibrary.getInstance().loadUser(player);
+        }
+
+        if (SinkLibrary.getInstance().isIrcAvailable()) {
+            for (User ircUser : SinkIrcReflection.getMainChannel().getUsers()) {
+                SinkLibrary.getInstance().unloadIrcUser(ircUser);
+                SinkLibrary.getInstance().loadIrcUser(ircUser, SinkIrcReflection.getMainChannel().getName()); //?
+            }
+        }
         sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
         return true;
     }

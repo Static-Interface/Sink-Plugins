@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
-import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -67,11 +66,6 @@ public class SinkTabCompleter implements TabCompleter {
             }
         }
 
-        Debug.log("onTabComplete: sender: " + sender.getName() +
-                  ", cmd: " + cmd.getName() + ", label: " + label + ", s: " + s + ", args: " + StringUtil
-                .formatArrayToString(
-                        args, ", "));
-
         Collections.sort(users);
         for (SinkUser user : users) {
             String suffix = user.getProvider().getTabCompleterSuffix();
@@ -85,32 +79,39 @@ public class SinkTabCompleter implements TabCompleter {
             String displayName = user.getDisplayName() == null ? "" : user.getDisplayName();
 
             if (includeSuffix) {
-                displayName = ChatColor.stripColor(displayName) + suffix;
+                displayName = ChatColor.stripColor(displayName.toLowerCase()) + suffix;
             } else {
-                displayName = ChatColor.stripColor(displayName);
+                displayName = ChatColor.stripColor(displayName.toLowerCase());
             }
 
             boolean hasDisplayname = false;
-            displayName = displayName.replace(suffix, "");
 
-            if (!StringUtil.isStringEmptyOrNull(displayName)) {
+            if (!StringUtil.isStringEmptyOrNull(displayName.replace(suffix, ""))) {
                 hasDisplayname = true;
             }
 
             // only add one entry per user
-            if (tmp.keySet().contains(user) || (hasDisplayname && tmp.values().contains(displayName))
-                || tmp.values().contains(name)) {
+
+            boolean valuesContains = false;
+            for (String valuename : tmp.values()) {
+                if ((hasDisplayname && valuename.equalsIgnoreCase(displayName)) ||
+                    valuename.equalsIgnoreCase(name)) {
+                    valuesContains = true;
+                    break;
+                }
+            }
+            if (tmp.keySet().contains(user) || (valuesContains)) {
                 continue;
             }
 
             // check if alias starts with displayname, if not, check if starts with default name
             if (!StringUtil.isStringEmptyOrNull(s)) {
-                if (hasDisplayname && displayName.startsWith(s)) {
+                if (hasDisplayname && displayName.toLowerCase().startsWith(s.toLowerCase())) {
                     tmp.put(user, displayName);
                     continue;
                 }
 
-                if (user.getName().startsWith(s)) {
+                if (user.getName().toLowerCase().startsWith(s.toLowerCase())) {
                     tmp.put(user, name);
                 }
             } else {

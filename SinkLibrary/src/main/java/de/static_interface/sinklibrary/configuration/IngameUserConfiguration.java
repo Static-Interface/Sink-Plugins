@@ -36,8 +36,8 @@ public class IngameUserConfiguration extends Configuration {
      *
      * @param user User
      */
-    public IngameUserConfiguration(IngameUser user) {
-        super(new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), user.getUniqueId().toString() + ".yml"), false);
+    public IngameUserConfiguration(IngameUser user, File configuration) {
+        super(configuration, false);
 
         File oldDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "Players");
         File newDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "players");
@@ -71,10 +71,11 @@ public class IngameUserConfiguration extends Configuration {
         addDefault("Nick.HasDisplayName", false);
         addDefault("Nick.DisplayName", user.getDefaultDisplayName());
 
-        addDefault("BanInfo.IsBanned", false);
-        addDefault("BanInfo.BanTime", 0);
-        addDefault("BanInfo.UnbanTime", 0);
-        addDefault("BanInfo.Reason", "");
+        addDefault("BanData.IsBanned", false);
+        addDefault("BanData.BanTime", 0);
+        addDefault("BanData.Timeout", 0);
+        addDefault("BanData.UnbanTime", 0);
+        addDefault("BanData.Reason", "");
     }
 
     /**
@@ -175,7 +176,15 @@ public class IngameUserConfiguration extends Configuration {
         return Long.parseLong(String.valueOf(get("BanInfo.UnbanTime")));
     }
 
-    public void setUnbanTime(long unbantime) {
-        set("BanInfo.UnbanTime", unbantime);
+    public void setUnbanTime(long bantime) {
+        set("BanInfo.UnbanTime", bantime);
+    }
+
+    public long getBanTimeOut() {
+        return Long.parseLong(String.valueOf(get("BanInfo.Timeout")));
+    }
+
+    public void setBanTimeOut(long unbantime) {
+        set("BanInfo.Timeout", unbantime);
     }
 }

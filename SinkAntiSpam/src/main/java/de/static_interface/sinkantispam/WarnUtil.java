@@ -36,7 +36,7 @@ public class WarnUtil {
     public static String WARNINGS_PATH = "Warnings";
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
-    public static void warnPlayer(IngameUser target, Warning warning) {
+    public static void warn(IngameUser target, Warning warning) {
         List<Warning> tmp = getWarnings(target);
         if (tmp == null) {
             tmp = new ArrayList<>();
@@ -62,8 +62,8 @@ public class WarnUtil {
 
         if (i == 5) {
             target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-            long bantime = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
-            target.ban(m("SinkAntiSpam.AutoBan"), bantime);
+            long timeout = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
+            target.ban(m("SinkAntiSpam.AutoBan"), timeout);
         }
     }
 
@@ -75,6 +75,7 @@ public class WarnUtil {
             serializedWarnings.add(gson.toJson(warning));
         }
         config.set(WARNINGS_PATH, serializedWarnings);
+        config.save();
     }
 
     public static List<Warning> getWarnings(IngameUser user) {

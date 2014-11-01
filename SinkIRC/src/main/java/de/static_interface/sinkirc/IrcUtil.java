@@ -180,11 +180,6 @@ public class IrcUtil {
 
         boolean isQueryCommand = !source.startsWith("#");
 
-        if (cmd == null || cmd.getCommandOptions().isPlayerOnly()) {
-            SinkLibrary.getInstance().sendIrcMessage(sender.getUser().getDisplayName() + ": Unknown command: " + command);
-            return;
-        }
-
         if (cmd != null && (!isQueryCommand && cmd.getCommandOptions().isIrcQueryOnly())) {
             sender.sendMessage("This command is only available via query");
             return;

@@ -78,11 +78,11 @@ public class LanguageConfiguration extends Configuration {
         addDefault("General.NotOnline", "&c{0} is not online!");
         addDefault("General.UserNotFound", "&cUser not found!");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
-
+        addDefault("General.Banned", "&4Banned:&c ");
         addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!"); // Deprecated
         addDefault("General.TooFewArguments", "&4Too few arguments!");
 
-        addDefault("General.TimeLeft", "&4Time Left: {0}");
+        addDefault("General.TimeLeft", "Time Left: {0}");
         addDefault("General.Me", "Me");
 
         addDefault("SinkChat.Commands.Nick.OtherChanged", "{0}'s name is now {1}!");

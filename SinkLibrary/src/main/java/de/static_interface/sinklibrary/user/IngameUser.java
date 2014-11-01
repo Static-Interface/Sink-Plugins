@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
 import de.static_interface.sinklibrary.api.model.BanData;
+import de.static_interface.sinklibrary.api.user.Bannable;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -34,25 +35,27 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
+import java.io.File;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable {
+public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable, Bannable {
 
     private Player player = null;
     private OfflinePlayer base = null;
     private String playerName = null;
     private IngameUserConfiguration config = null;
-
+    private File configurationFile;
     IngameUser(OfflinePlayer base, SinkUserProvider provider) {
         super(base, provider);
         this.base = base;
+        configurationFile = new File(new File(SinkLibrary.getInstance().getCustomDataFolder(), "players"), getUniqueId().toString() + ".yml");
         player = base.getPlayer();
         playerName = base.getName();
 
         if (playerName == null) {
-            SinkLibrary.getInstance().getLogger().warning("Couldn't get player name from UUID: " + base.getUniqueId().toString());
+            SinkLibrary.getInstance().getLogger().warning("Couldn't get player name from UUID: " + getUniqueId().toString());
         }
     }
 
@@ -94,7 +97,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
      */
     public IngameUserConfiguration getConfiguration() {
         if (config == null) {
-            config = new IngameUserConfiguration(this);
+            config = new IngameUserConfiguration(this, configurationFile);
         }
         return config;
     }
@@ -110,6 +113,10 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
     public boolean hasPermission(SinkCommand command) {
         String permission = command.getPermission();
         return permission == null || hasPermission(command.getPermission());
+    }
+
+    public boolean hasPlayedBefore() {
+        return base.hasPlayedBefore() && configurationFile.exists();
     }
 
     @Override
@@ -262,19 +269,24 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
         return base.getUniqueId();
     }
 
-    public void ban(String reason, long unbantime) {
+    public void ban(String reason, long timeout) {
+        if (isOnline()) {
+            getPlayer().kickPlayer(reason);
+        }
+
         getConfiguration().setBanned(true);
         getConfiguration().setBanTime(System.currentTimeMillis());
-        getConfiguration().setUnbanTime(unbantime);
+        getConfiguration().setBanTimeOut(timeout);
         getConfiguration().setBanReason(reason);
     }
 
     public void unban() {
         getConfiguration().setBanned(false);
+        getConfiguration().setUnbanTime(System.currentTimeMillis());
     }
 
-    public BanData getBanInfo() {
-        return new BanData(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getUnbanTime(),
-                           getConfiguration().getBanReason());
+    public BanData getBanData() {
+        return new BanData(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getBanTimeOut(),
+                           getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
     }
 }

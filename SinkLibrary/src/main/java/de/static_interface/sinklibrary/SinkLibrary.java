@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -31,9 +32,9 @@ import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
+import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
-import de.static_interface.sinklibrary.listener.UserConfigurationListener;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -452,29 +453,40 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * @param partialPlayerName Name of the player
-     * @return User instance
+     * @param partialPlayerName Partial name of the player
+     * @return User instance of the player
+     * @throws UserNotFoundException If user not found
      */
     public IngameUser getIngameUser(String partialPlayerName) {
         Player p = BukkitUtil.getPlayer(partialPlayerName);
         if (p != null) {
             return getIngameUser(p);
         }
-        UUID uuid = BukkitUtil.getUniqueIdByName(partialPlayerName);
-        return getIngameUser(uuid);
+
+        IngameUser user = getIngameUser(partialPlayerName);
+        if (!user.hasPlayedBefore()) {
+            throw new UserNotFoundException();
+        }
+
+        return user;
     }
 
     /**
      * @param playerName Exact name of the player
      * @return User instance
+     * @throws UserNotFoundException If user not found
      */
     public IngameUser getIngameUserExact(String playerName) {
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
             return getIngameUser(p);
         }
-        UUID uuid = BukkitUtil.getUniqueIdByName(playerName);
-        return getIngameUser(uuid);
+
+        IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(playerName));
+        if (!user.hasPlayedBefore()) {
+            throw new UserNotFoundException();
+        }
+        return user;
     }
 
     /**
@@ -561,6 +573,12 @@ public class SinkLibrary extends JavaPlugin {
 
         for (Class<?> implClass : userImplementations.keySet()) {
             if (implClass.isInstance(base)) {
+                SinkUserProvider provider = userImplementations.get(implClass);
+
+                if (provider instanceof IrcUserProvider) {
+                    return ((IrcUserProvider) provider).getUserInstance(((User) base).getNick());
+                }
+
                 return userImplementations.get(implClass).getUserInstance(base);
             }
         }
@@ -801,7 +819,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new UserConfigurationListener(), this);
+        Bukkit.getPluginManager().registerEvents(new IngameUserListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplayNameListener(), this);
     }
 

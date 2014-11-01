@@ -29,10 +29,13 @@ import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
 
 public abstract class SinkCommand implements CommandExecutor {
 
@@ -49,7 +52,7 @@ public abstract class SinkCommand implements CommandExecutor {
     }
 
     @Override
-    public final boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+    public final boolean onCommand(CommandSender sender, @Nullable Command command, String label, String[] args) {
         this.sender = sender;
         boolean result = onPreExecute(sender, label, args);
         if (!onPreExecuteCalled) {

@@ -26,6 +26,7 @@ import de.static_interface.sinkantispam.warning.DomainWarning;
 import de.static_interface.sinkantispam.warning.IpWarning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.util.DomainValidator;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,7 +56,7 @@ public class SinkAntiSpamListener implements Listener {
         result.setResultcode(WarnResult.PASS);
         IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
 
-        if (user.hasPermission("sinkcommands.bypass")) {
+        if (user.hasPermission("sinkantispam.bypass")) {
             return result;
         }
 
@@ -68,7 +69,7 @@ public class SinkAntiSpamListener implements Listener {
                 String
                         warnMessage =
                         message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
-                WarnUtil.warnPlayer(user, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
+                WarnUtil.warn(user, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CANCEL);
                 String tmp = "";
                 for (int i = 0; i < blacklistWord.length(); i++) {
@@ -87,25 +88,27 @@ public class SinkAntiSpamListener implements Listener {
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
-                WarnUtil.warnPlayer(user, new IpWarning(ip, WarnUtil.getWarningId(user)));
+                WarnUtil.warn(user, new IpWarning(ip, WarnUtil.getWarningId(user)));
                 result.setResultcode(WarnResult.CENSOR);
                 result.setCensoredMessage(message.replace(ip, m("SinkAntiSpam.ReplaceIP")));
                 return result;
             }
         }
         if (SinkLibrary.getInstance().getSettings().isWhitelistedDomainCheckEnabled()) {
-            pattern = Pattern.compile("((w{3}\\.)?([\\-A-Za-z0-9]+\\.)+[A-Za-z]{2,3}+/?)\\s");
-            matcher = pattern.matcher(message.replaceAll("www.", ""));
-            if (!matcher.find()) {
-                return result;
+            String[] words = message.split(" ");
+
+            for (String word : words) {
+                if (!DomainValidator.getInstance().isValid(word)) {
+                    continue;
+                }
+
+                if (containsWord(word, whiteListDomains) != null) {
+                    return result;
+                }
+                WarnUtil.warn(user, new DomainWarning(word, WarnUtil.getWarningId(user)));
+                result.setResultcode(WarnResult.CENSOR);
+                result.setCensoredMessage(message.replace(word, m("SinkAntiSpam.ReplaceDomain")));
             }
-            String domain = matcher.group(0).trim();
-            if (containsWord(domain, whiteListDomains) != null) {
-                return result;
-            }
-            WarnUtil.warnPlayer(user, new DomainWarning(domain, WarnUtil.getWarningId(user)));
-            result.setResultcode(WarnResult.CENSOR);
-            result.setCensoredMessage(message.replace(domain, m("SinkAntiSpam.ReplaceDomain")));
             return result;
         }
         return result;

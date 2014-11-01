@@ -21,27 +21,33 @@ public class BanData {
 
     private final boolean isBanned;
     private final long banTime;
-    private final long unbanTime;
+    private final long timeout;
     private final String reason;
+    private final long unbantime;
 
-    public BanData(boolean isBanned, long banTime, long unbanTime, String reason) {
+    public BanData(boolean isBanned, long banTime, long timeout, long unbantime, String reason) {
         this.isBanned = isBanned;
         this.banTime = banTime;
-        this.unbanTime = unbanTime;
+        this.timeout = timeout;
         this.reason = reason;
+        this.unbantime = unbantime;
     }
 
     public boolean isBanned() {
         // -1 == perma banned
-        return isBanned && (unbanTime == -1 || unbanTime < System.currentTimeMillis());
+        return isBanned && (timeout == -1 || timeout < System.currentTimeMillis());
     }
 
     public long getBanTime() {
         return banTime;
     }
 
+    public long getTimeOut() {
+        return timeout;
+    }
+
     public long getUnbanTime() {
-        return unbanTime;
+        return unbantime;
     }
 
     public String getReason() {
