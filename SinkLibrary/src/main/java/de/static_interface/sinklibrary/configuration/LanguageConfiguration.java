@@ -163,6 +163,14 @@ public class LanguageConfiguration extends Configuration {
         addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned by SinkAntiSpam");
         addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
 
+        addDefault("TimeUnit.Years", "Year(s)");
+        addDefault("TimeUnit.Months", "Month(s)");
+        addDefault("TimeUnit.Weeks", "Week(s)");
+        addDefault("TimeUnit.Days", "Day(s)");
+        addDefault("TimeUnit.Hours", "Hour(s)");
+        addDefault("TimeUnit.Minutes", "Minute(s)");
+        addDefault("TimeUnit.Seconds", "Second(s)");
+
         /*
         addDefault("SinkDuty.Time", "You have the following duty time: %s");
         addDefault("SinkDuty.Time.Others", "%s has the following duty time: %s");

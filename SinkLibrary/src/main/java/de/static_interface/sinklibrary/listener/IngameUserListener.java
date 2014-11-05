@@ -23,6 +23,8 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.model.BanData;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,10 +32,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Date;
+
 public class IngameUserListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
+        Debug.logMethodCall(event);
         SinkLibrary.getInstance().loadUser(event.getPlayer());
 
         IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
@@ -44,23 +49,31 @@ public class IngameUserListener implements Listener {
         }
 
         BanData result = user.getBanData();
+        Debug.log(result);
         if (!result.isBanned()) {
+            Debug.log("Player is not banned.");
             return;
         }
 
-        event.setResult(PlayerLoginEvent.Result.KICK_BANNED);
         String timeLeft = "";
 
         if (result.getTimeOut() < System.currentTimeMillis()) {
+            Debug.log("Bantimeout occurred. Unbanning player.");
             user.unban();
             return;
         }
 
+        Debug.log("User is banned, calculating time left...");
+
         if (result.getTimeOut() > 0) {
             long t = result.getTimeOut() - System.currentTimeMillis();
-            timeLeft = ", " + ChatColor.GOLD + m("General.TimeLeft", t / (1000 * 60));
+            timeLeft = ", " + ChatColor.GOLD + m("General.TimeLeft", StringUtil.timeLeftDateToString(new Date(t)));
         }
-        event.setKickMessage(m("General.Banned") + result.getReason() + timeLeft);
+        String kickMessage = m("General.Banned") + result.getReason() + timeLeft;
+        Debug.log("Denying user: " + user.getName() + "(KICK_BANNED, kickMessage: " + kickMessage + ")");
+        event.setKickMessage(kickMessage);
+        event.setResult(PlayerLoginEvent.Result.KICK_BANNED);
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

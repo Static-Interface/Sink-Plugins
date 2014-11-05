@@ -17,6 +17,10 @@
 
 package de.static_interface.sinklibrary.api.model;
 
+import de.static_interface.sinklibrary.api.user.SinkUser;
+
+import java.util.Date;
+
 public class BanData {
 
     private final boolean isBanned;
@@ -24,18 +28,19 @@ public class BanData {
     private final long timeout;
     private final String reason;
     private final long unbantime;
+    private final SinkUser user;
 
-    public BanData(boolean isBanned, long banTime, long timeout, long unbantime, String reason) {
+    public BanData(SinkUser user, boolean isBanned, long banTime, long timeout, long unbantime, String reason) {
         this.isBanned = isBanned;
         this.banTime = banTime;
         this.timeout = timeout;
         this.reason = reason;
         this.unbantime = unbantime;
+        this.user = user;
     }
 
     public boolean isBanned() {
-        // -1 == perma banned
-        return isBanned && (timeout == -1 || timeout < System.currentTimeMillis());
+        return isBanned;
     }
 
     public long getBanTime() {
@@ -52,5 +57,17 @@ public class BanData {
 
     public String getReason() {
         return reason;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " [" + "isbanned: " + isBanned + ", banTime:" + new Date(banTime)
+                .toString() + "(" + banTime + ")" +
+               ", timeout: " + new Date(timeout).toString() + "(" + timeout + ")" + ", reason: \"" + reason + "\", unbantime: " +
+               new Date(unbantime).toString() + "(" + unbantime + ")" + "]";
+    }
+
+    public SinkUser getUser() {
+        return user;
     }
 }

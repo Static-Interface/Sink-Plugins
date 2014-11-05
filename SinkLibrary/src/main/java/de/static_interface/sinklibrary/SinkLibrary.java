@@ -446,25 +446,38 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * @param player Player
-     * @return User instance of the player
+     * @return {@link IngameUser} instance of the player
      */
+    @Nonnull
     public IngameUser getIngameUser(Player player) {
         return (IngameUser) getUser(player);
     }
 
     /**
      * @param partialPlayerName Partial name of the player
-     * @return User instance of the player
+     * @return {@link IngameUser} instance of the player
      * @throws UserNotFoundException If user not found
      */
+    @Nonnull
     public IngameUser getIngameUser(String partialPlayerName) {
+        return getIngameUser(partialPlayerName, true);
+    }
+
+    /**
+     * @param partialPlayerName Partial name of the player
+     * @param throwExceptionIfNotFound If true, throw an exception if user was not found (never joined the server)
+     * @return {@link IngameUser} instance of the player
+     * @throws UserNotFoundException If user not found and throwExceptionIfNotFound equals true
+     */
+    @Nonnull
+    public IngameUser getIngameUser(String partialPlayerName, boolean throwExceptionIfNotFound) {
         Player p = BukkitUtil.getPlayer(partialPlayerName);
         if (p != null) {
             return getIngameUser(p);
         }
 
-        IngameUser user = getIngameUser(partialPlayerName);
-        if (!user.hasPlayedBefore()) {
+        IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(partialPlayerName));
+        if (throwExceptionIfNotFound && !user.hasPlayedBefore()) {
             throw new UserNotFoundException();
         }
 
@@ -477,13 +490,24 @@ public class SinkLibrary extends JavaPlugin {
      * @throws UserNotFoundException If user not found
      */
     public IngameUser getIngameUserExact(String playerName) {
+        return getIngameUserExact(playerName, true);
+    }
+
+    /**
+     * @param playerName Exact name of the player
+     * @param throwExceptionIfNotFound If true, throw an exception if user was not found (never joined the server)
+     * @return {@link IngameUser} instance of the player
+     * @throws UserNotFoundException If user not found and throwExceptionIfNotFound equals true
+     */
+    @Nonnull
+    public IngameUser getIngameUserExact(String playerName, boolean throwExceptionIfNotFound) {
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
             return getIngameUser(p);
         }
 
         IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(playerName));
-        if (!user.hasPlayedBefore()) {
+        if (throwExceptionIfNotFound && !user.hasPlayedBefore()) {
             throw new UserNotFoundException();
         }
         return user;
@@ -491,10 +515,19 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * @param partialName Name of the target user (e.g. use <name>_IRC suffix to target irc users)
-     * @return User instance of the target
+     * @return {@link SinkUser} instance of the target
      */
-    @Nullable
     public SinkUser getUser(String partialName) {
+        return getUser(partialName, true);
+    }
+
+    /**
+     * @param partialName Name of the target user (e.g. use <name>_IRC suffix to target irc users)
+     * @param throwExceptionIfNotFound If true, throw an exception if user was not found (never joined the server)
+     * @return {@link SinkUser} instance of the target
+     * @throws UserNotFoundException If user not found and throwExceptionIfNotFound equals true
+     */
+    public SinkUser getUser(String partialName, boolean throwExceptionIfNotFound) {
         boolean hasSuffix = false;
 
         //Search for suffixes
@@ -523,15 +556,24 @@ public class SinkLibrary extends JavaPlugin {
             return getConsoleUser();
         }
 
-        return getIngameUser(partialName);
+        return getIngameUser(partialName, throwExceptionIfNotFound);
     }
 
     /**
      * @param name Exact name of the target (e.g. use <name>_IRC prefix to target irc users)
-     * @return User instance of the target
+     * @return {@link SinkUser} instance of the target
      */
-    @Nullable
     public SinkUser getUserExact(String name) {
+        return getUserExact(name, true);
+    }
+
+    /**
+     * @param name Exact name of the target (e.g. use <name>_IRC prefix to target irc users)
+     * @param throwExceptionIfNotFound If true, throw an exception if user was not found (never joined the server)
+     * @return {@link SinkUser} instance of the target
+     * @throws UserNotFoundException If user not found and throwExceptionIfNotFound equals true
+     */
+    public SinkUser getUserExact(String name, boolean throwExceptionIfNotFound) {
 
         for (SinkUserProvider provider : userImplementations.values()) {
             String suffix = provider.getTabCompleterSuffix();
@@ -548,13 +590,22 @@ public class SinkLibrary extends JavaPlugin {
             return getConsoleUser();
         }
 
-        return getIngameUserExact(name);
+        return getIngameUserExact(name, throwExceptionIfNotFound);
     }
 
+    /**
+     * @param uuid UUID of the player
+     * @return {@link SinkUser} instance of the target
+     */
     public IngameUser getIngameUser(UUID uuid) {
         return ingameUserProvider.getUserInstance(uuid);
     }
 
+    /**
+     * @param sender Sender of the User
+     * @deprecated Use {@link SinkLibrary#getUser(Object) instead}
+     * @return {@link SinkUser} instance of the sender
+     */
     @Deprecated
     public SinkUser getUser(CommandSender sender) {
         return getUser((Object) sender);

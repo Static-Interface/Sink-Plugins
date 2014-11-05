@@ -94,6 +94,10 @@ public class Debug {
         logInternal(Level.INFO, message, null);
     }
 
+    public static void log(@Nonnull Object o) {
+        logInternal(Level.INFO, o.toString(), null);
+    }
+
     public static void log(@Nonnull Level level, @Nonnull String message) {
         logInternal(level, message, null);
     }

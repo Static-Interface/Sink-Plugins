@@ -286,7 +286,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
     }
 
     public BanData getBanData() {
-        return new BanData(getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getBanTimeOut(),
+        return new BanData(this, getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getBanTimeOut(),
                            getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
     }
 }

@@ -18,8 +18,8 @@
 package de.static_interface.sinklibrary.configuration;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 
 import java.io.File;
@@ -149,42 +149,42 @@ public class IngameUserConfiguration extends Configuration {
     }
 
     public boolean isBanned() {
-        return (boolean) get("BanInfo.IsBanned");
+        return (boolean) get("BanData.IsBanned");
     }
 
     public void setBanned(boolean b) {
-        set("BanInfo.IsBanned", b);
+        set("BanData.IsBanned", b);
     }
 
     public String getBanReason() {
-        return (String) get("BanInfo.Reason");
+        return (String) get("BanData.Reason");
     }
 
     public void setBanReason(String reason) {
-        set("BanInfo.Reason", reason);
+        set("BanData.Reason", reason);
     }
 
     public long getBanTime() {
-        return Long.parseLong(String.valueOf(get("BanInfo.BanTime")));
+        return Long.parseLong(String.valueOf(get("BanData.BanTime")));
     }
 
     public void setBanTime(long bantime) {
-        set("BanInfo.BanTime", bantime);
+        set("BanData.BanTime", bantime);
     }
 
     public long getUnbanTime() {
-        return Long.parseLong(String.valueOf(get("BanInfo.UnbanTime")));
+        return Long.parseLong(String.valueOf(get("BanData.UnbanTime")));
     }
 
     public void setUnbanTime(long bantime) {
-        set("BanInfo.UnbanTime", bantime);
+        set("BanData.UnbanTime", bantime);
     }
 
     public long getBanTimeOut() {
-        return Long.parseLong(String.valueOf(get("BanInfo.Timeout")));
+        return Long.parseLong(String.valueOf(get("BanData.Timeout")));
     }
 
     public void setBanTimeOut(long unbantime) {
-        set("BanInfo.Timeout", unbantime);
+        set("BanData.Timeout", unbantime);
     }
 }
