@@ -54,7 +54,7 @@ public class SayCommand extends IrcCommand {
         String messageWithPrefix;
         messageWithPrefix =
                 IRC_PREFIX + ChatColor.GRAY + sourcePrefix + IrcUtil.getFormattedName(sender.getUser().getBase()) + ChatColor.GRAY + ": "
-                + ChatColor.WHITE + label.replaceFirst("say", "");
+                + ChatColor.WHITE + label.replaceFirst("(?i)say", "");
 
         BukkitUtil.broadcastMessage(messageWithPrefix);
         return true;

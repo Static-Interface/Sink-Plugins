@@ -117,7 +117,7 @@ public class IrcListener implements Listener {
             formattedReason = "";
         }
         BukkitUtil.broadcastMessage(
-                IRC_PREFIX + ChatColor.GRAY + '[' + event.getChannel() + "] " + ChatColor.DARK_AQUA + event.getRecipient().getNick() + ChatColor.WHITE
+                IRC_PREFIX + ChatColor.GRAY + '[' + event.getChannel().getName() + "] " + ChatColor.DARK_AQUA + event.getRecipient().getNick() + ChatColor.WHITE
                 + " wurde von " + event.getUser().getNick() + " aus dem Kanal geworfen. " + formattedReason, false);
     }
 
