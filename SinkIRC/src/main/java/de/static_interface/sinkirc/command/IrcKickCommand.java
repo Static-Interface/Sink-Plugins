@@ -49,7 +49,7 @@ public class IrcKickCommand extends SinkCommand {
 
         String target = args[0];
 
-        if (StringUtil.isStringEmptyOrNull(reason)) {
+        if (StringUtil.isEmptyOrNull(reason)) {
             reason = "Kicked by " + user.getDisplayName();
         }
 

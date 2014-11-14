@@ -75,7 +75,7 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
     public void sendDebugMessage(String msg) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
-                        + Debug.getCallerClass().getSimpleName() + " #" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg);
+                        + Debug.getCallerClassName() + " #" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg);
         }
     }
 

@@ -119,32 +119,37 @@ public abstract class SinkCommand implements CommandExecutor {
     protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
 
     protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception, boolean success) {
+        boolean reportException = true;
+        boolean exceptionReported = false;
+
         if (exception instanceof UnauthorizedAccessException) {
             sender.sendMessage(m("Permissions.General"));
-            return;
-        }
-
-        if (exception instanceof NotEnoughArgumentsException) {
+            reportException = false;
+        } else if (exception instanceof NotEnoughArgumentsException) {
             sender.sendMessage(m("General.TooFewArguments"));
-            return;
-        }
-
-        if (exception instanceof UserNotFoundException) {
+            reportException = false;
+        } else if (exception instanceof UserNotFoundException) {
             sender.sendMessage(exception.getMessage());
-            return;
+            reportException = false;
         }
 
-        if (exception != null) {
-            SinkLibrary.getInstance().getLogger().severe("Unexpected exception occurred: ");
+        if (Debug.isEnabled() && exception != null) {
             exception.printStackTrace();
+            exceptionReported = true;
+        }
+
+        if (exception != null && reportException) {
+            if (!exceptionReported) {
+                SinkLibrary.getInstance().getLogger().severe("Unexpected exception occurred: ");
+                exception.printStackTrace();
+            }
+
             if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
                 sender.sendMessage(exception.getMessage());
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured");
             }
-        }
-
-        if (!success && !StringUtil.isStringEmptyOrNull(getUsage())) {
+        } else if (!success && !StringUtil.isEmptyOrNull(getUsage()) && reportException) {
             sender.sendMessage(getUsage()); // todo: replace command prefix and <command> macro
         }
     }

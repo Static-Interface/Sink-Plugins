@@ -123,7 +123,7 @@ public class IrcUser extends SinkUser<User> {
     public void sendDebugMessage(String msg) {
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
-                        + Debug.getCallerClass().getSimpleName() + "#" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg, false);
+                        + Debug.getCallerClassName() + "#" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg, false);
         }
     }
 

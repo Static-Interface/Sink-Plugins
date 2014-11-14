@@ -164,7 +164,7 @@ public class IrcUtil {
     }
 
     public static void handleCommand(String command, String[] args, String source, User user, String label) {
-        if (StringUtil.isStringEmptyOrNull(command)) {
+        if (StringUtil.isEmptyOrNull(command)) {
             return;
         }
 

@@ -105,7 +105,7 @@ public class MessageCommands {
 
         @Override
         protected boolean onExecute(CommandSender sender, String label, String[] args) {
-            if (args.length < 1 || StringUtil.isStringEmptyOrNull(args[0])) {
+            if (args.length < 1 || StringUtil.isEmptyOrNull(args[0])) {
                 throw new NotEnoughArgumentsException();
             }
 

@@ -39,25 +39,35 @@ import javax.annotation.Nullable;
 @Unstable
 public class Debug {
 
+    public static final String ANONYMOUS_CLASS = "<Anonymous Class>";
     private static boolean failed = false;
     private static FileWriter fileWriter = null;
     private static int STACK_INDEX = 4;
 
     /**
-     * @return {@link Class} instance of the caller class
+     * @return True if debug is enabled in the config
+     */
+    public static boolean isEnabled() {
+        return SinkLibrary.getInstance().getSettings().isDebugEnabled();
+    }
+
+    /**
+     * @return Simple name of the class or {@link #ANONYMOUS_CLASS} if the class is an anonymous class
      */
     @Nonnull
     @Nullable
-    public static Class<?> getCallerClass() {
+    public static String getCallerClassName() {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
         int index = STACK_INDEX;
         try {
-            String className = stElements[index].getClassName();
-            if (className.equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
+            if (stElements[index].getClassName().equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
                 index++; // fix for old Logger#debug calls
             }
-
-            return Class.forName(stElements[index].getClassName());
+            String className = stElements[index].getClassName();
+            if (StringUtil.isEmptyOrNull(className)) {
+                return ANONYMOUS_CLASS;
+            }
+            return Class.forName(className).getSimpleName();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -73,8 +83,7 @@ public class Debug {
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
         int index = STACK_INDEX;
 
-        String className = stElements[index].getClassName();
-        if (className.equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
+        if (stElements[index].getClassName().equalsIgnoreCase("de.static_interface.sinklibrary.Logger")) {
             index++; // fix for old Logger#debug calls
         }
 
@@ -95,7 +104,7 @@ public class Debug {
     }
 
     public static void log(@Nonnull Object o) {
-        logInternal(Level.INFO, o.toString(), null);
+        logInternal(Level.INFO, (o == null ? "null" : o.toString()), null);
     }
 
     public static void log(@Nonnull Level level, @Nonnull String message) {
@@ -126,7 +135,7 @@ public class Debug {
         }
 
         if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClass().getSimpleName() + " #" + getCallerMethodName() + ": " + message);
+            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
         }
     }
 
@@ -169,7 +178,6 @@ public class Debug {
             fileWriter.write('[' + date + ' ' + level.getName() + "]: " + message + newLine);
         } catch (IOException ignored) {
             //Do nothing...
-
         }
     }
 

@@ -127,6 +127,7 @@ public class IngameUserConfiguration extends Configuration {
      * @param displayName New Display Name
      */
     public void setDisplayName(String displayName) {
+        displayName = ChatColor.translateAlternateColorCodes('&', displayName);
         set("Nick.DisplayName", displayName);
         if (ChatColor.stripColor(displayName).equals(ChatColor.stripColor(user.getDefaultDisplayName()))) {
             setHasDisplayName(false);

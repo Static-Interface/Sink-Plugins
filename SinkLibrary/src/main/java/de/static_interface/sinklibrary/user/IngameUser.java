@@ -270,8 +270,16 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
     }
 
     public void ban(String reason, long timeout) {
-        if (isOnline()) {
+        boolean isOnline = isOnline();
+        if (isOnline) {
             getPlayer().kickPlayer(reason);
+        }
+
+        if (getBanData().isBanned()) {
+            if (isOnline) {
+                throw new IllegalStateException("User already has been banned and was online. Please report this.");
+            }
+            throw new IllegalStateException("User already has been banned");
         }
 
         getConfiguration().setBanned(true);

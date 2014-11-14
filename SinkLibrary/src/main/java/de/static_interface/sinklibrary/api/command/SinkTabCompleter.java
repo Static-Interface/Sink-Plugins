@@ -79,14 +79,14 @@ public class SinkTabCompleter implements TabCompleter {
             String displayName = user.getDisplayName() == null ? "" : user.getDisplayName();
 
             if (includeSuffix) {
-                displayName = ChatColor.stripColor(displayName.toLowerCase()) + suffix;
+                displayName = ChatColor.stripColor(displayName) + suffix;
             } else {
-                displayName = ChatColor.stripColor(displayName.toLowerCase());
+                displayName = ChatColor.stripColor(displayName);
             }
 
             boolean hasDisplayname = false;
 
-            if (!StringUtil.isStringEmptyOrNull(displayName.replace(suffix, ""))) {
+            if (!StringUtil.isEmptyOrNull(displayName.replace(suffix, ""))) {
                 hasDisplayname = true;
             }
 
@@ -105,7 +105,7 @@ public class SinkTabCompleter implements TabCompleter {
             }
 
             // check if alias starts with displayname, if not, check if starts with default name
-            if (!StringUtil.isStringEmptyOrNull(s)) {
+            if (!StringUtil.isEmptyOrNull(s)) {
                 if (hasDisplayname && displayName.toLowerCase().startsWith(s.toLowerCase())) {
                     tmp.put(user, displayName);
                     continue;

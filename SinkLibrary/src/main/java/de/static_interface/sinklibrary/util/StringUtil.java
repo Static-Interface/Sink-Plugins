@@ -357,8 +357,18 @@ public class StringUtil {
      * @param s String to check
      * @return True if a string is null or if the string is empty (length == 0)
      */
-    public static boolean isStringEmptyOrNull(@Nullable String s) {
+    public static boolean isEmptyOrNull(@Nullable String s) {
         return s == null || s.trim().length() == 0 || s.trim().isEmpty();
+    }
+
+    /**
+     * @param s String to check
+     * @return True if a string is null or if the string is empty (length == 0)
+     * @deprecated Use {@link #isEmptyOrNull(String)} instead
+     */
+    @Deprecated
+    public static boolean isStringEmptyOrNull(@Nullable String s) {
+        return isEmptyOrNull(s);
     }
 
     @SuppressWarnings("deprecation")
