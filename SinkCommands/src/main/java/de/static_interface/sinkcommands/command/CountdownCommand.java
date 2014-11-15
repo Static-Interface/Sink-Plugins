@@ -17,8 +17,17 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -32,26 +41,67 @@ public class CountdownCommand extends SinkCommand {
     public CountdownCommand(Plugin plugin) {
         super(plugin);
         getCommandOptions().setIrcOpOnly(true);
+        getCommandOptions().setCliOptions(buildOptions());
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <reason>");
+    }
+
+    private Options buildOptions() {
+        Options options = new Options();
+        Option global = OptionBuilder
+                .withDescription("Announce countdown globally")
+                .withLongOpt("global")
+                .create("g");
+
+        Option radius = OptionBuilder
+                .hasArg()
+                .withLongOpt("radius")
+                .withDescription("Set countdown announce radius")
+                .withType(Number.class)
+                .withArgName("value")
+                .create("r");
+
+        Option time = OptionBuilder
+                .hasArg()
+                .withLongOpt("time")
+                .withDescription("Set time")
+                .withType(Number.class)
+                .withArgName("seconds")
+                .create("t");
+
+        Option command = OptionBuilder
+                .hasArg()
+                .withLongOpt("command")
+                .withArgName("command")
+                .withDescription("Execute command on finish")
+                .withType(String.class)
+                .create("c");
+
+        Option skipLastMsg = OptionBuilder
+                .withLongOpt("skipmsg")
+                .withDescription("Skip message when countdown finishes")
+                .create("s");
+
+        options.addOption(global);
+        options.addOption(radius);
+        options.addOption(time);
+        options.addOption(command);
+        options.addOption(skipLastMsg);
+
+        return options;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage(PREFIX + ChatColor.RED + "Falsche Benutzung! /cd <Sekunden> <Grund>");
-            return true;
+    public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+        if (args.length < 1) {
+            return false;
         }
-
         if (secondsLeft > 0) {
             sender.sendMessage(PREFIX + ChatColor.RED + "Es läuft bereits ein Countdown!");
         }
 
-        String secondsString = args[0];
-        long seconds;
-        try {
-            seconds = Long.parseLong(secondsString);
-        } catch (NumberFormatException ignored) {
-            sender.sendMessage(PREFIX + ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + '"' + secondsString + "\" ist keine gueltige Zahl!");
-            return true;
+        int seconds = 30;
+        if (getCommandLine().hasOption("t")) {
+            seconds = ((Number) getCommandLine().getParsedOptionValue("t")).intValue();
         }
 
         if (seconds < 0) {
@@ -64,19 +114,54 @@ public class CountdownCommand extends SinkCommand {
             return true;
         }
 
-        String message = "";
-        for (int i = 1; i < args.length; i++) {
-            message += ' ' + args[i];
+        if (getCommandLine().hasOption("g") && getCommandLine().hasOption("r")) {
+            sender.sendMessage(ChatColor.DARK_RED + "You can't use the -g and the -r flag at the same time!");
+            return true;
         }
-        message = message.trim();
+
+        String message = StringUtil.formatArrayToString(args, " ");
         secondsLeft = seconds;
+
+        String command = null;
+        if (getCommandLine().hasOption("c")) {
+            command = (String) getCommandLine().getParsedOptionValue("c");
+        }
+
+        boolean skipLastMsg = getCommandLine().hasOption("s");
+
+        if (getCommandLine().hasOption("g")) {
+            broadcastCounterGlobal(sender, message, command, skipLastMsg);
+            return true;
+        }
+
+        int radius = 30;
+        if (getCommandLine().hasOption("r")) {
+            radius = ((Number) getCommandLine().getParsedOptionValue("r")).intValue();
+        }
+
+        SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
+        if (!(executor instanceof IngameUser)) {
+            sender.sendMessage(ChatColor.DARK_RED + "Only ingame players can use this without the -g flag");
+            sender.sendMessage(ChatColor.DARK_RED + "Please use " + getCommandPrefix() + "countdown -g <options> <message>");
+            return true;
+        }
+        broadcastCounterLocal((IngameUser) executor, message, command, radius, skipLastMsg);
+        return true;
+    }
+
+    private void broadcastCounterGlobal(final CommandSender sender, String message, final String command, final boolean skipLastMsg) {
         BukkitUtil.broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!", true);
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (secondsLeft <= 0) {
                     secondsLeft = 0;
-                    BukkitUtil.broadcastMessage(PREFIX + ChatColor.GREEN + "Los!", true);
+                    if (!skipLastMsg) {
+                        BukkitUtil.broadcastMessage(PREFIX + ChatColor.GREEN + "Los!", true);
+                    }
+                    if (command != null) {
+                        Bukkit.dispatchCommand(sender, command);
+                    }
                     cancel();
                     return;
                 }
@@ -90,6 +175,39 @@ public class CountdownCommand extends SinkCommand {
                 secondsLeft--;
             }
         }.runTaskTimer(plugin, 0, 20L);
-        return true;
+    }
+
+    private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg) {
+        BukkitUtil.broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!", true);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (secondsLeft <= 0) {
+                    secondsLeft = 0;
+                    if (!skipLastMsg) {
+                        for (IngameUser user : executor.getUsersAround(radius)) {
+                            user.sendMessage(PREFIX + ChatColor.GREEN + "Los!");
+                        }
+                    }
+                    if (command != null) {
+                        Bukkit.dispatchCommand(executor.getSender(), command);
+                    }
+                    cancel();
+                    return;
+                }
+                if (secondsLeft > 10) {
+                    if (secondsLeft % 10 == 0) {
+                        for (IngameUser user : executor.getUsersAround(radius)) {
+                            user.sendMessage(PREFIX + ChatColor.RED + secondsLeft + "...");
+                        }
+                    }
+                } else {
+                    for (IngameUser user : executor.getUsersAround(radius)) {
+                        user.sendMessage(PREFIX + ChatColor.DARK_RED + secondsLeft);
+                    }
+                }
+                secondsLeft--;
+            }
+        }.runTaskTimer(plugin, 0, 20L);
     }
 }

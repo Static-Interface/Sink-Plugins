@@ -17,26 +17,35 @@
 
 package de.static_interface.sinklibrary.api.command;
 
-import de.static_interface.sinklibrary.api.annotation.Unstable;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+
+import java.io.PrintWriter;
+import java.io.Writer;
 
 public class SinkCommandOptions {
 
-    private boolean useNotices;
-    private boolean isPlayerOnly;
-    private boolean isIrcOnly;
-    private boolean isIrcOpOnly;
-    private boolean isIrcQueryOnly;
+    private boolean useNotices = false;
+    private boolean isPlayerOnly = false;
+    private boolean isIrcOnly = false;
+    private boolean isIrcOpOnly = false;
+    private boolean isIrcQueryOnly = false;
+    private Options cliOptions = null;
+    private String cmdLineSyntax = "";
+    private HelpFormatter cliHelpFormatter = null;
 
-    public SinkCommandOptions(boolean isPlayerOnly, boolean isIrcOnly, boolean isIrcOpOnly, boolean isIrcQueryOnly, @Unstable boolean useNotices) {
+    private SinkCommand parentCommand;
+
+    public SinkCommandOptions(SinkCommand parentCommand) {
         if (isPlayerOnly && isIrcOnly) {
             throw new IllegalStateException("A command can't be player only and irc only at the same time");
         }
 
-        this.isPlayerOnly = isPlayerOnly;
-        this.isIrcOnly = isIrcOnly;
-        this.isIrcOpOnly = isIrcOpOnly;
-        this.isIrcQueryOnly = isIrcQueryOnly;
-        this.useNotices = useNotices;
+        if (cmdLineSyntax == null) {
+            cmdLineSyntax = "";
+        }
+
+        this.parentCommand = parentCommand;
     }
 
     public boolean isPlayerOnly() {
@@ -77,5 +86,41 @@ public class SinkCommandOptions {
 
     public boolean useNotices() {
         return useNotices;
+    }
+
+    public Options getCliOptions() {
+        return cliOptions;
+    }
+
+    public void setCliOptions(Options cliOptions) {
+        this.cliOptions = cliOptions;
+    }
+
+    public String getCmdLineSyntax() {
+        return cmdLineSyntax;
+    }
+
+    public void setCmdLineSyntax(String cmdLineSyntax) {
+        if (cmdLineSyntax == null) {
+            cmdLineSyntax = "";
+        }
+        this.cmdLineSyntax = cmdLineSyntax;
+    }
+
+    public void setCliHelpFormatter(HelpFormatter cliHelpFormatter) {
+        this.cliHelpFormatter = cliHelpFormatter;
+    }
+
+    public HelpFormatter getCliHelpFormatter(Writer writer) {
+        if (cliHelpFormatter == null) {
+            cliHelpFormatter = new HelpFormatter();
+            cliHelpFormatter.setNewLine(System.lineSeparator());
+            cliHelpFormatter.printHelp(new PrintWriter(writer), HelpFormatter.DEFAULT_WIDTH,
+                                       getCmdLineSyntax()
+                                               .replaceAll("\\{ALIAS\\}", parentCommand.getCmdAlias())
+                                               .replaceAll("\\{PREFIX\\}", parentCommand.getCommandPrefix()), null, getCliOptions(),
+                                       HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
+        }
+        return cliHelpFormatter;
     }
 }

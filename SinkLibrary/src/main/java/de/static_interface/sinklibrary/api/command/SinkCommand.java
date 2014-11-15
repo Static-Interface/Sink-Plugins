@@ -27,6 +27,11 @@ import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -35,6 +40,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.io.StringWriter;
+
 import javax.annotation.Nullable;
 
 public abstract class SinkCommand implements CommandExecutor {
@@ -42,17 +49,20 @@ public abstract class SinkCommand implements CommandExecutor {
     protected CommandSender sender;
     protected Plugin plugin;
     private SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
-    private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(false, false, false, false, false);
+    private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(this);
     private String usage = null;
     private String permission;
     private boolean onPreExecuteCalled = false;
-
+    private CommandLineParser parser = new GnuParser();
+    private CommandLine cmdLine = null;
+    private String cmd = null;
     public SinkCommand(Plugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public final boolean onCommand(CommandSender sender, @Nullable Command command, String label, String[] args) {
+        cmd = label.trim().replaceFirst(StringUtil.stripRegex(getCommandPrefix()), "").split(" ")[0];
         this.sender = sender;
         boolean result = onPreExecute(sender, label, args);
         if (!onPreExecuteCalled) {
@@ -100,7 +110,15 @@ public abstract class SinkCommand implements CommandExecutor {
                 try {
                     Debug.log("onExecute(" + sender.getName() + ", " + label + " [" +
                               StringUtil.formatArrayToString(args, ", ") + "])");
-                    success = onExecute(sender, label, args);
+                    String[] parsedCmdArgs = args;
+                    String parsedLabel = label;
+                    Options options = getCommandOptions().getCliOptions();
+                    if (options != null) {
+                        cmdLine = parser.parse(getCommandOptions().getCliOptions(), args);
+                        parsedCmdArgs = cmdLine.getArgs();
+                        parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
+                    }
+                    success = onExecute(sender, parsedLabel, parsedCmdArgs);
                 } catch (Exception e) {
                     exception = e;
                 }
@@ -116,7 +134,7 @@ public abstract class SinkCommand implements CommandExecutor {
         return true;
     }
 
-    protected abstract boolean onExecute(CommandSender sender, String label, String[] args);
+    protected abstract boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException;
 
     protected void onPostExecute(CommandSender sender, String label, String[] args, Exception exception, boolean success) {
         boolean reportException = true;
@@ -131,6 +149,10 @@ public abstract class SinkCommand implements CommandExecutor {
         } else if (exception instanceof UserNotFoundException) {
             sender.sendMessage(exception.getMessage());
             reportException = false;
+        } else if (exception instanceof ParseException) {
+            sendUsage(sender);
+            sender.sendMessage(exception.getMessage());
+            return;
         }
 
         if (Debug.isEnabled() && exception != null) {
@@ -150,8 +172,12 @@ public abstract class SinkCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured");
             }
         } else if (!success && !StringUtil.isEmptyOrNull(getUsage()) && reportException) {
-            sender.sendMessage(getUsage()); // todo: replace command prefix and <command> macro
+            sendUsage(sender);
         }
+    }
+
+    private void sendUsage(CommandSender sender) {
+        sender.sendMessage(getUsage().split(System.lineSeparator()));
     }
 
     protected String getCommandPrefix() {
@@ -162,6 +188,12 @@ public abstract class SinkCommand implements CommandExecutor {
     }
 
     public String getUsage() {
+        Options options = getCommandOptions().getCliOptions();
+        if (StringUtil.isEmptyOrNull(usage) && options != null) {
+            StringWriter writer = new StringWriter();
+            getCommandOptions().getCliHelpFormatter(writer);
+            usage = writer.toString();
+        }
         return usage;
     }
 
@@ -183,5 +215,21 @@ public abstract class SinkCommand implements CommandExecutor {
 
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    public CommandLine getCommandLine() {
+        return cmdLine;
+    }
+
+    public CommandLineParser getCommandParser() {
+        return parser;
+    }
+
+    public String getCmdAlias() {
+        return cmd;
+    }
+
+    public void setCmdAlias(String cmd) {
+        this.cmd = cmd;
     }
 }

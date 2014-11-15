@@ -42,6 +42,7 @@ public class IrcCommandListener implements Listener {
             sender.sendMessage("Unknown command: " + rawCmd);
             return;
         }
+
         try {
             command.onCommand(sender, Bukkit.getPluginCommand(rawCmd), label, args);
         } catch (UnauthorizedAccessException exception) {

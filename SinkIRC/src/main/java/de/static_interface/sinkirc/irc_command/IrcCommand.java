@@ -32,8 +32,6 @@ public abstract class IrcCommand extends SinkCommand {
     }
 
     public boolean isQueryCommand() {
-        assert sender instanceof IrcCommandSender;
-
         IrcCommandSender ircSender = (IrcCommandSender) sender;
         String source = ircSender.getSource();
         return source != null && !ircSender.getSource().startsWith("#"); //todo: may be a bad way

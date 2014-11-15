@@ -29,13 +29,17 @@ import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.VaultBridge;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -297,4 +301,25 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         return new BanData(this, getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getBanTimeOut(),
                            getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
     }
+
+    public List<IngameUser> getUsersAround(int radius) {
+        if (!isOnline()) {
+            throw new IllegalStateException("User is not online!");
+        }
+        List<IngameUser> playersInRange = new ArrayList<>();
+        double x = getPlayer().getLocation().getX();
+        double y = getPlayer().getLocation().getY();
+        double z = getPlayer().getLocation().getZ();
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            Location loc = p.getLocation();
+            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && Math.abs(z - loc.getZ()) <= radius;
+
+            if (isInRange) {
+                playersInRange.add(SinkLibrary.getInstance().getIngameUser(p));
+            }
+        }
+        return playersInRange;
+    }
+
 }
