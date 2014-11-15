@@ -17,11 +17,15 @@
 
 package de.static_interface.sinklibrary.api.command;
 
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import java.io.PrintWriter;
 import java.io.Writer;
+
+import javax.annotation.Nonnull;
 
 public class SinkCommandOptions {
 
@@ -33,7 +37,7 @@ public class SinkCommandOptions {
     private Options cliOptions = null;
     private String cmdLineSyntax = "";
     private HelpFormatter cliHelpFormatter = null;
-
+    private CommandLineParser cliParser = null;
     private SinkCommand parentCommand;
 
     public SinkCommandOptions(SinkCommand parentCommand) {
@@ -46,6 +50,18 @@ public class SinkCommandOptions {
         }
 
         this.parentCommand = parentCommand;
+    }
+
+    public CommandLineParser getCliParser() {
+        if (cliParser == null) {
+            cliParser = new DefaultParser();
+        }
+
+        return cliParser;
+    }
+
+    public void setCliParser(@Nonnull CommandLineParser cliParser) {
+        this.cliParser = cliParser;
     }
 
     public boolean isPlayerOnly() {
@@ -89,6 +105,9 @@ public class SinkCommandOptions {
     }
 
     public Options getCliOptions() {
+        if (cliOptions != null && !cliOptions.hasOption("h")) {
+            cliOptions.addOption("h", "help", false, "Shows this message");
+        }
         return cliOptions;
     }
 

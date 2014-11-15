@@ -24,7 +24,6 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
@@ -47,39 +46,39 @@ public class CountdownCommand extends SinkCommand {
 
     private Options buildOptions() {
         Options options = new Options();
-        Option global = OptionBuilder
-                .withDescription("Announce countdown globally")
-                .withLongOpt("global")
-                .create("g");
+        Option global = Option.builder("g")
+                .desc("Announce countdown globally")
+                .longOpt("global")
+                .build();
 
-        Option radius = OptionBuilder
+        Option radius = Option.builder("r")
                 .hasArg()
-                .withLongOpt("radius")
-                .withDescription("Set countdown announce radius")
-                .withType(Number.class)
-                .withArgName("value")
-                .create("r");
+                .longOpt("radius")
+                .desc("Set countdown announce radius")
+                .type(Number.class)
+                .argName("value")
+                .build();
 
-        Option time = OptionBuilder
+        Option time = Option.builder("t")
                 .hasArg()
-                .withLongOpt("time")
-                .withDescription("Set time")
-                .withType(Number.class)
-                .withArgName("seconds")
-                .create("t");
+                .longOpt("time")
+                .desc("Set time")
+                .type(Number.class)
+                .argName("seconds")
+                .build();
 
-        Option command = OptionBuilder
-                .hasArg()
-                .withLongOpt("command")
-                .withArgName("command")
-                .withDescription("Execute command on finish")
-                .withType(String.class)
-                .create("c");
+        Option command = Option.builder("c")
+                .hasArgs()
+                .longOpt("command")
+                .valueSeparator(';')
+                .desc("Execute command on finish")
+                .argName("command")
+                .build();
 
-        Option skipLastMsg = OptionBuilder
-                .withLongOpt("skipmsg")
-                .withDescription("Skip message when countdown finishes")
-                .create("s");
+        Option skipLastMsg = Option.builder("s")
+                .longOpt("skipmsg")
+                .desc("Skip message when countdown finishes")
+                .build();
 
         options.addOption(global);
         options.addOption(radius);
@@ -100,7 +99,7 @@ public class CountdownCommand extends SinkCommand {
         }
 
         int seconds = 30;
-        if (getCommandLine().hasOption("t")) {
+        if (getCommandLine().hasOption('t')) {
             seconds = ((Number) getCommandLine().getParsedOptionValue("t")).intValue();
         }
 
@@ -114,7 +113,7 @@ public class CountdownCommand extends SinkCommand {
             return true;
         }
 
-        if (getCommandLine().hasOption("g") && getCommandLine().hasOption("r")) {
+        if (getCommandLine().hasOption('g') && getCommandLine().hasOption('r')) {
             sender.sendMessage(ChatColor.DARK_RED + "You can't use the -g and the -r flag at the same time!");
             return true;
         }
@@ -123,19 +122,19 @@ public class CountdownCommand extends SinkCommand {
         secondsLeft = seconds;
 
         String command = null;
-        if (getCommandLine().hasOption("c")) {
-            command = (String) getCommandLine().getParsedOptionValue("c");
+        if (getCommandLine().hasOption('c')) {
+            command = StringUtil.formatArrayToString(getCommandLine().getOptionValues('c'), " ");
         }
 
-        boolean skipLastMsg = getCommandLine().hasOption("s");
+        boolean skipLastMsg = getCommandLine().hasOption('s');
 
-        if (getCommandLine().hasOption("g")) {
+        if (getCommandLine().hasOption('g')) {
             broadcastCounterGlobal(sender, message, command, skipLastMsg);
             return true;
         }
 
         int radius = 30;
-        if (getCommandLine().hasOption("r")) {
+        if (getCommandLine().hasOption('r')) {
             radius = ((Number) getCommandLine().getParsedOptionValue("r")).intValue();
         }
 

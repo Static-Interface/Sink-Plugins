@@ -29,7 +29,6 @@ import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
@@ -53,7 +52,7 @@ public abstract class SinkCommand implements CommandExecutor {
     private String usage = null;
     private String permission;
     private boolean onPreExecuteCalled = false;
-    private CommandLineParser parser = new GnuParser();
+    private CommandLineParser parser = getCommandOptions().getCliParser();
     private CommandLine cmdLine = null;
     private String cmd = null;
     public SinkCommand(Plugin plugin) {
@@ -100,6 +99,11 @@ public abstract class SinkCommand implements CommandExecutor {
         if (getCommandOptions().useNotices() && sender instanceof IrcCommandSender) {
             defaultNotices = ((IrcCommandSender) sender).getUseNotice();
             ((IrcCommandSender) sender).setUseNotice(true);
+        }
+
+        if (cmdLine != null && cmdLine.hasOption("h")) {
+            sendUsage(sender);
+            return true;
         }
 
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
@@ -151,7 +155,7 @@ public abstract class SinkCommand implements CommandExecutor {
             reportException = false;
         } else if (exception instanceof ParseException) {
             sendUsage(sender);
-            sender.sendMessage(exception.getMessage());
+            sender.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + exception.getMessage());
             return;
         }
 
