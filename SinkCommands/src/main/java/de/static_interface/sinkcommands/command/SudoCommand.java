@@ -1,26 +1,27 @@
 /*
- * Copyright (c) 2013 - 2014 http://adventuria.eu, http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.sender.FakeConsoleCommandSender;
+import de.static_interface.sinklibrary.api.sender.FakeCommandSender;
 import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
-import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,22 +38,23 @@ public class SudoCommand extends SinkCommand {
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (args.length < 3) {
+        if (args.length < 2) {
             return false;
         }
-        String target = args[0];
+
         CommandSender fakeSender;
 
-        if (target.equalsIgnoreCase("console")) {
-            fakeSender = new FakeConsoleCommandSender
-                    (Bukkit.getConsoleSender(), sender);
+        SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
+
+        if (!target.isOnline()) {
+            sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");
+            return true;
+        }
+
+        if (target.getBase() instanceof Player) {
+            fakeSender = new FakePlayerCommandSender((Player) target.getBase(), sender);
         } else {
-            Player p = BukkitUtil.getPlayer(target);
-            if (p == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");
-                return true;
-            }
-            fakeSender = new FakePlayerCommandSender(p, sender);
+            fakeSender = new FakeCommandSender(target.getSender(), sender);
         }
 
         String commandLine = StringUtil.formatArrayToString(args, " ", 1);

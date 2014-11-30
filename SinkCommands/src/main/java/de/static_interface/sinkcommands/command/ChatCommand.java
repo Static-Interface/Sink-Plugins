@@ -15,19 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.api.exception;
+package de.static_interface.sinkcommands.command;
 
-public class NotEnoughArgumentsException extends RuntimeException {
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.ParseException;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
-    public NotEnoughArgumentsException() {
-        super("");
+public class ChatCommand extends SinkCommand {
+
+    public ChatCommand(Plugin plugin) {
+        super(plugin);
+        getCommandOptions().setPlayerOnly(true);
     }
 
-    public NotEnoughArgumentsException(final String string) {
-        super(string);
-    }
-
-    public NotEnoughArgumentsException(final Throwable ex) {
-        super("", ex);
+    @Override
+    protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+        String message = StringUtil.formatArrayToString(args, " ");
+        ((Player) sender).chat(message);
+        return true;
     }
 }

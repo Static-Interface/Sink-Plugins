@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
- *  
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package de.static_interface.sinkcommands;
@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands;
 import static de.static_interface.sinklibrary.Constants.TICK;
 
 import com.earth2me.essentials.Essentials;
+import de.static_interface.sinkcommands.command.ChatCommand;
 import de.static_interface.sinkcommands.command.ClearCommand;
 import de.static_interface.sinkcommands.command.CountdownCommand;
 import de.static_interface.sinkcommands.command.DrugCommand;
@@ -202,7 +203,7 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("rawuser", new RawCommands.RawUserCommand(this));
         SinkLibrary.getInstance().registerCommand("gup", new GupCommand(this));
         SinkLibrary.getInstance().registerCommand("sudo", new SudoCommand(this));
-
+        SinkLibrary.getInstance().registerCommand("chat", new ChatCommand(this));
         SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this));
         SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this));
     }

@@ -20,92 +20,89 @@ package de.static_interface.sinklibrary.user;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.api.sender.FakeSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.Permission;
 
-public class ConsoleUser extends SinkUser<ConsoleCommandSender> {
+public class FakeUser extends SinkUser<FakeSender> {
 
-    private ConsoleCommandSender sender;
+    SinkUser base;
+    SinkUser faker;
 
-    public ConsoleUser(ConsoleCommandSender sender, SinkUserProvider provider) {
-        super(sender, provider);
-        this.sender = sender;
+    public FakeUser(FakeSender base, SinkUserProvider provider) {
+        super(base, provider);
+        this.base = SinkLibrary.getInstance().getUser((Object) base.getBase());
+        this.faker = SinkLibrary.getInstance().getUser((Object) base.getFaker());
     }
 
     @Override
     public String getName() {
-        return "Console";
+        return base.getName();
     }
 
     @Override
     public String getDisplayName() {
-        return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
+        return base.getDisplayName();
     }
 
     @Override
     public Configuration getConfiguration() {
+        if (base instanceof IngameUser) {
+            return base.getConfiguration();
+        }
         return null;
     }
 
     @Override
-    @Deprecated
     public CommandSender getSender() {
-        return sender;
+        return base.getSender();
     }
 
     @Override
     public boolean hasPermission(SinkCommand command) {
-        return true;
+        return base.hasPermission(command.getPermission());
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return true;
+        return base.hasPermission(permission);
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return true;
+        return base.hasPermission(permission);
     }
 
     @Override
     public boolean isOp() {
-        return true;
+        return base.isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        // do nothing
+        base.setOp(value);
     }
 
     @Override
     public String getPrimaryGroup() {
-        throw new UnsupportedOperationException("Console can't have a group");
+        return base.getPrimaryGroup();
     }
 
     @Override
     public String getChatPrefix() {
-        return ChatColor.DARK_RED.toString();
+        return base.getChatPrefix();
     }
 
     @Override
     public void sendMessage(String msg) {
-        getSender().sendMessage(msg);
-    }
-
-    @Override
-    public void sendDebugMessage(String msg) {
-        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
-            sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + msg);
-        }
+        base.sendMessage(msg);
+        faker.sendMessage(msg);
     }
 
     @Override
     public boolean isOnline() {
-        return true;
+        return base.isOnline();
     }
 }

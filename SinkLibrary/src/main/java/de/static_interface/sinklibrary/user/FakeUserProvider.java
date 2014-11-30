@@ -15,19 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.api.exception;
+package de.static_interface.sinklibrary.user;
 
-public class NotEnoughArgumentsException extends RuntimeException {
+import de.static_interface.sinklibrary.api.sender.FakeSender;
+import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 
-    public NotEnoughArgumentsException() {
-        super("");
+import javax.annotation.Nullable;
+
+public class FakeUserProvider extends SinkUserProvider<FakeSender, FakeUser> {
+
+    @Nullable
+    @Override
+    public FakeUser getUserInstance(String name) {
+        return null;
     }
 
-    public NotEnoughArgumentsException(final String string) {
-        super(string);
-    }
-
-    public NotEnoughArgumentsException(final Throwable ex) {
-        super("", ex);
+    @Override
+    public String getTabCompleterSuffix() {
+        return "";
     }
 }

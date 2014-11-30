@@ -117,6 +117,10 @@ commands:
     permission: sinkcommands.message
     aliases: r
 
+  chat:
+    description: Chat lel
+    permission: sinkcommands.chat
+
 permissions:
   sinkcommands.*:
     description: Gives access to all commands
@@ -128,6 +132,7 @@ permissions:
       sinkcommands.message: true
       sinkcommands.freeze: true
       sinkcommands.globalmute: true
+      sinkcommands.chat: true
       sinkcommands.teamchat: true
       sinkcommands.message: true
       sinkcommands.teamchat.color: true
@@ -157,6 +162,10 @@ permissions:
 
   sinkcommands.message:
     description: Allows to send messages
+    default: true
+
+  sinkcommands.chat:
+    description: Allows to use the chat command
     default: true
 
   sinkcommands.milk.*:

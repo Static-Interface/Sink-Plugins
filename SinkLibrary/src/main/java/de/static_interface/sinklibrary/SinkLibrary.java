@@ -1,27 +1,29 @@
 /*
- * Copyright (c) 2014 http://adventuria.eu, http://static-interface.de and contributors
- *  
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package de.static_interface.sinklibrary;
 
+import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.api.sender.FakeSender;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -37,6 +39,7 @@ import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
+import de.static_interface.sinklibrary.user.FakeUserProvider;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IngameUserProvider;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -67,7 +70,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -102,6 +107,7 @@ public class SinkLibrary extends JavaPlugin {
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
     private ConsoleUserProvider consoleUserProvider;
+    private FakeUserProvider fakeUserProvider;
     private SinkTabCompleter defaultCompleter;
 
     /**
@@ -146,6 +152,8 @@ public class SinkLibrary extends JavaPlugin {
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
+        fakeUserProvider = new FakeUserProvider();
+
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
@@ -155,7 +163,7 @@ public class SinkLibrary extends JavaPlugin {
         registerUserImplementation(Player.class, ingameUserProvider);
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
-
+        registerUserImplementation(FakeSender.class, fakeUserProvider);
         // Init language
         LanguageConfiguration languageConfiguration =
                 new LanguageConfiguration();
@@ -530,6 +538,10 @@ public class SinkLibrary extends JavaPlugin {
     public SinkUser getUser(String partialName, boolean throwExceptionIfNotFound) {
         boolean hasSuffix = false;
 
+        if (partialName.equalsIgnoreCase("console")) {
+            return getConsoleUser();
+        }
+
         //Search for suffixes
         for (SinkUserProvider provider : userImplementations.values()) {
             String suffix = provider.getTabCompleterSuffix();
@@ -733,11 +745,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param uuid UUID of the User who needs to be unloaded
      */
     public void unloadUser(UUID uuid) {
-        Player p = Bukkit.getPlayer(uuid);
-        IngameUser user = null;
-        if (p != null) {
-            user = ingameUserProvider.getUserInstance(uuid);
-        }
+        IngameUser user = ingameUserProvider.getUserInstance(uuid);
         if (user == null) {
             return;
         }
@@ -757,8 +765,9 @@ public class SinkLibrary extends JavaPlugin {
     /**
      * @return Online players as Users
      */
+    @Unstable
     public Collection<IngameUser> getOnlineUsers() {
-        Collection<IngameUser> users = new ArrayList<>();
+        Set<IngameUser> users = new HashSet<>();
         for (SinkUser user : ingameUserProvider.getUserInstances()) {
             users.add((IngameUser) user);
         }
@@ -768,8 +777,9 @@ public class SinkLibrary extends JavaPlugin {
     /**
      * @return Online IRC users as Users
      */
+    @Unstable
     public Collection<IrcUser> getOnlineIrcUsers() {
-        Collection<IrcUser> users = new ArrayList<>();
+        Set<IrcUser> users = new HashSet<>();
         for (SinkUser user : ircUserProvider.getUserInstances()) {
             users.add((IrcUser) user);
         }
