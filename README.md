@@ -6,7 +6,7 @@ For more information, visit <a href="http://dev.bukkit.org/bukkit-plugins/sink-p
 
 License
 ==============
-This work is licensed under an GNU General Public Licenese v3. For more information, read the LICENSE file.
+This work is licensed under an GNU Affero General Public Licenese v3. For more information, read the LICENSE file.
 
 
 Contribution Guidelines
