@@ -302,7 +302,20 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
                            getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
     }
 
+    @Deprecated
     public List<IngameUser> getUsersAround(int radius) {
+        return getUsersInRadius(radius);
+    }
+
+    public List<IngameUser> getUsersInRadius(int radius) {
+        return getUsersInRadius(radius, false);
+    }
+
+    public List<IngameUser> getUsersInRadius2d(int radius) {
+        return getUsersInRadius(radius, true);
+    }
+
+    public List<IngameUser> getUsersInRadius(int radius, boolean includeY) {
         if (!isOnline()) {
             throw new IllegalStateException("User is not online!");
         }
@@ -313,9 +326,14 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= radius && Math.abs(y - loc.getY()) <= radius && Math.abs(z - loc.getZ()) <= radius;
+            double range;
+            if (includeY) {
+                range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(z - loc.getZ(), 2));
+            } else {
+                range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(y - loc.getY(), 2) + Math.pow(z - loc.getZ(), 2));
+            }
 
-            if (isInRange) {
+            if (range <= radius) {
                 playersInRange.add(SinkLibrary.getInstance().getIngameUser(p));
             }
         }

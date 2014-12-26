@@ -176,14 +176,18 @@ public class CountdownCommand extends SinkCommand {
     }
 
     private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg) {
-        BukkitUtil.broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!", true);
+
+        for (IngameUser user : executor.getUsersInRadius(radius)) {
+            user.sendMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!");
+        }
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (secondsLeft <= 0) {
                     secondsLeft = 0;
                     if (!skipLastMsg) {
-                        for (IngameUser user : executor.getUsersAround(radius)) {
+                        for (IngameUser user : executor.getUsersInRadius(radius)) {
                             user.sendMessage(PREFIX + ChatColor.GREEN + "Los!");
                         }
                     }
@@ -195,12 +199,12 @@ public class CountdownCommand extends SinkCommand {
                 }
                 if (secondsLeft > 10) {
                     if (secondsLeft % 10 == 0) {
-                        for (IngameUser user : executor.getUsersAround(radius)) {
+                        for (IngameUser user : executor.getUsersInRadius(radius)) {
                             user.sendMessage(PREFIX + ChatColor.RED + secondsLeft + "...");
                         }
                     }
                 } else {
-                    for (IngameUser user : executor.getUsersAround(radius)) {
+                    for (IngameUser user : executor.getUsersInRadius(radius)) {
                         user.sendMessage(PREFIX + ChatColor.DARK_RED + secondsLeft);
                     }
                 }
