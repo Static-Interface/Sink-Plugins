@@ -168,6 +168,10 @@ public class IrcUtil {
             return;
         }
 
+        if (user.getNick().equals(SinkIRC.getInstance().getIrcBot().getNick())) {
+            return; // Bot has send a message to itself, this causes an ininite loop on this method and the server will crash after that
+        }
+
         Debug.logMethodCall(label);
         if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);
