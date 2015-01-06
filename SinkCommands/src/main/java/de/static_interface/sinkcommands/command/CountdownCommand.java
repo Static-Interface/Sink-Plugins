@@ -35,7 +35,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class CountdownCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RED + "CountDown" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
-    static long secondsLeft;
+    private static long secondsLeftGlobal;
+
+    //Todo: allow multiple local countdowns at the same time
 
     public CountdownCommand(Plugin plugin) {
         super(plugin);
@@ -91,10 +93,7 @@ public class CountdownCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (secondsLeft > 0) {
-            sender.sendMessage(PREFIX + ChatColor.RED + "Es läuft bereits ein Countdown!");
-            return true;
-        }
+
 
         int seconds = 30;
         if (getCommandLine().hasOption('t')) {
@@ -111,13 +110,24 @@ public class CountdownCommand extends SinkCommand {
             return true;
         }
 
-        if (getCommandLine().hasOption('g') && getCommandLine().hasOption('r')) {
-            sender.sendMessage(ChatColor.DARK_RED + "You can't use the -g and the -r flag at the same time!");
-            return true;
+        if (getCommandLine().hasOption('g')) {
+            if (getCommandLine().hasOption('r')) {
+                sender.sendMessage(ChatColor.DARK_RED + "You can't use the -g and the -r flag at the same time!");
+                return true;
+            }
+            if (secondsLeftGlobal > 0) {
+                sender.sendMessage(PREFIX + ChatColor.RED + "Es läuft bereits ein globaler Countdown!");
+                return true;
+            } else {
+                secondsLeftGlobal = seconds;
+            }
         }
 
-        String message = StringUtil.formatArrayToString(args, " ");
-        secondsLeft = seconds;
+        String message = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ");
+
+        if (message.equalsIgnoreCase("")) {
+            return false;
+        }
 
         String command = null;
         if (getCommandLine().hasOption('c')) {
@@ -140,10 +150,9 @@ public class CountdownCommand extends SinkCommand {
         if (!(executor instanceof IngameUser)) {
             sender.sendMessage(ChatColor.DARK_RED + "Only ingame players can use this without the -g flag");
             sender.sendMessage(ChatColor.DARK_RED + "Please use " + getCommandPrefix() + "countdown -g <options> <message>");
-            secondsLeft = 0;
             return true;
         }
-        broadcastCounterLocal((IngameUser) executor, message, command, radius, skipLastMsg);
+        broadcastCounterLocal((IngameUser) executor, message, command, radius, skipLastMsg, seconds);
         return true;
     }
 
@@ -152,8 +161,8 @@ public class CountdownCommand extends SinkCommand {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (secondsLeft <= 0) {
-                    secondsLeft = 0;
+                if (secondsLeftGlobal <= 0) {
+                    secondsLeftGlobal = 0;
                     if (!skipLastMsg) {
                         BukkitUtil.broadcastMessage(PREFIX + ChatColor.GREEN + "Los!", true);
                     }
@@ -163,29 +172,29 @@ public class CountdownCommand extends SinkCommand {
                     cancel();
                     return;
                 }
-                if (secondsLeft > 10) {
-                    if (secondsLeft % 10 == 0) {
-                        BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + secondsLeft + "...", true);
+                if (secondsLeftGlobal > 10) {
+                    if (secondsLeftGlobal % 10 == 0) {
+                        BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + secondsLeftGlobal + "...", true);
                     }
                 } else {
-                    BukkitUtil.broadcastMessage(PREFIX + ChatColor.DARK_RED + secondsLeft, true);
+                    BukkitUtil.broadcastMessage(PREFIX + ChatColor.DARK_RED + secondsLeftGlobal, true);
                 }
-                secondsLeft--;
+                secondsLeftGlobal--;
             }
         }.runTaskTimer(plugin, 0, 20L);
     }
 
-    private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg) {
-
+    private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg,
+                                       final int seconds) {
         for (IngameUser user : executor.getUsersInRadius(radius)) {
             user.sendMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!");
         }
 
+        final int[] secondsLeft = {seconds};
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (secondsLeft <= 0) {
-                    secondsLeft = 0;
+                if (secondsLeft[0] <= 0) {
                     if (!skipLastMsg) {
                         for (IngameUser user : executor.getUsersInRadius(radius)) {
                             user.sendMessage(PREFIX + ChatColor.GREEN + "Los!");
@@ -197,18 +206,18 @@ public class CountdownCommand extends SinkCommand {
                     cancel();
                     return;
                 }
-                if (secondsLeft > 10) {
-                    if (secondsLeft % 10 == 0) {
+                if (secondsLeft[0] > 10) {
+                    if (secondsLeft[0] % 10 == 0) {
                         for (IngameUser user : executor.getUsersInRadius(radius)) {
-                            user.sendMessage(PREFIX + ChatColor.RED + secondsLeft + "...");
+                            user.sendMessage(PREFIX + ChatColor.RED + secondsLeft[0] + "...");
                         }
                     }
                 } else {
                     for (IngameUser user : executor.getUsersInRadius(radius)) {
-                        user.sendMessage(PREFIX + ChatColor.DARK_RED + secondsLeft);
+                        user.sendMessage(PREFIX + ChatColor.DARK_RED + secondsLeft[0]);
                     }
                 }
-                secondsLeft--;
+                secondsLeft[0]--;
             }
         }.runTaskTimer(plugin, 0, 20L);
     }

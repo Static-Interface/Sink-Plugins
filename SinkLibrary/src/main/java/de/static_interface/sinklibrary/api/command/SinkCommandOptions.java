@@ -34,6 +34,7 @@ public class SinkCommandOptions {
     private boolean isIrcOnly = false;
     private boolean isIrcOpOnly = false;
     private boolean isIrcQueryOnly = false;
+    private boolean defaultHelpEnabled = true;
     private Options cliOptions = null;
     private String cmdLineSyntax = "";
     private HelpFormatter cliHelpFormatter = null;
@@ -105,7 +106,7 @@ public class SinkCommandOptions {
     }
 
     public Options getCliOptions() {
-        if (cliOptions != null && !cliOptions.hasOption("h")) {
+        if (cliOptions != null && !cliOptions.hasOption("h") && !cliOptions.hasLongOption("help") && isDefaultHelpEnabled()) {
             cliOptions.addOption("h", "help", false, "Shows this message");
         }
         return cliOptions;
@@ -141,5 +142,13 @@ public class SinkCommandOptions {
                                        HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
         }
         return cliHelpFormatter;
+    }
+
+    public boolean isDefaultHelpEnabled() {
+        return defaultHelpEnabled;
+    }
+
+    public void setDefaultHelpEnabled(boolean defaultHelpEnabled) {
+        this.defaultHelpEnabled = defaultHelpEnabled;
     }
 }

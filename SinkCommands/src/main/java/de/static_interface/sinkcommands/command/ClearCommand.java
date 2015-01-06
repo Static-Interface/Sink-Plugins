@@ -17,17 +17,21 @@
 
 package de.static_interface.sinkcommands.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.*;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-import de.static_interface.sinklibrary.*;
-import de.static_interface.sinklibrary.api.command.*;
-import de.static_interface.sinklibrary.user.*;
-import org.apache.commons.cli.*;
-import org.bukkit.*;
-import org.bukkit.command.*;
-import org.bukkit.entity.*;
-import org.bukkit.plugin.*;
-import org.bukkit.potion.*;
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 
 public class ClearCommand extends SinkCommand {
     //Todo: convert to command
@@ -38,7 +42,7 @@ public class ClearCommand extends SinkCommand {
         super(plugin);
         getCommandOptions().setPlayerOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options>");
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [options] [target]");
     }
 
     private Options buildOptions() {
@@ -68,37 +72,25 @@ public class ClearCommand extends SinkCommand {
                 .desc("Clear everything")
                 .build();
 
-        Option target = Option.builder("t")
-                .longOpt("target")
-                .desc("Target player")
-                .hasArgs()
-                .argName("player")
-                .type(String.class)
-                .build();
-
         options.addOption(inventory);
         options.addOption(effects);
         options.addOption(armor);
         options.addOption(xp);
         options.addOption(all);
-        options.addOption(target);
-
         return options;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] argsArr) throws ParseException {
+    public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         Player player = (Player) sender;
 
         IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
-
-        if (getCommandLine().hasOption('t')) {
+        String targetName = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ").trim();
+        if (!targetName.equalsIgnoreCase("")) {
             if (!user.hasPermission("sinkcommands.clear.others")) {
                 sender.sendMessage(PREFIX + m("Permissions.General"));
                 return true;
             }
-
-            String targetName = getCommandLine().getParsedOptionValue("t").toString();
 
             player = Bukkit.getPlayer(targetName);
 
@@ -113,16 +105,29 @@ public class ClearCommand extends SinkCommand {
         boolean clearArmor;
         boolean clearXp;
 
+        clearInventory = getCommandLine().hasOption('i');
+        clearEffects = getCommandLine().hasOption('e');
+        clearArmor = getCommandLine().hasOption('a');
+        clearXp = getCommandLine().hasOption('x');
+
         if (getCommandLine().hasOption('A')) {
+            //invert other options, for queries like "clear everything except these options"
+            if (clearInventory) {
+                clearInventory = false;
+            }
+            if (clearEffects) {
+                clearEffects = false;
+            }
+            if (clearArmor) {
+                clearArmor = false;
+            }
+            if (clearXp) {
+                clearXp = false;
+            }
+        } else if (!clearInventory && !clearArmor && !clearEffects && !clearXp) {
+            //default options
             clearInventory = true;
-            clearEffects = true;
             clearArmor = true;
-            clearXp = true;
-        } else {
-            clearInventory = getCommandLine().hasOption('i');
-            clearEffects = getCommandLine().hasOption('e');
-            clearArmor = getCommandLine().hasOption('a');
-            clearXp = getCommandLine().hasOption('x');
         }
 
         if (clearInventory) {
@@ -167,7 +172,7 @@ public class ClearCommand extends SinkCommand {
         }
 
         if (!player.equals(sender)) {
-            sender.sendMessage(PREFIX + player.getDisplayName() + " wurde gecleart.");
+            sender.sendMessage(PREFIX + ChatColor.RED + player.getDisplayName() + " wurde gecleart.");
         }
         player.sendMessage(PREFIX + ChatColor.RED + "Du wurdest gecleart.");
         return true;

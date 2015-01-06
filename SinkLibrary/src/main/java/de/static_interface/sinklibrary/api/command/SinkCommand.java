@@ -100,12 +100,6 @@ public abstract class SinkCommand implements CommandExecutor {
             defaultNotices = ((IrcCommandSender) sender).getUseNotice();
             ((IrcCommandSender) sender).setUseNotice(true);
         }
-
-        if (cmdLine != null && cmdLine.hasOption("h")) {
-            sendUsage(sender);
-            return true;
-        }
-
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
@@ -119,6 +113,10 @@ public abstract class SinkCommand implements CommandExecutor {
                     Options options = getCommandOptions().getCliOptions();
                     if (options != null) {
                         cmdLine = parser.parse(getCommandOptions().getCliOptions(), args);
+                        if (getCommandOptions().isDefaultHelpEnabled() && cmdLine.hasOption('h')) {
+                            sendUsage(sender);
+                            return;
+                        }
                         parsedCmdArgs = cmdLine.getArgs();
                         parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
                     }
@@ -173,7 +171,7 @@ public abstract class SinkCommand implements CommandExecutor {
             if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
                 sender.sendMessage(exception.getMessage());
             } else {
-                sender.sendMessage(ChatColor.DARK_RED + "An internal error occured");
+                sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");
             }
         } else if (!success && !StringUtil.isEmptyOrNull(getUsage()) && reportException) {
             sendUsage(sender);
