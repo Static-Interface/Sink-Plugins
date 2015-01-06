@@ -63,7 +63,7 @@ public class SinkReloadCommand extends SinkCommand {
         }
 
         sender.sendMessage(PREFIX + "Reloading Libraries...");
-        SinkLibrary.getInstance().loadLibs();
+        SinkLibrary.getInstance().loadLibs(SinkLibrary.getInstance().getUser((Object) sender));
 
         sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
         return true;

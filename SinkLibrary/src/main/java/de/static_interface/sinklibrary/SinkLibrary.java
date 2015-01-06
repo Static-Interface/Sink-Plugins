@@ -52,6 +52,7 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
@@ -241,7 +242,7 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
 
-        loadLibs();
+        loadLibs(getConsoleUser());
     }
 
     public SinkTabCompleter getDefaultTabCompleter() {
@@ -253,42 +254,65 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public void loadLibs() {
-        try {
-            File[] files = LIB_FOLDER.listFiles();
-            if (files != null) {
-                int i = 0;
-                for (File file : files) {
-                    if (loadedLibs.contains(file.getCanonicalPath())) {
+        loadLibs(null);
+    }
+
+    public void loadLibs(@Nullable SinkUser user) {
+        if (user == null) {
+            user = getConsoleUser();
+        }
+
+        File[] files = LIB_FOLDER.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    boolean loaded = true;
+                    String path = file.getCanonicalPath();
+
+                    // Don't load the same libs again (e.g. when using /sreload)
+                    if (loadedLibs.contains(path)) {
                         continue;
                     }
 
                     if (file.getName().endsWith(".jar")) {
-                        getLogger().info("SinkLibrary: Loading java library: " + file.getName());
-                        addUrlToClasspath(file.toURL());
-                        i++;
+                        user.sendMessage(ChatColor.DARK_GREEN + "Loading jar library: " + file.getName());
+                        addJarToClasspath(file.toURI().toURL());
+                    } else if (file.getName().endsWith(".class")) {
+                        addClassToClasspath(path);
+                        user.sendMessage(ChatColor.DARK_GREEN + "Loading class file: " + file.getName());
+                    } else if (file.getName().endsWith(".so") || file.getName().endsWith(".dll")) {
+                        user.sendMessage(ChatColor.DARK_GREEN + "Loading native library: " + file.getName());
+                        System.load(path);
+                    } else {
+                        user.sendMessage(ChatColor.RED + "Warning! Skipped unknown file: " + file.getName());
+                        loaded = false;
                     }
 
-                    loadedLibs.add(file.getCanonicalPath());
-                    //Todo:
-                    //if(file.getName().endsWith(".so") ||file.getName().endsWith("dll"))
-                    //{
-                    //    getLogger().info("SinkScripts: Loading native library: " + file.getName());
-                    //    System.load(file.getCanonicalPath());
-                    //    i++;
-                    //}
+                    if (loaded) {
+                        loadedLibs.add(path);
+                    }
+                } catch (Throwable thr) {
+                    user.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + "An exception occurred while loading file: " + file.getName());
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+
+        if (loadedLibs.size() > 0) {
+            getLogger().info("Loaded " + loadedLibs.size() + " Libraries");
         }
     }
 
-    public void addUrlToClasspath(URL url) throws Exception {
+    @Unstable
+    public void addClassToClasspath(String path) throws Exception {
+        getClassLoader().loadClass(path);
+    }
+
+    public void addJarToClasspath(URL url) throws Exception {
         URLClassLoader classLoader
                 = (URLClassLoader) getClassLoader();
         Class clazz = URLClassLoader.class;
 
-        // Use reflection
+        // Use reflection to access protected "addURL" method
         Method method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
         method.setAccessible(true);
         method.invoke(classLoader, url);
