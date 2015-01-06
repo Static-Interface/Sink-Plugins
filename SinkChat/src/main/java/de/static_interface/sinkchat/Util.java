@@ -17,28 +17,25 @@
 
 package de.static_interface.sinkchat;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.*;
 
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.util.BukkitUtil;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import de.static_interface.sinklibrary.*;
+import de.static_interface.sinklibrary.configuration.*;
+import de.static_interface.sinklibrary.user.*;
+import de.static_interface.sinklibrary.util.*;
+import org.bukkit.*;
+import org.bukkit.entity.*;
 
 public class Util {
 
     public static void sendMessage(IngameUser user, String message, int range) {
-
-        double x = user.getPlayer().getLocation().getX();
-        double y = user.getPlayer().getLocation().getY();
-        double z = user.getPlayer().getLocation().getZ();
-
         for (Player p : BukkitUtil.getOnlinePlayers()) {
-            Location loc = p.getLocation();
-            boolean isInRange = Math.abs(x - loc.getX()) <= range && Math.abs(y - loc.getY()) <= range && Math.abs(z - loc.getZ()) <= range;
 
+            if (p.getWorld() != user.getPlayer().getWorld()) {
+                continue;
+            }
+
+            boolean isInRange = range > 0 && user.getDistance(p) <= range;
             IngameUser onlineUser = SinkLibrary.getInstance().getIngameUser(p);
 
             // Check for spy

@@ -302,6 +302,25 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
                            getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
     }
 
+    public double getDistance(Player p, boolean use2d) {
+        double x = getPlayer().getLocation().getX();
+        double y = getPlayer().getLocation().getY();
+        double z = getPlayer().getLocation().getZ();
+        Location loc = p.getLocation();
+        double range;
+        if (use2d) {
+            range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(z - loc.getZ(), 2));
+        } else {
+            range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(y - loc.getY(), 2) + Math.pow(z - loc.getZ(), 2));
+        }
+
+        return range;
+    }
+
+    public double getDistance(Player p) {
+        return getDistance(p, false);
+    }
+
     @Deprecated
     public List<IngameUser> getUsersAround(int radius) {
         return getUsersInRadius(radius);
@@ -311,29 +330,17 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         return getUsersInRadius(radius, false);
     }
 
-    public List<IngameUser> getUsersInRadius2d(int radius) {
-        return getUsersInRadius(radius, true);
-    }
-
-    public List<IngameUser> getUsersInRadius(int radius, boolean includeY) {
+    public List<IngameUser> getUsersInRadius(int radius, boolean is2dRadius) {
         if (!isOnline()) {
             throw new IllegalStateException("User is not online!");
         }
         List<IngameUser> playersInRange = new ArrayList<>();
-        double x = getPlayer().getLocation().getX();
-        double y = getPlayer().getLocation().getY();
-        double z = getPlayer().getLocation().getZ();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Location loc = p.getLocation();
-            double range;
-            if (includeY) {
-                range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(z - loc.getZ(), 2));
-            } else {
-                range = Math.sqrt(Math.pow(x - loc.getX(), 2) + Math.pow(y - loc.getY(), 2) + Math.pow(z - loc.getZ(), 2));
+            if (p.getWorld() != getPlayer().getWorld()) {
+                continue;
             }
-
-            if (range <= radius) {
+            if (getDistance(p, is2dRadius) <= radius) {
                 playersInRange.add(SinkLibrary.getInstance().getIngameUser(p));
             }
         }
