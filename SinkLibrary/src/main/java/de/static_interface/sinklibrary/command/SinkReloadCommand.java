@@ -61,6 +61,10 @@ public class SinkReloadCommand extends SinkCommand {
                 SinkLibrary.getInstance().loadIrcUser(ircUser, SinkIrcReflection.getMainChannel().getName()); //?
             }
         }
+
+        sender.sendMessage(PREFIX + "Reloading Libraries...");
+        SinkLibrary.getInstance().loadLibs();
+
         sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
         return true;
     }

@@ -109,6 +109,7 @@ public class SinkLibrary extends JavaPlugin {
     private ConsoleUserProvider consoleUserProvider;
     private FakeUserProvider fakeUserProvider;
     private SinkTabCompleter defaultCompleter;
+    private List<String> loadedLibs = new ArrayList<>();
 
     /**
      * Get the instance of this plugin
@@ -251,22 +252,28 @@ public class SinkLibrary extends JavaPlugin {
         return getClassLoader();
     }
 
-    private void loadLibs() {
+    public void loadLibs() {
         try {
             File[] files = LIB_FOLDER.listFiles();
             if (files != null) {
                 int i = 0;
                 for (File file : files) {
+                    if (loadedLibs.contains(file.getCanonicalPath())) {
+                        continue;
+                    }
+
                     if (file.getName().endsWith(".jar")) {
                         getLogger().info("SinkLibrary: Loading java library: " + file.getName());
                         addUrlToClasspath(file.toURL());
                         i++;
                     }
 
+                    loadedLibs.add(file.getCanonicalPath());
+                    //Todo:
                     //if(file.getName().endsWith(".so") ||file.getName().endsWith("dll"))
                     //{
                     //    getLogger().info("SinkScripts: Loading native library: " + file.getName());
-                    //    System.loadLibrary(file.getCanonicalPath());
+                    //    System.load(file.getCanonicalPath());
                     //    i++;
                     //}
                 }
@@ -315,7 +322,17 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public boolean isIrcAvailable() {
-        return ircAvailable;
+        if (!ircAvailable) {
+            return false;
+        }
+
+        try {
+            SinkIrcReflection.getMainChannel();
+        } catch (Throwable e) {
+            Debug.log(e);
+            return false;
+        }
+        return true;
     }
 
     /**
