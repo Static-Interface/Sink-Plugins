@@ -67,14 +67,15 @@ public class ListWarnsCommand extends SinkCommand {
                 }
                 if (warning.isDeleted()) {
                     if (!sender.hasPermission("sinkantispam.canseedeleted")) {
+                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "Deleted");
                         continue;
                     }
 
                     if (user instanceof IrcUser) {
-                        out.add(ChatColor.GRAY + "[Deleted] " + "#" + warning.getId() + " - " + ChatColor.stripColor(warning.getWarnerDisplayName())
-                                + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.getReason()));
+                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + ChatColor.stripColor(warning.getWarnerDisplayName())
+                                + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.getReason()) + "[Deleted]");
                     } else {
-                        out.add(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "#" + warning.getId() + " - " + ChatColor.stripColor(
+                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ChatColor.stripColor(
                                 warning.getWarnerDisplayName())
                                 + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ": " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH
                                 + ChatColor.stripColor(warning.getReason()));
@@ -82,7 +83,7 @@ public class ListWarnsCommand extends SinkCommand {
                     }
                     continue;
                 }
-                out.add(ChatColor.DARK_RED + "#" + warning.getId() + " - " + warning.getWarnerDisplayName() + ChatColor.DARK_RED + ": "
+                out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + warning.getWarnerDisplayName() + ChatColor.GOLD + ": "
                         + ChatColor.RED
                         + warning.getReason());
             }
