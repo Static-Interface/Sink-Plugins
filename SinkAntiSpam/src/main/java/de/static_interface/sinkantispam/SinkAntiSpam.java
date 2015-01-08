@@ -17,6 +17,9 @@
 
 package de.static_interface.sinkantispam;
 
+import de.static_interface.sinkantispam.command.DeleteWarnCommand;
+import de.static_interface.sinkantispam.command.ListWarnsCommand;
+import de.static_interface.sinkantispam.command.WarnCommand;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,6 +40,7 @@ public class SinkAntiSpam extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
         SinkLibrary.getInstance().registerCommand("listwarns", new ListWarnsCommand(this));
+        SinkLibrary.getInstance().registerCommand("deletewarn", new DeleteWarnCommand(this));
     }
 
     @Override

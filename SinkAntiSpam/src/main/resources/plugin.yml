@@ -16,6 +16,11 @@ commands:
    permission: sinkantispam.listwarns
    usage: "/listwarns [target]"
 
+ deletewarn:
+   description: Deletes a warning
+   permission: sinkantispam.deletewarn
+   usage: "/deletewarn <target> <id>"
+
 permissions:
  sinkantispam.*:
    description: Gives access to all SinkAntiSpam commands
@@ -25,6 +30,7 @@ permissions:
      sinkantispam.bypass: true
      sinkantispam.warn: true
      sinkantispam.listwarns: true
+     sinkantispam.deletewarn: true
 
  sinkantispam.warn:
     description: Allows to warn players
@@ -40,9 +46,17 @@ permissions:
     description: Allows to bypass SinkAntiSpam
     default: op
 
+ sinkantispam.canseedeleted:
+    description: Allows to see deleted warnings
+    default: op
+
  sinkantispam.warnmessage:
     description: Allows to receive messages
     default: true
+
+ sinkantispam.deletewarn:
+    description: Allows to delete a warning
+    default: op
 
  sinkantispam.autowarnmessage:
     description: Allows to receive auto warn messages which may contains ip, domains, blacklisted words etc

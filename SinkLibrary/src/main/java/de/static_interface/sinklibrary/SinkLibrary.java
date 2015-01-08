@@ -520,9 +520,13 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nonnull
     public IngameUser getIngameUser(String partialPlayerName, boolean throwExceptionIfNotFound) {
-        Player p = BukkitUtil.getPlayer(partialPlayerName);
-        if (p != null) {
-            return getIngameUser(p);
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            IngameUser onlineUser = getIngameUser(p);
+            if (p.getName().startsWith(partialPlayerName) || onlineUser.getName().startsWith(partialPlayerName)
+                || ChatColor.stripColor(onlineUser.getDisplayName()).startsWith(partialPlayerName)) {
+                return onlineUser;
+            }
         }
 
         IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(partialPlayerName));

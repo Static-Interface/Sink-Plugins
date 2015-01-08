@@ -15,12 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkantispam;
+package de.static_interface.sinkantispam.command;
 
+import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.user.IrcUser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,6 +42,9 @@ public class ListWarnsCommand extends SinkCommand {
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) {
+
+        SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
+
         IngameUser targetUser;
 
         if (args.length < 1 && sender instanceof Player) {
@@ -53,9 +59,31 @@ public class ListWarnsCommand extends SinkCommand {
         out.add(ChatColor.RED + "Warnings: " + targetUser.getDisplayName());
 
         List<Warning> warnings = WarnUtil.getWarnings(targetUser);
+
         if (warnings.size() > 0) {
             for (Warning warning : WarnUtil.getWarnings(targetUser)) {
-                out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + warning.getWarnerDisplayName() + ChatColor.DARK_GRAY + ": " + ChatColor.RESET
+                if (warning.isAutoWarning() && !sender.hasPermission("sinkantispam.autowarnmessage")) {
+                    continue;
+                }
+                if (warning.isDeleted()) {
+                    if (!sender.hasPermission("sinkantispam.canseedeleted")) {
+                        continue;
+                    }
+
+                    if (user instanceof IrcUser) {
+                        out.add(ChatColor.GRAY + "[Deleted] " + "#" + warning.getId() + " - " + ChatColor.stripColor(warning.getWarnerDisplayName())
+                                + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.getReason()));
+                    } else {
+                        out.add(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "#" + warning.getId() + " - " + ChatColor.stripColor(
+                                warning.getWarnerDisplayName())
+                                + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ": " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH
+                                + ChatColor.stripColor(warning.getReason()));
+
+                    }
+                    continue;
+                }
+                out.add(ChatColor.DARK_RED + "#" + warning.getId() + " - " + warning.getWarnerDisplayName() + ChatColor.DARK_RED + ": "
+                        + ChatColor.RED
                         + warning.getReason());
             }
         } else {

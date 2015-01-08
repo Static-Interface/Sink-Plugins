@@ -18,6 +18,7 @@
 package de.static_interface.sinkantispam.warning;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.ChatColor;
 
@@ -29,18 +30,25 @@ public class Warning implements Comparable<Warning> {
 
     public static String SYSTEM = ChatColor.DARK_RED + "System";
     private final String reason;
-    private final UUID warnerUuid;
     private final String warnedBy;
     private final boolean autoWarning;
     private final long warnTime;
+    private String warnerUuid;
+    private String deleterUuid;
+    private String deleterName;
+    private long deleteTime;
+    private boolean deleted = false;
     private int id;
 
     public Warning(String reason, String warnedBy, @Nullable UUID warnerUuid, int id, boolean autoWarning) {
         this.reason = reason;
         this.warnedBy = warnedBy;
         this.autoWarning = autoWarning;
-        this.warnerUuid = warnerUuid;
+        if (warnerUuid != null) {
+            this.warnerUuid = warnerUuid.toString();
+        }
         this.id = id;
+        this.deleted = false;
         warnTime = System.currentTimeMillis();
     }
 
@@ -77,6 +85,19 @@ public class Warning implements Comparable<Warning> {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void delete(SinkUser deleter) {
+        this.deleted = true;
+        this.deleterName = deleter.getDisplayName();
+        this.deleteTime = System.currentTimeMillis();
+        if (deleter instanceof Identifiable) {
+            this.deleterUuid = ((Identifiable) deleter).getUniqueId().toString();
+        }
     }
 
     @Override

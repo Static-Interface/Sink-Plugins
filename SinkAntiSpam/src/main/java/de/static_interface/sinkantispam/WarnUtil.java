@@ -44,6 +44,12 @@ public class WarnUtil {
         tmp.add(warning);
         setWarnings(target, tmp);
 
+        for (Warning w : tmp) {
+            if (w.isDeleted()) {
+                tmp.remove(w);
+            }
+        }
+
         int i = tmp.size() % getMaxWarnings() == 0 ? getMaxWarnings() : tmp.size() % getMaxWarnings();
         String message = prefix + m("SinkAntiSpam.Warn", target.getDisplayName(),
                                     warning.getWarnerDisplayName(), warning.getReason(), i, getMaxWarnings());
@@ -60,7 +66,7 @@ public class WarnUtil {
             target.sendMessage(message);
         }
 
-        if (i == 5) {
+        if (i == getMaxWarnings()) {
             target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
             long timeout = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
             target.ban(m("SinkAntiSpam.AutoBan"), timeout);

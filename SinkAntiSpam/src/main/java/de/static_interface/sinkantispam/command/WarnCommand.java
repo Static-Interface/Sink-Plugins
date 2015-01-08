@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkantispam;
+package de.static_interface.sinkantispam.command;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
+import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
