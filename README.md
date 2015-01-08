@@ -1,6 +1,6 @@
 Sink-Plugins
 ==============
-[![Build Status](http://ci.static-interface.de/job/Sink-Plugins/badge/icon)](http://ci.static-interface.de/job/Sink-Plugins/)
+[![Build Status](https://img.shields.io/jenkins/s/http/ci.static-interface.de/Sink-Plugins.svg)](http://ci.static-interface.de/job/Sink-Plugins/)[![Test Status](https://img.shields.io/jenkins/t/http/ci.static-interface.de/Sink-Plugins.svg)](http://ci.static-interface.de/job/Sink-Plugins/)[![License](https://img.shields.io/badge/License-AGPL-blue.svg)](http://ci.static-interface.de/job/Sink-Plugins/)
 
 For more information, visit <a href="http://dev.bukkit.org/bukkit-plugins/sink-plugins">the BukkitDev page</a>.
 
