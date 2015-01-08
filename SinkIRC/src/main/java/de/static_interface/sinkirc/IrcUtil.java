@@ -31,6 +31,7 @@ import org.pircbotx.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
@@ -171,6 +172,8 @@ public class IrcUtil {
         if (user.getNick().equals(SinkIRC.getInstance().getIrcBot().getNick())) {
             return; // Bot has send a message to itself, this causes an ininite loop on this method and the server will crash after that
         }
+
+        Bukkit.getLogger().log(Level.INFO, user.getNick() + " issued IRC command: " + label);
 
         Debug.logMethodCall(label);
         if (IrcUtil.isOp(user)) {
