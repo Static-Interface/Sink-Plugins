@@ -78,10 +78,15 @@
 
     <distributionManagement>
         <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${main.basedir}/mvn-repo</url>
+            <id>deployment</id>
+            <name>Releases Repo</name>
+            <url>http://nexus.static-interface.de/nexus/content/repositories/releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Snapshots Repo</name>
+            <url>http://nexus.static-interface.de/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <modules>
@@ -118,7 +123,6 @@
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.basedir}</main.basedir>
-        <github.global.server>github</github.global.server>
     </properties>
 
     <build>
@@ -127,44 +131,6 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${main.basedir}/mvn-repo</altDeploymentRepository>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.9</version>
-                <configuration>
-                    <message>Maven artifacts for ${project.version}</message>
-                    <!-- git commit message -->
-                    <noJekyll>true</noJekyll>
-                    <!-- disable webpage processing -->
-                    <outputDirectory>${main.basedir}/mvn-repo</outputDirectory>
-                    <!-- matches distribution management repository url above -->
-                    <branch>refs/heads/mvn-repo</branch>
-                    <!-- remote branch name -->
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <repositoryName>Sink-Plugins</repositoryName>
-                    <!-- github repo name -->
-                    <repositoryOwner>Adventuria</repositoryOwner>
-                    <!-- github username  -->
-                </configuration>
-                <executions>
-                    <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
