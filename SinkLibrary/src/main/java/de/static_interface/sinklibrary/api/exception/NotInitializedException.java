@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary.api.exception;
 
+@SuppressWarnings("serial")
 public class NotInitializedException extends RuntimeException {
 
     public NotInitializedException(String s) {

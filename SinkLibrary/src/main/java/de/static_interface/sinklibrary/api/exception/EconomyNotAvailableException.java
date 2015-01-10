@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary.api.exception;
 
+@SuppressWarnings("serial")
 public class EconomyNotAvailableException extends RuntimeException {
 
     public EconomyNotAvailableException() {
