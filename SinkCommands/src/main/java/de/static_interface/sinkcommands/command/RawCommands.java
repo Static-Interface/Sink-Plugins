@@ -25,6 +25,7 @@ import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class RawCommands {
@@ -59,6 +60,12 @@ public class RawCommands {
                 return false;
             }
             IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
+
+            if (sender instanceof Player && target instanceof IngameUser) {
+                if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
+            }
 
             if (!target.isOnline()) {
                 throw new UserNotFoundException(args[0]);

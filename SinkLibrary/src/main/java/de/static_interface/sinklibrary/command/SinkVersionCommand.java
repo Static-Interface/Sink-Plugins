@@ -39,7 +39,8 @@ public class SinkVersionCommand extends SinkCommand {
         String authors = StringUtil.formatPlayerListToString(authorsList);
         sender.sendMessage(PREFIX + plugin.getDescription().getName() + " by " + authors);
         sender.sendMessage(PREFIX + "Version: " + plugin.getDescription().getVersion());
-        sender.sendMessage(PREFIX + "Copyright © 2013 - 2014 Adventuria / static-interface.de");
+        sender.sendMessage(PREFIX + "Copyright © 2013 - 2014 static-interface.de");
+        sender.sendMessage(PREFIX + "Source code is available at https://github.com/Static-Interface/Sink-Plugins");
         return true;
     }
 }

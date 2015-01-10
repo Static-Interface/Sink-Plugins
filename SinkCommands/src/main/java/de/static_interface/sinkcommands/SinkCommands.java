@@ -113,7 +113,7 @@ public class SinkCommands extends JavaPlugin {
 
         Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
 
-        onlinePlayers.setScore(BukkitUtil.getOnlinePlayers().size());
+        onlinePlayers.setScore(BukkitUtil.getOnlinePlayersForPlayer(player).size());
 
         Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
         date.setScore((int) player.getHealth());

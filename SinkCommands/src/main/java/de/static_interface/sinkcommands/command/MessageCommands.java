@@ -23,10 +23,12 @@ import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.FakeUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -91,6 +93,12 @@ public class MessageCommands {
 
             SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
             SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
+
+            if (sender instanceof Player && target instanceof IngameUser) {
+                if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
+            }
 
             if (target == null || !target.isOnline()) {
                 throw new UserNotFoundException(args[0]);

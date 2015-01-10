@@ -58,6 +58,16 @@ public class BukkitUtil {
         return tmp;
     }
 
+    public static List<Player> getOnlinePlayersForPlayer(Player p) {
+        List<Player> players = getOnlinePlayers();
+        for (Player player : players) {
+            if (!p.canSee(player)) {
+                players.remove(player);
+            }
+        }
+        return players;
+    }
+
 
     /**
      * Get online Player by name.

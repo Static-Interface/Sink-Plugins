@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -177,7 +178,19 @@ public class VotekickCommands {
             }
 
             targetPlayer = (BukkitUtil.getPlayer(args[0]));
+
+            if (targetPlayer == null) {
+                throw new UserNotFoundException(args[0]);
+            }
+
+            if (sender instanceof Player) {
+                if (!((Player) sender).canSee(targetPlayer) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
+            }
+
             IngameUser targetUser = SinkLibrary.getInstance().getIngameUser(targetPlayer);
+
             target = targetUser.getDisplayName();
             if (targetPlayer.equals(sender)) {
                 sender.sendMessage(PREFIX + "Du kannst nicht einen Votekick gegen dich selbst starten!");

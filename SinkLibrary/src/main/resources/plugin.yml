@@ -33,10 +33,15 @@ permissions:
       sinklibrary.reload: true
       sinklibrary.ver: true
       sinklibrary.script: true
+      sinklibrary.bypassvanish: true
 
   sinklibrary.updatenotification:
     default: op
     description: Receive update notifications
+
+  sinklibrary.bypassvanish:
+    default: op
+    description: Allows to bypass vanish
 
   sinklibrary.debug:
     default: op

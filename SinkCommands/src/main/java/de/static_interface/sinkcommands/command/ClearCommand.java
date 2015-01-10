@@ -21,6 +21,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.Option;
@@ -95,8 +96,13 @@ public class ClearCommand extends SinkCommand {
             player = Bukkit.getPlayer(targetName);
 
             if (player == null) {
-                sender.sendMessage(PREFIX + m("General.NotOnline", targetName));
-                return true;
+                throw new UserNotFoundException(args[0]);
+            }
+
+            if (sender instanceof Player) {
+                if (!((Player) sender).canSee(player) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
             }
         }
 

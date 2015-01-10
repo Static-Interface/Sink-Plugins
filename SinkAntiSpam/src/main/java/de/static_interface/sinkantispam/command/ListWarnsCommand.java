@@ -21,6 +21,7 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -45,23 +46,29 @@ public class ListWarnsCommand extends SinkCommand {
 
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
 
-        IngameUser targetUser;
+        IngameUser target;
 
         if (args.length < 1 && sender instanceof Player) {
-            targetUser = SinkLibrary.getInstance().getIngameUser((Player) sender);
+            target = SinkLibrary.getInstance().getIngameUser((Player) sender);
         } else if (args.length < 1) {
             return false;
         } else {
-            targetUser = SinkLibrary.getInstance().getIngameUser(args[0]);
+            target = SinkLibrary.getInstance().getIngameUser(args[0]);
+
+            if (sender instanceof Player && target instanceof IngameUser) {
+                if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
+            }
         }
 
         List<String> out = new ArrayList<>();
-        out.add(ChatColor.RED + "Warnings: " + targetUser.getDisplayName());
+        out.add(ChatColor.RED + "Warnings: " + target.getDisplayName());
 
-        List<Warning> warnings = WarnUtil.getWarnings(targetUser);
+        List<Warning> warnings = WarnUtil.getWarnings(target);
 
         if (warnings.size() > 0) {
-            for (Warning warning : WarnUtil.getWarnings(targetUser)) {
+            for (Warning warning : WarnUtil.getWarnings(target)) {
                 if (warning.isAutoWarning() && !sender.hasPermission("sinkantispam.autowarnmessage")) {
                     continue;
                 }
