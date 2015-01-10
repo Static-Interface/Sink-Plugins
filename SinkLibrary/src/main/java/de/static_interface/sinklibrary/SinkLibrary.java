@@ -310,7 +310,7 @@ public class SinkLibrary extends JavaPlugin {
     public void addJarToClasspath(URL url) throws Exception {
         URLClassLoader classLoader
                 = (URLClassLoader) getClassLoader();
-        Class clazz = URLClassLoader.class;
+        Class<URLClassLoader> clazz = URLClassLoader.class;
 
         // Use reflection to access protected "addURL" method
         Method method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
@@ -843,7 +843,7 @@ public class SinkLibrary extends JavaPlugin {
             try {
                 PluginCommand cmd = Bukkit.getPluginCommand(name);
                 if (cmd == null) {
-                    Debug.log(Level.WARNING, "Command is not registerd in plugin.yml file");
+                    Debug.log(Level.WARNING, "Command is not registered in plugin.yml file");
                     return;
                 }
 
