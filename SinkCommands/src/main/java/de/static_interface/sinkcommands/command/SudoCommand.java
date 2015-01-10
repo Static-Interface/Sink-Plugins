@@ -19,9 +19,11 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.FakeCommandSender;
 import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,6 +47,12 @@ public class SudoCommand extends SinkCommand {
         CommandSender fakeSender;
 
         SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
+
+        if (sender instanceof Player && target instanceof IngameUser) {
+            if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                throw new UserNotFoundException(args[0]);
+            }
+        }
 
         if (!target.isOnline()) {
             sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");

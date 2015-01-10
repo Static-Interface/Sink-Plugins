@@ -26,6 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +57,9 @@ public class SinkTabCompleter implements TabCompleter {
 
         if (includeIngameUsers) {
             for (IngameUser user : SinkLibrary.getInstance().getOnlineUsers()) {
+                if (sender instanceof Player && !((Player) sender).canSee(user.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    continue;
+                }
                 users.add(user);
             }
         }

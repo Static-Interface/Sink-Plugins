@@ -21,6 +21,7 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -73,8 +74,13 @@ public class MilkCommand extends SinkCommand {
         //Remove from specified player
         Player target = BukkitUtil.getPlayer(args[0]);
         if (target == null) {
-            sender.sendMessage(PREFIX + args[0] + " ist nicht online!");
-            return true;
+            throw new UserNotFoundException(args[0]);
+        }
+
+        if (sender instanceof Player) {
+            if (!((Player) sender).canSee(target) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                throw new UserNotFoundException(args[0]);
+            }
         }
 
         boolean equals = user instanceof IngameUser && ((IngameUser) user).getPlayer().equals(target);

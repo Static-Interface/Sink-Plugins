@@ -20,10 +20,11 @@ package de.static_interface.sinkchat.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -69,6 +70,12 @@ public class NickCommand extends SinkCommand {
             if (target == null) {
                 sender.sendMessage(PREFIX + m("General.NotOnline", args[0]));
                 return true;
+            }
+
+            if (sender instanceof Player) {
+                if (!((Player) sender).canSee(target) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
             }
 
             if (setDisplayName(target, newDisplayName, sender)) {
