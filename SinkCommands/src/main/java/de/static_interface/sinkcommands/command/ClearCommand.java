@@ -58,7 +58,7 @@ public class ClearCommand extends SinkCommand {
                 .desc("Clear effects")
                 .build();
 
-        Option armor = Option.builder("a")
+        Option armor = Option.builder("r")
                 .longOpt("armor")
                 .desc("Clear armor")
                 .build();
@@ -68,7 +68,7 @@ public class ClearCommand extends SinkCommand {
                 .desc("Clear XP")
                 .build();
 
-        Option all = Option.builder("A")
+        Option all = Option.builder("a")
                 .longOpt("all")
                 .desc("Clear everything")
                 .build();
@@ -113,10 +113,10 @@ public class ClearCommand extends SinkCommand {
 
         clearInventory = getCommandLine().hasOption('i');
         clearEffects = getCommandLine().hasOption('e');
-        clearArmor = getCommandLine().hasOption('a');
+        clearArmor = getCommandLine().hasOption('r');
         clearXp = getCommandLine().hasOption('x');
 
-        if (getCommandLine().hasOption('A')) {
+        if (getCommandLine().hasOption('a')) {
             //invert other options, for queries like "clear everything except these options"
             if (clearInventory) {
                 clearInventory = false;
@@ -131,7 +131,7 @@ public class ClearCommand extends SinkCommand {
                 clearXp = false;
             }
         } else if (!clearInventory && !clearArmor && !clearEffects && !clearXp) {
-            //default options
+            //default options for /clear without any args
             clearInventory = true;
             clearArmor = true;
         }
@@ -141,29 +141,9 @@ public class ClearCommand extends SinkCommand {
         }
 
         if (clearEffects) {
-            player.removePotionEffect(PotionEffectType.ABSORPTION);
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.removePotionEffect(PotionEffectType.CONFUSION);
-            player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
-            player.removePotionEffect(PotionEffectType.HARM);
-            player.removePotionEffect(PotionEffectType.HEAL);
-            player.removePotionEffect(PotionEffectType.HEALTH_BOOST);
-            player.removePotionEffect(PotionEffectType.HUNGER);
-            player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-            player.removePotionEffect(PotionEffectType.INVISIBILITY);
-            player.removePotionEffect(PotionEffectType.JUMP);
-            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.removePotionEffect(PotionEffectType.POISON);
-            player.removePotionEffect(PotionEffectType.REGENERATION);
-            player.removePotionEffect(PotionEffectType.SATURATION);
-            player.removePotionEffect(PotionEffectType.SLOW);
-            player.removePotionEffect(PotionEffectType.SLOW_DIGGING);
-            player.removePotionEffect(PotionEffectType.SPEED);
-            player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-            player.removePotionEffect(PotionEffectType.WEAKNESS);
-            player.removePotionEffect(PotionEffectType.WITHER);
-            player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+            for (PotionEffectType effect : PotionEffectType.values()) {
+                player.removePotionEffect(effect);
+            }
         }
 
         if (clearArmor) {
@@ -183,5 +163,4 @@ public class ClearCommand extends SinkCommand {
         player.sendMessage(PREFIX + ChatColor.RED + "Du wurdest gecleart.");
         return true;
     }
-
 }
