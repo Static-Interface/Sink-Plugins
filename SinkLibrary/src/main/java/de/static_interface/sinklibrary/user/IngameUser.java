@@ -140,7 +140,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
      */
     @Nullable
     public Player getPlayer() {
-        return player;
+        return Bukkit.getPlayer(getUniqueId());
     }
 
     /**
@@ -346,5 +346,4 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         }
         return playersInRange;
     }
-
 }

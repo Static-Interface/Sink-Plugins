@@ -17,20 +17,19 @@
 
 package de.static_interface.sinkchat.channel;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -58,15 +57,6 @@ public class Channel {
 
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns the callChar
-     * @deprecated use {@link #getCallCode()} instead.  
-     */
-    @Deprecated
-    public String getCallChar() {
-        return getCallCode();
     }
 
     /**
@@ -114,15 +104,10 @@ public class Channel {
         config.set(enabledPath, setEnabled);
     }
 
-    public boolean sendMessage(IngameUser user, String message) {
-        if (!isEnabled()) {
-            user.sendMessage(m("SinkChat.DisabledChannel"));
-            return true;
-        }
-
-        if (!enabledForPlayer(user.getUniqueId())) {
-            return false;
-        }
+    public String formatEventFormat(IngameUser user, String message) {
+        String eventFormat = format;
+        //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
+        //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
 
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.getInstance().isTownyAvailable()) {
@@ -131,24 +116,28 @@ public class Channel {
             customParams.put("Town(y)?", TownyHelper.getTown(user.getPlayer()));
             customParams.put("Nation", TownyHelper.getNation(user.getPlayer()));
         }
+        return StringUtil.format(eventFormat, user, null, message.substring(callCode.length()), customParams, false, null);
+    }
 
-        String formattedMessage = StringUtil.format(getFormat(), user,
-                                                    message.substring(callCode.length()), customParams, null);
-        if (getRange() > 0) {
-            Util.sendMessage(user, formattedMessage, getRange());
-        } else {
-            for (Player target : BukkitUtil.getOnlinePlayers()) {
-                if ((!enabledForPlayer(target.getUniqueId())) || !target.hasPermission(getPermission())) {
-                    continue;
-                }
-                target.sendMessage(formattedMessage);
+    public void handleRecipients(IngameUser sender, Set<Player> recipients, String message) {
+        for (Player p : new HashSet<>(recipients)) {
+            if ((getRange() > 0 && !Util.isInRange(sender, p, getRange()))
+                || (!enabledForPlayer(p.getUniqueId()))
+                || !p.hasPermission(getPermission())) {
+                recipients.remove(p);
             }
         }
 
-        Bukkit.getConsoleSender().sendMessage(formattedMessage);
-        if (sendToIRC()) {
-            SinkLibrary.getInstance().sendIrcMessage(formattedMessage);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (recipients.contains(p)) {
+                continue;
+            }
+
+            IngameUser target = SinkLibrary.getInstance().getIngameUser(p);
+            // Todo: make spy configurable for channels
+            if (!Util.isInRange(sender, p, getRange()) && Util.canSpySender(target, sender)) {
+                p.sendMessage(Util.getSpyPrefix() + message);
+            }
         }
-        return true;
     }
 }

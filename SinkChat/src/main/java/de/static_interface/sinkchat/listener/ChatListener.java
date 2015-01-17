@@ -29,6 +29,7 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,6 +37,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 
 public class ChatListener implements Listener {
@@ -47,6 +49,15 @@ public class ChatListener implements Listener {
         } catch (RuntimeException e) {
             SinkChat.getInstance().getLogger().log(Level.SEVERE, "Warning! Unexpected exception occurred", e);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void handleChatMonitor(AsyncPlayerChatEvent event) {
+        for (Player p : new HashSet<>(event.getRecipients())) {
+            p.sendMessage(event.getFormat().replace("$1%s", event.getPlayer().getDisplayName()).replace("$2%s", event.getMessage()));
+        }
+
+        event.setCancelled(true);
     }
 
     private void handleChat(AsyncPlayerChatEvent event) {
@@ -64,15 +75,22 @@ public class ChatListener implements Listener {
         Channel channel;
         for (String callChar : ChannelHandler.getRegisteredChannels().keySet()) {
             channel = ChannelHandler.getRegisteredChannel(callChar);
-            if (event.getMessage().startsWith(callChar) && !event.getMessage().equalsIgnoreCase(callChar)) {
+            if (!StringUtil.isEmptyOrNull(callChar) &&
+                event.getMessage().startsWith(callChar) &&
+                !event.getMessage().equalsIgnoreCase(callChar)) {
+
                 if (!channel.enabledForPlayer(event.getPlayer().getUniqueId())) {
                     continue;
                 }
-                if (channel.sendMessage(user, message)) {
-                    event.setCancelled(true);
-                    return;
+
+                event.setFormat(channel.formatEventFormat(user, message));
+                channel.handleRecipients(user, event.getRecipients(), message);
+
+                if (channel.sendToIRC()) {
+                    SinkLibrary.getInstance().sendIrcMessage(
+                            event.getFormat().replace("$1%s", event.getPlayer().getDisplayName()).replace("$2%s", event.getMessage()));
                 }
-                break;
+                return;
             }
         }
 
@@ -88,20 +106,39 @@ public class ChatListener implements Listener {
         customParams.put("CHANNEL", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
 
         String format = SinkLibrary.getInstance().getSettings().getDefaultChatFormat();
-
-        String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1%\\s");
-        eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2%\\s");
-        event.setFormat(eventFormat);
-        String formattedMessage = StringUtil.format(format, user, message, customParams);
+        String eventFormat = format;
+        //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
+        //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
+        eventFormat = StringUtil.format(eventFormat, user, null, message, customParams, false, null);
 
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
-            formattedMessage = m("SinkChat.Prefix.Local") + ' ' + ChatColor.RESET + formattedMessage;
+            eventFormat = m("SinkChat.Prefix.Local") + ' ' + ChatColor.RESET + eventFormat;
         }
 
-        Util.sendMessage(user, formattedMessage, range);
+        event.setFormat(eventFormat);
 
-        Bukkit.getConsoleSender().sendMessage(Util.getSpyPrefix() + formattedMessage);
-        event.setCancelled(true);
+        String spyMessage = Util.getSpyPrefix() + eventFormat.replace("$1%s", user.getDisplayName()).replace("$2%s", event.getMessage());
+        //String spyMessage = Util.getSpyPrefix() + eventFormat;
+
+        for (Player p : new HashSet<>(event.getRecipients())) {
+            if (!Util.isInRange(user, p, range)) {
+                event.getRecipients().remove(p);
+            }
+        }
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (event.getRecipients().contains(p)) {
+                continue;
+            }
+
+            IngameUser target = SinkLibrary.getInstance().getIngameUser(p);
+
+            if (!Util.isInRange(user, p, range) && Util.canSpySender(target, user)) {
+                p.sendMessage(spyMessage);
+            }
+        }
+
+        Bukkit.getConsoleSender().sendMessage(spyMessage);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

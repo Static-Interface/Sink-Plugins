@@ -59,7 +59,7 @@ public class BukkitUtil {
     }
 
     public static List<Player> getOnlinePlayersForPlayer(Player p) {
-        List<Player> players = getOnlinePlayers();
+        List<Player> players = new ArrayList<>(getOnlinePlayers());
         for (Player player : players) {
             if (!p.canSee(player)) {
                 players.remove(player);

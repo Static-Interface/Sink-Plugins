@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinkirc.IrcUtil;
+import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
@@ -24,12 +26,16 @@ import de.static_interface.sinklibrary.api.sender.FakeCommandSender;
 import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SudoCommand extends SinkCommand {
 
@@ -44,28 +50,42 @@ public class SudoCommand extends SinkCommand {
             return false;
         }
 
+        SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
+
         CommandSender fakeSender;
 
         SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
         if (sender instanceof Player && target instanceof IngameUser) {
+            if (!target.isOnline()) {
+                throw new UserNotFoundException(args[0]);
+            }
+
             if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
                 throw new UserNotFoundException(args[0]);
             }
         }
 
-        if (!target.isOnline()) {
-            sender.sendMessage(ChatColor.DARK_RED + "Fehler: " + ChatColor.RED + "Spieler ist nicht online!");
-            return true;
-        }
-
-        if (target.getBase() instanceof Player) {
+        if (target instanceof IrcUser && user instanceof IrcUser) {
+            fakeSender = target.getSender();
+        } else if (target.getBase() instanceof Player) {
             fakeSender = new FakePlayerCommandSender((Player) target.getBase(), sender);
         } else {
             fakeSender = new FakeCommandSender(target.getSender(), sender);
         }
 
         String commandLine = StringUtil.formatArrayToString(args, " ", 1);
+
+        if (target instanceof IrcUser) {
+            String cmd = args[0];
+            List<String> tmp = new ArrayList<>(Arrays.asList(args));
+            tmp.remove(cmd);
+            args = tmp.toArray(new String[tmp.size()]);
+
+            IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
+            return true;
+        }
+
         Bukkit.dispatchCommand(fakeSender, commandLine);
         return true;
     }

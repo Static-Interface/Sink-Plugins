@@ -94,7 +94,7 @@ public class MessageCommands {
             SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
             SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
-            if (sender instanceof Player && target instanceof IngameUser) {
+            if (sender instanceof Player && target instanceof IngameUser && ((IngameUser) target).getPlayer() != null) {
                 if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
                     throw new UserNotFoundException(args[0]);
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,42 +17,29 @@
 
 package de.static_interface.sinkchat;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.*;
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-import de.static_interface.sinklibrary.*;
-import de.static_interface.sinklibrary.configuration.*;
-import de.static_interface.sinklibrary.user.*;
-import de.static_interface.sinklibrary.util.*;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.user.IngameUser;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public class Util {
 
-    public static void sendMessage(IngameUser user, String message, int range) {
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-
-            if (p.getWorld() != user.getPlayer().getWorld()) {
-                continue;
-            }
-
-            boolean isInRange = range > 0 && user.getDistance(p) <= range;
-            IngameUser onlineUser = SinkLibrary.getInstance().getIngameUser(p);
-
-            // Check for spy
-            boolean canSpy = onlineUser.hasPermission("sinkchat.spy.all") || (onlineUser.hasPermission("sinkchat.spy")
-                                                                              && !user.hasPermission("sinkchat.spy.bypass"));
-
-            IngameUserConfiguration config = onlineUser.getConfiguration();
-
-            if (isInRange) {
-                p.sendMessage(message);
-            } else if (canSpy && config.isSpyEnabled()) {
-                p.sendMessage(getSpyPrefix() + message);
-            }
-        }
+    public static boolean isInRange(IngameUser sender, Player p, int range) {
+        return range < 1 || p.getWorld() == sender.getPlayer().getWorld() && sender.getDistance(p) <= range;
     }
 
     public static String getSpyPrefix() {
         return m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
+    }
+
+    public static boolean canSpySender(IngameUser user, IngameUser toSpy) {
+        IngameUserConfiguration config = user.getConfiguration();
+
+        // Check for spy
+        boolean canSpy = user.hasPermission("sinkchat.spy.all") || (user.hasPermission("sinkchat.spy")
+                                                                    && !toSpy.hasPermission("sinkchat.spy.bypass"));
+        return canSpy && config.isSpyEnabled();
     }
 }

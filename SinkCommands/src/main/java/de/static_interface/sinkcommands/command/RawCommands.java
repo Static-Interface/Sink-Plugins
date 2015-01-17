@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -59,16 +60,16 @@ public class RawCommands {
             if (args.length < 1) {
                 return false;
             }
-            IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
+            SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
             if (sender instanceof Player && target instanceof IngameUser) {
-                if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                if (!target.isOnline()) {
                     throw new UserNotFoundException(args[0]);
                 }
-            }
 
-            if (!target.isOnline()) {
-                throw new UserNotFoundException(args[0]);
+                if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+                    throw new UserNotFoundException(args[0]);
+                }
             }
 
             String message = "";

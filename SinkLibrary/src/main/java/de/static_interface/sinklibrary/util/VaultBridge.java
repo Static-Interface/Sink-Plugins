@@ -39,18 +39,19 @@ public class VaultBridge {
         }
 
         Economy economy = SinkLibrary.getInstance().getEconomy();
-        double roundedAmount = MathUtil.round(amount);
+        amount = MathUtil.round(amount);
 
         EconomyResponse response;
-        boolean withdraw = roundedAmount < 0;
+        boolean withdraw = amount < 0;
 
-        roundedAmount = Math.abs(roundedAmount);
+        amount = Math.abs(amount);
 
         if (withdraw) {
-            response = economy.withdrawPlayer(account, roundedAmount);
+            response = economy.withdrawPlayer(account, amount);
         } else {
-            response = economy.depositPlayer(account, roundedAmount);
+            response = economy.depositPlayer(account, amount);
         }
+
         return response.transactionSuccess();
     }
 

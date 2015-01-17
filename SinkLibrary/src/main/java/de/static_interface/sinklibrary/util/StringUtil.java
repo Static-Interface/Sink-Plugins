@@ -112,7 +112,6 @@ public class StringUtil {
         return format(str, user, null, userMessage, customPlaceholders, paramValues);
     }
 
-
     /**
      * Format a string
      * @param str Input String
@@ -128,6 +127,24 @@ public class StringUtil {
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable SinkUser target, @Nullable String userMessage,
                                 @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
+        return format(str, user, target, userMessage, customPlaceholders, true, paramValues);
+    }
+
+    /**
+     * Format a string
+     * @param str Input String
+     * @param user If there is any user who's calling this, you can use placeholders like
+     *             {NAME} (some of the placeholders works with offline users too)
+     * @param target If there is a target player (e.g. /msg <target>), you can use placeholders for that target too
+     * @param userMessage Message from user (e.g. /say <message> -> userMessage should be  <message>)
+     * @param paramValues Replace {0} {1}... {n} with these values
+     * @param customPlaceholders Custom placeholders values (keys are the placeholders), dont use brackets on keys.
+     *                           Example: if equals "TEST" and value equals "Hello", all {TEST} instances will be replaced
+     *                           with "Hello"
+     * @return Formatted String
+     */
+    public static String format(String str, @Nullable SinkUser user, @Nullable SinkUser target, @Nullable String userMessage,
+                                @Nullable HashMap<String, Object> customPlaceholders, boolean formatS, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
@@ -227,7 +244,9 @@ public class StringUtil {
             for (Object s : paramValues) {
                 str = str.replaceAll("\\{" + i + "\\}", String.valueOf(s));
                 i++;
-                str = str.replaceAll("%" + i + "\\$\\s", String.valueOf(s));
+                if (formatS) {
+                    str = str.replaceAll("%" + i + "\\$\\s", String.valueOf(s));
+                }
             }
         }
 

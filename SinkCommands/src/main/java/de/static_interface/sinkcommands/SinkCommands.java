@@ -86,40 +86,52 @@ public class SinkCommands extends JavaPlugin {
      * @param player Refresh scoreboard for this player
      */
     @SuppressWarnings("deprecation")
-    public void refreshScoreboard(Player player) {
-        IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
-        IngameUserConfiguration config = user.getConfiguration();
+    public void refreshScoreboard(final Player player) {
+        Bukkit.getScheduler().runTask(SinkCommands.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
+                IngameUserConfiguration config = user.getConfiguration();
 
-        if (!config.exists()) {
-            return;
-        }
+                if (!config.exists()) {
+                    return;
+                }
 
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
+                ScoreboardManager manager = Bukkit.getScoreboardManager();
 
-        if (!user.hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
-            player.setScoreboard(manager.getNewScoreboard());
-            return;
-        }
+                if (!user.getPlayer().hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
+                    player.setScoreboard(manager.getNewScoreboard());
+                    return;
+                }
 
-        Scoreboard board = manager.getNewScoreboard();
-        Team team = board.registerNewTeam(player.getName());
-        Objective objective = board.registerNewObjective(ChatColor.DARK_GREEN + "Statistiken", "dummy");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                Scoreboard board = manager.getNewScoreboard();
+                Team team = board.registerNewTeam(player.getName());
+                Objective objective = board.registerNewObjective(ChatColor.DARK_GREEN + "Statistiken", "dummy");
+                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        if (SinkLibrary.getInstance().isEconomyAvailable()) {
-            Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
-            money.setScore(new Double(user.getBalance()).intValue());
-        }
+                if (SinkLibrary.getInstance().isEconomyAvailable()) {
+                    Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
+                    money.setScore(new Double(user.getBalance()).intValue());
+                }
 
-        Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
+                Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
 
-        onlinePlayers.setScore(BukkitUtil.getOnlinePlayersForPlayer(player).size());
+                int size;
+                try {
+                    size = BukkitUtil.getOnlinePlayersForPlayer(player).size();
+                } catch (Exception e) {
+                    size = Bukkit.getOnlinePlayers().size();
+                }
 
-        Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
-        date.setScore((int) player.getHealth());
-        team.setAllowFriendlyFire(true);
-        team.setCanSeeFriendlyInvisibles(false);
-        player.setScoreboard(board);
+                onlinePlayers.setScore(size);
+
+                Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
+                date.setScore((int) player.getHealth());
+                team.setAllowFriendlyFire(true);
+                team.setCanSeeFriendlyInvisibles(false);
+                player.setScoreboard(board);
+            }
+        });
     }
 
     @Override

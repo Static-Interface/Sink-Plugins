@@ -85,4 +85,10 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
     }
 
     public abstract boolean isOnline();
+
+    @Override
+    public boolean equals(Object o) {
+        //Todo: test this
+        return o instanceof SinkUser && getClass().equals(o.getClass()) && getName().equals(((SinkUser) o).getName());
+    }
 }

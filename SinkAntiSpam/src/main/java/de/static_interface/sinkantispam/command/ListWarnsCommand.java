@@ -55,7 +55,7 @@ public class ListWarnsCommand extends SinkCommand {
         } else {
             target = SinkLibrary.getInstance().getIngameUser(args[0]);
 
-            if (sender instanceof Player && target instanceof IngameUser) {
+            if (user instanceof IngameUser && target instanceof IngameUser && target.getPlayer() != null) {
                 if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
                     throw new UserNotFoundException(args[0]);
                 }
