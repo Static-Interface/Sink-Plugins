@@ -58,7 +58,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.pircbotx.User;
@@ -86,22 +85,14 @@ public class SinkLibrary extends JavaPlugin {
     public static final int API_VERSION = 2;
     public static File LIB_FOLDER;
     private static SinkLibrary instance;
-    public List<String> tmpBannedPlayers;
-    private boolean sinkChatAvailable;
-    private boolean ircAvailable;
-    private Logger logger;
     private TpsTimer timer;
     private Economy econ;
     private Permission perm;
     private Chat chat;
-    private String version;
-    private Settings settings;
-    private PluginDescriptionFile description;
     private boolean economyAvailable = true;
     private boolean permissionsAvailable = true;
     private boolean chatAvailable = true;
     private boolean vaultAvailable = false;
-    private boolean initalized;
     private HashMap<String, SinkCommand> commandAliases;
     private HashMap<String, SinkCommand> commands;
     private HashMap<Class<?>, SinkUserProvider> userImplementations;
@@ -111,6 +102,9 @@ public class SinkLibrary extends JavaPlugin {
     private FakeUserProvider fakeUserProvider;
     private SinkTabCompleter defaultCompleter;
     private List<String> loadedLibs = new ArrayList<>();
+    private Settings settings;
+    private Logger logger;
+    private File customDataFolder;
 
     /**
      * Get the instance of this plugin
@@ -119,7 +113,8 @@ public class SinkLibrary extends JavaPlugin {
      */
     public static SinkLibrary getInstance() {
         if (instance == null) {
-            throw new NotInitializedException("SinkLibrary is not initalized");
+            instance = (SinkLibrary) Bukkit.getPluginManager().getPlugin("SinkLibrary");
+            //throw new NotInitializedException("SinkLibrary is not initalized");
         }
         return instance;
     }
@@ -138,18 +133,10 @@ public class SinkLibrary extends JavaPlugin {
     @Override
     public void onEnable() {
         // Init variables first to prevent NullPointerExceptions when other plugins try to access them
-        instance = this;
+        //instance = this;
         // Init Settings
-        description = getDescription();
-        settings = new Settings();
-        version = getDescription().getVersion();
-        tmpBannedPlayers = new ArrayList<>();
-        logger = new Logger();
-        timer = new TpsTimer();
-        commands = new HashMap<>();
-        commandAliases = new HashMap<>();
+        getLogger().info("Loading...");
         userImplementations = new HashMap<>();
-        defaultCompleter = new SinkTabCompleter();
 
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
@@ -159,19 +146,18 @@ public class SinkLibrary extends JavaPlugin {
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
-            getLogger().severe("Coudln't create lib directory");
+            getLogger().warning("Coudln't create lib directory");
         }
 
         registerUserImplementation(Player.class, ingameUserProvider);
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(FakeSender.class, fakeUserProvider);
-        // Init language
+
         LanguageConfiguration languageConfiguration =
                 new LanguageConfiguration();
         languageConfiguration.init();
 
-        getLogger().info("Loading...");
         // Check optional dependencies
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             getLogger().warning("Vault Plugin not found. Disabling economy and some permission features.");
@@ -213,13 +199,10 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         // Register Listeners and Commands
-        if (!initalized) {
-            registerListeners();
-            registerCommands();
-            initalized = true;
-        }
+        registerListeners();
+        registerCommands();
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, timer, 1000, 50);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, getSinkTimer(), 1000, 50);
 
         // Check for updates
         update();
@@ -229,12 +212,8 @@ public class SinkLibrary extends JavaPlugin {
             onRefreshDisplayName(p);
         }
 
-        sinkChatAvailable = Bukkit.getPluginManager().getPlugin("SinkChat") != null;
-
         if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null) {
-            ircAvailable = true;
             Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
-
             if (Bukkit.getPluginManager().getPlugin("SinkChat") != null) {
                 Debug.log("SinkChat found. Skipping registration of IRCLinkListener");
             } else {
@@ -247,6 +226,9 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public SinkTabCompleter getDefaultTabCompleter() {
+        if (defaultCompleter == null) {
+            defaultCompleter = new SinkTabCompleter();
+        }
         return defaultCompleter;
     }
 
@@ -347,7 +329,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public boolean isIrcAvailable() {
-        if (!ircAvailable) {
+        if (Bukkit.getPluginManager().getPlugin("SinkIRC") == null) {
             return false;
         }
 
@@ -394,6 +376,9 @@ public class SinkLibrary extends JavaPlugin {
      * @return SinkTimer
      */
     public TpsTimer getSinkTimer() {
+        if (timer == null) {
+            timer = new TpsTimer();
+        }
         return timer;
     }
 
@@ -434,11 +419,11 @@ public class SinkLibrary extends JavaPlugin {
      */
     public File getCustomDataFolder() {
         String pluginName = getPluginName();
-        if (pluginName == null) {
-            throw new NullPointerException("getPluginName() returned null");
+        if (customDataFolder == null) {
+            customDataFolder = new File(getDataFolder().getAbsolutePath().replace(pluginName, "SinkPlugins"));
         }
 
-        return new File(getDataFolder().getAbsolutePath().replace(pluginName, "SinkPlugins"));
+        return customDataFolder;
     }
 
     /**
@@ -458,7 +443,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return true if successfully sended, false if event got cancelled or irc is not available
      */
     public boolean sendIrcMessage(@Nonnull String message, @Nonnull String target) {
-        if (!ircAvailable) {
+        if (!isIrcAvailable()) {
             return false;
         }
         Debug.log("Firing new IRCSendMessageEvent(\"" + message + "\")");
@@ -468,29 +453,14 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * Add Temp Ban to Player. Will be cleared on next server restart or plugin reload.
-     *
-     * @param username Player to ban
-     */
-    public void addTempBan(String username) {
-        tmpBannedPlayers.add(username);
-    }
-
-    /**
-     * Remove Temp Ban
-     *
-     * @param username Player to unban
-     */
-    public void removeTempBan(String username) {
-        tmpBannedPlayers.remove(username);
-    }
-
-    /**
      * Get SinkPlugins Settings.
      *
      * @return Settings
      */
     public Settings getSettings() {
+        if (settings == null) {
+            settings = new Settings();
+        }
         return settings;
     }
 
@@ -711,7 +681,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return Version
      */
     public String getVersion() {
-        return version;
+        return getInstance().getDescription().getVersion();
     }
 
     /**
@@ -720,7 +690,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player that needs to refresh DisplayName
      */
     public void onRefreshDisplayName(Player player) {
-        if (!settings.isDisplayNamesEnabled()) {
+        if (!getSettings().isDisplayNamesEnabled()) {
             return;
         }
 
@@ -805,7 +775,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return the name of this plugin
      */
     public String getPluginName() {
-        return description.getName();
+        return getInstance().getDescription().getName();
     }
 
     /**
@@ -834,10 +804,21 @@ public class SinkLibrary extends JavaPlugin {
 
     @Deprecated
     public Logger getCustomLogger() {
+        if (logger == null) {
+            logger = new Logger();
+        }
         return logger;
     }
 
     public void registerCommand(String name, SinkCommand command) {
+        if (commands == null) {
+            commands = new HashMap<>();
+        }
+
+        if (commandAliases == null) {
+            commandAliases = new HashMap<>();
+        }
+
         name = name.toLowerCase();
         Debug.logMethodCall(name, command);
         if (!command.getCommandOptions().isIrcOnly()) {
@@ -884,7 +865,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     private void update() {
-        Updater updater = new Updater(settings.getUpdateType());
+        Updater updater = new Updater(getSettings().getUpdateType());
         String permission = "sinklibrary.updatenotification";
         String versionType = ' ' + updater.getLatestGameVersion() + ' ';
         if (versionType.equalsIgnoreCase("release")) {
@@ -937,7 +918,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public boolean isSinkChatAvailable() {
-        return sinkChatAvailable;
+        return Bukkit.getPluginManager().getPlugin("SinkChat") != null;
     }
 
     public ConsoleUser getConsoleUser() {
