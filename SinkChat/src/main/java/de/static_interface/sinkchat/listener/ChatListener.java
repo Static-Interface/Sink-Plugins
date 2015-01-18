@@ -53,11 +53,11 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleChatMonitor(AsyncPlayerChatEvent event) {
-        for (Player p : new HashSet<>(event.getRecipients())) {
-            p.sendMessage(event.getFormat().replace("$1%s", event.getPlayer().getDisplayName()).replace("$2%s", event.getMessage()));
-        }
-
-        event.setCancelled(true);
+        //for (Player p : new HashSet<>(event.getRecipients())) {
+        //    p.sendMessage(event.getFormat().replace("%1$s", event.getPlayer().getDisplayName()).replace("%2$s", event.getMessage()));
+        //}
+        //
+        //event.setCancelled(true);
     }
 
     private void handleChat(AsyncPlayerChatEvent event) {
@@ -88,7 +88,7 @@ public class ChatListener implements Listener {
 
                 if (channel.sendToIRC()) {
                     SinkLibrary.getInstance().sendIrcMessage(
-                            event.getFormat().replace("$1%s", event.getPlayer().getDisplayName()).replace("$2%s", event.getMessage()));
+                            event.getFormat().replace("%1$s", event.getPlayer().getDisplayName()).replace("%2$s", event.getMessage()));
                 }
                 return;
             }
@@ -117,7 +117,7 @@ public class ChatListener implements Listener {
 
         event.setFormat(eventFormat);
 
-        String spyMessage = Util.getSpyPrefix() + eventFormat.replace("$1%s", user.getDisplayName()).replace("$2%s", event.getMessage());
+        String spyMessage = Util.getSpyPrefix() + eventFormat.replace("%1$s", user.getDisplayName()).replace("%2$s", event.getMessage());
         //String spyMessage = Util.getSpyPrefix() + eventFormat;
 
         for (Player p : new HashSet<>(event.getRecipients())) {

@@ -183,6 +183,7 @@ public class SinkLibrary extends JavaPlugin {
             vaultAvailable = true;
 
             if (!setupChat()) {
+                getLogger().warning("Chat providing plugin not found. Disabling chat features.");
                 chatAvailable = false;
             }
 
