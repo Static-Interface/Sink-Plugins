@@ -51,6 +51,7 @@ import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -96,16 +97,15 @@ public class SinkLibrary extends JavaPlugin {
     private HashMap<String, SinkCommand> commandAliases;
     private HashMap<String, SinkCommand> commands;
     private HashMap<Class<?>, SinkUserProvider> userImplementations;
-    private IngameUserProvider ingameUserProvider;
-    private IrcUserProvider ircUserProvider;
-    private ConsoleUserProvider consoleUserProvider;
-    private FakeUserProvider fakeUserProvider;
     private SinkTabCompleter defaultCompleter;
     private List<String> loadedLibs = new ArrayList<>();
     private Settings settings;
     private Logger logger;
     private File customDataFolder;
 
+    private ConsoleUserProvider consoleUserProvider;
+    private IngameUserProvider ingameUserProvider;
+    private IrcUserProvider ircUserProvider;
     /**
      * Get the instance of this plugin
      * @return instance
@@ -138,10 +138,7 @@ public class SinkLibrary extends JavaPlugin {
         getLogger().info("Loading...");
         userImplementations = new HashMap<>();
 
-        ingameUserProvider = new IngameUserProvider();
-        consoleUserProvider = new ConsoleUserProvider();
-        ircUserProvider = new IrcUserProvider();
-        fakeUserProvider = new FakeUserProvider();
+        FakeUserProvider fakeUserProvider = new FakeUserProvider();
 
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
@@ -149,9 +146,6 @@ public class SinkLibrary extends JavaPlugin {
             getLogger().warning("Coudln't create lib directory");
         }
 
-        registerUserImplementation(Player.class, ingameUserProvider);
-        registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
-        registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(FakeSender.class, fakeUserProvider);
 
         LanguageConfiguration languageConfiguration =
@@ -624,7 +618,7 @@ public class SinkLibrary extends JavaPlugin {
      * @return {@link SinkUser} instance of the target
      */
     public IngameUser getIngameUser(UUID uuid) {
-        return ingameUserProvider.getUserInstance(uuid);
+        return getIngameUserProvider().getUserInstance(uuid);
     }
 
     /**
@@ -668,10 +662,11 @@ public class SinkLibrary extends JavaPlugin {
      * Register an own implementation of {@link SinkUser} for a {@link CommandSender}
      */
     public void registerUserImplementation(Class<?> base, SinkUserProvider provider) {
+        Validate.notNull(base);
+        Validate.notNull(provider);
         Debug.log("Registering user provider for base: " + base.getName() + ": " + provider.getClass().getName());
         userImplementations.put(base, provider);
     }
-
 
     /**
      * Get Version of SinkLibrary
@@ -721,19 +716,19 @@ public class SinkLibrary extends JavaPlugin {
 
     @Nullable
     public IrcUser getIrcUser(String nick) {
-        return ircUserProvider.getUserInstance(nick);
+        return getIrcUserProvider().getUserInstance(nick);
     }
 
     public IrcUser getIrcUser(User user, String source) {
-        return ircUserProvider.getUserInstance(user, source);
+        return getIrcUserProvider().getUserInstance(user, source);
     }
 
     public void loadIrcUser(User user, String source) {
-        ircUserProvider.loadUser(user, source);
+        getIrcUserProvider().loadUser(user, source);
     }
 
     public void unloadIrcUser(User user) {
-        ircUserProvider.unloadUser(user);
+        getIrcUserProvider().unloadUser(user);
     }
 
     /**
@@ -759,12 +754,12 @@ public class SinkLibrary extends JavaPlugin {
      * @param uuid UUID of the User who needs to be unloaded
      */
     public void unloadUser(UUID uuid) {
-        IngameUser user = ingameUserProvider.getUserInstance(uuid);
+        IngameUser user = getIngameUserProvider().getUserInstance(uuid);
         if (user == null) {
             return;
         }
         user.getConfiguration().save();
-        ingameUserProvider.unloadUser(user);
+        getIngameUserProvider().unloadUser(user);
     }
 
     /**
@@ -782,7 +777,7 @@ public class SinkLibrary extends JavaPlugin {
     @Unstable
     public Collection<IngameUser> getOnlineUsers() {
         Set<IngameUser> users = new HashSet<>();
-        for (SinkUser user : ingameUserProvider.getUserInstances()) {
+        for (SinkUser user : getIngameUserProvider().getUserInstances()) {
             users.add((IngameUser) user);
         }
         return users;
@@ -794,7 +789,7 @@ public class SinkLibrary extends JavaPlugin {
     @Unstable
     public Collection<IrcUser> getOnlineIrcUsers() {
         Set<IrcUser> users = new HashSet<>();
-        for (SinkUser user : ircUserProvider.getUserInstances()) {
+        for (SinkUser user : getIrcUserProvider().getUserInstances()) {
             users.add((IrcUser) user);
         }
         return users;
@@ -920,6 +915,33 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public ConsoleUser getConsoleUser() {
-        return consoleUserProvider.getUserInstance(Bukkit.getConsoleSender());
+        return getConsoleUserProvider().getUserInstance(Bukkit.getConsoleSender());
+    }
+
+    private ConsoleUserProvider getConsoleUserProvider() {
+        if (consoleUserProvider == null) {
+            consoleUserProvider = new ConsoleUserProvider();
+            registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
+        }
+
+        return consoleUserProvider;
+    }
+
+    private IngameUserProvider getIngameUserProvider() {
+        if (ingameUserProvider == null) {
+            ingameUserProvider = new IngameUserProvider();
+            registerUserImplementation(Player.class, ingameUserProvider);
+        }
+
+        return ingameUserProvider;
+    }
+
+    private IrcUserProvider getIrcUserProvider() {
+        if (ircUserProvider == null) {
+            ircUserProvider = new IrcUserProvider();
+            registerUserImplementation(User.class, ircUserProvider);
+        }
+
+        return ircUserProvider;
     }
 }
