@@ -5,7 +5,7 @@ author: Trojaner
 authors: [_ShadowRaven_]
 website: http://static-interface.de
 main: de.static_interface.sinkirc.SinkIRC
-soft-depend: [SinkLibrary]
+depend: [SinkLibrary]
 
 commands:
   irckick:

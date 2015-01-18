@@ -4,7 +4,7 @@ description: Sink Anti Spam
 author: Trojaner
 website: http://static-interface.de
 main: de.static_interface.sinkantispam.SinkAntiSpam
-soft-depend: [SinkLibrary]
+depend: [SinkLibrary]
 
 commands:
  warn:

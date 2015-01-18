@@ -4,7 +4,8 @@ description: General Chat Plugin
 author: Trojaner
 website: http://static-interface.de
 main: de.static_interface.sinkchat.SinkChat
-soft-depend: [SinkLibrary, Towny]
+depend: [SinkLibrary]
+soft-depend: [Towny]
 
 commands:
   nick:
