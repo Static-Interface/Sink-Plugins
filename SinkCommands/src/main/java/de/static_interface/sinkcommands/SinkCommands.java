@@ -36,11 +36,9 @@ import de.static_interface.sinkcommands.command.RenameCommand;
 import de.static_interface.sinkcommands.command.StatsCommands;
 import de.static_interface.sinkcommands.command.SudoCommand;
 import de.static_interface.sinkcommands.command.TeamchatCommand;
-import de.static_interface.sinkcommands.command.VotekickCommands;
 import de.static_interface.sinkcommands.listener.DrugDeadListener;
 import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinkcommands.listener.ScoreboardListener;
-import de.static_interface.sinkcommands.listener.VotekickListener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -185,7 +183,6 @@ public class SinkCommands extends JavaPlugin {
     private void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GlobalMuteListener(), this);
-        pm.registerEvents(new VotekickListener(), this);
         pm.registerEvents(new DrugDeadListener(), this);
         pm.registerEvents(new ScoreboardListener(), this);
     }
@@ -194,12 +191,6 @@ public class SinkCommands extends JavaPlugin {
 
         getCommand("teamchat").setExecutor(new TeamchatCommand());
         getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        getCommand("votekick").setExecutor(new VotekickCommands.VotekickCommand(this));
-        getCommand("voteyes").setExecutor(new VotekickCommands.VoteyesCommand(this));
-        getCommand("voteno").setExecutor(new VotekickCommands.VotenoCommand(this));
-        getCommand("votestatus").setExecutor(new VotekickCommands.VotestatusCommand());
-        getCommand("endvote").setExecutor(new VotekickCommands.EndvoteCommand(this));
-        getCommand("votekickunban").setExecutor(new VotekickCommands.VotekickunbanCommand());
         getCommand("list").setExecutor(new ListCommand());
 
         SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));

@@ -37,32 +37,6 @@ commands:
     description: Shows information about server lag
     permission: sinkcommands.lag
 
-  votekick:
-    description: Votekick a player
-    usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler> [Grund]"
-    permission: sinkcommands.votekick
-
-  voteyes:
-    description: Votes yes on a votekick
-    permission: sinkcommands.votekick.vote
-
-  voteno:
-    description: Votes no on a votekick
-    permission: sinkcommands.votekick.vote
-
-  votestatus:
-    description: Shows Votekick status
-    permission: sinkcommands.votekick.vote
-
-  endvote:
-    description: Ends a votekick
-    permission: sinkcommands.votekick.endvote
-
-  votekickunban:
-    description: Unbans a player banned by a votekick
-    permission: sinkcommands.votekick.unban
-    usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Spieler>"
-
   rename:
     description: Rename an item
     permission: sinkcommands.rename
@@ -138,9 +112,6 @@ permissions:
       sinkcommands.teamchat.color: true
       sinkcommands.newbiechat: true
       sinkcommands.newbiechat.color: true
-      sinkcommands.duty.gm: true
-      sinkcommands.votekick: true
-      sinkcommands.votekick.bypass: true
       sinkcommands.rename: true
       sinkcommands.clear: true
       sinkcommands.clear.others: true
@@ -251,39 +222,6 @@ permissions:
     default: op
     children:
       sinkcommands.duty: true
-
-  sinkcommands.votekick:
-    default: true
-    description: Players with this permission can start a vote kick
-    children:
-      sinkcommands.votekick.vote: true
-
-  sinkcommands.votekick.vote:
-    default: true
-    description: Players with this permission can vote on a votekick.
-
-  sinkcommands.votekick.bypass:
-    default: op
-    description: Players with this permission cannot be vote kicked
-
-  sinkcommands.votekick.staff:
-    default: op
-    description: If a player with this permission is online, nobody can start a votekick.
-    children:
-      sinkcommands.votekick: true
-      sinkcommands.votekick.bypass: true
-
-  sinkcommands.votekick.endvote:
-     default: op
-     description: Cancels a votekick
-     children:
-       sinkcommands.votekick.staff: true
-
-  sinkcommands.votekick.unban:
-     default: op
-     description: Unban a player banned by a votekick
-     children:
-       sinkcommands.votekick.staff: true
 
   sinkcommands.rename:
     default: op
