@@ -212,14 +212,12 @@ public class SinkLibrary extends JavaPlugin {
             onRefreshDisplayName(p);
         }
 
-        if (Bukkit.getPluginManager().getPlugin("SinkIRC") != null) {
+        if (isIrcAvailable()) {
             Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
-            if (Bukkit.getPluginManager().getPlugin("SinkChat") != null) {
-                Debug.log("SinkChat found. Skipping registration of IRCLinkListener");
-            } else {
-                Debug.log("SinkChat not found. Registering IRCLinkListener");
-                Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
-            }
+        }
+
+        if (!isSinkChatAvailable()) {
+            Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
         }
 
         loadLibs(getConsoleUser());
