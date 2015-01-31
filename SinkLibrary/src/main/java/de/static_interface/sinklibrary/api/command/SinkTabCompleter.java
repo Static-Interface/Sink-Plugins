@@ -19,9 +19,9 @@ package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,11 +56,11 @@ public class SinkTabCompleter implements TabCompleter {
         String s = args[args.length - 1];
 
         if (includeIngameUsers) {
-            for (IngameUser user : SinkLibrary.getInstance().getOnlineUsers()) {
-                if (sender instanceof Player && !((Player) sender).canSee(user.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (sender instanceof Player && !((Player) sender).canSee(p) && !sender.hasPermission("sinklibrary.bypassvanish")) {
                     continue;
                 }
-                users.add(user);
+                users.add(SinkLibrary.getInstance().getIngameUser(p));
             }
         }
 

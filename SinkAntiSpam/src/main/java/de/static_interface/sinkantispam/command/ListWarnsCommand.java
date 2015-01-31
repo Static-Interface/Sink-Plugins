@@ -21,7 +21,6 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -54,12 +53,6 @@ public class ListWarnsCommand extends SinkCommand {
             return false;
         } else {
             target = SinkLibrary.getInstance().getIngameUser(args[0]);
-
-            if (user instanceof IngameUser && target instanceof IngameUser && target.getPlayer() != null) {
-                if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
-                    throw new UserNotFoundException(args[0]);
-                }
-            }
         }
 
         List<String> out = new ArrayList<>();

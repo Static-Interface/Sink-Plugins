@@ -88,6 +88,9 @@ public class SinkCommands extends JavaPlugin {
         Bukkit.getScheduler().runTask(SinkCommands.getInstance(), new Runnable() {
             @Override
             public void run() {
+                if (player == null) {
+                    return;
+                }
                 IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
                 IngameUserConfiguration config = user.getConfiguration();
 
@@ -97,7 +100,7 @@ public class SinkCommands extends JavaPlugin {
 
                 ScoreboardManager manager = Bukkit.getScoreboardManager();
 
-                if (!user.getPlayer().hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
+                if (!player.hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
                     player.setScoreboard(manager.getNewScoreboard());
                     return;
                 }

@@ -232,7 +232,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
      * @return True if player is online and does not equals null
      */
     public boolean isOnline() {
-        return base.isOnline();
+        return Bukkit.getPlayer(base.getUniqueId()) != null;
     }
 
     /**

@@ -21,12 +21,10 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.warning.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -45,12 +43,6 @@ public class DeleteWarnCommand extends SinkCommand {
         }
 
         IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
-
-        if (sender instanceof Player && target instanceof IngameUser) {
-            if (!((Player) sender).canSee(target.getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
-                throw new UserNotFoundException(args[0]);
-            }
-        }
 
         int id;
         try {

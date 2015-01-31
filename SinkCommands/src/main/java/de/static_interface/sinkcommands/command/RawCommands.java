@@ -62,11 +62,11 @@ public class RawCommands {
             }
             SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
 
-            if (sender instanceof Player && target instanceof IngameUser) {
-                if (!target.isOnline()) {
-                    throw new UserNotFoundException(args[0]);
-                }
+            if (!target.isOnline()) {
+                throw new UserNotFoundException(args[0]);
+            }
 
+            if (sender instanceof Player && target instanceof IngameUser) {
                 if (!((Player) sender).canSee(((IngameUser) target).getPlayer()) && !sender.hasPermission("sinklibrary.bypassvanish")) {
                     throw new UserNotFoundException(args[0]);
                 }

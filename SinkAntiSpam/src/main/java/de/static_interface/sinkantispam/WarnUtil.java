@@ -62,7 +62,7 @@ public class WarnUtil {
             BukkitUtil.broadcast(message, perm, true);
         }
 
-        if (!target.hasPermission(perm)) {
+        if (target.isOnline() && !target.hasPermission(perm)) {
             target.sendMessage(message);
         }
 

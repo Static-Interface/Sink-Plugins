@@ -132,21 +132,22 @@ public class SinkLibrary extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Init variables first to prevent NullPointerExceptions when other plugins try to access them
-        //instance = this;
-        // Init Settings
-        getLogger().info("Loading...");
-        userImplementations = new HashMap<>();
 
-        FakeUserProvider fakeUserProvider = new FakeUserProvider();
+        getLogger().info("Loading...");
+        ingameUserProvider = new IngameUserProvider();
+        consoleUserProvider = new ConsoleUserProvider();
+        ircUserProvider = new IrcUserProvider();
+
+        registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
+        registerUserImplementation(User.class, ircUserProvider);
+        registerUserImplementation(Player.class, ingameUserProvider);
+        registerUserImplementation(FakeSender.class, new FakeUserProvider());
 
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
             getLogger().warning("Coudln't create lib directory");
         }
-
-        registerUserImplementation(FakeSender.class, fakeUserProvider);
 
         LanguageConfiguration languageConfiguration =
                 new LanguageConfiguration();
@@ -206,9 +207,7 @@ public class SinkLibrary extends JavaPlugin {
             onRefreshDisplayName(p);
         }
 
-        if (isIrcAvailable()) {
-            Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
-        }
+        Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
 
         if (!isSinkChatAvailable()) {
             Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
@@ -483,6 +482,7 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nonnull
     public IngameUser getIngameUser(String partialPlayerName, boolean throwExceptionIfNotFound) {
+        throwExceptionIfNotFound = false;
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             IngameUser onlineUser = getIngameUser(p);
@@ -517,6 +517,7 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nonnull
     public IngameUser getIngameUserExact(String playerName, boolean throwExceptionIfNotFound) {
+        throwExceptionIfNotFound = false;
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
             return getIngameUser(p);
@@ -545,13 +546,14 @@ public class SinkLibrary extends JavaPlugin {
      */
     public SinkUser getUser(String partialName, boolean throwExceptionIfNotFound) {
         boolean hasSuffix = false;
+        throwExceptionIfNotFound = false;
 
         if (partialName.equalsIgnoreCase("console")) {
             return getConsoleUser();
         }
 
         //Search for suffixes
-        for (SinkUserProvider provider : userImplementations.values()) {
+        for (SinkUserProvider provider : getUserImplementations().values()) {
             String suffix = provider.getTabCompleterSuffix();
             if (suffix == null || suffix.equals("")) {
                 continue;
@@ -569,6 +571,9 @@ public class SinkLibrary extends JavaPlugin {
 
         //No user found with that suffix
         if (hasSuffix) {
+            if (throwExceptionIfNotFound) {
+                throw new UserNotFoundException();
+            }
             return null;
         }
 
@@ -595,7 +600,7 @@ public class SinkLibrary extends JavaPlugin {
      */
     public SinkUser getUserExact(String name, boolean throwExceptionIfNotFound) {
 
-        for (SinkUserProvider provider : userImplementations.values()) {
+        for (SinkUserProvider provider : getUserImplementations().values()) {
             String suffix = provider.getTabCompleterSuffix();
             if (suffix.equals("")) {
                 continue;
@@ -642,15 +647,15 @@ public class SinkLibrary extends JavaPlugin {
             base = ((IrcCommandSender) base).getUser().getBase();
         }
 
-        for (Class<?> implClass : userImplementations.keySet()) {
+        for (Class<?> implClass : getUserImplementations().keySet()) {
             if (implClass.isInstance(base)) {
-                SinkUserProvider provider = userImplementations.get(implClass);
+                SinkUserProvider provider = getUserImplementations().get(implClass);
 
                 if (provider instanceof IrcUserProvider) {
                     return ((IrcUserProvider) provider).getUserInstance(((User) base).getNick());
                 }
 
-                return userImplementations.get(implClass).getUserInstance(base);
+                return getUserImplementations().get(implClass).getUserInstance(base);
             }
         }
 
@@ -665,7 +670,15 @@ public class SinkLibrary extends JavaPlugin {
         Validate.notNull(base);
         Validate.notNull(provider);
         Debug.log("Registering user provider for base: " + base.getName() + ": " + provider.getClass().getName());
-        userImplementations.put(base, provider);
+        getUserImplementations().put(base, provider);
+    }
+
+    private HashMap<Class<?>, SinkUserProvider> getUserImplementations() {
+        if (userImplementations == null) {
+            userImplementations = new HashMap<>();
+        }
+
+        return userImplementations;
     }
 
     /**
@@ -919,29 +932,14 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     private ConsoleUserProvider getConsoleUserProvider() {
-        if (consoleUserProvider == null) {
-            consoleUserProvider = new ConsoleUserProvider();
-            registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
-        }
-
         return consoleUserProvider;
     }
 
     private IngameUserProvider getIngameUserProvider() {
-        if (ingameUserProvider == null) {
-            ingameUserProvider = new IngameUserProvider();
-            registerUserImplementation(Player.class, ingameUserProvider);
-        }
-
         return ingameUserProvider;
     }
 
     private IrcUserProvider getIrcUserProvider() {
-        if (ircUserProvider == null) {
-            ircUserProvider = new IrcUserProvider();
-            registerUserImplementation(User.class, ircUserProvider);
-        }
-
         return ircUserProvider;
     }
 }

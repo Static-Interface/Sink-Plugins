@@ -39,7 +39,7 @@ public class IrcKickCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
 
         if (args.length < 1) {
             return false;

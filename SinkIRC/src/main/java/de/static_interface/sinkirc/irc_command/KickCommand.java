@@ -47,23 +47,20 @@ public class KickCommand extends IrcCommand {
             return true;
         }
 
-        String formattedReason;
+        String reason;
         if (args.length > 1) {
-            String reason = label.replace(targetPlayerName, "");
-            reason = reason.replace("kick ", "").trim();
-            formattedReason = " (Reason: " + reason + ')';
+            reason = label.replace(targetPlayerName, "");
+            reason = reason.replaceFirst("\\Qkick \\E", "").trim();
         } else {
-            formattedReason = ".";
+            reason = "Kicked by " + BukkitUtil.getSenderName(sender) + " from IRC";
         }
-        formattedReason = ChatColor.translateAlternateColorCodes('&', formattedReason);
-        final String finalReason = "kicked by " + BukkitUtil.getSenderName(sender) + " from IRC" + formattedReason;
+        final String formattedReason = ChatColor.translateAlternateColorCodes('&', reason);
         Bukkit.getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
-                targetPlayer.kickPlayer("You've been " + finalReason);
+                targetPlayer.kickPlayer(formattedReason);
             }
         });
-        BukkitUtil.broadcastMessage(ChatColor.RED + targetPlayer.getDisplayName() + " has been " + finalReason, false);
         return true;
     }
 }
