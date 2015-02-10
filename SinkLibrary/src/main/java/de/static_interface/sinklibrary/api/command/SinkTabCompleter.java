@@ -42,7 +42,12 @@ public class SinkTabCompleter implements TabCompleter {
 
         SinkCommand command = SinkLibrary.getInstance().getCustomCommand(cmd.getName());
 
-        SinkTabCompleterOptions options = command.getTabCompleterOptions();
+        SinkTabCompleterOptions options = null;
+        if (command != null) {
+            command.getTabCompleterOptions();
+        } else {
+            options = new SinkTabCompleterOptions(true, false, false);
+        }
         boolean includeIngameUsers = options.includeIngameUsers();
         boolean includeIrcUsers = options.includeIrcUsers();
         boolean includeSuffix = options.includeSuffix();
