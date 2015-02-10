@@ -27,17 +27,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @SuppressWarnings(
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
 public abstract class Configuration {
 
-    private static HashMap<String, Configuration> configs = new HashMap<>();
+    private static Map<String, Configuration> configs = new ConcurrentHashMap<>();
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
-    HashMap<String, String> comments = new HashMap<>();
+    Map<String, String> comments = new HashMap<>();
 
     /**
      * Create a new configuration
@@ -60,7 +62,7 @@ public abstract class Configuration {
         }
     }
 
-    public static HashMap<String, Configuration> getConfigs() {
+    public static Map<String, Configuration> getConfigs() {
         return configs;
     }
 

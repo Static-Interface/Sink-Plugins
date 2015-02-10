@@ -27,11 +27,12 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChannelHandler {
 
-    private static HashMap<String, Channel> registeredChannels = new HashMap<>();
+    private static Map<String, Channel> registeredChannels = new ConcurrentHashMap<>();
 
     public static void registerChannel(Channel channel) {
         registeredChannels.put(channel.getCallCode(), channel);
@@ -41,7 +42,7 @@ public class ChannelHandler {
     /**
      * @return All registered channels. HashMap<String, Channel> where String is the call code, Channel is the channel instance.
      */
-    public static HashMap<String, Channel> getRegisteredChannels() {
+    public static Map<String, Channel> getRegisteredChannels() {
         return registeredChannels;
     }
 

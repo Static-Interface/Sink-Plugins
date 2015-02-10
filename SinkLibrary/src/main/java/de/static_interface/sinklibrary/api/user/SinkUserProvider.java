@@ -20,7 +20,8 @@ package de.static_interface.sinklibrary.api.user;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
@@ -29,10 +30,10 @@ public abstract class SinkUserProvider<K, E extends SinkUser<K>> {
     private final Class<E> implType;
     private final Class<K> baseType;
 
-    public HashMap<K, E> instances;
+    public Map<K, E> instances;
 
     public SinkUserProvider() {
-        instances = new HashMap<>();
+        instances = new ConcurrentHashMap<>();
         this.baseType = (Class<K>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
         this.implType = (Class<E>) ((ParameterizedType) getClass()

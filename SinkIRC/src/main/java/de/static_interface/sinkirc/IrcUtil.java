@@ -31,6 +31,7 @@ import org.pircbotx.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import javax.annotation.Nullable;
@@ -38,13 +39,13 @@ import javax.annotation.Nullable;
 public class IrcUtil {
 
     private static String commandPrefix = "~";
-    private static List<String> loadedChannels = new ArrayList<>();
+    private static List<String> loadedChannels = new CopyOnWriteArrayList<>();
 
     public static boolean isOp(User user) {
         return SinkIRC.getInstance().getMainChannel().isOp(user);
     }
 
-    public static void setOp(User user, boolean value) {
+    public static void setOp(User user, Boolean value) {
         if (value && isOp(user)) {
             return;
         }

@@ -32,10 +32,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageCommands {
 
-    private static HashMap<SinkUser, SinkUser> lastReplies = new HashMap<>();
+    private static Map<SinkUser, SinkUser> lastReplies = new ConcurrentHashMap<>();
 
     private static void sendMessage(SinkUser executor, SinkUser target, String message) {
         for (SinkUser user : lastReplies.keySet()) {

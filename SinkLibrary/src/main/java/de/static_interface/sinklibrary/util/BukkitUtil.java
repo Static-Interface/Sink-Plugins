@@ -18,9 +18,9 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.Nullable;
 
@@ -45,7 +46,7 @@ public class BukkitUtil {
      * @return the current online players
      */
     public static List<Player> getOnlinePlayers() {
-        List<Player> tmp = new ArrayList<>();
+        List<Player> tmp = new CopyOnWriteArrayList<>();
         try {
             if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
             {
@@ -59,7 +60,7 @@ public class BukkitUtil {
     }
 
     public static List<Player> getOnlinePlayersForPlayer(Player p) {
-        List<Player> players = new ArrayList<>(getOnlinePlayers());
+        List<Player> players = new CopyOnWriteArrayList<>(getOnlinePlayers());
         for (Player player : players) {
             if (!p.canSee(player)) {
                 players.remove(player);

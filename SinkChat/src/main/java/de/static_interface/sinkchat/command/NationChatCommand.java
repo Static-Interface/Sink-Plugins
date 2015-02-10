@@ -33,6 +33,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NationChatCommand implements CommandExecutor {
 
@@ -87,7 +88,7 @@ public class NationChatCommand implements CommandExecutor {
                 ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + townPrefix + prefixName + ChatColor.GRAY + ": "
                 + ChatColor.WHITE + msg;
 
-        ArrayList<Player> sendPlayers = new ArrayList<>();
+        List<Player> sendPlayers = new ArrayList<>();
 
         for (Resident nationResident : nation.getResidents()) {
             if (nationResident.isNPC()) {

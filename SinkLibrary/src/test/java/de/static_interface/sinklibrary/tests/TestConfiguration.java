@@ -23,10 +23,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestConfiguration extends Configuration {
 
-    public HashMap<String, Object> defaultTestValues = new HashMap<>();
+    public Map<String, Object> defaultTestValues = new HashMap<>();
 
     public TestConfiguration(File file) {
         super(file);
@@ -60,7 +61,7 @@ public class TestConfiguration extends Configuration {
         }
     }
 
-    public HashMap<String, Object> getDefaultTestValues() {
+    public Map<String, Object> getDefaultTestValues() {
         return defaultTestValues;
     }
 

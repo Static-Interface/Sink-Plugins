@@ -32,6 +32,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TownChatCommand implements CommandExecutor {
 
@@ -77,7 +78,7 @@ public class TownChatCommand implements CommandExecutor {
                 ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE
                 + msg;
 
-        ArrayList<Player> sendPlayers = new ArrayList<>();
+        List<Player> sendPlayers = new ArrayList<>();
 
         for (Resident townResident : town.getResidents()) {
             if (townResident.isNPC()) {

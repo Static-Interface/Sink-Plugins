@@ -68,13 +68,14 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
@@ -94,11 +95,11 @@ public class SinkLibrary extends JavaPlugin {
     private boolean permissionsAvailable = true;
     private boolean chatAvailable = true;
     private boolean vaultAvailable = false;
-    private HashMap<String, SinkCommand> commandAliases;
-    private HashMap<String, SinkCommand> commands;
-    private HashMap<Class<?>, SinkUserProvider> userImplementations;
+    private Map<String, SinkCommand> commandAliases;
+    private Map<String, SinkCommand> commands;
+    private Map<Class<?>, SinkUserProvider> userImplementations;
     private SinkTabCompleter defaultCompleter;
-    private List<String> loadedLibs = new ArrayList<>();
+    private List<String> loadedLibs;
     private Settings settings;
     private Logger logger;
     private File customDataFolder;
@@ -134,6 +135,10 @@ public class SinkLibrary extends JavaPlugin {
     public void onEnable() {
 
         getLogger().info("Loading...");
+        commands = new ConcurrentHashMap<>();
+        commandAliases = new ConcurrentHashMap<>();
+        loadedLibs = new CopyOnWriteArrayList<>();
+
         ingameUserProvider = new IngameUserProvider();
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
@@ -315,7 +320,7 @@ public class SinkLibrary extends JavaPlugin {
         getLogger().info("Disabled.");
     }
 
-    public HashMap<String, SinkCommand> getCommands() {
+    public Map<String, SinkCommand> getCommands() {
         return commands;
     }
 
@@ -673,9 +678,9 @@ public class SinkLibrary extends JavaPlugin {
         getUserImplementations().put(base, provider);
     }
 
-    private HashMap<Class<?>, SinkUserProvider> getUserImplementations() {
+    private Map<Class<?>, SinkUserProvider> getUserImplementations() {
         if (userImplementations == null) {
-            userImplementations = new HashMap<>();
+            userImplementations = new ConcurrentHashMap<>();
         }
 
         return userImplementations;
@@ -817,48 +822,34 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public void registerCommand(String name, SinkCommand command) {
-        if (commands == null) {
-            commands = new HashMap<>();
-        }
-
-        if (commandAliases == null) {
-            commandAliases = new HashMap<>();
-        }
-
         name = name.toLowerCase();
         Debug.logMethodCall(name, command);
-        if (!command.getCommandOptions().isIrcOnly()) {
-            try {
-                PluginCommand cmd = Bukkit.getPluginCommand(name);
-                if (cmd == null) {
-                    Debug.log(Level.WARNING, "Command is not registered in plugin.yml file");
-                    return;
+        PluginCommand cmd = Bukkit.getPluginCommand(name);
+        if (cmd != null && !command.getCommandOptions().isIrcOnly()) {
+            Debug.log("Bukkit Command instance found: " + cmd.toString());
+            cmd.setExecutor(command);
+            cmd.setTabCompleter(getDefaultTabCompleter());
+            for (String alias : cmd.getAliases()) // Register alias commands
+            {
+                alias = alias.toLowerCase();
+                if (alias.equals(name)) {
+                    continue;
                 }
-
-                Debug.log("Bukkit Command instance found: " + cmd.toString());
-
-                cmd.setExecutor(command);
-                cmd.setTabCompleter(getDefaultTabCompleter());
-                for (String alias : cmd.getAliases()) // Register alias commands
-                {
-                    alias = alias.toLowerCase();
-                    if (alias.equals(name)) {
-                        continue;
-                    }
-                    commandAliases.put(alias, command);
-                }
-                command.setUsage(cmd.getUsage());
-                command.setPermission(cmd.getPermission());
-                command.setPlugin(cmd.getPlugin());
-            } catch (NullPointerException ignored) {
-                // do nothing because command may be an irc command which is not registered in the plugin.yml
+                commandAliases.put(alias, command);
             }
+            command.setUsage(cmd.getUsage());
+            command.setPermission(cmd.getPermission());
+            command.setPlugin(cmd.getPlugin());
         } else {
             Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
+        if (!commandAliases.containsKey(name)) {
+            commandAliases.put(name, command);
+        }
 
-        commandAliases.put(name, command);
-        commands.put(name, command);
+        if (!commands.containsKey(name)) {
+            commands.put(name, command);
+        }
     }
 
     public SinkCommand getCustomCommand(String name) {

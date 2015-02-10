@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigurationTest {
 
@@ -33,7 +33,7 @@ public class ConfigurationTest {
         File testFile = new File(url.getFile());
 
         TestConfiguration config = new TestConfiguration(testFile);
-        HashMap<String, Object> defaultTestValues = config.getDefaultTestValues();
+        Map<String, Object> defaultTestValues = config.getDefaultTestValues();
         for (String s : defaultTestValues.keySet()) {
             assertEquals(defaultTestValues.get(s), config.get(s));
             assertEquals(defaultTestValues.get(s), config.getDefaults().get(s));
