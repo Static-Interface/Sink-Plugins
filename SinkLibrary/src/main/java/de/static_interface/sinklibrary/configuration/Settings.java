@@ -85,7 +85,7 @@ public class Settings extends Configuration {
         addDefault("SinkIRC.Authentification.AuthBot", "NickServ", "Name of the authbot");
         addDefault("SinkIRC.Authentification.AuthMessage", "identify NickServPasswordHere",
                    "Message you send for identification with /msg <AuthBot> <message>. If you e.g. NickServ, use identify <password>");
-
+        addDefault("SinkIRC.JoinLeaveMaxUsers", 20, "Max users until join leaves won't show in IRC. Use 0 to disable");
         addDefault("SinkCommands.Message.MessageReceived", "&7[{TARGETIRCPREFIX} {DISPLAYNAME} &7-> &6Me&7]&r {USERMESSAGE}");
         addDefault("SinkCommands.Message.MessageSend", "&7[&6Me &7-> {TARGETIRCPREFIX} {TARGETDISPLAYNAME}&7]&r {USERMESSAGE}");
     }
@@ -190,6 +190,10 @@ public class Settings extends Configuration {
 
     public String getIrcAuthMessage() {
         return (String) get("SinkIRC.Authentification.AuthMessage");
+    }
+
+    public int getIrcJoinLeaveMaxUsers() {
+        return (int) get("SinkIRC.JoinLeaveMaxUsers");
     }
 
     public boolean isLogEnabled() {

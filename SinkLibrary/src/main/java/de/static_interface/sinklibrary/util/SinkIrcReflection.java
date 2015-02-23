@@ -89,4 +89,15 @@ public class SinkIrcReflection {
             throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
         }
     }
+
+    public static void addToQueue(String message, String target) {
+        try {
+            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcQueue");
+            Method method = c.getMethod("addToQueue");
+            method.setAccessible(true);
+            method.invoke(message, target);
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+        }
+    }
 }

@@ -20,7 +20,6 @@ package de.static_interface.sinklibrary;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
-import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.FakeSender;
@@ -107,6 +106,7 @@ public class SinkLibrary extends JavaPlugin {
     private ConsoleUserProvider consoleUserProvider;
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
+    private boolean ircExceptionOccured = false;
     /**
      * Get the instance of this plugin
      * @return instance
@@ -325,7 +325,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public boolean isIrcAvailable() {
-        if (Bukkit.getPluginManager().getPlugin("SinkIRC") == null) {
+        if (Bukkit.getPluginManager().getPlugin("SinkIRC") == null || ircExceptionOccured) {
             return false;
         }
 
@@ -333,6 +333,7 @@ public class SinkLibrary extends JavaPlugin {
             SinkIrcReflection.getMainChannel();
         } catch (Throwable e) {
             Debug.log(e);
+            ircExceptionOccured = true;
             return false;
         }
         return true;
@@ -427,8 +428,8 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      */
-    public boolean sendIrcMessage(@Nonnull String message) {
-        return sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
+    public void sendIrcMessage(@Nonnull String message) {
+        sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
     }
 
     /**
@@ -438,14 +439,16 @@ public class SinkLibrary extends JavaPlugin {
      * @param target Target user/channel, use null for default channel
      * @return true if successfully sended, false if event got cancelled or irc is not available
      */
-    public boolean sendIrcMessage(@Nonnull String message, @Nonnull String target) {
+    public void sendIrcMessage(@Nonnull String message, @Nonnull String target) {
         if (!isIrcAvailable()) {
-            return false;
+            return;
         }
-        Debug.log("Firing new IRCSendMessageEvent(\"" + message + "\")");
-        IrcSendMessageEvent event = new IrcSendMessageEvent(message, target);
-        Bukkit.getPluginManager().callEvent(event);
-        return !event.isCancelled();
+        try {
+            SinkIrcReflection.addToQueue(message, target);
+        } catch (Throwable tr) {
+            tr.printStackTrace();
+            ircExceptionOccured = true;
+        }
     }
 
     /**

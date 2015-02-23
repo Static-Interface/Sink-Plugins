@@ -138,7 +138,7 @@ public class ChatListener implements Listener {
             }
         }
 
-        Bukkit.getConsoleSender().sendMessage(spyMessage);
+        //Bukkit.getConsoleSender().sendMessage(spyMessage);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

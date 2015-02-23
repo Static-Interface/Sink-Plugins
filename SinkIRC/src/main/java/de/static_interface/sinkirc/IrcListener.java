@@ -30,6 +30,7 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import org.apache.commons.lang3.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -51,6 +52,11 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
+        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
+            return;
+        }
+
         String message = event.getJoinMessage();
         if (message == null || message.isEmpty()) {
             return;
@@ -60,6 +66,12 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
+        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
+            return;
+        }
+
+
         String message = event.getQuitMessage();
         if (message == null || message.isEmpty()) {
             return;
@@ -69,6 +81,11 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerKick(PlayerKickEvent event) {
+        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
+            return;
+        }
+
         String reason = ": " + event.getReason();
         if (event.getReason().isEmpty()) {
             reason = "!";

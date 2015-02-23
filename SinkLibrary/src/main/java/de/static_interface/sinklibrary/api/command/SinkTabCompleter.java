@@ -42,9 +42,9 @@ public class SinkTabCompleter implements TabCompleter {
 
         SinkCommand command = SinkLibrary.getInstance().getCustomCommand(cmd.getName());
 
-        SinkTabCompleterOptions options = null;
+        SinkTabCompleterOptions options;
         if (command != null) {
-            command.getTabCompleterOptions();
+            options = command.getTabCompleterOptions();
         } else {
             options = new SinkTabCompleterOptions(true, false, false);
         }

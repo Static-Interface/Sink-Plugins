@@ -76,17 +76,32 @@ public class SudoCommand extends SinkCommand {
 
         String commandLine = StringUtil.formatArrayToString(args, " ", 1);
 
-        if (target instanceof IrcUser) {
-            String cmd = args[0];
-            List<String> tmp = new ArrayList<>(Arrays.asList(args));
-            tmp.remove(cmd);
-            args = tmp.toArray(new String[tmp.size()]);
-
-            IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
-            return true;
+        boolean shouldBeOp = false;
+        if (commandLine.startsWith("*")) {
+            commandLine = commandLine.replaceFirst("\\*", "");
+            shouldBeOp = !target.isOp();
         }
 
-        Bukkit.dispatchCommand(fakeSender, commandLine);
+        if (commandLine.startsWith("/")) {
+            commandLine = commandLine.replaceFirst("/", "");
+        }
+
+        String cmd = args[0];
+        List<String> tmp = new ArrayList<>(Arrays.asList(args));
+        tmp.remove(cmd);
+        args = tmp.toArray(new String[tmp.size()]);
+
+        if (shouldBeOp) {
+            target.setOp(true);
+        }
+        if (target instanceof IrcUser) {
+            IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
+        } else {
+            Bukkit.dispatchCommand(fakeSender, commandLine);
+        }
+        if (shouldBeOp) {
+            target.setOp(false);
+        }
         return true;
     }
 }

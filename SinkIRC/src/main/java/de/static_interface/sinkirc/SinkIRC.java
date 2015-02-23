@@ -118,6 +118,8 @@ public class SinkIRC extends JavaPlugin {
                             }
                         }
                         ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIrcChannel());
+
+                        IrcQueue.getInstance().start();
                     }
 
                     //wait for bot join
@@ -169,6 +171,8 @@ public class SinkIRC extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        IrcQueue.getInstance().stop();
+
         if (ircBot != null) {
             ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
         }
