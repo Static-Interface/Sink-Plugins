@@ -20,18 +20,16 @@ package de.static_interface.sinkirc;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import org.bukkit.Bukkit;
 
-import java.util.Queue;
+import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class IrcQueue {
 
-    private static IrcQueue instance;
-
-    private final Queue<String> messageQueue = new ConcurrentLinkedDeque<>();
-    private final Queue<String> targetQueue = new ConcurrentLinkedDeque<>();
-
-    Thread queueThread;
     public static final int INTERVAL = 250; //Todo, make configurable?
+    private static IrcQueue instance;
+    private final Deque<String> messageQueue = new ConcurrentLinkedDeque<>();
+    private final Deque<String> targetQueue = new ConcurrentLinkedDeque<>();
+    Thread queueThread;
     private long lastTime = 0;
     private boolean work = true;
 
@@ -43,29 +41,19 @@ public class IrcQueue {
         return instance;
     }
 
-    private void doWork() {
-        String msg = messageQueue.poll();
-        String target = targetQueue.poll();
-        if (msg == null || target == null) {
-            return;
-        }
-        IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
-        Bukkit.getPluginManager().callEvent(event);
-    }
-
-    private void doWork() {
-        String msg = messageQueue.poll();
-        String target = targetQueue.poll();
-        if (msg == null || target == null) {
-            return;
-        }
-        IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
-        Bukkit.getPluginManager().callEvent(event);
-    }
-
     public static void addToQueue(String message, String target) {
         getInstance().messageQueue.offer(message);
         getInstance().targetQueue.offer(target);
+    }
+
+    private void doWork() {
+        String msg = messageQueue.pop();
+        String target = targetQueue.pop();
+        if (msg == null || target == null) {
+            return;
+        }
+        IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void stop() {
