@@ -27,6 +27,14 @@ public abstract class IrcEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     boolean cancelled;
 
+    public IrcEvent() {
+        super();
+    }
+
+    public IrcEvent(boolean async) {
+        super(async);
+    }
+
     @SuppressWarnings("UnusedDeclaration")
     public static HandlerList getHandlerList() {
         return handlers;

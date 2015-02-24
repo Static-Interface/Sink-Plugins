@@ -30,6 +30,7 @@ public class IrcCommandEvent extends IrcEvent {
     private String[] args;
 
     public IrcCommandEvent(IrcCommandSender sender, SinkCommand cmd, String label, String[] args, PircBotX bot) {
+        super(true);
         this.sender = sender;
         this.command = cmd;
         this.label = label;

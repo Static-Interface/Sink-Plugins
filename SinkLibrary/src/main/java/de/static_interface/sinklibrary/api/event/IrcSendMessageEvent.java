@@ -36,6 +36,7 @@ public class IrcSendMessageEvent extends Event implements Cancellable {
      * @param message Message to send
      */
     public IrcSendMessageEvent(String message, String target) {
+        super(true);
         this.message = message;
         this.target = target;
     }

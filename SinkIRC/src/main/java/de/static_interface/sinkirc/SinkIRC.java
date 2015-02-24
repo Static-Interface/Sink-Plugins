@@ -37,6 +37,7 @@ import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 
 public class SinkIRC extends JavaPlugin {
@@ -85,6 +86,8 @@ public class SinkIRC extends JavaPlugin {
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
                             .setAutoReconnect(true)
+                            .setMessageDelay(1)
+                            .setShutdownHookEnabled(true)
                             .setServer(SinkLibrary.getInstance().getSettings().getIrcAddress(), SinkLibrary.getInstance().getSettings().getIrcPort())
                             .addListener(new PircBotXLinkListener())
                             .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
@@ -98,7 +101,6 @@ public class SinkIRC extends JavaPlugin {
 
                     ircBot = new PircBotX(configBuilder.buildConfiguration());
                     ircBot.startBot();
-
                     WaitForQueue queue = new WaitForQueue(ircBot);
                     if (SinkLibrary.getInstance().getSettings().isIrcAuthentificationEnabled()) {
                         ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIrcAuthBot(),
@@ -118,8 +120,6 @@ public class SinkIRC extends JavaPlugin {
                             }
                         }
                         ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIrcChannel());
-
-                        IrcQueue.getInstance().start();
                     }
 
                     //wait for bot join
@@ -144,7 +144,7 @@ public class SinkIRC extends JavaPlugin {
             }
         });
         ircThread.start();
-
+        IrcQueue.getInstance().start();
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
         SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this));
@@ -174,7 +174,15 @@ public class SinkIRC extends JavaPlugin {
         IrcQueue.getInstance().stop();
 
         if (ircBot != null) {
-            ircBot.sendIRC().quitServer("Plugin is reloading or server is shutting down...");
+            ircBot.sendIRC().quitServer("Disabling...");
+            try {
+                Class clazz = ircBot.getClass();
+                Method m = clazz.getDeclaredMethod("shutdown", Boolean.TYPE);
+                m.setAccessible(true);
+                m.invoke(ircBot, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if (ircThread != null && !ircThread.isInterrupted()) {
             ircThread.interrupt();

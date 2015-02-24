@@ -21,15 +21,18 @@ import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import org.bukkit.Bukkit;
 
 import java.util.Deque;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.logging.Level;
 
 public class IrcQueue {
 
-    public static final int INTERVAL = 250; //Todo, make configurable?
+    public static final int INTERVAL = 64; //Todo, make configurable?
     private static IrcQueue instance;
     private final Deque<String> messageQueue = new ConcurrentLinkedDeque<>();
     private final Deque<String> targetQueue = new ConcurrentLinkedDeque<>();
     Thread queueThread;
+    boolean queueEmptyMessageSend = false;
     private long lastTime = 0;
     private boolean work = true;
 
@@ -41,26 +44,42 @@ public class IrcQueue {
         return instance;
     }
 
-    public static void addToQueue(String message, String target) {
+    public static synchronized void addToQueue(String message, String target) {
+        SinkIRC.getInstance().getLogger().log(Level.INFO, "[Queue] Adding to queue: " + message + " @ " + target);
         getInstance().messageQueue.offer(message);
         getInstance().targetQueue.offer(target);
     }
 
     private void doWork() {
-        String msg = messageQueue.pop();
-        String target = targetQueue.pop();
-        if (msg == null || target == null) {
-            return;
+        try {
+            String msg = messageQueue.pop();
+            String target = targetQueue.pop();
+            if (msg == null || target == null) {
+                messageQueue.clear();
+                targetQueue.clear();
+                if (!queueEmptyMessageSend) {
+                    SinkIRC.getInstance().getLogger().log(Level.INFO, "[Queue] IRC Queue is empty");
+                    queueEmptyMessageSend = true;
+                }
+                return;
+            }
+            queueEmptyMessageSend = false;
+            IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
+            Bukkit.getPluginManager().callEvent(event);
+        } catch (NoSuchElementException ignored) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
-        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void stop() {
         work = false;
         messageQueue.clear();
         targetQueue.clear();
-        queueThread.interrupt();
+        if (queueThread != null) {
+            queueThread.interrupt();
+        }
     }
 
     public void start() {
@@ -74,7 +93,7 @@ public class IrcQueue {
                         doWork();
                     } else {
                         try {
-                            Thread.sleep(difference);
+                            Thread.sleep(INTERVAL - difference);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -82,7 +101,7 @@ public class IrcQueue {
                 }
             }
         }, "IRC-Queue Thread");
-
+        SinkIRC.getInstance().getLogger().log(Level.INFO, "[Queue] IRC Queue Thread started");
         queueThread.start();
     }
 }

@@ -27,6 +27,7 @@ public class IrcPrivateMessageEvent extends IrcEvent {
     private final PircBotX bot;
 
     public IrcPrivateMessageEvent(User user, String message, PircBotX bot) {
+        super(true);
         this.user = user;
         this.message = message;
         this.bot = bot;

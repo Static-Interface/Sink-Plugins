@@ -29,6 +29,7 @@ public class IrcReceiveMessageEvent extends IrcEvent {
     private final PircBotX bot;
 
     public IrcReceiveMessageEvent(User user, Channel channel, String message, PircBotX bot) {
+        super(true);
         this.user = user;
         this.channel = channel;
         this.message = message;
