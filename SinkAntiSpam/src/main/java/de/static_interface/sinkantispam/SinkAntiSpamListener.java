@@ -36,14 +36,20 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SinkAntiSpamListener implements Listener {
 
+    public static final int SPAM_DELAY = 750; // Todo make configurable
     private static List<String> blacklistedWords;
     private static List<String> whiteListDomains;
     private static List<String> excludedCommands;
+    private Map<UUID, String> lastMessages = new ConcurrentHashMap<>();
+    private Map<UUID, Long> lastMessagesTime = new ConcurrentHashMap<>();
 
     public SinkAntiSpamListener() {
         blacklistedWords = SinkLibrary.getInstance().getSettings().getBlackListedWords();
@@ -55,10 +61,6 @@ public class SinkAntiSpamListener implements Listener {
         WarnResult result = new WarnResult();
         result.setResultcode(WarnResult.PASS);
         IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
-
-        if (user.hasPermission("sinkantispam.bypass")) {
-            return result;
-        }
 
         message = ChatColor.stripColor(message);
 
@@ -128,16 +130,47 @@ public class SinkAntiSpamListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+        if(event.getPlayer().hasPermission("sinkantispam.bypass")){
+            return;
+        }
+
         WarnResult result = checkMessage(event.getPlayer(), event.getMessage());
+        UUID uuid = event.getPlayer().getUniqueId();
+        String msg = event.getMessage();
+        String lastMsg = lastMessages.get(uuid);
+
+        lastMessages.put(uuid, msg);
+
+        Long lastMsgTime = lastMessagesTime.get(uuid);
+        lastMessagesTime.put(uuid, System.currentTimeMillis());
 
         switch (result.getResultCode()) {
             case WarnResult.CANCEL: {
                 event.setCancelled(true);
+                return;
             }
 
             case WarnResult.CENSOR: {
                 event.setMessage(result.getCensoredMessage());
+                break;
             }
+        }
+
+        if(lastMsg != null && lastMsg.equalsIgnoreCase(msg)) {
+            event.getPlayer().sendMessage(m("SinkAntiSpam.RepeatingMessage"));
+            event.setCancelled(true);
+            return;
+        }
+
+        if(lastMsgTime == null) {
+            return;
+        }
+
+        long difference = System.currentTimeMillis() - lastMsgTime;
+        if(lastMsgTime != null && difference < SPAM_DELAY) {
+            event.getPlayer().sendMessage(m("SinkAntiSpam.SpamMessage", SPAM_DELAY - difference));
+            event.setCancelled(true);
+            return;
         }
     }
 

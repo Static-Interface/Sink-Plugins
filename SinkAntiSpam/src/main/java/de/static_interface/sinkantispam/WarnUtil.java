@@ -30,6 +30,7 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WarnUtil {
 
@@ -86,8 +87,9 @@ public class WarnUtil {
 
     public static List<Warning> getWarnings(IngameUser user) {
         IngameUserConfiguration config = user.getConfiguration();
-        List<Warning> deserializedWarnings = new ArrayList<>();
-        List<String> serializedWarnings = config.getYamlConfiguration().getStringList(WARNINGS_PATH);
+        List<Warning> deserializedWarnings = new CopyOnWriteArrayList<>();
+        List<String> serializedWarnings = new CopyOnWriteArrayList<>(config.getYamlConfiguration().getStringList(WARNINGS_PATH));
+
         if (serializedWarnings == null) {
             setWarnings(user, deserializedWarnings);
         } else {
@@ -97,7 +99,6 @@ public class WarnUtil {
             }
         }
         Collections.sort(deserializedWarnings);
-        //return fixWarningsIds(deserializedWarnings);
         return deserializedWarnings;
     }
 
@@ -108,17 +109,4 @@ public class WarnUtil {
     public static int getMaxWarnings() {
         return SinkLibrary.getInstance().getSettings().getMaxWarnings();
     }
-
-    //public static List<Warning> fixWarningsIds(List<Warning> warnings) {
-    //    List<Warning> fixedWarnings = new ArrayList<>();
-    //    int id = 1;
-    //
-    //    for(Warning warning : warnings) {
-    //        warning.setId(id);
-    //        fixedWarnings.add(warning);
-    //        id++;
-    //    }
-    //
-    //    return fixedWarnings;
-    //}
 }

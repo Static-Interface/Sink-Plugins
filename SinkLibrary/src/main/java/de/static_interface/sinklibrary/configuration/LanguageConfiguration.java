@@ -162,6 +162,8 @@ public class LanguageConfiguration extends Configuration {
         addDefault("SinkAntiSpam.WarnSelf", "&4You can't warn yourself!");
         addDefault("SinkAntiSpam.AutoBan", "&4You've been auto banned by SinkAntiSpam");
         addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
+        addDefault("SinkAntiSpam.RepeatingMessage", "&4Please don't spam the same message!");
+        addDefault("SinkAntiSpam.SpamMessage", "&4Please wait {0} ms before sending a message again");
 
         addDefault("TimeUnit.Years", "Year(s)");
         addDefault("TimeUnit.Months", "Month(s)");
