@@ -36,7 +36,7 @@ public class SinkIrcReflection {
             method.setAccessible(true);
             return (PircBotX) method.invoke(Bukkit.getPluginManager().getPlugin("SinkIRC"));
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
     }
 
@@ -49,7 +49,7 @@ public class SinkIrcReflection {
             method.setAccessible(true);
             value = (boolean) method.invoke(null, user);
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
         return value;
     }
@@ -62,7 +62,7 @@ public class SinkIrcReflection {
             method.setAccessible(true);
             method.invoke(null, user, value);
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
     }
 
@@ -75,7 +75,7 @@ public class SinkIrcReflection {
             }
             return (String) method.invoke(null);
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
     }
 
@@ -86,18 +86,18 @@ public class SinkIrcReflection {
             method.setAccessible(true);
             return (Channel) method.invoke(Bukkit.getPluginManager().getPlugin("SinkIRC"));
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
     }
 
     public static void addToQueue(String message, String target) {
         try {
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcQueue");
-            Method method = c.getMethod("addToQueue");
+            Method method = c.getMethod("addToQueue", String.class, String.class);
             method.setAccessible(true);
-            method.invoke(message, target);
+            method.invoke(null, message, target);
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you forgot to install it?", e);
+            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
     }
 }

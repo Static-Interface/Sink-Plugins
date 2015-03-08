@@ -165,7 +165,15 @@ public class IrcUtil {
         }
     }
 
-    public static void handleCommand(String command, String[] args, String source, User user, String label) {
+    /**
+     * Trigger an IRC command. It's thread-safe.
+     * @param command The command to be executed
+     * @param args Command args
+     * @param source Command source (e.g. channel or username if private message)
+     * @param user The user who executes the command
+     * @param label Command label
+     */
+    public static void handleCommand(String command, final String[] args, String source, User user, String label) {
         if (StringUtil.isEmptyOrNull(command)) {
             return;
         }
@@ -182,9 +190,9 @@ public class IrcUtil {
         } else {
             label = ChatColor.stripColor(label);
         }
-        IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user, source), source);
+        final IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user, source), source);
 
-        SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
+        final SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
 
         boolean isQueryCommand = !source.startsWith("#");
 
@@ -193,8 +201,15 @@ public class IrcUtil {
             return;
         }
 
-        IrcCommandEvent event = new IrcCommandEvent(sender, cmd, label, args, SinkIRC.getInstance().getIrcBot());
-        Bukkit.getPluginManager().callEvent(event);
+        final String finalLabel = label;
+        Bukkit.getScheduler().runTaskAsynchronously(SinkIRC.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                IrcCommandEvent event = new IrcCommandEvent(sender, cmd, finalLabel, args, SinkIRC.getInstance().getIrcBot());
+                Bukkit.getPluginManager().callEvent(event);
+            }
+        });
+
     }
 
     public static String getFormattedName(User user) {

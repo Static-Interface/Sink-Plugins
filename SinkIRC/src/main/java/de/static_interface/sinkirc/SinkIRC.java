@@ -24,6 +24,7 @@ import de.static_interface.sinkirc.irc_command.KickCommand;
 import de.static_interface.sinkirc.irc_command.ListCommand;
 import de.static_interface.sinkirc.irc_command.SayCommand;
 import de.static_interface.sinkirc.irc_command.SetCommand;
+import de.static_interface.sinkirc.queue.IrcQueue;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

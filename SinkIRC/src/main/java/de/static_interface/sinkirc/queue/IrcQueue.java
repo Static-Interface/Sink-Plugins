@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkirc;
+package de.static_interface.sinkirc.queue;
 
+import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
+import de.static_interface.sinklibrary.util.Debug;
 import org.bukkit.Bukkit;
 
 import java.util.Deque;
@@ -29,8 +31,8 @@ public class IrcQueue {
 
     public static final int INTERVAL = 64; //Todo, make configurable?
     private static IrcQueue instance;
-    private final Deque<String> messageQueue = new ConcurrentLinkedDeque<>();
-    private final Deque<String> targetQueue = new ConcurrentLinkedDeque<>();
+    private final Deque<QueuedIrcMessage> queue = new ConcurrentLinkedDeque<>();
+
     Thread queueThread;
     boolean queueEmptyMessageSend = false;
     private long lastTime = 0;
@@ -44,27 +46,19 @@ public class IrcQueue {
         return instance;
     }
 
-    public static synchronized void addToQueue(String message, String target) {
-        SinkIRC.getInstance().getLogger().log(Level.INFO, "[Queue] Adding to queue: " + message + " @ " + target);
-        getInstance().messageQueue.offer(message);
-        getInstance().targetQueue.offer(target);
+    public static synchronized void addToQueue(QueuedIrcMessage message) {
+        Debug.log(Level.INFO, "[Queue] Adding to queue: " + message.getMessage() + " @ " + message.getTarget());
+        getInstance().queue.offer(message);
     }
 
     private void doWork() {
         try {
-            String msg = messageQueue.pop();
-            String target = targetQueue.pop();
-            if (msg == null || target == null) {
-                messageQueue.clear();
-                targetQueue.clear();
-                if (!queueEmptyMessageSend) {
-                    SinkIRC.getInstance().getLogger().log(Level.INFO, "[Queue] IRC Queue is empty");
-                    queueEmptyMessageSend = true;
-                }
+            QueuedIrcMessage msg = queue.pop();
+            if (msg == null) {
                 return;
             }
-            queueEmptyMessageSend = false;
-            IrcSendMessageEvent event = new IrcSendMessageEvent(msg, target);
+
+            IrcSendMessageEvent event = new IrcSendMessageEvent(msg.getMessage(), msg.getTarget());
             Bukkit.getPluginManager().callEvent(event);
         } catch (NoSuchElementException ignored) {
 
@@ -75,8 +69,7 @@ public class IrcQueue {
 
     public void stop() {
         work = false;
-        messageQueue.clear();
-        targetQueue.clear();
+        queue.clear();
         if (queueThread != null) {
             queueThread.interrupt();
         }
