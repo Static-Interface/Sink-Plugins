@@ -22,7 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.user.FakeUser;
+import de.static_interface.sinklibrary.user.ProxiedUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -41,12 +41,12 @@ public class MessageCommands {
 
     private static void sendMessage(SinkUser executor, SinkUser target, String message) {
         for (SinkUser user : lastReplies.keySet()) {
-            if (user instanceof FakeUser && !(executor instanceof FakeUser) && ((FakeUser) user).getBase().getBase().equals(executor.getSender())) {
+            if (user instanceof ProxiedUser && !(executor instanceof ProxiedUser) && ((ProxiedUser) user).getBase().getCallee().equals(executor.getSender())) {
                 executor = user;
                 break;
             }
         }
-
+        //Todo: add @Name Message Support
         String format = SinkLibrary.getInstance().getSettings().getMessageSendFormat();
         HashMap<String, Object> customValues = new HashMap<>();
         if (target instanceof IrcUser) {

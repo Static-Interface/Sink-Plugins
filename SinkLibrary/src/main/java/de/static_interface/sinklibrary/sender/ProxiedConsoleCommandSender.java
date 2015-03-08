@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,13 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.api.sender;
+package de.static_interface.sinklibrary.sender;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
-public interface FakeSender extends CommandSender {
+public class ProxiedConsoleCommandSender extends ProxiedCommandSenderConversable implements ConsoleCommandSender {
 
-    CommandSender getBase();
-
-    CommandSender getFaker();
+    public ProxiedConsoleCommandSender(ConsoleCommandSender base, CommandSender faker) {
+        super(base, faker);
+    }
 }

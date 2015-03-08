@@ -41,6 +41,7 @@ jars/
 *.ipr
 .gradle/
 
+spigot*.jar
 
 #############
 ## Windows detritus

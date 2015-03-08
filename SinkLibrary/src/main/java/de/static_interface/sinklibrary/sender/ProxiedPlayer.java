@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.api.sender;
+package de.static_interface.sinklibrary.sender;
 
 import org.bukkit.Achievement;
 import org.bukkit.Effect;
@@ -25,15 +25,13 @@ import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
-import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.v1_8_R2.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
@@ -50,10 +48,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.PluginMessageRecipient;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
@@ -67,1280 +63,1108 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class FakePlayerCommandSender implements Player, FakeSender {
+public class ProxiedPlayer extends ProxiedCommandSenderConversable implements Player {
 
-    private final Player base;
-    private final CommandSender faker;
-
-    public FakePlayerCommandSender(Player base, CommandSender faker) {
-        this.base = base;
-        this.faker = faker;
+    public ProxiedPlayer(Player base, CommandSender faker) {
+        super(base, faker);
     }
 
     @Override
     public String getDisplayName() {
-        return base.getDisplayName();
+        return ((Player) getCallee()).getDisplayName();
     }
 
     @Override
     public void setDisplayName(String s) {
-        base.setDisplayName(s);
+        ((Player) getCallee()).setDisplayName(s);
     }
 
     @Override
     public String getPlayerListName() {
-        return base.getPlayerListName();
+        return ((Player) getCallee()).getPlayerListName();
     }
 
     @Override
     public void setPlayerListName(String s) {
-        base.setPlayerListName(s);
+        ((Player) getCallee()).setPlayerListName(s);
     }
 
     @Override
     public Location getCompassTarget() {
-        return base.getCompassTarget();
+        return ((Player) getCallee()).getCompassTarget();
     }
 
     @Override
     public void setCompassTarget(Location location) {
-        base.setCompassTarget(location);
+        ((Player) getCallee()).setCompassTarget(location);
     }
 
     @Override
     public InetSocketAddress getAddress() {
-        return base.getAddress();
-    }
-
-    @Override
-    public boolean isConversing() {
-        return base.isConversing();
-    }
-
-    @Override
-    public void acceptConversationInput(String s) {
-        base.acceptConversationInput(s);
-    }
-
-    @Override
-    public boolean beginConversation(Conversation conversation) {
-        return base.beginConversation(conversation);
-    }
-
-    @Override
-    public void abandonConversation(Conversation conversation) {
-        base.abandonConversation(conversation);
-    }
-
-    @Override
-    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent) {
-        base.abandonConversation(conversation, conversationAbandonedEvent);
-    }
-
-    @Override
-    public void sendRawMessage(String s) {
-        base.sendRawMessage(s);
-        if (faker instanceof Player) {
-            ((Player) faker).sendRawMessage(s);
-        }
+        return ((Player) getCallee()).getAddress();
     }
 
     @Override
     public void kickPlayer(String s) {
-        base.kickPlayer(s);
+        ((Player) getCallee()).kickPlayer(s);
     }
 
     @Override
     public void chat(String s) {
-        base.chat(s);
+        ((Player) getCallee()).chat(s);
     }
 
     @Override
     public boolean performCommand(String s) {
-        return base.performCommand(s);
+        return ((Player) getCallee()).performCommand(s);
     }
 
     @Override
     public boolean isSneaking() {
-        return base.isSneaking();
+        return ((Player) getCallee()).isSneaking();
     }
 
     @Override
     public void setSneaking(boolean b) {
-        base.setSneaking(b);
+        ((Player) getCallee()).setSneaking(b);
     }
 
     @Override
     public boolean isSprinting() {
-        return base.isSprinting();
+        return ((Player) getCallee()).isSprinting();
     }
 
     @Override
     public void setSprinting(boolean b) {
-        base.setSprinting(b);
+        ((Player) getCallee()).setSprinting(b);
     }
 
     @Override
     public void saveData() {
-        base.saveData();
+        ((Player) getCallee()).saveData();
     }
 
     @Override
     public void loadData() {
-        base.loadData();
+        ((Player) getCallee()).loadData();
     }
 
     @Override
     public boolean isSleepingIgnored() {
-        return base.isSleepingIgnored();
+        return ((Player) getCallee()).isSleepingIgnored();
     }
 
     @Override
     public void setSleepingIgnored(boolean b) {
-        base.setSleepingIgnored(b);
+        ((Player) getCallee()).setSleepingIgnored(b);
     }
 
     @Override
     @Deprecated
     public void playNote(Location location, byte b, byte b2) {
-        base.playNote(location, b, b2);
+        ((Player) getCallee()).playNote(location, b, b2);
     }
 
     @Override
     public void playNote(Location location, Instrument instrument, Note note) {
-        base.playNote(location, instrument, note);
+        ((Player) getCallee()).playNote(location, instrument, note);
     }
 
     @Override
     public void playSound(Location location, Sound sound, float v, float v2) {
-        base.playSound(location, sound, v, v2);
+        ((Player) getCallee()).playSound(location, sound, v, v2);
     }
 
     @Override
     @Deprecated
     public void playSound(Location location, String s, float v, float v2) {
-        base.playSound(location, s, v, v2);
+        ((Player) getCallee()).playSound(location, s, v, v2);
     }
 
     @Override
     @Deprecated
     public void playEffect(Location location, Effect effect, int i) {
-        base.playEffect(location, effect, i);
+        ((Player) getCallee()).playEffect(location, effect, i);
     }
 
     @Override
     public <T> void playEffect(Location location, Effect effect, T t) {
-        base.playEffect(location, effect, t);
+        ((Player) getCallee()).playEffect(location, effect, t);
     }
 
     @Override
     @Deprecated
     public void sendBlockChange(Location location, Material material, byte b) {
-        base.sendBlockChange(location, material, b);
+        ((Player) getCallee()).sendBlockChange(location, material, b);
     }
 
     @Override
     @Deprecated
     public boolean sendChunkChange(Location location, int i, int i2, int i3, byte[] bytes) {
-        return base.sendChunkChange(location, i, i2, i3, bytes);
+        return ((Player) getCallee()).sendChunkChange(location, i, i2, i3, bytes);
     }
 
     @Override
     @Deprecated
     public void sendBlockChange(Location location, int i, byte b) {
-        base.sendBlockChange(location, i, b);
+        ((Player) getCallee()).sendBlockChange(location, i, b);
     }
 
     @Override
     public void sendSignChange(Location location, String[] strings) throws IllegalArgumentException {
-        base.sendSignChange(location, strings);
+        ((Player) getCallee()).sendSignChange(location, strings);
     }
 
     @Override
     public void sendMap(MapView mapView) {
-        base.sendMap(mapView);
+        ((Player) getCallee()).sendMap(mapView);
     }
 
     @Override
     @Deprecated
     public void updateInventory() {
-        base.updateInventory();
+        ((Player) getCallee()).updateInventory();
     }
 
     @Override
     public void awardAchievement(Achievement achievement) {
-        base.awardAchievement(achievement);
+        ((Player) getCallee()).awardAchievement(achievement);
     }
 
     @Override
     public void removeAchievement(Achievement achievement) {
-        base.removeAchievement(achievement);
+        ((Player) getCallee()).removeAchievement(achievement);
     }
 
     @Override
     public boolean hasAchievement(Achievement achievement) {
-        return base.hasAchievement(achievement);
+        return ((Player) getCallee()).hasAchievement(achievement);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic) throws IllegalArgumentException {
-        base.incrementStatistic(statistic);
+        ((Player) getCallee()).incrementStatistic(statistic);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic) throws IllegalArgumentException {
-        base.decrementStatistic(statistic);
+        ((Player) getCallee()).decrementStatistic(statistic);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-        base.incrementStatistic(statistic, i);
+        ((Player) getCallee()).incrementStatistic(statistic, i);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-        base.decrementStatistic(statistic, i);
+        ((Player) getCallee()).decrementStatistic(statistic, i);
     }
 
     @Override
     public void setStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-        base.setStatistic(statistic, i);
+        ((Player) getCallee()).setStatistic(statistic, i);
     }
 
     @Override
     public int getStatistic(Statistic statistic) throws IllegalArgumentException {
-        return base.getStatistic(statistic);
+        return ((Player) getCallee()).getStatistic(statistic);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        base.incrementStatistic(statistic, material);
+        ((Player) getCallee()).incrementStatistic(statistic, material);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        base.decrementStatistic(statistic, material);
+        ((Player) getCallee()).decrementStatistic(statistic, material);
     }
 
     @Override
     public int getStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        return base.getStatistic(statistic, material);
+        return ((Player) getCallee()).getStatistic(statistic, material);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-        base.incrementStatistic(statistic, material, i);
+        ((Player) getCallee()).incrementStatistic(statistic, material, i);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-        base.decrementStatistic(statistic, material, i);
+        ((Player) getCallee()).decrementStatistic(statistic, material, i);
     }
 
     @Override
     public void setStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-        base.setStatistic(statistic, material, i);
+        ((Player) getCallee()).setStatistic(statistic, material, i);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        base.incrementStatistic(statistic, entityType);
+        ((Player) getCallee()).incrementStatistic(statistic, entityType);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        base.decrementStatistic(statistic, entityType);
+        ((Player) getCallee()).decrementStatistic(statistic, entityType);
     }
 
     @Override
     public int getStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        return base.getStatistic(statistic, entityType);
+        return ((Player) getCallee()).getStatistic(statistic, entityType);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType, int i) throws IllegalArgumentException {
-        base.incrementStatistic(statistic, entityType, i);
+        ((Player) getCallee()).incrementStatistic(statistic, entityType, i);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType, int i) {
-        base.decrementStatistic(statistic, entityType, i);
+        ((Player) getCallee()).decrementStatistic(statistic, entityType, i);
     }
 
     @Override
     public void setStatistic(Statistic statistic, EntityType entityType, int i) {
-        base.setStatistic(statistic, entityType, i);
+        ((Player) getCallee()).setStatistic(statistic, entityType, i);
     }
 
     @Override
     public void setPlayerTime(long l, boolean b) {
-        base.setPlayerTime(l, b);
+        ((Player) getCallee()).setPlayerTime(l, b);
     }
 
     @Override
     public long getPlayerTime() {
-        return base.getPlayerTime();
+        return ((Player) getCallee()).getPlayerTime();
     }
 
     @Override
     public long getPlayerTimeOffset() {
-        return base.getPlayerTimeOffset();
+        return ((Player) getCallee()).getPlayerTimeOffset();
     }
 
     @Override
     public boolean isPlayerTimeRelative() {
-        return base.isPlayerTimeRelative();
+        return ((Player) getCallee()).isPlayerTimeRelative();
     }
 
     @Override
     public void resetPlayerTime() {
-        base.resetPlayerTime();
+        ((Player) getCallee()).resetPlayerTime();
     }
 
     @Override
     public WeatherType getPlayerWeather() {
-        return base.getPlayerWeather();
+        return ((Player) getCallee()).getPlayerWeather();
     }
 
     @Override
     public void setPlayerWeather(WeatherType weatherType) {
-        base.setPlayerWeather(weatherType);
+        ((Player) getCallee()).setPlayerWeather(weatherType);
     }
 
     @Override
     public void resetPlayerWeather() {
-        base.resetPlayerWeather();
+        ((Player) getCallee()).resetPlayerWeather();
     }
 
     @Override
     public void giveExp(int i) {
-        base.giveExp(i);
+        ((Player) getCallee()).giveExp(i);
     }
 
     @Override
     public void giveExpLevels(int i) {
-        base.giveExpLevels(i);
+        ((Player) getCallee()).giveExpLevels(i);
     }
 
     @Override
     public float getExp() {
-        return base.getExp();
+        return ((Player) getCallee()).getExp();
     }
 
     @Override
     public void setExp(float v) {
-        base.setExp(v);
+        ((Player) getCallee()).setExp(v);
     }
 
     @Override
     public int getLevel() {
-        return base.getLevel();
+        return ((Player) getCallee()).getLevel();
     }
 
     @Override
     public void setLevel(int i) {
-        base.setLevel(i);
+        ((Player) getCallee()).setLevel(i);
     }
 
     @Override
     public int getTotalExperience() {
-        return base.getTotalExperience();
+        return ((Player) getCallee()).getTotalExperience();
     }
 
     @Override
     public void setTotalExperience(int i) {
-        base.setTotalExperience(i);
+        ((Player) getCallee()).setTotalExperience(i);
     }
 
     @Override
     public float getExhaustion() {
-        return base.getExhaustion();
+        return ((Player) getCallee()).getExhaustion();
     }
 
     @Override
     public void setExhaustion(float v) {
-        base.setExhaustion(v);
+        ((Player) getCallee()).setExhaustion(v);
     }
 
     @Override
     public float getSaturation() {
-        return base.getSaturation();
+        return ((Player) getCallee()).getSaturation();
     }
 
     @Override
     public void setSaturation(float v) {
-        base.setSaturation(v);
+        ((Player) getCallee()).setSaturation(v);
     }
 
     @Override
     public int getFoodLevel() {
-        return base.getFoodLevel();
+        return ((Player) getCallee()).getFoodLevel();
     }
 
     @Override
     public void setFoodLevel(int i) {
-        base.setFoodLevel(i);
+        ((Player) getCallee()).setFoodLevel(i);
     }
 
     @Override
     public Location getBedSpawnLocation() {
-        return base.getBedSpawnLocation();
+        return ((Player) getCallee()).getBedSpawnLocation();
     }
 
     @Override
     public void setBedSpawnLocation(Location location) {
-        base.setBedSpawnLocation(location);
+        ((Player) getCallee()).setBedSpawnLocation(location);
     }
 
     @Override
     public void setBedSpawnLocation(Location location, boolean b) {
-        base.setBedSpawnLocation(location, b);
+        ((Player) getCallee()).setBedSpawnLocation(location, b);
     }
 
     @Override
     public boolean getAllowFlight() {
-        return base.getAllowFlight();
+        return ((Player) getCallee()).getAllowFlight();
     }
 
     @Override
     public void setAllowFlight(boolean b) {
-        base.setAllowFlight(b);
+        ((Player) getCallee()).setAllowFlight(b);
     }
 
     @Override
     public void hidePlayer(Player player) {
-        base.hidePlayer(player);
+        ((Player) getCallee()).hidePlayer(player);
     }
 
     @Override
     public void showPlayer(Player player) {
-        base.showPlayer(player);
+        ((Player) getCallee()).showPlayer(player);
     }
 
     @Override
     public boolean canSee(Player player) {
-        return base.canSee(player);
+        return ((Player) getCallee()).canSee(player);
     }
 
     @Override
     public Location getLocation() {
-        return base.getLocation();
+        return ((Player) getCallee()).getLocation();
     }
 
     @Override
     public Location getLocation(Location location) {
-        return base.getLocation(location);
+        return ((Player) getCallee()).getLocation(location);
     }
 
     @Override
     public Vector getVelocity() {
-        return base.getVelocity();
+        return ((Player) getCallee()).getVelocity();
     }
 
     @Override
     public void setVelocity(Vector vector) {
-        base.setVelocity(vector);
+        ((Player) getCallee()).setVelocity(vector);
     }
 
     @Override
     @Deprecated
     public boolean isOnGround() {
-        return base.isOnGround();
+        return ((Player) getCallee()).isOnGround();
     }
 
     @Override
     public World getWorld() {
-        return base.getWorld();
+        return ((Player) getCallee()).getWorld();
     }
 
     @Override
     public boolean teleport(Location location) {
-        return base.teleport(location);
+        return ((Player) getCallee()).teleport(location);
     }
 
     @Override
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause teleportCause) {
-        return base.teleport(location, teleportCause);
+        return ((Player) getCallee()).teleport(location, teleportCause);
     }
 
     @Override
     public boolean teleport(Entity entity) {
-        return base.teleport(entity);
+        return ((Player) getCallee()).teleport(entity);
     }
 
     @Override
     public boolean teleport(Entity entity, PlayerTeleportEvent.TeleportCause teleportCause) {
-        return base.teleport(entity, teleportCause);
+        return ((Player) getCallee()).teleport(entity, teleportCause);
     }
 
     @Override
     public List<Entity> getNearbyEntities(double v, double v2, double v3) {
-        return base.getNearbyEntities(v, v2, v3);
+        return ((Player) getCallee()).getNearbyEntities(v, v2, v3);
     }
 
     @Override
     public int getEntityId() {
-        return base.getEntityId();
+        return ((Player) getCallee()).getEntityId();
     }
 
     @Override
     public int getFireTicks() {
-        return base.getFireTicks();
+        return ((Player) getCallee()).getFireTicks();
     }
 
     @Override
     public void setFireTicks(int i) {
-        base.setFireTicks(i);
+        ((Player) getCallee()).setFireTicks(i);
     }
 
     @Override
     public int getMaxFireTicks() {
-        return base.getMaxFireTicks();
+        return ((Player) getCallee()).getMaxFireTicks();
     }
 
     @Override
     public void remove() {
-        base.remove();
+        ((Player) getCallee()).remove();
     }
 
     @Override
     public boolean isDead() {
-        return base.isDead();
+        return ((Player) getCallee()).isDead();
     }
 
     @Override
     public boolean isValid() {
-        return base.isValid();
-    }
-
-    @Override
-    public Server getServer() {
-        return base.getServer();
+        return ((Player) getCallee()).isValid();
     }
 
     @Override
     public Entity getPassenger() {
-        return base.getPassenger();
+        return ((Player) getCallee()).getPassenger();
     }
 
     @Override
     public boolean setPassenger(Entity entity) {
-        return base.setPassenger(entity);
+        return ((Player) getCallee()).setPassenger(entity);
     }
 
     @Override
     public boolean isEmpty() {
-        return base.isEmpty();
+        return ((Player) getCallee()).isEmpty();
     }
 
     @Override
     public boolean eject() {
-        return base.eject();
+        return ((Player) getCallee()).eject();
     }
 
     @Override
     public float getFallDistance() {
-        return base.getFallDistance();
+        return ((Player) getCallee()).getFallDistance();
     }
 
     @Override
     public void setFallDistance(float v) {
-        base.setFallDistance(v);
+        ((Player) getCallee()).setFallDistance(v);
     }
 
     @Override
     public EntityDamageEvent getLastDamageCause() {
-        return base.getLastDamageCause();
+        return ((Player) getCallee()).getLastDamageCause();
     }
 
     @Override
     public void setLastDamageCause(EntityDamageEvent entityDamageEvent) {
-        base.setLastDamageCause(entityDamageEvent);
+        ((Player) getCallee()).setLastDamageCause(entityDamageEvent);
     }
 
     @Override
     public UUID getUniqueId() {
-        return base.getUniqueId();
+        return ((Player) getCallee()).getUniqueId();
     }
 
     @Override
     public boolean isBanned() {
-        return base.isBanned();
+        return ((Player) getCallee()).isBanned();
     }
 
     @Override
     @Deprecated
     public void setBanned(boolean b) {
-        base.setBanned(b);
+        ((Player) getCallee()).setBanned(b);
     }
 
     @Override
     public boolean isWhitelisted() {
-        return base.isWhitelisted();
+        return ((Player) getCallee()).isWhitelisted();
     }
 
     @Override
     public void setWhitelisted(boolean b) {
-        base.setWhitelisted(b);
+        ((Player) getCallee()).setWhitelisted(b);
     }
 
     @Override
     public Player getPlayer() {
-        return base;
+        return ((Player) getCallee());
     }
 
     @Override
     public long getFirstPlayed() {
-        return base.getFirstPlayed();
+        return ((Player) getCallee()).getFirstPlayed();
     }
 
     @Override
     public long getLastPlayed() {
-        return base.getLastPlayed();
+        return ((Player) getCallee()).getLastPlayed();
     }
 
     @Override
     public boolean hasPlayedBefore() {
-        return base.hasPlayedBefore();
+        return ((Player) getCallee()).hasPlayedBefore();
     }
 
     @Override
     public int getTicksLived() {
-        return base.getTicksLived();
+        return ((Player) getCallee()).getTicksLived();
     }
 
     @Override
     public void setTicksLived(int i) {
-        base.setTicksLived(i);
+        ((Player) getCallee()).setTicksLived(i);
     }
 
     @Override
     public void playEffect(EntityEffect entityEffect) {
-        base.playEffect(entityEffect);
+        ((Player) getCallee()).playEffect(entityEffect);
     }
 
     @Override
     public EntityType getType() {
-        return base.getType();
+        return ((Player) getCallee()).getType();
     }
 
     @Override
     public boolean isInsideVehicle() {
-        return base.isInsideVehicle();
+        return ((Player) getCallee()).isInsideVehicle();
     }
 
     @Override
     public boolean leaveVehicle() {
-        return base.leaveVehicle();
+        return ((Player) getCallee()).leaveVehicle();
     }
 
     @Override
     public Entity getVehicle() {
-        return base.getVehicle();
+        return ((Player) getCallee()).getVehicle();
     }
 
     @Override
     public boolean isFlying() {
-        return base.isFlying();
+        return ((Player) getCallee()).isFlying();
     }
 
     @Override
     public void setFlying(boolean b) {
-        base.setFlying(b);
+        ((Player) getCallee()).setFlying(b);
     }
 
     @Override
     public float getFlySpeed() {
-        return base.getFlySpeed();
+        return ((Player) getCallee()).getFlySpeed();
     }
 
     @Override
     public void setFlySpeed(float v) throws IllegalArgumentException {
-        base.setFlySpeed(v);
+        ((Player) getCallee()).setFlySpeed(v);
     }
 
     @Override
     public float getWalkSpeed() {
-        return base.getWalkSpeed();
+        return ((Player) getCallee()).getWalkSpeed();
     }
 
     @Override
     public void setWalkSpeed(float v) throws IllegalArgumentException {
-        base.setWalkSpeed(v);
+        ((Player) getCallee()).setWalkSpeed(v);
     }
 
     @Override
     @Deprecated
     public void setTexturePack(String s) {
-        base.setTexturePack(s);
+        ((Player) getCallee()).setTexturePack(s);
     }
 
     @Override
     public void setResourcePack(String s) {
-        base.setResourcePack(s);
+        ((Player) getCallee()).setResourcePack(s);
     }
 
     @Override
-    public Scoreboard getScoreboard() {
-        return base.getScoreboard();
+    public CraftScoreboard getScoreboard() {
+        return (CraftScoreboard) ((Player) getCallee()).getScoreboard();
     }
 
     @Override
     public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException {
-        base.setScoreboard(scoreboard);
+        ((Player) getCallee()).setScoreboard(scoreboard);
     }
 
     @Override
     public boolean isHealthScaled() {
-        return base.isHealthScaled();
+        return ((Player) getCallee()).isHealthScaled();
     }
 
     @Override
     public void setHealthScaled(boolean b) {
-        base.setHealthScaled(b);
+        ((Player) getCallee()).setHealthScaled(b);
     }
 
     @Override
     public double getHealthScale() {
-        return base.getHealthScale();
+        return ((Player) getCallee()).getHealthScale();
     }
 
     @Override
     public void setHealthScale(double v) throws IllegalArgumentException {
-        base.setHealthScale(v);
+        ((Player) getCallee()).setHealthScale(v);
     }
 
     @Override
-    public void sendMessage(String s) {
-        base.sendMessage(s);
-        faker.sendMessage(s);
-    }
-
-    @Override
-    public void sendMessage(String[] strings) {
-        base.sendMessage(strings);
-        faker.sendMessage(strings);
+    public Spigot spigot() {
+        return ((Player) getCallee()).spigot();
     }
 
     @Override
     public Map<String, Object> serialize() {
-        return base.serialize();
+        return ((Player) getCallee()).serialize();
     }
 
     @Override
     public boolean isOnline() {
-        return base.isOnline();
-    }
-
-    @Override
-    public String getName() {
-        return base.getName();
+        return ((Player) getCallee()).isOnline();
     }
 
     @Override
     public PlayerInventory getInventory() {
-        return base.getInventory();
+        return ((Player) getCallee()).getInventory();
     }
 
     @Override
     public Inventory getEnderChest() {
-        return base.getEnderChest();
+        return ((Player) getCallee()).getEnderChest();
     }
 
     @Override
     public boolean setWindowProperty(InventoryView.Property property, int i) {
-        return base.setWindowProperty(property, i);
+        return ((Player) getCallee()).setWindowProperty(property, i);
     }
 
     @Override
     public InventoryView getOpenInventory() {
-        return base.getOpenInventory();
+        return ((Player) getCallee()).getOpenInventory();
     }
 
     @Override
     public InventoryView openInventory(Inventory itemStacks) {
-        return base.openInventory(itemStacks);
+        return ((Player) getCallee()).openInventory(itemStacks);
     }
 
     @Override
     public InventoryView openWorkbench(Location location, boolean b) {
-        return base.openWorkbench(location, b);
+        return ((Player) getCallee()).openWorkbench(location, b);
     }
 
     @Override
     public InventoryView openEnchanting(Location location, boolean b) {
-        return base.openEnchanting(location, b);
+        return ((Player) getCallee()).openEnchanting(location, b);
     }
 
     @Override
     public void openInventory(InventoryView inventoryView) {
-        base.openInventory(inventoryView);
+        ((Player) getCallee()).openInventory(inventoryView);
     }
 
     @Override
     public void closeInventory() {
-        base.closeInventory();
+        ((Player) getCallee()).closeInventory();
     }
 
     @Override
     public ItemStack getItemInHand() {
-        return base.getItemInHand();
+        return ((Player) getCallee()).getItemInHand();
     }
 
     @Override
     public void setItemInHand(ItemStack itemStack) {
-        base.setItemInHand(itemStack);
+        ((Player) getCallee()).setItemInHand(itemStack);
     }
 
     @Override
     public ItemStack getItemOnCursor() {
-        return base.getItemOnCursor();
+        return ((Player) getCallee()).getItemOnCursor();
     }
 
     @Override
     public void setItemOnCursor(ItemStack itemStack) {
-        base.setItemOnCursor(itemStack);
+        ((Player) getCallee()).setItemOnCursor(itemStack);
     }
 
     @Override
     public boolean isSleeping() {
-        return base.isSleeping();
+        return ((Player) getCallee()).isSleeping();
     }
 
     @Override
     public int getSleepTicks() {
-        return base.getSleepTicks();
+        return ((Player) getCallee()).getSleepTicks();
     }
 
     @Override
     public GameMode getGameMode() {
-        return base.getGameMode();
+        return ((Player) getCallee()).getGameMode();
     }
 
     @Override
     public void setGameMode(GameMode gameMode) {
-        base.setGameMode(gameMode);
+        ((Player) getCallee()).setGameMode(gameMode);
     }
 
     @Override
     public boolean isBlocking() {
-        return base.isBlocking();
+        return ((Player) getCallee()).isBlocking();
     }
 
     @Override
     public int getExpToLevel() {
-        return base.getExpToLevel();
+        return ((Player) getCallee()).getExpToLevel();
     }
 
     @Override
     public double getEyeHeight() {
-        return base.getEyeHeight();
+        return ((Player) getCallee()).getEyeHeight();
     }
 
     @Override
     public double getEyeHeight(boolean b) {
-        return base.getEyeHeight(b);
+        return ((Player) getCallee()).getEyeHeight(b);
     }
 
     @Override
     public Location getEyeLocation() {
-        return base.getEyeLocation();
+        return ((Player) getCallee()).getEyeLocation();
     }
 
     @Override
     @Deprecated
     public List<Block> getLineOfSight(HashSet<Byte> bytes, int i) {
-        return base.getLineOfSight(bytes, i);
+        return ((Player) getCallee()).getLineOfSight(bytes, i);
+    }
+
+    @Override
+    public List<Block> getLineOfSight(Set<Material> set, int i) {
+        return ((Player) getCallee()).getLineOfSight(set, i);
     }
 
     @Override
     @Deprecated
     public Block getTargetBlock(HashSet<Byte> bytes, int i) {
-        return base.getTargetBlock(bytes, i);
+        return ((Player) getCallee()).getTargetBlock(bytes, i);
+    }
+
+    @Override
+    public Block getTargetBlock(Set<Material> set, int i) {
+        return ((Player) getCallee()).getTargetBlock(set, i);
     }
 
     @Override
     @Deprecated
     public List<Block> getLastTwoTargetBlocks(HashSet<Byte> bytes, int i) {
-        return base.getLastTwoTargetBlocks(bytes, i);
+        return ((Player) getCallee()).getLastTwoTargetBlocks(bytes, i);
+    }
+
+    @Override
+    public List<Block> getLastTwoTargetBlocks(Set<Material> set, int i) {
+        return ((Player) getCallee()).getLastTwoTargetBlocks(set, i);
     }
 
     @Override
     @Deprecated
     public Egg throwEgg() {
-        return base.throwEgg();
+        return ((Player) getCallee()).throwEgg();
     }
 
     @Override
     @Deprecated
     public Snowball throwSnowball() {
-        return base.throwSnowball();
+        return ((Player) getCallee()).throwSnowball();
     }
 
     @Override
     @Deprecated
     public Arrow shootArrow() {
-        return base.shootArrow();
+        return ((Player) getCallee()).shootArrow();
     }
 
     @Override
     public int getRemainingAir() {
-        return base.getRemainingAir();
+        return ((Player) getCallee()).getRemainingAir();
     }
 
     @Override
     public void setRemainingAir(int i) {
-        base.setRemainingAir(i);
+        ((Player) getCallee()).setRemainingAir(i);
     }
 
     @Override
     public int getMaximumAir() {
-        return base.getMaximumAir();
+        return ((Player) getCallee()).getMaximumAir();
     }
 
     @Override
     public void setMaximumAir(int i) {
-        base.setMaximumAir(i);
+        ((Player) getCallee()).setMaximumAir(i);
     }
 
     @Override
     public int getMaximumNoDamageTicks() {
-        return base.getMaximumNoDamageTicks();
+        return ((Player) getCallee()).getMaximumNoDamageTicks();
     }
 
     @Override
     public void setMaximumNoDamageTicks(int i) {
-        base.setMaximumNoDamageTicks(i);
+        ((Player) getCallee()).setMaximumNoDamageTicks(i);
     }
 
     @Override
     public double getLastDamage() {
-        return base.getLastDamage();
+        return ((Player) getCallee()).getLastDamage();
     }
 
     @Override
     public void setLastDamage(double v) {
-        base.setLastDamage(v);
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getLastDamage() {
-        return base._INVALID_getLastDamage();
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_setLastDamage(int i) {
-        base._INVALID_setLastDamage(i);
+        ((Player) getCallee()).setLastDamage(v);
     }
 
     @Override
     public int getNoDamageTicks() {
-        return base.getNoDamageTicks();
+        return ((Player) getCallee()).getNoDamageTicks();
     }
 
     @Override
     public void setNoDamageTicks(int i) {
-        base.setNoDamageTicks(i);
+        ((Player) getCallee()).setNoDamageTicks(i);
     }
 
     @Override
     public Player getKiller() {
-        return base.getKiller();
+        return ((Player) getCallee()).getKiller();
     }
 
     @Override
     public boolean addPotionEffect(PotionEffect potionEffect) {
-        return base.addPotionEffect(potionEffect);
+        return ((Player) getCallee()).addPotionEffect(potionEffect);
     }
 
     @Override
     public boolean addPotionEffect(PotionEffect potionEffect, boolean b) {
-        return base.addPotionEffect(potionEffect, b);
+        return ((Player) getCallee()).addPotionEffect(potionEffect, b);
     }
 
     @Override
     public boolean addPotionEffects(Collection<PotionEffect> potionEffects) {
-        return base.addPotionEffects(potionEffects);
+        return ((Player) getCallee()).addPotionEffects(potionEffects);
     }
 
     @Override
     public boolean hasPotionEffect(PotionEffectType potionEffectType) {
-        return base.hasPotionEffect(potionEffectType);
+        return ((Player) getCallee()).hasPotionEffect(potionEffectType);
     }
 
     @Override
     public void removePotionEffect(PotionEffectType potionEffectType) {
-        base.removePotionEffect(potionEffectType);
+        ((Player) getCallee()).removePotionEffect(potionEffectType);
     }
 
     @Override
     public Collection<PotionEffect> getActivePotionEffects() {
-        return base.getActivePotionEffects();
+        return ((Player) getCallee()).getActivePotionEffects();
     }
 
     @Override
     public boolean hasLineOfSight(Entity entity) {
-        return base.hasLineOfSight(entity);
+        return ((Player) getCallee()).hasLineOfSight(entity);
     }
 
     @Override
     public boolean getRemoveWhenFarAway() {
-        return base.getRemoveWhenFarAway();
+        return ((Player) getCallee()).getRemoveWhenFarAway();
     }
 
     @Override
     public void setRemoveWhenFarAway(boolean b) {
-        base.setRemoveWhenFarAway(b);
+        ((Player) getCallee()).setRemoveWhenFarAway(b);
     }
 
     @Override
     public EntityEquipment getEquipment() {
-        return base.getEquipment();
+        return ((Player) getCallee()).getEquipment();
     }
 
     @Override
     public boolean getCanPickupItems() {
-        return base.getCanPickupItems();
+        return ((Player) getCallee()).getCanPickupItems();
     }
 
     @Override
     public void setCanPickupItems(boolean b) {
-        base.setCanPickupItems(b);
+        ((Player) getCallee()).setCanPickupItems(b);
     }
 
     @Override
     public String getCustomName() {
-        return base.getCustomName();
+        return ((Player) getCallee()).getCustomName();
     }
 
     @Override
     public void setCustomName(String s) {
-        base.setCustomName(s);
+        ((Player) getCallee()).setCustomName(s);
     }
 
     @Override
     public boolean isCustomNameVisible() {
-        return base.isCustomNameVisible();
+        return ((Player) getCallee()).isCustomNameVisible();
     }
 
     @Override
     public void setCustomNameVisible(boolean b) {
-        base.setCustomNameVisible(b);
+        ((Player) getCallee()).setCustomNameVisible(b);
     }
 
     @Override
     public boolean isLeashed() {
-        return base.isLeashed();
+        return ((Player) getCallee()).isLeashed();
     }
 
     @Override
     public Entity getLeashHolder() throws IllegalStateException {
-        return base.getLeashHolder();
+        return ((Player) getCallee()).getLeashHolder();
     }
 
     @Override
     public boolean setLeashHolder(Entity entity) {
-        return base.setLeashHolder(entity);
+        return ((Player) getCallee()).setLeashHolder(entity);
     }
 
     @Override
     public void damage(double v) {
-        base.damage(v);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_damage(int i) {
-        base._INVALID_damage(i);
+        ((Player) getCallee()).damage(v);
     }
 
     @Override
     public void damage(double v, Entity entity) {
-        base.damage(v, entity);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_damage(int i, Entity entity) {
-        base._INVALID_damage(i, entity);
+        ((Player) getCallee()).damage(v, entity);
     }
 
     @Override
     public double getHealth() {
-        return base.getHealth();
+        return ((Player) getCallee()).getHealth();
     }
 
     @Override
     public void setHealth(double v) {
-        base.setHealth(v);
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getHealth() {
-        return base._INVALID_getHealth();
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_setHealth(int i) {
-        base._INVALID_setHealth(i);
+        ((Player) getCallee()).setHealth(v);
     }
 
     @Override
     public double getMaxHealth() {
-        return base.getMaxHealth();
+        return ((Player) getCallee()).getMaxHealth();
     }
 
     @Override
     public void setMaxHealth(double v) {
-        base.setMaxHealth(v);
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getMaxHealth() {
-        return base._INVALID_getMaxHealth();
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_setMaxHealth(int i) {
-        base._INVALID_setMaxHealth(i);
+        ((Player) getCallee()).setMaxHealth(v);
     }
 
     @Override
     public void resetMaxHealth() {
-        base.resetMaxHealth();
+        ((Player) getCallee()).resetMaxHealth();
     }
 
     @Override
     public void setMetadata(String s, MetadataValue metadataValue) {
-        base.setMetadata(s, metadataValue);
+        ((Player) getCallee()).setMetadata(s, metadataValue);
     }
 
     @Override
     public List<MetadataValue> getMetadata(String s) {
-        return base.getMetadata(s);
+        return ((Player) getCallee()).getMetadata(s);
     }
 
     @Override
     public boolean hasMetadata(String s) {
-        return base.hasMetadata(s);
+        return ((Player) getCallee()).hasMetadata(s);
     }
 
     @Override
     public void removeMetadata(String s, Plugin plugin) {
-        base.removeMetadata(s, plugin);
-    }
-
-    @Override
-    public boolean isPermissionSet(String s) {
-        return base.isPermissionSet(s);
-    }
-
-    @Override
-    public boolean isPermissionSet(Permission permission) {
-        return base.isPermissionSet(permission);
-    }
-
-    @Override
-    public boolean hasPermission(String s) {
-        return base.hasPermission(s);
-    }
-
-    @Override
-    public boolean hasPermission(Permission permission) {
-        return base.hasPermission(permission);
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b) {
-        return base.addAttachment(plugin, s, b);
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin) {
-        return base.addAttachment(plugin);
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i) {
-        return base.addAttachment(plugin, s, b, i);
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, int i) {
-        return base.addAttachment(plugin, i);
-    }
-
-    @Override
-    public void removeAttachment(PermissionAttachment permissionAttachment) {
-        base.removeAttachment(permissionAttachment);
-    }
-
-    @Override
-    public void recalculatePermissions() {
-        base.recalculatePermissions();
-    }
-
-    @Override
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return base.getEffectivePermissions();
+        ((Player) getCallee()).removeMetadata(s, plugin);
     }
 
     @Override
     public void sendPluginMessage(Plugin plugin, String s, byte[] bytes) {
-        base.sendPluginMessage(plugin, s, bytes);
-        if (faker instanceof Player) {
-            ((Player) faker).sendPluginMessage(plugin, s, bytes);
+        ((Player) getCallee()).sendPluginMessage(plugin, s, bytes);
+        if (getCaller() instanceof PluginMessageRecipient) {
+            ((PluginMessageRecipient) getCaller()).sendPluginMessage(plugin, s, bytes);
         }
     }
 
     @Override
     public Set<String> getListeningPluginChannels() {
-        return base.getListeningPluginChannels();
+        return ((Player) getCallee()).getListeningPluginChannels();
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> aClass) {
-        return base.launchProjectile(aClass);
+        return ((Player) getCallee()).launchProjectile(aClass);
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> aClass, Vector vector) {
-        return base.launchProjectile(aClass, vector);
-    }
-
-    @Override
-    public boolean isOp() {
-        return base.isOp();
-    }
-
-    @Override
-    public void setOp(boolean b) {
-        base.setOp(b);
-    }
-
-    @Override
-    public int hashCode() {
-        return base.hashCode(); //???
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return base.equals(o); //???
-    }
-
-    @Override
-    public CommandSender getBase() {
-        return base;
-    }
-
-    @Override
-    public CommandSender getFaker() {
-        return faker;
+        return ((Player) getCallee()).launchProjectile(aClass, vector);
     }
 }

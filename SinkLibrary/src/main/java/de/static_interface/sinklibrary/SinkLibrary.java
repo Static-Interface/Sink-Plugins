@@ -22,8 +22,8 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
-import de.static_interface.sinklibrary.api.sender.FakeSender;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
@@ -36,13 +36,15 @@ import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
+import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
-import de.static_interface.sinklibrary.user.FakeUserProvider;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IngameUserProvider;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.user.IrcUserProvider;
+import de.static_interface.sinklibrary.user.ProxiedIngameUserProvider;
+import de.static_interface.sinklibrary.user.ProxiedUserProvider;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
@@ -86,6 +88,8 @@ public class SinkLibrary extends JavaPlugin {
     public static final int API_VERSION = 2;
     public static File LIB_FOLDER;
     private static SinkLibrary instance;
+    private final Map<String, SinkCommand> commandAliases = new ConcurrentHashMap<>();
+    private final Map<String, SinkCommand> commands = new ConcurrentHashMap<>();
     private TpsTimer timer;
     private Economy econ;
     private Permission perm;
@@ -94,8 +98,6 @@ public class SinkLibrary extends JavaPlugin {
     private boolean permissionsAvailable = true;
     private boolean chatAvailable = true;
     private boolean vaultAvailable = false;
-    private Map<String, SinkCommand> commandAliases;
-    private Map<String, SinkCommand> commands;
     private Map<Class<?>, SinkUserProvider> userImplementations;
     private SinkTabCompleter defaultCompleter;
     private List<String> loadedLibs;
@@ -135,8 +137,6 @@ public class SinkLibrary extends JavaPlugin {
     public void onEnable() {
 
         getLogger().info("Loading...");
-        commands = new ConcurrentHashMap<>();
-        commandAliases = new ConcurrentHashMap<>();
         loadedLibs = new CopyOnWriteArrayList<>();
 
         ingameUserProvider = new IngameUserProvider();
@@ -146,7 +146,7 @@ public class SinkLibrary extends JavaPlugin {
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(Player.class, ingameUserProvider);
-        registerUserImplementation(FakeSender.class, new FakeUserProvider());
+        registerUserImplementation(ProxiedCommandSender.class, new ProxiedUserProvider());
 
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
@@ -428,8 +428,8 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      */
-    public void sendIrcMessage(@Nonnull String message) {
-        sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
+    public boolean sendIrcMessage(@Nonnull String message) {
+        return sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
     }
 
     /**
@@ -437,17 +437,19 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      * @param target Target user/channel, use null for default channel
-     * @return true if successfully sended, false if event got cancelled or irc is not available
+     * @return true if successfully added to queue, false if exception happened or irc not available
      */
-    public void sendIrcMessage(@Nonnull String message, @Nonnull String target) {
+    public boolean sendIrcMessage(@Nonnull String message, @Nonnull String target) {
         if (!isIrcAvailable()) {
-            return;
+            return false;
         }
         try {
             SinkIrcReflection.addToQueue(message, target);
+            return true;
         } catch (Throwable tr) {
             tr.printStackTrace();
             ircExceptionOccured = true;
+            return false;
         }
     }
 
@@ -615,7 +617,10 @@ public class SinkLibrary extends JavaPlugin {
             }
             if (name.endsWith(suffix)) {
                 name = name.replaceFirst(StringUtil.stripRegex(suffix), "");
-                return provider.getUserInstance(name);
+                SinkUser user = provider.getUserInstance(name);
+                if (user != null) {
+                    return user;
+                }
             }
         }
 
@@ -658,6 +663,14 @@ public class SinkLibrary extends JavaPlugin {
         for (Class<?> implClass : getUserImplementations().keySet()) {
             if (implClass.isInstance(base)) {
                 SinkUserProvider provider = getUserImplementations().get(implClass);
+
+                if (provider instanceof IngameUserProvider && implClass == ProxiedPlayer.class) {
+                    continue;
+                }
+
+                if (provider instanceof ProxiedIngameUserProvider && implClass != ProxiedPlayer.class) {
+                    continue;
+                }
 
                 if (provider instanceof IrcUserProvider) {
                     return ((IrcUserProvider) provider).getUserInstance(((User) base).getNick());
@@ -824,7 +837,7 @@ public class SinkLibrary extends JavaPlugin {
         return logger;
     }
 
-    public void registerCommand(String name, SinkCommand command) {
+    public synchronized void registerCommand(String name, SinkCommand command) {
         name = name.toLowerCase();
         Debug.logMethodCall(name, command);
         PluginCommand cmd = Bukkit.getPluginCommand(name);
@@ -846,20 +859,29 @@ public class SinkLibrary extends JavaPlugin {
         } else {
             Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
-        if (!commandAliases.containsKey(name)) {
-            commandAliases.put(name, command);
+        synchronized (commandAliases) {
+            if (!commandAliases.containsKey(name)) {
+                commandAliases.put(name, command);
+            }
         }
 
-        if (!commands.containsKey(name)) {
-            commands.put(name, command);
+        synchronized (commands) {
+            if (!commands.containsKey(name)) {
+                commands.put(name, command);
+            }
         }
     }
 
-    public SinkCommand getCustomCommand(String name) {
+    public synchronized SinkCommand getCustomCommand(String name) {
         SinkCommand cmd;
-        cmd = commands.get(name.toLowerCase());
+
+        synchronized (commands) {
+            cmd = commands.get(name.toLowerCase());
+        }
         if (cmd == null) {
-            cmd = commandAliases.get(name.toLowerCase());
+            synchronized (commandAliases) {
+                cmd = commandAliases.get(name.toLowerCase());
+            }
         }
         return cmd;
     }

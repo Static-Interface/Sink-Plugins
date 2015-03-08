@@ -22,14 +22,18 @@ import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
-import de.static_interface.sinklibrary.api.sender.FakeCommandSender;
-import de.static_interface.sinklibrary.api.sender.FakePlayerCommandSender;
+import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
+import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
+import de.static_interface.sinklibrary.sender.ProxiedPlayer;
+import de.static_interface.sinklibrary.sender.ProxiedCommandSenderConversable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -69,9 +73,16 @@ public class SudoCommand extends SinkCommand {
         if (target instanceof IrcUser && user instanceof IrcUser) {
             fakeSender = target.getSender();
         } else if (target.getBase() instanceof Player) {
-            fakeSender = new FakePlayerCommandSender((Player) target.getBase(), sender);
-        } else {
-            fakeSender = new FakeCommandSender(target.getSender(), sender);
+            fakeSender = new ProxiedPlayer((Player) target.getBase(), sender);
+        }
+        else if (target instanceof ConsoleUser) {
+            fakeSender = new ProxiedConsoleCommandSender(Bukkit.getConsoleSender(), sender);
+        }
+        else if (target.getSender() instanceof Conversable) {
+            fakeSender = new ProxiedCommandSenderConversable(target.getSender(), sender);
+        }
+        else {
+            fakeSender = new ProxiedCommandSender(target.getSender(), sender);
         }
 
         String commandLine = StringUtil.formatArrayToString(args, " ", 1);
@@ -86,7 +97,7 @@ public class SudoCommand extends SinkCommand {
             commandLine = commandLine.replaceFirst("/", "");
         }
 
-        String cmd = args[0];
+        String cmd = args[0].trim();
         List<String> tmp = new ArrayList<>(Arrays.asList(args));
         tmp.remove(cmd);
         args = tmp.toArray(new String[tmp.size()]);

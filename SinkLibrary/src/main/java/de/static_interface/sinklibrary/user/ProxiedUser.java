@@ -20,21 +20,22 @@ package de.static_interface.sinklibrary.user;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.sender.FakeSender;
+import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-public class FakeUser extends SinkUser<FakeSender> {
+public class ProxiedUser extends SinkUser<ProxiedCommandSender> {
 
-    SinkUser base;
-    SinkUser faker;
+    private ProxiedCommandSender sender;
+    private SinkUser base;
 
-    public FakeUser(FakeSender base, SinkUserProvider provider) {
+
+    public ProxiedUser(ProxiedCommandSender base, SinkUserProvider provider) {
         super(base, provider);
-        this.base = SinkLibrary.getInstance().getUser((Object) base.getBase());
-        this.faker = SinkLibrary.getInstance().getUser((Object) base.getFaker());
+        this.sender = base;
+        this.base = SinkLibrary.getInstance().getUser((Object) base.getCallee());
     }
 
     @Override
@@ -49,40 +50,37 @@ public class FakeUser extends SinkUser<FakeSender> {
 
     @Override
     public Configuration getConfiguration() {
-        if (base instanceof IngameUser) {
-            return base.getConfiguration();
-        }
-        return null;
+        return base.getConfiguration();
     }
 
     @Override
     public CommandSender getSender() {
-        return base.getSender();
+        return sender;
     }
 
     @Override
     public boolean hasPermission(SinkCommand command) {
-        return base.hasPermission(command.getPermission());
+        return sender.hasPermission(command.getPermission());
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return base.hasPermission(permission);
+        return sender.hasPermission(permission);
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return base.hasPermission(permission);
+        return sender.hasPermission(permission);
     }
 
     @Override
     public boolean isOp() {
-        return base.isOp();
+        return sender.isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        base.setOp(value);
+        sender.setOp(value);
     }
 
     @Override
@@ -97,12 +95,22 @@ public class FakeUser extends SinkUser<FakeSender> {
 
     @Override
     public void sendMessage(String msg) {
-        base.sendMessage(msg);
-        faker.sendMessage(msg);
+        sender.sendMessage(msg);
     }
 
     @Override
     public boolean isOnline() {
         return base.isOnline();
+    }
+
+
+    @Override
+    public int hashCode() {
+        return base.hashCode(); //???
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return base.equals(o); //???
     }
 }

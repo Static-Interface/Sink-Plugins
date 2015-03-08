@@ -19,6 +19,8 @@ package de.static_interface.sinklibrary.api.sender;
 
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R2.command.ProxiedNativeCommandSender;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -26,110 +28,106 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
-public class FakeCommandSender implements FakeSender {
+public class ProxiedCommandSender extends ProxiedNativeCommandSender implements CommandSender {
 
-    private final CommandSender base;
-    private final CommandSender faker;
-
-    public FakeCommandSender(CommandSender base, CommandSender faker) {
-        this.base = base;
-        this.faker = faker;
-    }
-
-    @Override
-    public CommandSender getBase() {
-        return base;
-    }
-
-    @Override
-    public CommandSender getFaker() {
-        return faker;
+    public ProxiedCommandSender(CommandSender base, CommandSender faker) {
+        super(((CraftPlayer) base).getHandle(), base, faker);
     }
 
     @Override
     public void sendMessage(String s) {
-        base.sendMessage(s);
-        faker.sendMessage(s);
+        getCallee().sendMessage(s);
+        getCaller().sendMessage(s);
     }
 
     @Override
     public void sendMessage(String[] strings) {
-        base.sendMessage(strings);
-        faker.sendMessage(strings);
+        getCallee().sendMessage(strings);
+        getCaller().sendMessage(strings);
     }
 
     @Override
     public Server getServer() {
-        return base.getServer();
+        return getCallee().getServer();
     }
 
     @Override
     public String getName() {
-        return base.getName();
+        return getCallee().getName();
     }
 
     @Override
     public boolean isPermissionSet(String s) {
-        return base.isPermissionSet(s);
+        return getCallee().isPermissionSet(s);
     }
 
     @Override
     public boolean isPermissionSet(Permission permission) {
-        return base.isPermissionSet(permission);
+        return getCallee().isPermissionSet(permission);
     }
 
     @Override
     public boolean hasPermission(String s) {
-        return base.hasPermission(s);
+        return getCallee().hasPermission(s);
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return base.hasPermission(permission);
+        return getCallee().hasPermission(permission);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b) {
-        return base.addAttachment(plugin, s, b);
+        return getCallee().addAttachment(plugin, s, b);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin) {
-        return base.addAttachment(plugin);
+        return getCallee().addAttachment(plugin);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i) {
-        return base.addAttachment(plugin, s, b, i);
+        return getCallee().addAttachment(plugin, s, b, i);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, int i) {
-        return base.addAttachment(plugin, i);
+        return getCallee().addAttachment(plugin, i);
     }
 
     @Override
     public void removeAttachment(PermissionAttachment permissionAttachment) {
-        base.removeAttachment(permissionAttachment);
+        getCallee().removeAttachment(permissionAttachment);
     }
 
     @Override
     public void recalculatePermissions() {
-        base.recalculatePermissions();
+        getCallee().recalculatePermissions();
     }
 
     @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return base.getEffectivePermissions();
+        return getCallee().getEffectivePermissions();
     }
 
     @Override
     public boolean isOp() {
-        return base.isOp();
+        return getCallee().isOp();
     }
 
     @Override
     public void setOp(boolean b) {
-        base.setOp(b);
+        getCallee().setOp(b);
+    }
+
+    @Override
+    public int hashCode() {
+        return getCallee().hashCode(); //???
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return getCallee().equals(o); //???
     }
 }

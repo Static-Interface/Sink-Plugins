@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,16 +17,25 @@
 
 package de.static_interface.sinklibrary.user;
 
-import de.static_interface.sinklibrary.api.sender.FakeSender;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.sender.ProxiedPlayer;
+import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nullable;
 
-public class FakeUserProvider extends SinkUserProvider<FakeSender, FakeUser> {
+public class ProxiedIngameUserProvider extends SinkUserProvider<OfflinePlayer, ProxiedIngameUser> {
+
+    @Override
+    public ProxiedIngameUser getUserInstance(OfflinePlayer base) {
+        if (!(base instanceof ProxiedPlayer)) {
+            throw new IllegalArgumentException("base not instanceof ProxiedIngameUser!");
+        }
+        return new ProxiedIngameUser(base, this);
+    }
 
     @Nullable
     @Override
-    public FakeUser getUserInstance(String name) {
+    public ProxiedIngameUser getUserInstance(String name) {
         return null;
     }
 
