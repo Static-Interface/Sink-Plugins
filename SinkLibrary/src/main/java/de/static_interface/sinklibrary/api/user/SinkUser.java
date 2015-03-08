@@ -88,7 +88,23 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
 
     @Override
     public boolean equals(Object o) {
-        return o != null && getClass().equals(o.getClass()) && getName().equals(((SinkUser) o).getName());
+        if(o == null) {
+            return false;
+        }
 
+        if(!(o instanceof SinkUser)) {
+            return false;
+        }
+        
+        if(getName() == null &&  ((SinkUser)o).getName() != null) {
+            return false;
+        }
+
+        if(getName() != null &&  ((SinkUser)o).getName() == null) {
+            return false;
+        }
+
+        return getClass().getName().equals(o.getClass().getName())
+               && getName().equals(((SinkUser) o).getName());
     }
 }

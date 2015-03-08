@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -28,9 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -43,29 +42,39 @@ public class BukkitUtil {
     /** Since Bukkit 1.7.9 R0.3, the return type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
      *  plugins will possibly break when using this method on older bukkit versions
      *
-     * @return the current online players
+     * @return The current online players
+     * @deprecated Older Bukkit versions are not supported anymore
      */
+    @Unstable
+    @Deprecated
     public static List<Player> getOnlinePlayers() {
-        List<Player> tmp = new CopyOnWriteArrayList<>();
-        try {
-            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
-            {
-                tmp = (List<Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null);
-            } else {
-                Collections.addAll(tmp, ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)));
-            }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-        }
-        return tmp;
+        return new CopyOnWriteArrayList<>(Bukkit.getOnlinePlayers());
+
+        //List<Player> tmp = new CopyOnWriteArrayList<>();
+        //try {
+        //    if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
+        //    {
+        //        tmp = (List<Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null);
+        //    } else {
+        //        Collections.addAll(tmp, ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)));
+        //    }
+        //} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+        //}
+        //return tmp;
     }
 
     public static List<Player> getOnlinePlayersForPlayer(Player p) {
-        List<Player> players = new CopyOnWriteArrayList<>(getOnlinePlayers());
-        for (Player player : players) {
+        List<Player> players = new CopyOnWriteArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
             if (!p.canSee(player)) {
                 players.remove(player);
             }
         }
+
+        if(players.size() == 0 ){
+            return new CopyOnWriteArrayList<>(Bukkit.getOnlinePlayers());
+        }
+
         return players;
     }
 
