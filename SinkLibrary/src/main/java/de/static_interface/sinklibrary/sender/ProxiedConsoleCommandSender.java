@@ -21,7 +21,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 public class ProxiedConsoleCommandSender extends ProxiedCommandSenderConversable implements ConsoleCommandSender {
-
     public ProxiedConsoleCommandSender(ConsoleCommandSender base, CommandSender faker) {
         super(base, faker);
     }

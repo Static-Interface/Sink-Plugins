@@ -7,57 +7,57 @@ main: de.static_interface.sinkantispam.SinkAntiSpam
 depend: [SinkLibrary]
 
 commands:
- warn:
-   description: Warn a player
-   permission: sinkantispam.warn
+  warn:
+     description: Warn a player
+     permission: sinkantispam.warn
 
- listwarns:
-   description: List a players warns
-   permission: sinkantispam.listwarns
-   usage: "/listwarns [target]"
+  listwarns:
+     description: List a players warns
+     permission: sinkantispam.listwarns
+     usage: "/listwarns [target]"
 
- deletewarn:
-   description: Deletes a warning
-   permission: sinkantispam.deletewarn
-   usage: "/deletewarn <target> <id>"
+  deletewarn:
+     description: Deletes a warning
+     permission: sinkantispam.deletewarn
+     usage: "/deletewarn <target> <id>"
 
 permissions:
- sinkantispam.*:
-   description: Gives access to all SinkAntiSpam commands
-   children:
-     sinkantispam.autowarnmessage: true
-     sinkantispam.warnmessage: true
-     sinkantispam.bypass: true
-     sinkantispam.warn: true
-     sinkantispam.listwarns: true
-     sinkantispam.deletewarn: true
+  sinkantispam.*:
+     description: Gives access to all SinkAntiSpam commands
+     children:
+        sinkantispam.autowarnmessage: true
+        sinkantispam.warnmessage: true
+        sinkantispam.bypass: true
+        sinkantispam.warn: true
+        sinkantispam.listwarns: true
+        sinkantispam.deletewarn: true
 
- sinkantispam.warn:
-    description: Allows to warn players
-    default: op
-    children:
-      sinkantispam.warn.message: true
+  sinkantispam.warn:
+      description: Allows to warn players
+      default: op
+      children:
+         sinkantispam.warn.message: true
 
- sinkantispam.listwarns:
-    description: Allows to list warnings of a players
-    default: true
+  sinkantispam.listwarns:
+      description: Allows to list warnings of a players
+      default: true
 
- sinkantispam.bypass:
-    description: Allows to bypass SinkAntiSpam
-    default: op
+  sinkantispam.bypass:
+      description: Allows to bypass SinkAntiSpam
+      default: op
 
- sinkantispam.canseedeleted:
-    description: Allows to see deleted warnings
-    default: op
+  sinkantispam.canseedeleted:
+      description: Allows to see deleted warnings
+      default: op
 
- sinkantispam.warnmessage:
-    description: Allows to receive messages
-    default: true
+  sinkantispam.warnmessage:
+      description: Allows to receive messages
+      default: true
 
- sinkantispam.deletewarn:
-    description: Allows to delete a warning
-    default: op
+  sinkantispam.deletewarn:
+      description: Allows to delete a warning
+      default: op
 
- sinkantispam.autowarnmessage:
-    description: Allows to receive auto warn messages which may contains ip, domains, blacklisted words etc
-    default: op
+  sinkantispam.autowarnmessage:
+      description: Allows to receive auto warn messages which may contains ip, domains, blacklisted words etc
+      default: op

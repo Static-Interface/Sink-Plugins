@@ -92,7 +92,7 @@ public class SinkIrcReflection {
 
     public static void addToQueue(String message, String target) {
         try {
-            Class<?> c = Class.forName("de.static_interface.sinkirc.IrcQueue");
+            Class<?> c = Class.forName("de.static_interface.sinkirc.queue.IrcQueue");
             Method method = c.getMethod("addToQueue", String.class, String.class);
             method.setAccessible(true);
             method.invoke(null, message, target);

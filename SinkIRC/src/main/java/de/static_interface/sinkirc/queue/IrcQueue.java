@@ -34,7 +34,6 @@ public class IrcQueue {
     private final Deque<QueuedIrcMessage> queue = new ConcurrentLinkedDeque<>();
 
     Thread queueThread;
-    boolean queueEmptyMessageSend = false;
     private long lastTime = 0;
     private boolean work = true;
 
@@ -46,9 +45,9 @@ public class IrcQueue {
         return instance;
     }
 
-    public static synchronized void addToQueue(QueuedIrcMessage message) {
-        Debug.log(Level.INFO, "[Queue] Adding to queue: " + message.getMessage() + " @ " + message.getTarget());
-        getInstance().queue.offer(message);
+    public static synchronized void addToQueue(String message, String target) {
+        Debug.log(Level.INFO, "[Queue] Adding to queue: " + message + " @ " + target);
+        getInstance().queue.offer(new QueuedIrcMessage(message, target));
     }
 
     private void doWork() {

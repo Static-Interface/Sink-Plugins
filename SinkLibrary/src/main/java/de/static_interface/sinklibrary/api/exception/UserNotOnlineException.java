@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,20 +20,16 @@ package de.static_interface.sinklibrary.api.exception;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 @SuppressWarnings("serial")
-public class UserNotFoundException extends RuntimeException {
+public class UserNotOnlineException extends RuntimeException {
 
     private String name;
 
-    @Deprecated
-    public UserNotFoundException() {
-    }
-
-    public UserNotFoundException(String name) {
+    public UserNotOnlineException(String name) {
         this.name = name;
     }
 
     @Override
     public String getMessage() {
-        return m("General.UserNotFound", name);
+        return m("General.NotOnline", name);
     }
 }

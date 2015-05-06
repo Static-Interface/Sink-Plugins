@@ -25,36 +25,36 @@ commands:
 
 permissions:
   sinklibrary.*:
-    default: op
-    description: Access all SinkLibrary commands
-    children:
-      sinklibrary.updatenotification: true
-      sinklibrary.debug: true
-      sinklibrary.reload: true
-      sinklibrary.ver: true
-      sinklibrary.script: true
-      sinklibrary.bypassvanish: true
+     default: op
+     description: Access all SinkLibrary commands
+     children:
+        sinklibrary.updatenotification: true
+        sinklibrary.debug: true
+        sinklibrary.reload: true
+        sinklibrary.ver: true
+        sinklibrary.script: true
+        sinklibrary.bypassvanish: true
 
   sinklibrary.updatenotification:
-    default: op
-    description: Receive update notifications
+     default: op
+     description: Receive update notifications
 
   sinklibrary.bypassvanish:
-    default: op
-    description: Allows to bypass vanish
+     default: op
+     description: Allows to bypass vanish
 
   sinklibrary.debug:
-    default: op
-    description: Permission required for debugging
+     default: op
+     description: Permission required for debugging
 
   sinklibrary.reload:
-    default: op
-    description: Permission required for reloading SinkPlugins Configurations
+     default: op
+     description: Permission required for reloading SinkPlugins Configurations
 
   sinklibrary.script:
-    default: op
-    description: Allows to use groovy scripts.
+     default: op
+     description: Allows to use groovy scripts.
 
   sinklibrary.ver:
-    description: Allows to use version command
-    default: true
+     description: Allows to use version command
+     default: true

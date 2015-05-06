@@ -32,6 +32,7 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
@@ -105,10 +106,16 @@ public class SudoCommand extends SinkCommand {
         if (shouldBeOp) {
             target.setOp(true);
         }
-        if (target instanceof IrcUser) {
-            IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
-        } else {
-            Bukkit.dispatchCommand(fakeSender, commandLine);
+
+        try {
+            if (target instanceof IrcUser) {
+                IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
+            } else {
+                Bukkit.dispatchCommand(fakeSender, commandLine);
+            }
+        } catch (Throwable thr) {
+            sender.sendMessage(ChatColor.DARK_RED + "An internal error occurred while trying to execute command on target");
+            thr.printStackTrace();
         }
         if (shouldBeOp) {
             target.setOp(false);

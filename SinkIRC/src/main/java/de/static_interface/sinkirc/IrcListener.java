@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkirc;
 
+import de.static_interface.sinkirc.queue.IrcQueue;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.event.IrcJoinEvent;
 import de.static_interface.sinklibrary.api.event.IrcKickEvent;
@@ -24,7 +25,6 @@ import de.static_interface.sinklibrary.api.event.IrcNickChangeEvent;
 import de.static_interface.sinklibrary.api.event.IrcPartEvent;
 import de.static_interface.sinklibrary.api.event.IrcPrivateMessageEvent;
 import de.static_interface.sinklibrary.api.event.IrcQuitEvent;
-import de.static_interface.sinklibrary.api.event.IrcReceiveMessageEvent;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -39,7 +39,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.pircbotx.Channel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +116,7 @@ public class IrcListener implements Listener {
             return;
         }
 
-        event.getChannel().send().message("Willkommen, " + event.getUser().getNick() + '!');
+        IrcQueue.addToQueue("Willkommen, " + event.getUser().getNick() + '!', event.getChannel().getName());
         BukkitUtil.broadcastMessage(
                 IRC_PREFIX + ChatColor.GRAY + '[' + event.getChannel().getName() + "] " + ChatColor.DARK_AQUA + event.getUser().getNick()
                 + ChatColor.WHITE + " ist dem Kanal beigetreten.", false);
@@ -175,23 +174,5 @@ public class IrcListener implements Listener {
         BukkitUtil.broadcastMessage(
                 IRC_PREFIX + ChatColor.GRAY + '[' + "Server" + "] " + ChatColor.DARK_AQUA + event.getUser().getNick() + ChatColor.WHITE
                 + " hat den IRC Server verlassen." + formattedReason, false);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onIrcReceiveMessage(IrcReceiveMessageEvent event) {
-        Debug.logMethodCall(event.getUser().getNick(), event.getChannel().getName(), event.getMessage());
-        String label = event.getMessage();
-        Channel channel = event.getChannel();
-
-        if (!label.toLowerCase().startsWith(IrcUtil.getCommandPrefix())) {
-            return;
-        }
-        label = label.replaceFirst(IrcUtil.getCommandPrefix(), "");
-        String[] args = label.split(" ");
-        String cmd = args[0];
-        List<String> tmp = new ArrayList<>(Arrays.asList(args));
-        tmp.remove(0);
-        args = tmp.toArray(new String[tmp.size()]);
-        IrcUtil.handleCommand(cmd, args, channel.getName(), event.getUser(), label);
     }
 }

@@ -36,6 +36,7 @@ import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
+import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
@@ -55,9 +56,11 @@ import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -66,10 +69,12 @@ import org.pircbotx.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -146,8 +151,10 @@ public class SinkLibrary extends JavaPlugin {
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(Player.class, ingameUserProvider);
-        registerUserImplementation(ProxiedCommandSender.class, new ProxiedUserProvider());
-
+        ProxiedUserProvider proxiedUserProvider = new ProxiedUserProvider();
+        registerUserImplementation(ProxiedCommandSender.class, proxiedUserProvider);
+        registerUserImplementation(ProxiedConsoleCommandSender.class, proxiedUserProvider);
+        registerUserImplementation(ProxiedPlayer.class, new ProxiedIngameUserProvider());
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
@@ -656,6 +663,8 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nullable
     public SinkUser getUser(Object base) {
+        Debug.logMethodCall(base.toString());
+
         if (base instanceof IrcCommandSender) {
             base = ((IrcCommandSender) base).getUser().getBase();
         }
@@ -672,11 +681,18 @@ public class SinkLibrary extends JavaPlugin {
                     continue;
                 }
 
+                if (provider instanceof ProxiedUserProvider && implClass == ProxiedPlayer.class) {
+                    continue;
+                }
+
                 if (provider instanceof IrcUserProvider) {
                     return ((IrcUserProvider) provider).getUserInstance(((User) base).getNick());
                 }
 
-                return getUserImplementations().get(implClass).getUserInstance(base);
+                SinkUser tmp = getUserImplementations().get(implClass).getUserInstance(base);
+                if (tmp != null) {
+                    return tmp;
+                }
             }
         }
 
@@ -837,12 +853,17 @@ public class SinkLibrary extends JavaPlugin {
         return logger;
     }
 
-    public synchronized void registerCommand(String name, SinkCommand command) {
+    public synchronized void registerCommand(@Nonnull String name, @Nonnull SinkCommand command) {
         name = name.toLowerCase();
         Debug.logMethodCall(name, command);
-        PluginCommand cmd = Bukkit.getPluginCommand(name);
+        Plugin p = command.getPlugin();
+        PluginCommand cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
         if (cmd != null && !command.getCommandOptions().isIrcOnly()) {
-            Debug.log("Bukkit Command instance found: " + cmd.toString());
+            //Todo: this may not work correctly
+            //if(command.getPlugin() != cmd.getPlugin()) {
+            //    return;
+            //}
+            Debug.log("Bukkit Command instance found: " + cmd.getPlugin().getName() + ":" + cmd.toString());
             cmd.setExecutor(command);
             cmd.setTabCompleter(getDefaultTabCompleter());
             for (String alias : cmd.getAliases()) // Register alias commands
@@ -851,7 +872,10 @@ public class SinkLibrary extends JavaPlugin {
                 if (alias.equals(name)) {
                     continue;
                 }
-                commandAliases.put(alias, command);
+
+                if (!commandAliases.containsKey(alias) || commandAliases.get(alias) == null) {
+                    commandAliases.put(alias, command);
+                }
             }
             command.setUsage(cmd.getUsage());
             command.setPermission(cmd.getPermission());
@@ -859,16 +883,83 @@ public class SinkLibrary extends JavaPlugin {
         } else {
             Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
+
         synchronized (commandAliases) {
-            if (!commandAliases.containsKey(name)) {
+            if (!commandAliases.containsKey(name) || commandAliases.get(name) == null) {
                 commandAliases.put(name, command);
             }
         }
 
         synchronized (commands) {
-            if (!commands.containsKey(name)) {
+            if (!commands.containsKey(name) || commands.get(name) == null) {
                 commands.put(name, command);
             }
+        }
+    }
+
+    public synchronized void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
+        unregisterCommand(name, plugin, true);
+    }
+
+    public synchronized void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin, boolean unregisterBukkit) {
+        Validate.notNull(name);
+        Validate.notNull(plugin);
+
+        name = name.toLowerCase();
+
+        SinkCommand sinkCommand = commands.get(name);
+        if (sinkCommand != null && sinkCommand.getCommandOptions().isIrcOnly()) {
+            commands.remove(name);
+            return;
+        }
+
+        PluginCommand cmd = Bukkit.getPluginCommand(plugin.getName() + ":" + name);
+        if (cmd == null) {
+            return;
+        }
+
+        for (String alias : cmd.getAliases()) // Register alias commands
+        {
+            alias = alias.toLowerCase();
+            if (alias.equals(name)) {
+                continue;
+            }
+            commandAliases.remove(alias);
+        }
+
+        commands.remove(name);
+        commandAliases.remove(name);
+
+        if (unregisterBukkit) {
+            unregisterCommandBukkit(cmd);
+        }
+    }
+
+    private Object getPrivateField(Object object, String field) throws SecurityException,
+                                                                       NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        Class<?> clazz = object.getClass();
+        Field objectField = clazz.getDeclaredField(field);
+        objectField.setAccessible(true);
+        Object result = objectField.get(object);
+        objectField.setAccessible(false);
+        return result;
+    }
+
+    private void unregisterCommandBukkit(PluginCommand cmd) {
+        try {
+            Object result = getPrivateField(this.getServer().getPluginManager(), "commandMap");
+            SimpleCommandMap commandMap = (SimpleCommandMap) result;
+            Object map = getPrivateField(commandMap, "knownCommands");
+            @SuppressWarnings("unchecked")
+            HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
+            knownCommands.remove(cmd.getName());
+            for (String alias : cmd.getAliases()) {
+                if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
+                    knownCommands.remove(alias);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

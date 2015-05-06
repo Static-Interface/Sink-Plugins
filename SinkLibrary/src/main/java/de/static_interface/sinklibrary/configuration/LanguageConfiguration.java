@@ -76,7 +76,7 @@ public class LanguageConfiguration extends Configuration {
     public void addDefaults() {
         addDefault("Main.ConfigVersion", REQUIRED_VERSION);
         addDefault("General.NotOnline", "&c{0} is not online!");
-        addDefault("General.UserNotFound", "&cUser not found!");
+        addDefault("General.UserNotFound", "&cUser not found: {0}");
         addDefault("General.ConsoleNotAvailable", "&cThis command is only ingame available");
         addDefault("General.Banned", "&4Banned:&c ");
         addDefault("General.CommandMisused.Arguments.TooFew", "&4Too few arguments!"); // Deprecated

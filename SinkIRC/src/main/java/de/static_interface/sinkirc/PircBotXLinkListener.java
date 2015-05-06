@@ -26,7 +26,9 @@ import de.static_interface.sinklibrary.api.event.IrcPartEvent;
 import de.static_interface.sinklibrary.api.event.IrcPrivateMessageEvent;
 import de.static_interface.sinklibrary.api.event.IrcQuitEvent;
 import de.static_interface.sinklibrary.api.event.IrcReceiveMessageEvent;
+import de.static_interface.sinklibrary.util.Debug;
 import org.bukkit.Bukkit;
+import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
@@ -38,10 +40,28 @@ import org.pircbotx.hooks.events.PartEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.pircbotx.hooks.events.QuitEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class PircBotXLinkListener extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) {
+        if (event.getMessage().startsWith(IrcUtil.getCommandPrefix())) {
+            Debug.logMethodCall(event.getUser().getNick(), event.getChannel().getName(), event.getMessage());
+            String label = event.getMessage();
+            Channel channel = event.getChannel();
+            label = label.replaceFirst(IrcUtil.getCommandPrefix(), "");
+            String[] args = label.split(" ");
+            String cmd = args[0];
+            List<String> tmp = new ArrayList<>(Arrays.asList(args));
+            tmp.remove(0);
+            args = tmp.toArray(new String[tmp.size()]);
+            IrcUtil.handleCommand(cmd, args, channel.getName(), event.getUser(), label);
+            //Commands shouldn't trigger message events
+            return;
+        }
         IrcReceiveMessageEvent bukkitEvent = new IrcReceiveMessageEvent(event.getUser(), event.getChannel(), event.getMessage(), event.getBot());
         Bukkit.getPluginManager().callEvent(bukkitEvent);
     }

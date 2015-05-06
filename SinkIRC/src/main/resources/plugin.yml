@@ -8,19 +8,19 @@ main: de.static_interface.sinkirc.SinkIRC
 depend: [SinkLibrary]
 
 commands:
-  irckick:
-    aliases: ikick
-    description: Kick an user from IRC
-    permission: sinkirc.irckick
+   irckick:
+      aliases: ikick
+      description: Kick an user from IRC
+      permission: sinkirc.irckick
 
 permissions:
-  sinkirc.*:
-    description: Gives access to all IRC commands
-    children:
-      sinkirc.irclist: true
-      sinkirc.privatemessage: true
-      sinkirc.irckick: true
+   sinkirc.*:
+      description: Gives access to all IRC commands
+      children:
+         sinkirc.irclist: true
+         sinkirc.privatemessage: true
+         sinkirc.irckick: true
 
-  sinkirc.irckick:
-    description: Allows to use the irckick command
-    default: op
+   sinkirc.irckick:
+      description: Allows to use the irckick command
+      default: op

@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkirc;
 
+import de.static_interface.sinkirc.queue.IrcQueue;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
@@ -143,9 +144,10 @@ public class IrcUtil {
 
         try {
             if (target.startsWith("#")) {
-                SinkIRC.getInstance().getIrcBot().sendIRC().message(target, message);
+                IrcQueue.addToQueue(message, target);
             } else {
-                getUser(SinkIRC.getInstance().getMainChannel(), target).send().message(message);
+                String user = getUser(SinkIRC.getInstance().getMainChannel(), target).getNick();
+                IrcQueue.addToQueue(message, user);
             }
             return true;
         } catch (Exception e) {
@@ -158,7 +160,7 @@ public class IrcUtil {
         //SinkLibrary.getInstance().getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
         message = replaceColorCodes(message);
         try {
-            target.send().message(message);
+            IrcQueue.addToQueue(message, target.getName());
             return true;
         } catch (Exception e) {
             return false;

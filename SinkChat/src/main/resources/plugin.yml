@@ -8,107 +8,107 @@ depend: [SinkLibrary]
 soft-depend: [Towny]
 
 commands:
-  nick:
-    description: Change your or other users nickname!
-    permission: sinkchat.nick
-    usage: "§4Usage: /<command> [Player] <New Name|off>"
+   nick:
+      description: Change your or other users nickname!
+      permission: sinkchat.nick
+      usage: "§4Usage: /<command> [Player] <New Name|off>"
 
-  channel:
-    description: Access the channels plugin.
-    usage: "§4Usage: /<command> help"
-    aliases: ch
-    permission: sinkchat.channel.use
+   channel:
+      description: Access the channels plugin.
+      usage: "§4Usage: /<command> help"
+      aliases: ch
+      permission: sinkchat.channel.use
 
-  enablespy:
-    description: Enable spy chat.
-    aliases: es
-    permission: sinkchat.spy
+   enablespy:
+      description: Enable spy chat.
+      aliases: es
+      permission: sinkchat.spy
 
-  disablespy:
-    description: Disable spy chat.
-    aliases: ds
-    permission: sinkchat.spy
+   disablespy:
+      description: Disable spy chat.
+      aliases: ds
+      permission: sinkchat.spy
 
-  privatechannel:
-    description: Use private channels
-    aliases: [pc, privatechat]
-    permission: sinkchat.privatechannel.use
+   privatechannel:
+      description: Use private channels
+      aliases: [pc, privatechat]
+      permission: sinkchat.privatechannel.use
 
-  nationchat:
-    description: Chat Channel for Towny Nations
-    aliases: tnc
+   nationchat:
+      description: Chat Channel for Towny Nations
+      aliases: tnc
 
-  townchat:
-    description: Chat Channel for Towny Towns
-    aliases: ttc
+   townchat:
+      description: Chat Channel for Towny Towns
+      aliases: ttc
 
 permissions:
-  sinkchat.*:
-    description: Gives access to all commands
-    children:
-      sinkchat.spy.all: true
-      sinkchat.shout: true
-      sinkchat.color: true
-      sinkchat.nick: true
-      sinkchat.channel.*: true
-      sinkchat.townyspy: true
+   sinkchat.*:
+      description: Gives access to all commands
+      children:
+         sinkchat.spy.all: true
+         sinkchat.shout: true
+         sinkchat.color: true
+         sinkchat.nick: true
+         sinkchat.channel.*: true
+         sinkchat.townyspy: true
 
-  sinkchat.townyspy:
-    description: Allows to read all Town & Nation Messages
-    default: op
+   sinkchat.townyspy:
+      description: Allows to read all Town & Nation Messages
+      default: op
 
-  sinkchat.spy:
-    description: Allows to read local chat
-    default: op
+   sinkchat.spy:
+      description: Allows to read local chat
+      default: op
 
-  sinkchat.spy.bypass:
-    description: Bypasses spy, players with permission sinkchat.spy cant read these
-    default: false
+   sinkchat.spy.bypass:
+      description: Bypasses spy, players with permission sinkchat.spy cant read these
+      default: false
 
-  sinkchat.spy.all:
+   sinkchat.spy.all:
       description: Players with this permission can read spy of all players, even of them with bypass permissions
       default: false
       children:
-        sinkchat.spy: true
+         sinkchat.spy: true
 
-  sinkchat.color:
-    description: Allows to use chat colors
-    default: true
+   sinkchat.color:
+      description: Allows to use chat colors
+      default: true
 
-  sinkchat.nick:
-    description: Allows to use nick command
-    default: op
+   sinkchat.nick:
+      description: Allows to use nick command
+      default: op
 
-  sinkchat.nick.others:
-    description: Allows to set other players nickname
-    default: op
-    children:
-       sinkchat.nick: true
+   sinkchat.nick.others:
+      description: Allows to set other players nickname
+      default: op
+      children:
+         sinkchat.nick: true
 
-  sinkchat.channel.*:
-    description: Grants access to all channel commands and features.
-    default: op
-    children:
-       sinkchat.channel.use: true
-       sinkchat.channel.list: true
-       sinkchat.channel.admin: false
+   sinkchat.channel.*:
+      description: Grants access to all channel commands and features.
+      default: op
+      children:
+         sinkchat.channel.use: true
+         sinkchat.channel.list: true
+         sinkchat.channel.admin: false
 
-  sinkchat.channel.use:
-    description: Allows to use /ch commands
-    default: true
+   sinkchat.channel.use:
+      description: Allows to use /ch commands
+      default: true
 
-  sinkchat.channel.shout:
-    description: Allows to shout
-    default: true
+   sinkchat.channel.shout:
+      description: Allows to shout
+      default: true
 
-  sinkchat.channel.trade:
-    description: Allows to use trade chat
-    default: true
+   sinkchat.channel.trade:
+      description: Allows to use trade chat
+      default: true
 
-  sinkchat.channel.help:
-    description: Allows to use help chat
-    default: true
+   sinkchat.channel.help:
+      description: Allows to use help chat
+      default: true
 
-  sinkchat.privatechannel.use:
-    description: Allows to use private channels
-    default: true
+   sinkchat.privatechannel.use:
+      description: Allows to use private channels
+      default: true

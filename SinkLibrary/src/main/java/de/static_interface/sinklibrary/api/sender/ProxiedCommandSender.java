@@ -17,10 +17,21 @@
 
 package de.static_interface.sinklibrary.api.sender;
 
+import net.minecraft.server.v1_8_R2.EntityMinecartCommandBlock;
+import net.minecraft.server.v1_8_R2.ICommandListener;
+import net.minecraft.server.v1_8_R2.RemoteControlCommandListener;
 import org.bukkit.Server;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_8_R2.command.ProxiedNativeCommandSender;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftMinecartCommand;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -31,7 +42,29 @@ import java.util.Set;
 public class ProxiedCommandSender extends ProxiedNativeCommandSender implements CommandSender {
 
     public ProxiedCommandSender(CommandSender base, CommandSender faker) {
-        super(((CraftPlayer) base).getHandle(), base, faker);
+        super(getListener(base), faker, base);
+    }
+
+    private static ICommandListener getListener(CommandSender sender) {
+        if (sender instanceof Player) {
+            return ((CraftPlayer) sender).getHandle();
+        }
+        if (sender instanceof BlockCommandSender) {
+            return ((CraftBlockCommandSender) sender).getTileEntity();
+        }
+        if (sender instanceof CommandMinecart) {
+            return ((EntityMinecartCommandBlock) ((CraftMinecartCommand) sender).getHandle()).getCommandBlock();
+        }
+        if (sender instanceof RemoteConsoleCommandSender) {
+            return RemoteControlCommandListener.getInstance();
+        }
+        if (sender instanceof ConsoleCommandSender) {
+            return ((CraftServer) sender.getServer()).getServer();
+        }
+        if (sender instanceof ProxiedCommandSender) {
+            return ((ProxiedNativeCommandSender) sender).getHandle();
+        }
+        return null;
     }
 
     @Override
