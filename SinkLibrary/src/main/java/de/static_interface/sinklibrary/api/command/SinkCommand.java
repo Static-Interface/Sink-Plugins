@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 
 public abstract class SinkCommand implements CommandExecutor {
 
+    private final boolean async;
     protected CommandSender sender;
     protected Plugin plugin;
     private SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
@@ -60,8 +61,13 @@ public abstract class SinkCommand implements CommandExecutor {
     private String cmd = null;
 
     public SinkCommand(@Nonnull Plugin plugin) {
+        this(plugin, false);
+    }
+
+    public SinkCommand(@Nonnull Plugin plugin, boolean async) {
         Validate.notNull(plugin);
         this.plugin = plugin;
+        this.async = async;
     }
 
     @Override
@@ -103,9 +109,10 @@ public abstract class SinkCommand implements CommandExecutor {
         }
 
         final Command finalCommand = command;
-        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+        CommandTask task = new CommandTask() {
             @Override
-            public void run() {
+            public boolean execute() {
                 Exception exception = null;
 
                 boolean success = true;
@@ -126,7 +133,7 @@ public abstract class SinkCommand implements CommandExecutor {
                             cmdLine = parser.parse(options, args);
                             if (getCommandOptions().isDefaultHelpEnabled() && cmdLine.hasOption('h')) {
                                 sendUsage(sender);
-                                return;
+                                return true;
                             }
                             parsedCmdArgs = cmdLine.getArgs();
                             parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
@@ -138,14 +145,20 @@ public abstract class SinkCommand implements CommandExecutor {
                 }
 
                 onPostExecute(sender, finalCommand, label, args, success, exception);
+                return StringUtil.isEmptyOrNull(getUsage()) && !success;
             }
-        });
+        };
 
         if (getCommandOptions().useNotices() && sender instanceof IrcCommandSender) {
             ((IrcCommandSender) sender).setUseNotice(defaultNotices);
         }
 
-        return true;
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
+            return true;
+        } else {
+            return task.execute();
+        }
     }
 
     public SinkTabCompleterOptions getTabCompleterOptions() {
@@ -233,7 +246,6 @@ public abstract class SinkCommand implements CommandExecutor {
         return usage;
     }
 
-
     public void setUsage(String usage) {
         this.usage = usage;
     }
@@ -268,5 +280,15 @@ public abstract class SinkCommand implements CommandExecutor {
 
     public void setCmdAlias(String cmd) {
         this.cmd = cmd;
+    }
+
+    private abstract class CommandTask implements Runnable {
+
+        @Override
+        public void run() {
+            execute();
+        }
+
+        public abstract boolean execute();
     }
 }

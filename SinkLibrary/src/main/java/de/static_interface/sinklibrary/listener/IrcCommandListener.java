@@ -33,23 +33,27 @@ public class IrcCommandListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onCommand(IrcCommandEvent event) {
-        IrcCommandSender sender = event.getCommandSender();
-        SinkCommand command = event.getCommand();
-        String label = event.getLabel();
-        String[] args = event.getArgs();
-        String rawCmd = label.split(" ")[0];
+        final IrcCommandSender sender = event.getCommandSender();
+        final SinkCommand command = event.getCommand();
+        final String label = event.getLabel();
+        final String[] args = event.getArgs();
+        final String rawCmd = label.split(" ")[0];
         if (command == null || command.getCommandOptions().isPlayerOnly()) {
             sender.sendMessage("Unknown command: " + rawCmd);
             return;
         }
-
-        try {
-            command.onCommand(sender, Bukkit.getPluginCommand(rawCmd), label, args);
-        } catch (UnauthorizedAccessException exception) {
-            sender.sendMessage(m("Permissions.General"));
-        } catch (Exception e) {
-            sender.sendMessage(ChatColor.RED + "An error occurred. Please check the console");
-            e.printStackTrace();
-        }
+        Bukkit.getScheduler().runTask(command.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    command.onCommand(sender, Bukkit.getPluginCommand(rawCmd), label, args);
+                } catch (UnauthorizedAccessException exception) {
+                    sender.sendMessage(m("Permissions.General"));
+                } catch (Exception e) {
+                    sender.sendMessage(ChatColor.RED + "An error occurred. Please check the console");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
