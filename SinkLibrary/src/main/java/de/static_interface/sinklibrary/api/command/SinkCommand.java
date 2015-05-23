@@ -132,7 +132,7 @@ public abstract class SinkCommand implements CommandExecutor {
                         String parsedLabel = label;
                         Options options = getCommandOptions().getCliOptions();
                         if (options != null) {
-                            cmdLine = parser.parse(options, args);
+                            cmdLine = parser.parse(options, parsedCmdArgs);
                             if (getCommandOptions().isDefaultHelpEnabled() && cmdLine.hasOption('h')) {
                                 sendUsage(sender);
                                 return true;
