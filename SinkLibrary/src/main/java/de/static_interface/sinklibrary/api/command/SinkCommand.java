@@ -43,6 +43,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,7 +128,7 @@ public abstract class SinkCommand implements CommandExecutor {
 
                 if (preExecuteSuccess) {
                     try {
-                        String[] parsedCmdArgs = args;
+                        String[] parsedCmdArgs = parseCmdArgs(args);
                         String parsedLabel = label;
                         Options options = getCommandOptions().getCliOptions();
                         if (options != null) {
@@ -135,7 +137,7 @@ public abstract class SinkCommand implements CommandExecutor {
                                 sendUsage(sender);
                                 return true;
                             }
-                            parsedCmdArgs = cmdLine.getArgs();
+                            parsedCmdArgs = parseCmdArgs(cmdLine.getArgs());
                             parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
                         }
                         success = onExecute(sender, parsedLabel, parsedCmdArgs);
@@ -159,6 +161,43 @@ public abstract class SinkCommand implements CommandExecutor {
         } else {
             return task.execute();
         }
+    }
+
+    private String[] parseCmdArgs(String[] args) {
+        String sourceString = StringUtil.formatArrayToString(args, " ");
+        List<String> arguments = new ArrayList<>();
+        sourceString = sourceString.trim();
+
+        String singleArgument = "";
+        boolean inSingleQuotation = false;
+        boolean inDoubleQuotation = false;
+
+        for (char c : sourceString.toCharArray()) {
+            if (c == '\'' && !inDoubleQuotation) {
+                inSingleQuotation = !inSingleQuotation;
+            }
+
+            if (c == '"' && !inSingleQuotation) {
+                inDoubleQuotation = !inDoubleQuotation;
+            }
+
+            if (c == ' ') {
+                if (inSingleQuotation || inDoubleQuotation) {
+                    singleArgument += c;
+                } else {
+                    arguments.add(singleArgument);
+                    singleArgument = "";
+                }
+            } else {
+                singleArgument += c;
+            }
+        }
+
+        if (singleArgument.length() > 0) {
+            arguments.add(singleArgument);
+        }
+
+        return arguments.toArray(new String[arguments.size()]);
     }
 
     public SinkTabCompleterOptions getTabCompleterOptions() {
