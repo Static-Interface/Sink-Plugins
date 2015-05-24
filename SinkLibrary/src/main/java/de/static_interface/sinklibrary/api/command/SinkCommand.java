@@ -134,7 +134,7 @@ public abstract class SinkCommand implements CommandExecutor {
                         if (options != null) {
                             cmdLine = parser.parse(options, parsedCmdArgs);
                             if (getCommandOptions().isDefaultHelpEnabled() && cmdLine.hasOption('h')) {
-                                sendUsage(sender);
+                                sendUsage(sender, finalCommand);
                                 return true;
                             }
                             parsedCmdArgs = parseCmdArgs(cmdLine.getArgs());
@@ -146,8 +146,9 @@ public abstract class SinkCommand implements CommandExecutor {
                     }
                 }
 
-                onPostExecute(sender, finalCommand, label, args, success, exception);
-                return StringUtil.isEmptyOrNull(getUsage()) && !success;
+                boolean postHandled = onPostExecute(sender, finalCommand, label, args, success, exception);
+                return postHandled || success || StringUtil.isEmptyOrNull(getUsage());
+
             }
         };
 
@@ -214,16 +215,16 @@ public abstract class SinkCommand implements CommandExecutor {
 
     protected abstract boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException;
 
-    public void onPostExecute(CommandSender sender, Command command, String label, String[] args, boolean success, @Nullable Exception exception) {
-        handleResult(sender, command, label, args, exception, success);
+    public boolean onPostExecute(CommandSender sender, Command command, String label, String[] args, boolean success, @Nullable Exception exception) {
+        return handleResult(sender, command, label, args, exception, success);
     }
 
-    protected final void handleResult(CommandSender sender, Command command, String label, String[] args, Exception exception, boolean success) {
+    protected final boolean handleResult(CommandSender sender, Command command, String label, String[] args, Exception exception, boolean success) {
         boolean reportException = true;
         boolean exceptionReported = false;
 
         if (handleException(sender, command, label, args, exception)) {
-            return;
+            return true;
         } else if (exception instanceof UnauthorizedAccessException) {
             sender.sendMessage(m("Permissions.General"));
             reportException = false;
@@ -234,9 +235,9 @@ public abstract class SinkCommand implements CommandExecutor {
             sender.sendMessage(exception.getMessage());
             reportException = false;
         } else if (exception instanceof ParseException) {
-            sendUsage(sender);
+            sendUsage(sender, command);
             sender.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + exception.getMessage());
-            return;
+            return true;
         }
 
         if (Debug.isEnabled() && exception != null) {
@@ -256,16 +257,18 @@ public abstract class SinkCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");
             }
         } else if (!success && !StringUtil.isEmptyOrNull(getUsage()) && reportException) {
-            sendUsage(sender);
+            sendUsage(sender, command);
+            return true;
         }
+        return false;
     }
 
     public boolean handleException(CommandSender sender, @Nullable Command command, String label, String[] args, Exception exception) {
         return false;
     }
 
-    protected void sendUsage(CommandSender sender) {
-        sender.sendMessage(getUsage().split(System.lineSeparator()));
+    protected void sendUsage(CommandSender sender, Command command) {
+        sender.sendMessage(getUsage().split(System.lineSeparator().replace("<command>", command.getName())));
     }
 
     protected String getCommandPrefix() {
