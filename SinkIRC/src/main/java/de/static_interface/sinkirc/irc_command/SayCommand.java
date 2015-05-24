@@ -51,6 +51,10 @@ public class SayCommand extends IrcCommand {
             sourcePrefix = '[' + source + "] ";
         }
 
+        if (!sender.isOp()) {
+            label = ChatColor.stripColor(label);
+        }
+
         String messageWithPrefix;
         messageWithPrefix =
                 IRC_PREFIX + ChatColor.GRAY + sourcePrefix + IrcUtil.getFormattedName(sender.getUser().getBase()) + ChatColor.GRAY + ": "
