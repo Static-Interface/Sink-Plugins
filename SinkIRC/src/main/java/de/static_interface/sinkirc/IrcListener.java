@@ -25,7 +25,6 @@ import de.static_interface.sinklibrary.api.event.IrcNickChangeEvent;
 import de.static_interface.sinklibrary.api.event.IrcPartEvent;
 import de.static_interface.sinklibrary.api.event.IrcPrivateMessageEvent;
 import de.static_interface.sinklibrary.api.event.IrcQuitEvent;
-import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
@@ -99,11 +98,6 @@ public class IrcListener implements Listener {
             return;
         }
         IrcUtil.sendMessage(SinkIRC.getInstance().getMainChannel(), message);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onIrcSendMessage(IrcSendMessageEvent event) {
-        SinkIRC.getInstance().getIrcBot().sendIRC().message(event.getTarget(), event.getMessage());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -140,8 +140,6 @@ public class IrcUtil {
 
     public static boolean sendMessage(String target, String message) {
         //SinkLibrary.getInstance().getCustomLogger().debug("sendCleanMessage(\"" + target + "\", \"" + message + "\")");
-        message = replaceColorCodes(message);
-
         try {
             if (target.startsWith("#")) {
                 IrcQueue.addToQueue(message, target);
@@ -158,7 +156,6 @@ public class IrcUtil {
 
     public static boolean sendMessage(Channel target, String message) {
         //SinkLibrary.getInstance().getCustomLogger().debug("sendCleanMessage(\"" + target.getName() + "\", \"" + message + "\")");
-        message = replaceColorCodes(message);
         try {
             IrcQueue.addToQueue(message, target.getName());
             return true;

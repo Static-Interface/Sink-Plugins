@@ -17,6 +17,7 @@
 
 package de.static_interface.sinkirc.queue;
 
+import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.api.event.IrcSendMessageEvent;
 import de.static_interface.sinklibrary.util.Debug;
@@ -59,6 +60,10 @@ public class IrcQueue {
 
             IrcSendMessageEvent event = new IrcSendMessageEvent(msg.getMessage(), msg.getTarget());
             Bukkit.getPluginManager().callEvent(event);
+
+            if (!event.isCancelled()) {
+                SinkIRC.getInstance().getIrcBot().sendIRC().message(event.getTarget(), IrcUtil.replaceColorCodes(event.getMessage()));
+            }
         } catch (NoSuchElementException ignored) {
 
         } catch (Exception e) {
