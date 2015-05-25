@@ -43,6 +43,11 @@ jars/
 
 spigot*.jar
 
+## Ignore eclipse folders and files
+.classpath
+.settings/
+.project
+
 #############
 ## Windows detritus
 #############
