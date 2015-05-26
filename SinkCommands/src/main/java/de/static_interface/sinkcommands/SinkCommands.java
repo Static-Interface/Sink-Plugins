@@ -137,11 +137,11 @@ public class SinkCommands extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         if (!checkDependencies()) {
             return;
         }
 
-        instance = this;
         LagTimer lagTimer = new LagTimer();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
 

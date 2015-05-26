@@ -53,6 +53,7 @@ import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -148,6 +149,20 @@ public class SinkLibrary extends JavaPlugin {
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
 
+        if (settings == null) {
+            if (!getCustomDataFolder().exists()) {
+                try {
+                    boolean success = getCustomDataFolder().mkdirs();
+                    if (!success) {
+                        throw new IOException("Couldn't create directories!");
+                    }
+                } catch (Exception e) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Data Folder!", e); // Log via Bukkits Logger, because Log File doesnt exists
+                }
+            }
+            settings = new Settings();
+        }
+
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(Player.class, ingameUserProvider);
@@ -187,17 +202,6 @@ public class SinkLibrary extends JavaPlugin {
             if (!setupPermissions()) {
                 getLogger().warning("Permissions Plugin not found. Disabling permissions features.");
                 permissionsAvailable = false;
-            }
-        }
-
-        if (!getCustomDataFolder().exists()) {
-            try {
-                boolean success = getCustomDataFolder().mkdirs();
-                if (!success) {
-                    throw new IOException("Couldn't create directories!");
-                }
-            } catch (Exception e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Data Folder!", e); // Log via Bukkits Logger, because Log File doesnt exists
             }
         }
 
@@ -467,6 +471,8 @@ public class SinkLibrary extends JavaPlugin {
      */
     public Settings getSettings() {
         if (settings == null) {
+            if (!new File(SinkLibrary.getInstance().getCustomDataFolder(), "Settings.yml").exists())
+                return null;
             settings = new Settings();
         }
         return settings;

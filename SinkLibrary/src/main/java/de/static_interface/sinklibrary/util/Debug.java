@@ -1,27 +1,21 @@
 /*
  * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package de.static_interface.sinklibrary.util;
-
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.annotation.Unstable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +26,13 @@ import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.annotation.Unstable;
 
 /**
  * Does not work correctly when reloading server
@@ -48,11 +49,12 @@ public class Debug {
      * @return True if debug is enabled in the config
      */
     public static boolean isEnabled() {
-        return SinkLibrary.getInstance().getSettings().isDebugEnabled();
+        return ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isDebugEnabled()));
     }
 
     /**
-     * @return Simple name of the class or {@link #ANONYMOUS_CLASS} if the class is an anonymous class
+     * @return Simple name of the class or {@link #ANONYMOUS_CLASS} if the class
+     *         is an anonymous class
      */
     @Nonnull
     @Nullable
@@ -124,7 +126,11 @@ public class Debug {
     }
 
     private static void logInternal(@Nonnull Level level, @Nonnull String message, @Nullable Throwable throwable) {
-        if (!SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+        boolean debugEnabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isDebugEnabled()));
+        /*
+         * TODO: Fails on a first launch (endless loop)
+         */
+        if (debugEnabled) {
             return;
         }
         if (throwable != null) {
@@ -134,15 +140,18 @@ public class Debug {
             logToFile(level, ChatColor.stripColor(message));
         }
 
-        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+        if (debugEnabled) {
             Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
         }
     }
 
     public static void logToFile(@Nonnull Level level, @Nonnull String message) {
+        /*
+         * TODO: Fix endless loop
+         */
         boolean enabled;
         try {
-            enabled = SinkLibrary.getInstance().getSettings().isLogEnabled();
+            enabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isLogEnabled()));
         } catch (Exception ignored) {
             return;
         }
@@ -151,7 +160,8 @@ public class Debug {
         }
 
         File logFile = new File(SinkLibrary.getInstance().getCustomDataFolder(), "Debug.log");
-        if (!failed && !logFile.exists()) // Prevent creating/checking every time
+        if (!failed && !logFile.exists()) // Prevent creating/checking every
+                                          // time
         {
             if (!FileUtil.createFile(logFile)) {
                 return;
@@ -177,7 +187,7 @@ public class Debug {
         try {
             fileWriter.write('[' + date + ' ' + level.getName() + "]: " + message + newLine);
         } catch (IOException ignored) {
-            //Do nothing...
+            // Do nothing...
         }
     }
 
