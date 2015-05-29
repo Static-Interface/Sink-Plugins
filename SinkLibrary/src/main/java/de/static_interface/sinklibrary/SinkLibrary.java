@@ -470,11 +470,6 @@ public class SinkLibrary extends JavaPlugin {
      * @return Settings
      */
     public Settings getSettings() {
-        if (settings == null) {
-            if (!new File(SinkLibrary.getInstance().getCustomDataFolder(), "Settings.yml").exists())
-                return null;
-            settings = new Settings();
-        }
         return settings;
     }
 
