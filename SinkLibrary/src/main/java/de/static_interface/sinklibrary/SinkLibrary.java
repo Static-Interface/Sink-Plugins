@@ -53,7 +53,6 @@ import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -66,6 +65,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import java.io.File;
@@ -440,7 +440,12 @@ public class SinkLibrary extends JavaPlugin {
      * @param message Message to send
      */
     public boolean sendIrcMessage(@Nonnull String message) {
-        return sendIrcMessage(message, SinkIrcReflection.getMainChannel().getName());
+        Channel channel = SinkIrcReflection.getMainChannel();
+        if (channel != null) {
+            return sendIrcMessage(message, channel.getName());
+        }
+        Debug.log("channel == null!");
+        return false;
     }
 
     /**
