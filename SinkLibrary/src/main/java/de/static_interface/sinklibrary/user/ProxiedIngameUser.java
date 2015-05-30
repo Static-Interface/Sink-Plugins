@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 public class ProxiedIngameUser extends IngameUser {
 
@@ -31,7 +30,7 @@ public class ProxiedIngameUser extends IngameUser {
     ProxiedIngameUser(OfflinePlayer base, SinkUserProvider provider) {
         super(base, provider);
         proxiedPlayer = (ProxiedPlayer) base;
-        baseUser = SinkLibrary.getInstance().getIngameUser((Player) proxiedPlayer.getCallee());
+        baseUser = SinkLibrary.getInstance().getIngameUser(proxiedPlayer.getBase());
     }
 
     @Override
