@@ -23,7 +23,8 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 
-public class ProxiedCommandSenderConversable extends ProxiedCommandSender implements Conversable {
+public class ProxiedCommandSenderConversable<K extends CommandSender, E extends CommandSender> extends ProxiedCommandSender
+        implements ProxiedObject<K, E>, Conversable {
 
     public ProxiedCommandSenderConversable(CommandSender base, CommandSender faker) {
         super(base, faker);
@@ -65,5 +66,15 @@ public class ProxiedCommandSenderConversable extends ProxiedCommandSender implem
         } else {
             getCaller().sendMessage(s);
         }
+    }
+
+    @Override
+    public K getBase() {
+        return (K) getCallee();
+    }
+
+    @Override
+    public E getProxy() {
+        return (E) getCaller();
     }
 }

@@ -17,12 +17,9 @@
 
 package de.static_interface.sinklibrary.sender;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+public interface ProxiedObject<K, E> {
 
-public class ProxiedConsoleCommandSender extends ProxiedCommandSenderConversable<ConsoleCommandSender, CommandSender>
-        implements ConsoleCommandSender {
-    public ProxiedConsoleCommandSender(ConsoleCommandSender base, CommandSender faker) {
-        super(base, faker);
-    }
+    K getBase();
+
+    E getProxy();
 }
