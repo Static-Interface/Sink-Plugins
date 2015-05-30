@@ -17,19 +17,19 @@
 
 package de.static_interface.sinklibrary.api.sender;
 
-import net.minecraft.server.v1_8_R2.EntityMinecartCommandBlock;
-import net.minecraft.server.v1_8_R2.ICommandListener;
-import net.minecraft.server.v1_8_R2.RemoteControlCommandListener;
+import net.minecraft.server.v1_8_R3.EntityMinecartCommandBlock;
+import net.minecraft.server.v1_8_R3.ICommandListener;
+import net.minecraft.server.v1_8_R3.RemoteControlCommandListener;
 import org.bukkit.Server;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.command.CraftBlockCommandSender;
-import org.bukkit.craftbukkit.v1_8_R2.command.ProxiedNativeCommandSender;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftMinecartCommand;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.command.CraftBlockCommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.command.ProxiedNativeCommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftMinecartCommand;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.permissions.Permission;

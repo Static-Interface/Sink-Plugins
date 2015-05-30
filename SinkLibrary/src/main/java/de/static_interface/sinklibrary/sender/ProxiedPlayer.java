@@ -31,7 +31,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R2.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;

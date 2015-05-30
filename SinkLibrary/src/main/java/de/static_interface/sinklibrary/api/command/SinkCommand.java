@@ -38,7 +38,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R2.command.ProxiedNativeCommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.command.ProxiedNativeCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
