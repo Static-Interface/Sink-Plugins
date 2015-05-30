@@ -632,6 +632,9 @@ public class ProxiedPlayer extends CraftPlayer implements ProxiedObject<Player, 
 
     @Override
     public UUID getUniqueId() {
+        if (getBase() == null) {
+            return null;
+        }
         return getBase().getUniqueId();
     }
 
