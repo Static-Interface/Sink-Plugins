@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary.api.sender;
 
+import de.static_interface.sinklibrary.sender.ProxiedObject;
 import net.minecraft.server.v1_8_R3.EntityMinecartCommandBlock;
 import net.minecraft.server.v1_8_R3.ICommandListener;
 import net.minecraft.server.v1_8_R3.RemoteControlCommandListener;
@@ -39,7 +40,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
-public class ProxiedCommandSender extends ProxiedNativeCommandSender implements CommandSender {
+public class ProxiedCommandSender<K extends CommandSender, E extends CommandSender> extends ProxiedNativeCommandSender
+        implements ProxiedObject<K, E>, CommandSender {
 
     public ProxiedCommandSender(CommandSender base, CommandSender faker) {
         super(getListener(base), faker, base);
@@ -64,7 +66,7 @@ public class ProxiedCommandSender extends ProxiedNativeCommandSender implements 
         if (sender instanceof ProxiedCommandSender) {
             return ((ProxiedNativeCommandSender) sender).getHandle();
         }
-        return null;
+        throw new IllegalArgumentException("Cannot make " + sender + " a vanilla command listener");
     }
 
     @Override
@@ -162,5 +164,15 @@ public class ProxiedCommandSender extends ProxiedNativeCommandSender implements 
     @Override
     public boolean equals(Object o) {
         return getCallee().equals(o); //???
+    }
+
+    @Override
+    public K getBase() {
+        return (K) getCallee();
+    }
+
+    @Override
+    public E getProxy() {
+        return (E) getCaller();
     }
 }

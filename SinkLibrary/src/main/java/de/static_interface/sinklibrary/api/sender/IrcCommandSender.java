@@ -23,7 +23,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -33,8 +33,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-public class IrcCommandSender implements CommandSender {
-
+public class IrcCommandSender implements RemoteConsoleCommandSender {
     IrcUser user;
     String source;
     volatile boolean useNotice = false;

@@ -23,13 +23,13 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 
-public class ProxiedCommandSenderConversable<K extends CommandSender, E extends CommandSender> extends ProxiedCommandSender
-        implements ProxiedObject<K, E>, Conversable {
+public class ProxiedCommandSenderConversable<K extends CommandSender, E extends CommandSender> extends ProxiedCommandSender<K, E>
+        implements Conversable {
 
     public ProxiedCommandSenderConversable(CommandSender base, CommandSender faker) {
         super(base, faker);
         if (!(base instanceof Conversable)) {
-            throw new IllegalArgumentException("Base is not instanceof conversable!");
+            throw new IllegalArgumentException("Base is not instanceof conversable (use ProxiedCommandSender.class)!");
         }
     }
 
@@ -66,15 +66,5 @@ public class ProxiedCommandSenderConversable<K extends CommandSender, E extends 
         } else {
             getCaller().sendMessage(s);
         }
-    }
-
-    @Override
-    public K getBase() {
-        return (K) getCallee();
-    }
-
-    @Override
-    public E getProxy() {
-        return (E) getCaller();
     }
 }
