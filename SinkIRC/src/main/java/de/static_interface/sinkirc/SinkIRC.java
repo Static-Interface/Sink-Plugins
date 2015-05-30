@@ -39,6 +39,7 @@ import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.SocketException;
 import java.util.logging.Level;
 
 public class SinkIRC extends JavaPlugin {
@@ -101,7 +102,13 @@ public class SinkIRC extends JavaPlugin {
                     }
 
                     ircBot = new PircBotX(configBuilder.buildConfiguration());
-                    ircBot.startBot();
+                    try {
+                        ircBot.startBot();
+                    } catch (SocketException e) {
+                        getLogger().log(Level.SEVERE, "Couldn't connect to host: " + SinkLibrary.getInstance().getSettings().getIrcAddress(), e);
+                        Bukkit.getPluginManager().disablePlugin(SinkIRC.this);
+                        return;
+                    }
                     WaitForQueue queue = new WaitForQueue(ircBot);
                     if (SinkLibrary.getInstance().getSettings().isIrcAuthentificationEnabled()) {
                         ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIrcAuthBot(),
