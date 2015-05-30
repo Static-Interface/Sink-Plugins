@@ -93,9 +93,9 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.8.3-R0.1-SNAPSHOT</version>
+            <version>1.8.6-R0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${main.basedir}/libs/spigot-1.8.3.jar</systemPath>
+            <systemPath>${main.basedir}/libs/spigot-1.8.6.jar</systemPath>
         </dependency>
         <!--
         <dependency>
