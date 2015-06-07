@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public class ProxiedIngameUser extends IngameUser {
 
@@ -39,7 +40,12 @@ public class ProxiedIngameUser extends IngameUser {
     }
 
     @Override
+    public Player getPlayer() {
+        return proxiedPlayer;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        return proxiedPlayer.equals(o);
+        return baseUser.equals(o);
     }
 }

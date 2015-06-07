@@ -26,13 +26,13 @@ import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-public class ProxiedUser extends SinkUser<ProxiedCommandSender> {
+public class ProxiedUser<T extends ProxiedCommandSender> extends SinkUser<T> {
 
     private ProxiedCommandSender sender;
     private SinkUser base;
 
 
-    public ProxiedUser(ProxiedCommandSender base, SinkUserProvider provider) {
+    public ProxiedUser(T base, SinkUserProvider provider) {
         super(base, provider);
         this.sender = base;
         this.base = SinkLibrary.getInstance().getUser((Object) base.getCallee());
