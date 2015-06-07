@@ -18,11 +18,12 @@
 package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 
 import javax.annotation.Nullable;
 
-public class ProxiedUserProvider extends SinkUserProvider<ProxiedCommandSender, ProxiedUser> {
+public class ProxiedUserProvider extends SinkUserProvider<ProxiedCommandSender, ProxiedUser<ProxiedCommandSender, SinkUser>> {
 
     @Nullable
     @Override

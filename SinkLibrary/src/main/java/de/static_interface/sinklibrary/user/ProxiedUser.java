@@ -23,19 +23,21 @@ import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.sender.ProxiedObject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-public class ProxiedUser<T extends ProxiedCommandSender> extends SinkUser<T> {
+public class ProxiedUser<T extends ProxiedCommandSender, K extends SinkUser> extends SinkUser<T> implements ProxiedObject<K, CommandSender> {
 
-    private ProxiedCommandSender sender;
-    private SinkUser base;
-
+    private T sender;
+    private K base;
+    private CommandSender proxy;
 
     public ProxiedUser(T base, SinkUserProvider provider) {
         super(base, provider);
         this.sender = base;
-        this.base = SinkLibrary.getInstance().getUser((Object) base.getCallee());
+        this.base = (K) SinkLibrary.getInstance().getUser((Object) base.getCallee());
+        this.proxy = base.getCaller();
     }
 
     @Override
@@ -112,5 +114,15 @@ public class ProxiedUser<T extends ProxiedCommandSender> extends SinkUser<T> {
     @Override
     public boolean equals(Object o) {
         return base.equals(o); //???
+    }
+
+    @Override
+    public K getBaseObject() {
+        return base;
+    }
+
+    @Override
+    public CommandSender getProxy() {
+        return proxy;
     }
 }

@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.sender;
 
 public interface ProxiedObject<K, E> {
 
-    K getBase();
+    K getBaseObject();
 
     E getProxy();
 }

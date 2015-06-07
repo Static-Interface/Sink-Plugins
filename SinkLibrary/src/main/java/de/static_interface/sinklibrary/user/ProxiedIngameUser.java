@@ -19,19 +19,22 @@ package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.sender.ProxiedObject;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ProxiedIngameUser extends IngameUser {
+public class ProxiedIngameUser extends IngameUser implements ProxiedObject<IngameUser, CommandSender> {
 
     private ProxiedPlayer proxiedPlayer;
     private IngameUser baseUser;
-
+    private CommandSender proxy;
     ProxiedIngameUser(OfflinePlayer base, SinkUserProvider provider) {
         super(base, provider);
         proxiedPlayer = (ProxiedPlayer) base;
-        baseUser = SinkLibrary.getInstance().getIngameUser(proxiedPlayer.getBase());
+        proxy = proxiedPlayer.getProxy();
+        baseUser = SinkLibrary.getInstance().getIngameUser(proxiedPlayer.getBaseObject());
     }
 
     @Override
@@ -47,5 +50,15 @@ public class ProxiedIngameUser extends IngameUser {
     @Override
     public boolean equals(Object o) {
         return baseUser.equals(o);
+    }
+
+    @Override
+    public IngameUser getBaseObject() {
+        return baseUser;
+    }
+
+    @Override
+    public CommandSender getProxy() {
+        return proxy;
     }
 }

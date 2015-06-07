@@ -167,7 +167,7 @@ public class ProxiedCommandSender<K extends CommandSender, E extends CommandSend
     }
 
     @Override
-    public K getBase() {
+    public K getBaseObject() {
         return (K) getCallee();
     }
 
