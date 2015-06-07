@@ -31,7 +31,7 @@ public class ProxiedIngameUser extends IngameUser {
     ProxiedIngameUser(OfflinePlayer base, SinkUserProvider provider) {
         super(base, provider);
         proxiedPlayer = (ProxiedPlayer) base;
-        baseUser = SinkLibrary.getInstance().getIngameUser((Player) proxiedPlayer.getCallee());
+        baseUser = SinkLibrary.getInstance().getIngameUser((Player) proxiedPlayer.getBase());
     }
 
     @Override
