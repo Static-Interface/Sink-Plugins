@@ -25,6 +25,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class WarnUtil {
     public static String WARNINGS_PATH = "Warnings";
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
-    public static void warn(IngameUser target, Warning warning) {
+    public static void warn(final IngameUser target, Warning warning) {
         List<Warning> tmp = getWarnings(target);
         if (tmp == null) {
             tmp = new ArrayList<>();
@@ -68,9 +69,14 @@ public class WarnUtil {
         }
 
         if (i == getMaxWarnings()) {
-            target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-            long timeout = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
-            target.ban(m("SinkAntiSpam.AutoBan"), timeout);
+            Bukkit.getScheduler().runTask(SinkAntiSpam.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
+                    long timeout = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
+                    target.ban(m("SinkAntiSpam.AutoBan"), timeout);
+                }
+            });
         }
     }
 

@@ -30,6 +30,10 @@ public class SinkAntiSpam extends JavaPlugin {
 
     private static SinkAntiSpam instance;
 
+    public static SinkAntiSpam getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         if (!checkDependencies()) {
@@ -46,10 +50,6 @@ public class SinkAntiSpam extends JavaPlugin {
     @Override
     public void onDisable() {
         instance = null;
-    }
-
-    public SinkAntiSpam getInstance() {
-        return instance;
     }
 
     private boolean checkDependencies() {
