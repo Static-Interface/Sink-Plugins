@@ -20,18 +20,16 @@ package de.static_interface.sinklibrary.database.impl.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.Database;
-import de.static_interface.sinklibrary.database.DatabaseConfiguration;
+import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 
 import java.sql.SQLException;
 
-import javax.annotation.Nonnull;
-
 public class MySqlDatabase extends Database {
 
-    public MySqlDatabase(@Nonnull DatabaseConfiguration config, Plugin plugin) {
-        super(config, plugin, SQLDialect.MYSQL, '`');
+    public MySqlDatabase(DatabaseConnectionInfo info, Plugin plugin) {
+        super(info, plugin, SQLDialect.MYSQL, '`');
     }
 
     @Override
