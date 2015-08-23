@@ -19,6 +19,8 @@ package de.static_interface.sinklibrary.database;
 
 import org.jooq.SQLDialect;
 
+import javax.annotation.Nonnull;
+
 public interface DatabaseConnectionInfo {
 
     SQLDialect getDatabaseType();
@@ -31,6 +33,7 @@ public interface DatabaseConnectionInfo {
 
     String getPassword();
 
+    @Nonnull
     String getTablePrefix();
 
     String getDatabaseName();

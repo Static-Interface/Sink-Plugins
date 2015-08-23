@@ -26,9 +26,11 @@ import org.jooq.SQLDialect;
 
 import java.sql.SQLException;
 
+import javax.annotation.Nonnull;
+
 public class MySqlDatabase extends Database {
 
-    public MySqlDatabase(DatabaseConfiguration config, Plugin plugin) {
+    public MySqlDatabase(@Nonnull DatabaseConfiguration config, Plugin plugin) {
         super(config, plugin, SQLDialect.MYSQL, '`');
     }
 

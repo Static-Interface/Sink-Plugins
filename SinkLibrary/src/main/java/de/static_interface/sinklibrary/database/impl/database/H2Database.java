@@ -21,7 +21,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.database.Database;
-import de.static_interface.sinklibrary.database.DatabaseConfiguration;
+import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 
@@ -31,8 +31,52 @@ import java.sql.SQLException;
 @Unstable
 public class H2Database extends Database {
 
-    public H2Database(DatabaseConfiguration config, Plugin plugin) {
-        super(config, plugin, SQLDialect.H2, '\0');
+    private final File dbFile;
+
+    public H2Database(File file, final String prefix, Plugin plugin) {
+        super(new DatabaseConnectionInfo() {
+            @Override
+            public SQLDialect getDatabaseType() {
+                return SQLDialect.H2;
+            }
+
+            @Override
+            public String getAddress() {
+                return null;
+            }
+
+            @Override
+            public int getPort() {
+                return 0;
+            }
+
+            @Override
+            public String getUsername() {
+                return null;
+            }
+
+            @Override
+            public String getPassword() {
+                return null;
+            }
+
+            @Override
+            public String getTablePrefix() {
+                return prefix;
+            }
+
+            @Override
+            public String getDatabaseName() {
+                return null;
+            }
+        }, plugin, SQLDialect.H2, '\0');
+        dbFile = file;
+    }
+
+    @Deprecated
+    public H2Database(DatabaseConnectionInfo info, Plugin plugin) {
+        super(info, plugin, SQLDialect.H2, '\0');
+        dbFile = new File(plugin.getDataFolder(), info.getDatabaseName() + ".h2");
     }
 
     @Override
@@ -41,7 +85,7 @@ public class H2Database extends Database {
         config.setMaximumPoolSize(10);
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
         config.addDataSourceProperty("user", "sa");
-        config.addDataSourceProperty("url", "jdbc:h2:file:" + new File(plugin.getDataFolder(), "database").getAbsolutePath()
+        config.addDataSourceProperty("url", "jdbc:h2:file:" + dbFile.getAbsolutePath()
                                             + ";MV_STORE=FALSE;MODE=MySQL;IGNORECASE=TRUE");
         config.setConnectionTimeout(5000);
         dataSource = new HikariDataSource(config);

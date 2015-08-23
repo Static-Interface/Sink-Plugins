@@ -28,6 +28,10 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
         super(new File(baseFolder, "Database.yml"), true);
     }
 
+    public DatabaseConfiguration(File baseFolder, String fileName) {
+        super(new File(baseFolder, fileName), true);
+    }
+
     @Override
     public void addDefaults() {
         addDefault("Type", "H2");

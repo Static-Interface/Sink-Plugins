@@ -26,6 +26,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 public abstract class Database {
 
     private final DatabaseConnectionInfo info;
@@ -35,7 +37,7 @@ public abstract class Database {
     protected Plugin plugin;
     protected Connection connection;
 
-    public Database(DatabaseConnectionInfo info, Plugin plugin, SQLDialect dialect, char backtick) {
+    public Database(@Nullable DatabaseConnectionInfo info, Plugin plugin, SQLDialect dialect, char backtick) {
         this.plugin = plugin;
         this.info = info;
         this.dialect = dialect;
@@ -86,6 +88,7 @@ public abstract class Database {
 
     public abstract void close() throws SQLException;
 
+    @Nullable
     public DatabaseConnectionInfo getConnectionInfo() {
         return info;
     }
