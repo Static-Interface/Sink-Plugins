@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary.api.user;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,26 +27,33 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
 public abstract class SinkUserProvider<K, E extends SinkUser<K>> {
-
-    private final Class<E> implType;
-    private final Class<K> baseType;
-
     public Map<K, E> instances;
 
     public SinkUserProvider() {
         instances = new ConcurrentHashMap<>();
-        this.baseType = (Class<K>) ((ParameterizedType) getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
-        this.implType = (Class<E>) ((ParameterizedType) getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
     public Class<E> getImplementationClass() {
-        return implType;
+        return (Class<E>) getParamizedClass(0);
     }
 
     public Class<K> getBaseClass() {
-        return baseType;
+        return (Class<K>) getParamizedClass(1);
+    }
+
+    private Class<?> getParamizedClass(int index) {
+        Object superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof Class) {
+            return (Class<?>) superclass;
+        }
+        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+        Type type = genericSuperclass.getActualTypeArguments()[index];
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        } else if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        throw new IllegalStateException("Unknown type: " + type.getTypeName());
     }
 
     public E getUserInstance(K base) {
