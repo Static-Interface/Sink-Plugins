@@ -28,16 +28,16 @@ import java.util.Date;
 
 public abstract class Database {
 
-    private final DatabaseConfiguration config;
+    private final DatabaseConnectionInfo info;
     private final SQLDialect dialect;
     private final char backtick;
     protected HikariDataSource dataSource;
     protected Plugin plugin;
     protected Connection connection;
 
-    public Database(DatabaseConfiguration config, Plugin plugin, SQLDialect dialect, char backtick) {
+    public Database(DatabaseConnectionInfo info, Plugin plugin, SQLDialect dialect, char backtick) {
         this.plugin = plugin;
-        this.config = config;
+        this.info = info;
         this.dialect = dialect;
         this.backtick = backtick;
     }
@@ -86,8 +86,8 @@ public abstract class Database {
 
     public abstract void close() throws SQLException;
 
-    public DatabaseConfiguration getConfig() {
-        return config;
+    public DatabaseConnectionInfo getConnectionInfo() {
+        return info;
     }
 
     public Connection getConnection() {

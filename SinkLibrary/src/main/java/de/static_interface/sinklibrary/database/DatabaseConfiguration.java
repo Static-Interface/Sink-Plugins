@@ -22,7 +22,7 @@ import org.jooq.SQLDialect;
 
 import java.io.File;
 
-public class DatabaseConfiguration extends Configuration {
+public class DatabaseConfiguration extends Configuration implements DatabaseConnectionInfo {
 
     public DatabaseConfiguration(File baseFolder) {
         super(new File(baseFolder, "Database.yml"), true);
@@ -39,6 +39,7 @@ public class DatabaseConfiguration extends Configuration {
         addDefault("DatabaseName", "ReallifePlugin");
     }
 
+    @Override
     public SQLDialect getDatabaseType() {
         try {
             return SQLDialect.valueOf(((String) get("Type")).toUpperCase());
@@ -47,26 +48,32 @@ public class DatabaseConfiguration extends Configuration {
         }
     }
 
+    @Override
     public String getAddress() {
         return (String) get("Address");
     }
 
+    @Override
     public int getPort() {
         return Integer.valueOf(String.valueOf(get("Port")));
     }
 
+    @Override
     public String getUsername() {
         return (String) get("Username");
     }
 
+    @Override
     public String getPassword() {
         return (String) get("Password");
     }
 
+    @Override
     public String getTablePrefix() {
         return (String) get("TablePrefix");
     }
 
+    @Override
     public String getDatabaseName() {
         return (String) get("DatabaseName");
     }

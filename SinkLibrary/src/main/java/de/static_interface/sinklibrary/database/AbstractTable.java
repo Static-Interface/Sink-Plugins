@@ -78,7 +78,7 @@ public abstract class AbstractTable<T extends Row> {
     }
 
     public final String getName() {
-        return db.getConfig().getTablePrefix() + name;
+        return db.getConnectionInfo().getTablePrefix() + name;
     }
 
     public void create() throws SQLException {
@@ -224,7 +224,7 @@ public abstract class AbstractTable<T extends Row> {
         }
 
         sql +=
-                "FOREIGN KEY (" + bt + name + bt + ") REFERENCES " + db.getConfig().getTablePrefix() + tablename + " (" + bt + columnName
+                "FOREIGN KEY (" + bt + name + bt + ") REFERENCES " + db.getConnectionInfo().getTablePrefix() + tablename + " (" + bt + columnName
                 + bt + ")";
         sql += " ON UPDATE " + onUpdate.toSql() + " ON DELETE " + onDelete.toSql();
 

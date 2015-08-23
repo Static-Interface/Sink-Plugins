@@ -46,11 +46,11 @@ public class MySqlDatabase extends Database {
             for use with MySQL and MariaDB database servers. It's originally based on the Drizzle JDBC code, and with a lot of additions and bug fixes."
          */
         hConfig.setDataSourceClassName("org.mariadb.jdbc.MySQLDataSource");
-        hConfig.addDataSourceProperty("serverName", getConfig().getAddress());
-        hConfig.addDataSourceProperty("port", getConfig().getPort());
-        hConfig.addDataSourceProperty("databaseName", getConfig().getDatabaseName());
-        hConfig.addDataSourceProperty("user", getConfig().getUsername());
-        hConfig.addDataSourceProperty("password", getConfig().getPassword());
+        hConfig.addDataSourceProperty("serverName", getConnectionInfo().getAddress());
+        hConfig.addDataSourceProperty("port", getConnectionInfo().getPort());
+        hConfig.addDataSourceProperty("databaseName", getConnectionInfo().getDatabaseName());
+        hConfig.addDataSourceProperty("user", getConnectionInfo().getUsername());
+        hConfig.addDataSourceProperty("password", getConnectionInfo().getPassword());
         hConfig.setConnectionTimeout(5000);
         dataSource = new HikariDataSource(hConfig);
     }
