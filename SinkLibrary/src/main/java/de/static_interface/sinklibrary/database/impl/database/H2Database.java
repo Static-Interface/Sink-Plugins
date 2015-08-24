@@ -93,6 +93,7 @@ public class H2Database extends Database {
 
     @Override
     public void connect() throws SQLException {
+        setupConfig();
         try {
             connection = dataSource.getConnection();
         } catch (SQLException e) {

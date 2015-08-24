@@ -82,7 +82,7 @@ public abstract class Database {
         throw new RuntimeException("No database type available for: " + clazz.getName());
     }
 
-    public abstract void setupConfig();
+    protected abstract void setupConfig();
 
     public abstract void connect() throws SQLException;
 

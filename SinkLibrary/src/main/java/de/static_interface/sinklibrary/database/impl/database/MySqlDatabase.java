@@ -33,7 +33,7 @@ public class MySqlDatabase extends Database {
     }
 
     @Override
-    public void setupConfig() {
+    protected void setupConfig() {
         HikariConfig hConfig = new HikariConfig();
         hConfig.setMaximumPoolSize(10);
         /*
@@ -57,6 +57,7 @@ public class MySqlDatabase extends Database {
 
     @Override
     public void connect() throws SQLException {
+        setupConfig();
         try {
             connection = dataSource.getConnection();
         } catch (SQLException e) {
