@@ -80,7 +80,7 @@ public class H2Database extends Database {
     }
 
     @Override
-    public void setupConfig() {
+    protected void setupConfig() {
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(10);
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
