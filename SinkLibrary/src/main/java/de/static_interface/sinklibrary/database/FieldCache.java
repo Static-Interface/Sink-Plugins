@@ -31,10 +31,9 @@ public class FieldCache {
     @Nullable
     public static <T extends Annotation> T getAnnotation(Field f, Class<T> annotation) {
         String name = f.getDeclaringClass().getName() + "." + f.getName();
-        if (cache.containsKey(name)) {
+        if (cache.containsKey(name) && annotation.isAssignableFrom(cache.get(name).getClass())) {
             return (T) cache.get(name);
         }
-
         cache.put(name, f.getAnnotation(annotation));
         return getAnnotation(f, annotation);
     }
