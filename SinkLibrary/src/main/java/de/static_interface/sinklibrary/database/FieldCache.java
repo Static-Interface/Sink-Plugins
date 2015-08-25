@@ -34,7 +34,8 @@ public class FieldCache {
         if (cache.containsKey(name) && cache.get(name) != null && annotation.isAssignableFrom(cache.get(name).getClass())) {
             return (T) cache.get(name);
         }
-        cache.put(name, f.getAnnotation(annotation));
-        return getAnnotation(f, annotation);
+        T value = f.getAnnotation(annotation);
+        cache.put(name, value);
+        return value;
     }
 }
