@@ -95,13 +95,13 @@ public abstract class AbstractTable<T extends Row> {
 
         boolean primarySet = false;
         for (Field f : getRowClass().getFields()) {
-            Column column = f.getAnnotation(Column.class);
+            Column column = FieldCache.getAnnotation(f, Column.class);
             if (column == null) {
                 continue;
             }
             String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
 
-            sql += bt + name + bt + " " + db.toDatabaseType(f.getType(), column);
+            sql += bt + name + bt + " " + db.toDatabaseType(f);
 
             if (column.zerofill()) {
                 if (!ReflectionUtil.isNumber(f.getType())) {
@@ -138,7 +138,7 @@ public abstract class AbstractTable<T extends Row> {
                 sql += " PRIMARY KEY";
             }
 
-            if (f.getAnnotation(Nullable.class) == null) {
+            if (FieldCache.getAnnotation(f, Nullable.class) == null) {
                 sql += " NOT NULL";
             } else if (ReflectionUtil.isPrimitiveClass(f.getType())) {
                 // The column is nullable but the wrapper type is a primitive value, which can't be null
@@ -154,11 +154,11 @@ public abstract class AbstractTable<T extends Row> {
                 sql += " COMMENT '" + column.comment() + "'";
             }
 
-            if (f.getAnnotation(ForeignKey.class) != null) {
+            if (FieldCache.getAnnotation(f, ForeignKey.class) != null) {
                 foreignKeys.add(f);
             }
 
-            if (f.getAnnotation(Index.class) != null) {
+            if (FieldCache.getAnnotation(f, Index.class) != null) {
                 indexes.add(f);
             }
 
@@ -166,9 +166,9 @@ public abstract class AbstractTable<T extends Row> {
         }
 
         for (Field f : foreignKeys) {
-            Column column = f.getAnnotation(Column.class);
+            Column column = FieldCache.getAnnotation(f, Column.class);
             String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-            ForeignKey foreignKey = f.getAnnotation(ForeignKey.class);
+            ForeignKey foreignKey = FieldCache.getAnnotation(f, ForeignKey.class);
 
             sql = addForeignKey(sql, name, foreignKey.table(), foreignKey.column(), foreignKey.onUpdate(), foreignKey.onDelete());
         }
@@ -185,10 +185,10 @@ public abstract class AbstractTable<T extends Row> {
                 continue; //InnoDB already creates indexes for foreign keys, so skip these...
             }
 
-            Column column = f.getAnnotation(Column.class);
+            Column column = FieldCache.getAnnotation(f, Column.class);
             String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
 
-            Index index = f.getAnnotation(Index.class);
+            Index index = FieldCache.getAnnotation(f, Index.class);
             String indexName = StringUtil.isEmptyOrNull(index.name()) ? name + "_I" : index.name();
 
             sql += "INDEX " + bt + indexName + bt + " (" + bt + name + bt + ")";
@@ -243,7 +243,7 @@ public abstract class AbstractTable<T extends Row> {
         int i = 0;
         List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
         for (Field f : fields) {
-            Column column = f.getAnnotation(Column.class);
+            Column column = FieldCache.getAnnotation(f, Column.class);
             if (column == null) {
                 continue;
             }
@@ -355,7 +355,7 @@ public abstract class AbstractTable<T extends Row> {
 
         List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
         for (Field f : fields) {
-            Column column = f.getAnnotation(Column.class);
+            Column column = FieldCache.getAnnotation(f, Column.class);
             if (column == null) {
                 continue;
             }
@@ -370,7 +370,7 @@ public abstract class AbstractTable<T extends Row> {
                 if (f.getType() == boolean.class || f.getType() == Boolean.class) {
                     value = ((int) value) != 0; // for some reason this is returned as int on TINYINT(1)..
                 }
-                if (value == null && f.getAnnotation(Nullable.class) == null && !column.autoIncrement()) {
+                if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
                     throw new RuntimeException("Trying to set null value on a not nullable and not autoincrement column");
                 }
                 f.set(instance, value);
@@ -402,7 +402,7 @@ public abstract class AbstractTable<T extends Row> {
 
                 List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
                 for (Field f : fields) {
-                    Column column = f.getAnnotation(Column.class);
+                    Column column = FieldCache.getAnnotation(f, Column.class);
                     if (column == null) {
                         continue;
                     }
@@ -420,7 +420,7 @@ public abstract class AbstractTable<T extends Row> {
                             value = ((int) value) != 0; // for some reason this is returned as int on TINYINT(1)..
                         }
 
-                        if (value == null && f.getAnnotation(Nullable.class) == null && !column.autoIncrement()) {
+                        if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
                             SinkLibrary.getInstance().getLogger().warning(
                                     "Trying to set null value on a not nullable and not autoincrement column: " + getRowClass().getName() + "." + f
                                             .getName());

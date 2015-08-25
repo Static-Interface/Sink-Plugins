@@ -19,9 +19,11 @@ package de.static_interface.sinklibrary.database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.annotation.Column;
+import de.static_interface.sinklibrary.database.annotation.ForeignKey;
 import org.bukkit.plugin.Plugin;
 import org.jooq.SQLDialect;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -48,7 +50,11 @@ public abstract class Database {
         return backtick;
     }
 
-    public String toDatabaseType(Class<?> clazz, Column column) {
+    public String toDatabaseType(Field f) {
+        Class clazz = f.getType();
+        Column column = FieldCache.getAnnotation(f, Column.class);
+        boolean isForeignKey = FieldCache.getAnnotation(f, ForeignKey.class) != null;
+
         if (clazz == Date.class) {
             throw new RuntimeException("Date is for now not supported!");
         }
@@ -77,7 +83,7 @@ public abstract class Database {
             return "TINYINT";
         }
         if (clazz == String.class) {
-            return column.primaryKey() || column.uniqueKey() ? "VARCHAR(255)" : "TEXT(999)";
+            return column.primaryKey() || column.uniqueKey() || isForeignKey ? "VARCHAR(255)" : "TEXT(999)";
         }
         throw new RuntimeException("No database type available for: " + clazz.getName());
     }
