@@ -17,18 +17,28 @@
 
 package de.static_interface.sinkantispam;
 
+import de.static_interface.sinkantispam.command.CreatePredefinedWarningCommand;
+import de.static_interface.sinkantispam.command.DeletePredefinedWarningCommand;
 import de.static_interface.sinkantispam.command.DeleteWarnCommand;
 import de.static_interface.sinkantispam.command.ListWarnsCommand;
 import de.static_interface.sinkantispam.command.WarnCommand;
+import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
+import de.static_interface.sinkantispam.database.table.WarningsTable;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.database.Database;
+import de.static_interface.sinklibrary.database.impl.database.H2Database;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class SinkAntiSpam extends JavaPlugin {
 
     private static SinkAntiSpam instance;
+    private WarningsTable warningsTable;
+    private PredefinedWarningsTable predefinedWarningsTable;
 
     public static SinkAntiSpam getInstance() {
         return instance;
@@ -39,12 +49,23 @@ public class SinkAntiSpam extends JavaPlugin {
         if (!checkDependencies()) {
             return;
         }
+
+        Database db = new H2Database(new File(getDataFolder(), "warnings.h2"), "SAS", this);
+        predefinedWarningsTable = new PredefinedWarningsTable(db);
+        warningsTable = new WarningsTable(db);
+        try {
+            warningsTable.create();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         instance = this;
 
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
         SinkLibrary.getInstance().registerCommand("listwarns", new ListWarnsCommand(this));
         SinkLibrary.getInstance().registerCommand("deletewarn", new DeleteWarnCommand(this));
+        SinkLibrary.getInstance().registerCommand("createpwarn", new CreatePredefinedWarningCommand(this));
+        SinkLibrary.getInstance().registerCommand("deletepwarn", new DeletePredefinedWarningCommand(this));
     }
 
     @Override
@@ -60,5 +81,13 @@ public class SinkAntiSpam extends JavaPlugin {
         }
 
         return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
+    }
+
+    public WarningsTable getWarningsTable() {
+        return warningsTable;
+    }
+
+    public PredefinedWarningsTable getPredefinedWarningsTable() {
+        return predefinedWarningsTable;
     }
 }

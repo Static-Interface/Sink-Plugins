@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,15 +17,16 @@
 
 package de.static_interface.sinkantispam.warning;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
-import de.static_interface.sinklibrary.util.StringUtil;
+import de.static_interface.sinkantispam.database.row.Warning;
 
 import java.util.UUID;
 
-public class BlacklistWarning extends AutoWarning {
+public abstract class AutoWarning extends Warning {
 
-    public BlacklistWarning(UUID uuid, String message, int id) {
-        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
+    public AutoWarning(UUID player, String reason, int id) {
+        this.reason = reason;
+        this.userWarningId = id;
+        this.isAutoWarning = true;
+        this.player = player.toString();
     }
 }

@@ -20,13 +20,20 @@ package de.static_interface.sinkantispam.command;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkantispam.WarnUtil;
-import de.static_interface.sinkantispam.warning.Warning;
+import de.static_interface.sinkantispam.database.row.PredefinedWarning;
+import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.util.DateUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -40,10 +47,50 @@ public class WarnCommand extends SinkCommand {
     public WarnCommand(Plugin plugin) {
         super(plugin);
         getCommandOptions().setIrcOpOnly(true);
+        getCommandOptions().setCliOptions(buildOptions());
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <player> [WarningId]");
+    }
+
+    private Options buildOptions() {
+        Options options = new Options();
+        Option custom = Option.builder("c")
+                .desc("Custom warning")
+                .longOpt("custom")
+                .build();
+        options.addOption(custom);
+
+        Option reason = Option.builder("r")
+                .desc("Warning reason for custom warnings")
+                .hasArg()
+                .argName("reason")
+                .type(String.class)
+                .longOpt("reason")
+                .build();
+
+        options.addOption(reason);
+
+        Option points = Option.builder("p")
+                .desc("Warning points for custom warnings")
+                .hasArg()
+                .argName("points")
+                .type(Integer.class)
+                .longOpt("points")
+                .build();
+        options.addOption(points);
+
+        Option expire = Option.builder("e")
+                .desc("Expire time for custom warnings")
+                .hasArg()
+                .argName("time")
+                .type(String.class)
+                .longOpt("expire")
+                .build();
+        options.addOption(expire);
+        return options;
     }
 
     @Override
-    public boolean onExecute(CommandSender sender, String label, String[] args) {
+    public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (args.length < 2) {
             sender.sendMessage(PREFIX + m("General.CommandMisused.Arguments.TooFew"));
             sender.sendMessage(PREFIX + ChatColor.RED + "Usage: " + getCommandPrefix() + "warn [Player] [Reason]");
@@ -57,24 +104,66 @@ public class WarnCommand extends SinkCommand {
             return true;
         }
 
-        String reason = "";
-
-        for (int i = 1; i < args.length; i++) {
-            if (reason.isEmpty()) {
-                reason = args[i];
-                continue;
-            }
-            reason = reason + ' ' + args[i];
-        }
-
-        SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
         UUID uuid = null;
         if (user instanceof Identifiable) {
             uuid = ((Identifiable) user).getUniqueId();
         }
         String name = (sender instanceof IrcCommandSender) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
 
-        WarnUtil.warn(target, new Warning(reason, name, uuid, WarnUtil.getWarningId(target), false));
+        Warning warning = new Warning();
+        warning.isDeleted = false;
+        warning.isAutoWarning = false;
+        warning.warnTime = System.currentTimeMillis();
+        warning.deleter = null;
+        warning.deleterUuid = null;
+        warning.deleteTime = null;
+        warning.warner = name;
+        warning.warnerUuid = uuid == null ? null : uuid.toString();
+        warning.player = target.getUniqueId().toString();
+        warning.userWarningId = WarnUtil.getNextWarningId(target);
+
+        if (getCommandLine().hasOption('c')) {
+            if (!sender.hasPermission("sinkantispam.warnings.custom")) {
+                sender.sendMessage(m("Permissions.General"));
+                return true;
+            }
+            if (!getCommandLine().hasOption('r')) {
+                throw new ParseException("Custom warnings require -r <reason> option");
+            }
+            if (!getCommandLine().hasOption('p')) {
+                throw new ParseException("Custom warnings require -p <points> option");
+            }
+
+            if (getCommandLine().hasOption('e')) {
+                try {
+                    warning.expireTime = DateUtil.parseDateDiff(getCommandLine().getParsedOptionValue("e").toString(), true);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            Integer points = ((Number) getCommandLine().getParsedOptionValue("p")).intValue();
+
+            warning.reason = StringUtil.formatArrayToString(getCommandLine().getOptionValues('r'), " ");
+            warning.points = points;
+            warning.predefinedId = null;
+        } else {
+            if (args.length < 1) {
+                throw new NotEnoughArgumentsException();
+            }
+            PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
+            if (pWarning == null) {
+                sender.sendMessage(m("SinkAntiSpam.UnknownWarning", args[1]));
+                return true;
+            }
+            warning.reason = pWarning.reason;
+            warning.points = pWarning.points;
+            warning.expireTime = System.currentTimeMillis() + pWarning.expireTime;
+            warning.predefinedId = pWarning.id;
+        }
+
+        WarnUtil.performWarning(warning);
         return true;
     }
 }

@@ -41,6 +41,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class SinkAntiSpamListener implements Listener {
 
@@ -64,25 +65,6 @@ public class SinkAntiSpamListener implements Listener {
 
         message = ChatColor.stripColor(message);
 
-        if (SinkLibrary.getInstance().getSettings().isBlacklistedWordsEnabled()) {
-            String blacklistWord = containsWord(message, blacklistedWords);
-            if (blacklistWord != null) {
-                blacklistWord = blacklistWord.trim();
-                String
-                        warnMessage =
-                        message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
-                WarnUtil.warn(user, new BlacklistWarning(warnMessage, WarnUtil.getWarningId(user)));
-                result.setResultcode(WarnResult.CANCEL);
-                String tmp = "";
-                for (int i = 0; i < blacklistWord.length(); i++) {
-                    tmp += "*";
-                }
-                result.setResultcode(WarnResult.CENSOR);
-                result.setCensoredMessage(message.replace(blacklistWord, tmp));
-                return result;
-            }
-        }
-
         Pattern pattern;
         Matcher matcher;
         if (SinkLibrary.getInstance().getSettings().isIPCheckEnabled()) {
@@ -90,7 +72,7 @@ public class SinkAntiSpamListener implements Listener {
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
-                WarnUtil.warn(user, new IpWarning(ip, WarnUtil.getWarningId(user)));
+                WarnUtil.performWarning(new IpWarning(user.getUniqueId(), ip, WarnUtil.getNextWarningId(user)));
                 result.setResultcode(WarnResult.CENSOR);
                 result.setCensoredMessage(message.replace(ip, m("SinkAntiSpam.ReplaceIP")));
                 return result;
@@ -104,25 +86,48 @@ public class SinkAntiSpamListener implements Listener {
                     continue;
                 }
 
-                if (containsWord(word, whiteListDomains) != null) {
+                if (isBlackListed(word, whiteListDomains) != null) {
                     return result;
                 }
-                WarnUtil.warn(user, new DomainWarning(word, WarnUtil.getWarningId(user)));
+                WarnUtil.performWarning(new DomainWarning(user.getUniqueId(), word, WarnUtil.getNextWarningId(user)));
                 result.setResultcode(WarnResult.CENSOR);
                 result.setCensoredMessage(message.replace(word, m("SinkAntiSpam.ReplaceDomain")));
             }
             return result;
         }
+        if (SinkLibrary.getInstance().getSettings().isBlacklistedWordsEnabled()) {
+            String blacklistWord = isBlackListed(message, blacklistedWords);
+            if (blacklistWord != null) {
+                blacklistWord = blacklistWord.trim();
+                String
+                        warnMessage =
+                        message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
+                WarnUtil.performWarning(new BlacklistWarning(user.getUniqueId(), warnMessage, WarnUtil.getNextWarningId(user)));
+                result.setResultcode(WarnResult.CANCEL);
+                String tmp = "";
+                for (int i = 0; i < blacklistWord.length(); i++) {
+                    tmp += "*";
+                }
+                result.setResultcode(WarnResult.CENSOR);
+                result.setCensoredMessage(message.replace(blacklistWord, tmp));
+                return result;
+            }
+        }
         return result;
     }
 
-    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-    private static String containsWord(String input, List<String> blacklistedWords) {
-        for (String blacklistedWord : blacklistedWords) {
-            for (String word : input.split(" !?.")) {
-                if (word.equals(blacklistedWord)) {
-                    return word.trim();
-                }
+    private static String isBlackListed(String input, List<String> blacklistedWords) {
+        for (String regex : blacklistedWords) {
+            Pattern pattern;
+            try {
+                pattern = Pattern.compile(regex);
+            } catch (PatternSyntaxException e) {
+                SinkAntiSpam.getInstance().getLogger().warning("Wrong regex: " + regex);
+                continue;
+            }
+            Matcher matcher = pattern.matcher(input);
+            if (matcher.find()) {
+                return input;
             }
         }
         return null;
@@ -170,7 +175,6 @@ public class SinkAntiSpamListener implements Listener {
         if(lastMsgTime != null && difference < SPAM_DELAY) {
             event.getPlayer().sendMessage(m("SinkAntiSpam.SpamMessage", SPAM_DELAY - difference));
             event.setCancelled(true);
-            return;
         }
     }
 

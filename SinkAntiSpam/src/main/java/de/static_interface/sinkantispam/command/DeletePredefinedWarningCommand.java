@@ -17,53 +17,43 @@
 
 package de.static_interface.sinkantispam.command;
 
+import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+
+import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.WarnUtil;
-import de.static_interface.sinkantispam.database.row.Warning;
-import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
+import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
-public class DeleteWarnCommand extends SinkCommand {
+public class DeletePredefinedWarningCommand extends SinkCommand {
 
-    public DeleteWarnCommand(Plugin plugin) {
+    public DeletePredefinedWarningCommand(@Nonnull Plugin plugin) {
         super(plugin);
-        getCommandOptions().setIrcOpOnly(true);
+        getCommandOptions().setCliOptions(new Options());
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [WarningName]");
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (args.length < 2) {
-            return false;
+        if (args.length < 1) {
+            throw new NotEnoughArgumentsException();
         }
 
-        IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
-
-        int id;
-        try {
-            id = Integer.parseInt(args[1]);
-        } catch (Exception e) {
-            return false;
+        PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
+        if (pWarning == null) {
+            sender.sendMessage(m("SinkAntiSpam.UnknownWarning", args[1]));
+            return true;
         }
 
-        SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
-
-        List<Warning> warnings = WarnUtil.getWarnings(target, false);
-        for (Warning warning : warnings) {
-            if (warning.userWarningId == id) {
-                WarnUtil.deleteWarning(warning, user);
-                sender.sendMessage(ChatColor.DARK_GREEN + "Success");
-                return true;
-            }
-        }
-
-        sender.sendMessage(ChatColor.DARK_RED + "ID not found: " + id + "!");
+        SinkAntiSpam.getInstance().getPredefinedWarningsTable().executeUpdate("DELETE FROM `{TABLE}` WHERE `id` = ?", pWarning.id);
+        sender.sendMessage(ChatColor.DARK_GREEN + "Success");
         return true;
     }
 }

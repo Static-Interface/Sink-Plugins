@@ -19,100 +19,93 @@ package de.static_interface.sinkantispam;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
-import com.google.gson.Gson;
-import de.static_interface.sinkantispam.warning.Warning;
+import de.static_interface.sinkantispam.database.row.PredefinedWarning;
+import de.static_interface.sinkantispam.database.row.Warning;
+import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 public class WarnUtil {
-
-    public static String WARNINGS_PATH = "Warnings";
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
-    public static void warn(final IngameUser target, Warning warning) {
-        List<Warning> tmp = getWarnings(target);
+    public static void performWarning(Warning warning) {
+        IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(warning.player));
+        List<Warning> tmp = getWarnings(target, false);
         if (tmp == null) {
             tmp = new ArrayList<>();
         }
         tmp.add(warning);
-        setWarnings(target, tmp);
 
-        for (Warning w : tmp) {
-            if (w.isDeleted()) {
-                tmp.remove(w);
-            }
-        }
+        addWarning(warning);
 
-        int i = tmp.size() % getMaxWarnings() == 0 ? getMaxWarnings() : tmp.size() % getMaxWarnings();
         String message = prefix + m("SinkAntiSpam.Warn", target.getDisplayName(),
-                                    warning.getWarnerDisplayName(), warning.getReason(), i, getMaxWarnings());
+                                    warning.getWarnerDisplayName(), warning.reason, warning.points);
         String perm;
-        if (warning.isAutoWarning()) {
+        if (warning.isAutoWarning) {
             perm = "sinkantispam.autowarnmessage";
-            BukkitUtil.broadcast(message, perm, false);
         } else {
             perm = "sinkantispam.warnmessage";
-            BukkitUtil.broadcast(message, perm, true);
         }
+
+        BukkitUtil.broadcast(message, perm, true);
 
         if (target.isOnline() && !target.hasPermission(perm)) {
             target.sendMessage(message);
         }
+    }
 
-        if (i == getMaxWarnings()) {
-            Bukkit.getScheduler().runTask(SinkAntiSpam.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    target.getPlayer().kickPlayer(m("SinkAntiSpam.TooManyWarnings"));
-                    long timeout = System.currentTimeMillis() + SinkLibrary.getInstance().getSettings().getWarnAutoBanTime() * 60 * 1000;
-                    target.ban(m("SinkAntiSpam.AutoBan"), timeout);
-                }
-            });
+    public static List<Warning> getWarnings(IngameUser user, boolean includeDeleted) {
+        String sql = "SELECT * FROM `{TABLE}` WHERE player = ?";
+        if (!includeDeleted) {
+            sql += " AND is_deleted = 0";
         }
+        sql += ";";
+        List<Warning> warnings = Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable().get(sql, user.getUniqueId().toString()));
+        Collections.sort(warnings);
+
+        return warnings;
     }
 
-    public static void setWarnings(IngameUser user, List<Warning> deserializedWarnings) {
-        IngameUserConfiguration config = user.getConfiguration();
-        Gson gson = new Gson();
-        List<String> serializedWarnings = new ArrayList<>();
-        for (Warning warning : deserializedWarnings) {
-            serializedWarnings.add(gson.toJson(warning));
+    public static int getNextWarningId(IngameUser user) {
+        return getWarnings(user, true).size() + 1;
+    }
+
+    public static void addWarning(Warning warning) {
+        SinkAntiSpam.getInstance().getWarningsTable().insert(warning);
+    }
+
+    public static void deleteWarning(Warning warning, @Nullable SinkUser deleter) {
+        UUID uuid = null;
+        if (deleter != null && deleter instanceof Identifiable) {
+            uuid = ((Identifiable) deleter).getUniqueId();
         }
-        config.set(WARNINGS_PATH, serializedWarnings);
-        config.save();
+        String name = deleter == null ? null : ((deleter instanceof IrcUser) ? deleter.getDisplayName() + " (IRC)" : deleter.getDisplayName());
+
+        SinkAntiSpam.getInstance().getWarningsTable().executeUpdate(
+                "UPDATE `{TABLE}` SET `is_deleted` = 1, `deleter` = ?, `deleter_uuid` = ?, `delete_time` = ? "
+                + "WHERE `id` = ?",
+                name, uuid == null ? null : uuid.toString(), System.currentTimeMillis(), warning.id);
     }
 
-    public static List<Warning> getWarnings(IngameUser user) {
-        IngameUserConfiguration config = user.getConfiguration();
-        List<Warning> deserializedWarnings = new CopyOnWriteArrayList<>();
-        List<String> serializedWarnings = new CopyOnWriteArrayList<>(config.getYamlConfiguration().getStringList(WARNINGS_PATH));
-
-        if (serializedWarnings == null) {
-            setWarnings(user, deserializedWarnings);
-        } else {
-            Gson gson = new Gson();
-            for (String json : serializedWarnings) {
-                deserializedWarnings.add(gson.fromJson(json, Warning.class));
-            }
+    public static PredefinedWarning getPredefinedWarning(String name) {
+        PredefinedWarningsTable tbl = SinkAntiSpam.getInstance().getPredefinedWarningsTable();
+        PredefinedWarning[] res = tbl.get("SELECT * FROM `{TABLE}` WHERE `nameId` = ?", name);
+        if (res == null || res.length < 1) {
+            return null;
         }
-        Collections.sort(deserializedWarnings);
-        return deserializedWarnings;
-    }
-
-    public static int getWarningId(IngameUser user) {
-        return getWarnings(user).size() + 1;
-    }
-
-    public static int getMaxWarnings() {
-        return SinkLibrary.getInstance().getSettings().getMaxWarnings();
+        return res[0];
     }
 }

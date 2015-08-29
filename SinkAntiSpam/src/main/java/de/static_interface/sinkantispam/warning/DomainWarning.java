@@ -21,9 +21,11 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.util.StringUtil;
 
-public class DomainWarning extends Warning {
+import java.util.UUID;
 
-    public DomainWarning(String domain, int id) {
-        super(StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), Warning.SYSTEM, null, id, true);
+public class DomainWarning extends AutoWarning {
+
+    public DomainWarning(UUID uuid, String domain, int id) {
+        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), id);
     }
 }

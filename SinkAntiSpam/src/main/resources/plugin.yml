@@ -13,13 +13,24 @@ commands:
 
   listwarns:
      description: List a players warns
+     aliases: [listwarnings]
      permission: sinkantispam.listwarns
-     usage: "/listwarns [target]"
+     usage: "/<command> [target]"
+
+  createpwarning:
+    description: Create a predefined warning
+    aliases: [createpredefinedwarning, createpwarn]
+    permission: sinkantispam.createwarning
+
+  deletepwarning:
+    description: Create a predefined warning
+    aliases: [deletepredefinedwarning, delpwarn]
+    permission: sinkantispam.createwarning
 
   deletewarn:
+     aliases: [delwarn, deletewarning]
      description: Deletes a warning
      permission: sinkantispam.deletewarn
-     usage: "/deletewarn <target> <id>"
 
 permissions:
   sinkantispam.*:

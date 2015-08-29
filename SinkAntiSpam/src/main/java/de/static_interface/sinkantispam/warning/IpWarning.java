@@ -21,9 +21,11 @@ import static de.static_interface.sinklibrary.configuration.LanguageConfiguratio
 
 import de.static_interface.sinklibrary.util.StringUtil;
 
-public class IpWarning extends Warning {
+import java.util.UUID;
 
-    public IpWarning(String ip, int id) {
-        super(StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), Warning.SYSTEM, null, id, true);
+public class IpWarning extends AutoWarning {
+
+    public IpWarning(UUID uuid, String ip, int id) {
+        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), id);
     }
 }

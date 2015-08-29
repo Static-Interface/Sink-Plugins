@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkantispam.warning;
+package de.static_interface.sinkantispam.database.row;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+import de.static_interface.sinklibrary.database.Row;
+import de.static_interface.sinklibrary.database.annotation.Column;
 
-import de.static_interface.sinklibrary.util.StringUtil;
+import javax.annotation.Nullable;
 
-import java.util.UUID;
+public class PredefinedWarning implements Row {
 
-public class BlacklistWarning extends AutoWarning {
+    @Column(primaryKey = true, autoIncrement = true)
+    public Integer id;
 
-    public BlacklistWarning(UUID uuid, String message, int id) {
-        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
-    }
+    @Column(uniqueKey = true)
+    public String reason;
+
+    @Column(uniqueKey = true)
+    public String nameId;
+
+    @Column
+    public int points;
+
+    @Column(name = "expire_time")
+    @Nullable
+    public Long expireTime;
 }

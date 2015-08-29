@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2014 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkantispam.warning;
+package de.static_interface.sinkantispam.database.table;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+import de.static_interface.sinkantispam.database.row.Warning;
+import de.static_interface.sinklibrary.database.AbstractTable;
+import de.static_interface.sinklibrary.database.Database;
 
-import de.static_interface.sinklibrary.util.StringUtil;
+public class WarningsTable extends AbstractTable<Warning> {
 
-import java.util.UUID;
+    public static final String TABLE_NAME = "warnings";
 
-public class BlacklistWarning extends AutoWarning {
-
-    public BlacklistWarning(UUID uuid, String message, int id) {
-        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
+    public WarningsTable(Database db) {
+        super(TABLE_NAME, db);
     }
 }

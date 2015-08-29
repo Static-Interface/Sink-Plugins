@@ -153,7 +153,7 @@ public class LanguageConfiguration extends Configuration {
         addDefault("Permissions.SinkChat.Nick.Other", "&4You may not change the nickname of other players!");
 
         addDefault("SinkAntiSpam.Prefix", "&4[SinkAntiSpam]");
-        addDefault("SinkAntiSpam.Warn", "{0}&4 has been warned by {1}: {2} ({3}/{4})");
+        addDefault("SinkAntiSpam.Warn", "{0}&4 has been warned by {1}: {2} ({3} points)");
         addDefault("SinkAntiSpam.Reasons.BlacklistedWord", "&cTried to write a blacklisted word: {0}");
         addDefault("SinkAntiSpam.Reasons.IP", "&cTried to write IP: &9&l&n{0}");
         addDefault("SinkAntiSpam.Reasons.Domain", "&cTried to write a not whitelisted domain: &9&l&n{0}");
@@ -164,6 +164,7 @@ public class LanguageConfiguration extends Configuration {
         addDefault("SinkAntiSpam.TooManyWarnings", "&4Too many warnings!");
         addDefault("SinkAntiSpam.RepeatingMessage", "&4Please don't spam the same message!");
         addDefault("SinkAntiSpam.SpamMessage", "&4Please wait {0} ms before sending a message again");
+        addDefault("SinkAntiSpam.UnknownWarning", "&4Unknown warning: &c{0}");
 
         addDefault("TimeUnit.Years", "Year(s)");
         addDefault("TimeUnit.Months", "Month(s)");
@@ -172,7 +173,6 @@ public class LanguageConfiguration extends Configuration {
         addDefault("TimeUnit.Hours", "Hour(s)");
         addDefault("TimeUnit.Minutes", "Minute(s)");
         addDefault("TimeUnit.Seconds", "Second(s)");
-
         /*
         addDefault("SinkDuty.Time", "You have the following duty time: %s");
         addDefault("SinkDuty.Time.Others", "%s has the following duty time: %s");

@@ -18,7 +18,7 @@
 package de.static_interface.sinkantispam.command;
 
 import de.static_interface.sinkantispam.WarnUtil;
-import de.static_interface.sinkantispam.warning.Warning;
+import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -58,34 +58,36 @@ public class ListWarnsCommand extends SinkCommand {
         List<String> out = new ArrayList<>();
         out.add(ChatColor.RED + "Warnings: " + target.getDisplayName());
 
-        List<Warning> warnings = WarnUtil.getWarnings(target);
+        List<Warning> warnings = WarnUtil.getWarnings(target, true);
 
         if (warnings.size() > 0) {
-            for (Warning warning : WarnUtil.getWarnings(target)) {
-                if (warning.isAutoWarning() && !sender.hasPermission("sinkantispam.autowarnmessage")) {
+            for (Warning warning : warnings) {
+                String hidden = ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + " [Hidden]";
+                if (warning.isAutoWarning && !sender.hasPermission("sinkantispam.autowarnmessage")) {
+                    sender.sendMessage(hidden);
                     continue;
                 }
-                if (warning.isDeleted()) {
+                if (warning.isDeleted) {
                     if (!sender.hasPermission("sinkantispam.canseedeleted")) {
-                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "Deleted");
+                        out.add(hidden);
                         continue;
                     }
 
                     if (user instanceof IrcUser) {
-                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + ChatColor.stripColor(warning.getWarnerDisplayName())
-                                + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.getReason()) + "[Deleted]");
+                        out.add(ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + ChatColor.stripColor(warning.getWarnerDisplayName())
+                                + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.reason) + "[Hidden]");
                     } else {
-                        out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ChatColor.stripColor(
+                        out.add(ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ChatColor.stripColor(
                                 warning.getWarnerDisplayName())
                                 + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ": " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH
-                                + ChatColor.stripColor(warning.getReason()));
+                                + ChatColor.stripColor(warning.reason));
 
                     }
                     continue;
                 }
-                out.add(ChatColor.GOLD + "#" + warning.getId() + " - " + warning.getWarnerDisplayName() + ChatColor.GOLD + ": "
+                out.add(ChatColor.GOLD + "#" + warning.id + " - " + warning.getWarnerDisplayName() + ChatColor.GOLD + ": "
                         + ChatColor.RED
-                        + warning.getReason());
+                        + warning.reason);
             }
         } else {
             out.add(ChatColor.RED + "No warnings found");
