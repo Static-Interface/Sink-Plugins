@@ -23,10 +23,10 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.util.DateUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -37,7 +37,7 @@ public class CreatePredefinedWarningCommand extends SinkCommand {
     public CreatePredefinedWarningCommand(@Nonnull Plugin plugin) {
         super(plugin);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <option s> <WarningName>");
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <WarningName>");
     }
 
     private Options buildOptions() {
@@ -83,13 +83,13 @@ public class CreatePredefinedWarningCommand extends SinkCommand {
         PredefinedWarning warning = new PredefinedWarning();
         if (getCommandLine().hasOption('e')) {
             try {
-                warning.expireTime = DateUtil.parseDateDiff(getCommandLine().getParsedOptionValue("e").toString(), true);
+                warning.expireTime = DateUtil.parseDateDiff(getCommandLine().getParsedOptionValue("e").toString(), true) - System.currentTimeMillis();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        Integer points = ((Number) getCommandLine().getParsedOptionValue("p")).intValue();
+        Integer points = Integer.valueOf(getCommandLine().getOptionValue('p'));
 
         warning.reason = StringUtil.formatArrayToString(getCommandLine().getOptionValues('r'), " ");
         warning.points = points;

@@ -159,7 +159,9 @@ public class WarnCommand extends SinkCommand {
             }
             warning.reason = pWarning.reason;
             warning.points = pWarning.points;
-            warning.expireTime = System.currentTimeMillis() + pWarning.expireTime;
+            if (pWarning.expireTime != null) {
+                warning.expireTime = System.currentTimeMillis() + pWarning.expireTime;
+            }
             warning.predefinedId = pWarning.id;
         }
 

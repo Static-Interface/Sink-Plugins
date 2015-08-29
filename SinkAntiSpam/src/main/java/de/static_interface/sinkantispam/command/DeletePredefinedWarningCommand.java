@@ -24,9 +24,9 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 

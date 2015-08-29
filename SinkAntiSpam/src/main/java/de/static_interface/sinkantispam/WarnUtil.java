@@ -30,7 +30,6 @@ import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,12 +42,6 @@ public class WarnUtil {
 
     public static void performWarning(Warning warning) {
         IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(warning.player));
-        List<Warning> tmp = getWarnings(target, false);
-        if (tmp == null) {
-            tmp = new ArrayList<>();
-        }
-        tmp.add(warning);
-
         addWarning(warning);
 
         String message = prefix + m("SinkAntiSpam.Warn", target.getDisplayName(),
@@ -68,12 +61,18 @@ public class WarnUtil {
     }
 
     public static List<Warning> getWarnings(IngameUser user, boolean includeDeleted) {
-        String sql = "SELECT * FROM `{TABLE}` WHERE player = ?";
+        List<Warning> warnings;
         if (!includeDeleted) {
-            sql += " AND is_deleted = 0";
+            warnings =
+                    Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
+                                          .get("SELECT * FROM `{TABLE}` WHERE `player` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL);",
+                                               user.getUniqueId().toString(), System.currentTimeMillis()));
+        } else {
+            warnings =
+                    Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
+                                          .get("SELECT * FROM `{TABLE}` WHERE `player` = ?", user.getUniqueId().toString()));
         }
-        sql += ";";
-        List<Warning> warnings = Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable().get(sql, user.getUniqueId().toString()));
+
         Collections.sort(warnings);
 
         return warnings;

@@ -26,11 +26,11 @@ import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.database.table.WarningsTable;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.database.Database;
-import de.static_interface.sinklibrary.database.impl.database.H2Database;
+import de.static_interface.sinklibrary.database.DatabaseConfiguration;
+import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
@@ -39,6 +39,7 @@ public class SinkAntiSpam extends JavaPlugin {
     private static SinkAntiSpam instance;
     private WarningsTable warningsTable;
     private PredefinedWarningsTable predefinedWarningsTable;
+    private Database db;
 
     public static SinkAntiSpam getInstance() {
         return instance;
@@ -50,8 +51,19 @@ public class SinkAntiSpam extends JavaPlugin {
             return;
         }
 
-        Database db = new H2Database(new File(getDataFolder(), "warnings.h2"), "SAS", this);
+        db = new MySqlDatabase(new DatabaseConfiguration(SinkLibrary.getInstance().getCustomDataFolder(), "SinkAntiSpamDB.yml"), this);
+        try {
+            db.connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         predefinedWarningsTable = new PredefinedWarningsTable(db);
+        try {
+            predefinedWarningsTable.create();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         warningsTable = new WarningsTable(db);
         try {
             warningsTable.create();
@@ -71,6 +83,14 @@ public class SinkAntiSpam extends JavaPlugin {
     @Override
     public void onDisable() {
         instance = null;
+        if (db != null) {
+            try {
+                db.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private boolean checkDependencies() {

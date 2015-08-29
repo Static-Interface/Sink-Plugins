@@ -55,12 +55,12 @@ public class Warning implements Row, Comparable<Warning> {
     public String warnerUuid;
 
     @Column
+    @Nullable
     public String deleter;
 
     @Column(name = "deleter_uuid")
     @Nullable
     public String deleterUuid;
-
 
     @Column(name = "delete_time")
     @Nullable
