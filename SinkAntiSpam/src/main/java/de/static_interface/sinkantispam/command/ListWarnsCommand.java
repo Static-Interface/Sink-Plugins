@@ -65,7 +65,7 @@ public class ListWarnsCommand extends SinkCommand {
                     sender.sendMessage(hidden);
                     continue;
                 }
-                if (warning.isDeleted) {
+                if (!warning.isValid()) {
                     if (!sender.hasPermission("sinkantispam.canseedeleted") || (user instanceof IrcUser && !user.isOp())) {
                         out.add(hidden);
                         continue;
@@ -91,7 +91,7 @@ public class ListWarnsCommand extends SinkCommand {
             out.add(ChatColor.RED + "No warnings found");
         }
 
-        out.add(ChatColor.DARK_RED + "Points: " + ChatColor.RED + WarnUtil.getPoints(WarnUtil.getWarnedPlayer(target)));
+        out.add(ChatColor.DARK_RED + "Points: " + ChatColor.RED + WarnUtil.getPoints(target));
         sender.sendMessage(out.toArray(new String[out.size()]));
         return true;
     }

@@ -145,9 +145,10 @@ public class WarnUtil {
                 .executeUpdate("UPDATE `{TABLE}` SET `deleted_points` = ? WHERE `id` = ?", points, wPlayer.id);
     }
 
-    public static int getPoints(WarnedPlayer player) {
+    public static int getPoints(IngameUser target) {
         int points = 0;
-        for (Warning warning : getWarnings(SinkLibrary.getInstance().getIngameUser(UUID.fromString(player.playerUuid)), false)) {
+        WarnedPlayer player = getWarnedPlayer(target);
+        for (Warning warning : getWarnings(target, false)) {
             points += warning.points;
         }
 
@@ -157,7 +158,7 @@ public class WarnUtil {
 
     private static WarnedPlayer insertWarnedUser(IngameUser user) {
         WarnedPlayer wPlayer = new WarnedPlayer();
-        wPlayer.playerName = user.getDisplayName();
+        wPlayer.playerName = user.getName();
         wPlayer.playerUuid = user.getUniqueId().toString();
         wPlayer.deleted_points = 0;
         return SinkAntiSpam.getInstance().getWarnedPlayersTable().insert(wPlayer);

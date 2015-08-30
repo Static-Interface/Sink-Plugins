@@ -87,7 +87,7 @@ public class Warning implements Row, Comparable<Warning> {
     public Integer predefinedId;
 
     public boolean isValid() {
-        return !isDeleted && expireTime > System.currentTimeMillis();
+        return !isDeleted && (expireTime == null || expireTime > System.currentTimeMillis());
     }
 
     public String getWarnerDisplayName() {

@@ -27,11 +27,11 @@ public class WarnedPlayer implements Row {
     @Column(primaryKey = true, autoIncrement = true)
     public Integer id;
 
-    @Column(name = "player_uuid")
+    @Column(name = "player_uuid", uniqueKey = true)
     @Nullable
     public String playerUuid;
 
-    @Column(name = "player_name")
+    @Column(name = "player_name", uniqueKey = true)
     public String playerName;
 
     @Column
