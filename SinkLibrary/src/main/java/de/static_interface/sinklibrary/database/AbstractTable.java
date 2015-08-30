@@ -416,9 +416,9 @@ public abstract class AbstractTable<T extends Row> {
                         }
 
                         value = r.getObject(name);
-                        if (f.getType() == boolean.class || f.getType() == Boolean.class && ReflectionUtil.isNumber(value.getClass())
-                                                            && value != (Object) false && value != (Object) true && value != Boolean.TRUE
-                                                            && value != Boolean.FALSE) {
+                        if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
+                            && value != (Object) false && value != (Object) true && value != Boolean.TRUE
+                            && value != Boolean.FALSE) {
                             value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
                         }
 
