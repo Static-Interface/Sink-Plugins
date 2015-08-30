@@ -18,15 +18,16 @@
 package de.static_interface.sinkantispam.warning;
 
 import de.static_interface.sinkantispam.database.row.Warning;
-
-import java.util.UUID;
+import de.static_interface.sinklibrary.SinkLibrary;
+import org.bukkit.OfflinePlayer;
 
 public abstract class AutoWarning extends Warning {
 
-    public AutoWarning(UUID player, String reason, int id) {
+    public AutoWarning(OfflinePlayer player, String reason, int id) {
         this.reason = reason;
         this.userWarningId = id;
         this.isAutoWarning = true;
-        this.player = player.toString();
+        this.player = player.getUniqueId().toString();
+        this.playerName = SinkLibrary.getInstance().getIngameUser(player.getUniqueId()).getName();
     }
 }

@@ -120,6 +120,7 @@ public class WarnCommand extends SinkCommand {
         warning.deleteTime = null;
         warning.warner = name;
         warning.warnerUuid = uuid == null ? null : uuid.toString();
+        warning.playerName = target.getDisplayName();
         warning.player = target.getUniqueId().toString();
         warning.userWarningId = WarnUtil.getNextWarningId(target);
 

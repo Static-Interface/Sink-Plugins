@@ -20,12 +20,13 @@ package de.static_interface.sinkantispam.warning;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.bukkit.Bukkit;
 
 import java.util.UUID;
 
 public class DomainWarning extends AutoWarning {
 
     public DomainWarning(UUID uuid, String domain, int id) {
-        super(uuid, StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), id);
+        super(Bukkit.getOfflinePlayer(uuid), StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), id);
     }
 }

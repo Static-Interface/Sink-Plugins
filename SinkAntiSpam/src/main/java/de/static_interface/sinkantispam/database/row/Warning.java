@@ -70,7 +70,11 @@ public class Warning implements Row, Comparable<Warning> {
     public boolean isDeleted;
 
     @Column
+    @Nullable
     public String player;
+
+    @Column(name = "player_name")
+    public String playerName;
 
     @Column
     public int points;
