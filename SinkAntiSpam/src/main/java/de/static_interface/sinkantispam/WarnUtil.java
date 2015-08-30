@@ -63,16 +63,17 @@ public class WarnUtil {
     }
 
     public static List<Warning> getWarnings(IngameUser user, boolean includeDeleted) {
+        int userId = getWarnedPlayer(user).id;
         List<Warning> warnings;
         if (!includeDeleted) {
             warnings =
                     Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `player` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL);",
-                                               user.getUniqueId().toString(), System.currentTimeMillis()));
+                                          .get("SELECT * FROM `{TABLE}` WHERE `userId` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL);",
+                                               userId, System.currentTimeMillis()));
         } else {
             warnings =
                     Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `player` = ?", user.getUniqueId().toString()));
+                                          .get("SELECT * FROM `{TABLE}` WHERE `userId` = ?", userId));
         }
 
         Collections.sort(warnings);
