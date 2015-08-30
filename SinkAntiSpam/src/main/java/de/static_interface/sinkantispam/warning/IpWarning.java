@@ -19,14 +19,14 @@ package de.static_interface.sinkantispam.warning;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.Bukkit;
-
-import java.util.UUID;
 
 public class IpWarning extends AutoWarning {
 
-    public IpWarning(UUID uuid, String ip, int id) {
-        super(Bukkit.getOfflinePlayer(uuid), StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), id);
+    public IpWarning(IngameUser user, String ip, int id) {
+        super(user, StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), id);
+        points = Integer.valueOf(SinkLibrary.getInstance().getSettings().get("SinkAntiSpam.Points.IP").toString());
     }
 }

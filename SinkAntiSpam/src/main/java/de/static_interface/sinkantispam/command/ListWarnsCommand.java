@@ -56,11 +56,17 @@ public class ListWarnsCommand extends SinkCommand {
         List<String> out = new ArrayList<>();
         out.add(ChatColor.RED + "Warnings: " + target.getDisplayName());
 
+
+        int points = 0;
         List<Warning> warnings = WarnUtil.getWarnings(target, true);
 
         if (warnings.size() > 0) {
             for (Warning warning : warnings) {
-                String hidden = ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + " [Hidden]";
+                if(!warning.isDeleted && warning.expireTime > System.currentTimeMillis()) {
+                    points += warning.points;
+                }
+
+                String hidden = ChatColor.GOLD + "#" + warning.userWarningId + " - " + ChatColor.GRAY + " [Hidden]";
                 if (warning.isAutoWarning && !sender.hasPermission("sinkantispam.autowarnmessage")) {
                     sender.sendMessage(hidden);
                     continue;
@@ -72,10 +78,10 @@ public class ListWarnsCommand extends SinkCommand {
                     }
 
                     if (user instanceof IrcUser) {
-                        out.add(ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + ChatColor.stripColor(warning.getWarnerDisplayName())
+                        out.add(ChatColor.GOLD + "#" + warning.userWarningId + " - " + ChatColor.GRAY + ChatColor.stripColor(warning.getWarnerDisplayName())
                                 + ChatColor.GRAY + ": " + ChatColor.GRAY + ChatColor.stripColor(warning.reason) + "[Hidden]");
                     } else {
-                        out.add(ChatColor.GOLD + "#" + warning.id + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ChatColor.stripColor(
+                        out.add(ChatColor.GOLD + "#" + warning.userWarningId + " - " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ChatColor.stripColor(
                                 warning.getWarnerDisplayName())
                                 + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + ": " + ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH
                                 + ChatColor.stripColor(warning.reason));
@@ -83,7 +89,7 @@ public class ListWarnsCommand extends SinkCommand {
                     }
                     continue;
                 }
-                out.add(ChatColor.GOLD + "#" + warning.id + " - " + warning.getWarnerDisplayName() + ChatColor.GOLD + ": "
+                out.add(ChatColor.GOLD + "#" + warning.userWarningId + " - " + warning.getWarnerDisplayName() + ChatColor.GOLD + ": "
                         + ChatColor.RED
                         + warning.reason);
             }
@@ -91,6 +97,7 @@ public class ListWarnsCommand extends SinkCommand {
             out.add(ChatColor.RED + "No warnings found");
         }
 
+        out.add(ChatColor.DARK_RED + "Points: " +ChatColor.RED + points);
         sender.sendMessage(out.toArray(new String[out.size()]));
         return true;
     }

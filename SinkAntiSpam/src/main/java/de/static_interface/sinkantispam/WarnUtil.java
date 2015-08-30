@@ -20,6 +20,7 @@ package de.static_interface.sinkantispam;
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
+import de.static_interface.sinkantispam.database.row.WarnedPlayer;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -41,7 +42,8 @@ public class WarnUtil {
     static String prefix = m("SinkAntiSpam.Prefix") + ' ' + ChatColor.RESET;
 
     public static void performWarning(Warning warning) {
-        IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(warning.player));
+        WarnedPlayer wPlayer = getWarnedPlayer(warning.userId);
+        IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(wPlayer.playerUuid));
         addWarning(warning);
 
         String message = prefix + m("SinkAntiSpam.Warn", target.getDisplayName(),
@@ -84,6 +86,17 @@ public class WarnUtil {
 
     public static void addWarning(Warning warning) {
         SinkAntiSpam.getInstance().getWarningsTable().insert(warning);
+        WarnedPlayer wPlayer = getWarnedPlayer(warning.userId);
+        setPoints(wPlayer, wPlayer.points + warning.points);
+    }
+
+    @Nullable
+    private static WarnedPlayer getWarnedPlayer(int userId) {
+        WarnedPlayer[] result = SinkAntiSpam.getInstance().getWarnedPlayersTable().get("SELECT * FROM `{TABLE}` WHERE `id` = ?", userId);
+        if (result == null || result.length < 1) {
+            return null;
+        }
+        return result[0];
     }
 
     public static void deleteWarning(Warning warning, @Nullable SinkUser deleter) {
@@ -106,5 +119,28 @@ public class WarnUtil {
             return null;
         }
         return res[0];
+    }
+
+    public static WarnedPlayer getWarnedPlayer(IngameUser user) {
+        WarnedPlayer[]
+                result =
+                SinkAntiSpam.getInstance().getWarnedPlayersTable()
+                        .get("SELECT * FROM `{TABLE}` WHERE `player_uuid` = ?", user.getUniqueId().toString());
+        if (result == null || result.length < 1) {
+            return insertWarnedUser(user);
+        }
+        return result[0];
+    }
+
+    public static void setPoints(WarnedPlayer wPlayer, int points) {
+        SinkAntiSpam.getInstance().getWarnedPlayersTable().executeUpdate("UPDATE `{TABLE}` SET `points` = ? WHERE `id` = ?", points, wPlayer.id);
+    }
+
+    private static WarnedPlayer insertWarnedUser(IngameUser user) {
+        WarnedPlayer wPlayer = new WarnedPlayer();
+        wPlayer.playerName = user.getDisplayName();
+        wPlayer.playerUuid = user.getUniqueId().toString();
+        wPlayer.points = 0;
+        return SinkAntiSpam.getInstance().getWarnedPlayersTable().insert(wPlayer);
     }
 }

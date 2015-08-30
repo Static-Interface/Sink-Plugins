@@ -18,6 +18,7 @@
 package de.static_interface.sinkantispam.database.row;
 
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
+import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.database.CascadeAction;
@@ -70,19 +71,15 @@ public class Warning implements Row, Comparable<Warning> {
     public boolean isDeleted;
 
     @Column
-    @Nullable
-    public String player;
-
-    @Column(name = "player_name")
-    public String playerName;
-
-    @Column
     public int points;
 
     @Column(name = "expire_time")
     @Nullable
     public Long expireTime;
 
+    @Column(name = "user_id")
+    @ForeignKey(table = WarnedPlayersTable.class, column = "id", onUpdate = CascadeAction.CASCADE, onDelete = CascadeAction.CASCADE)
+    public int userId;
 
     @Column(name = "predefined_id")
     @ForeignKey(table = PredefinedWarningsTable.class, column = "id", onDelete = CascadeAction.SET_NULL, onUpdate = CascadeAction.CASCADE)

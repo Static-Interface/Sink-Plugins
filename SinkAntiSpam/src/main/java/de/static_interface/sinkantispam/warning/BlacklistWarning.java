@@ -19,14 +19,14 @@ package de.static_interface.sinkantispam.warning;
 
 import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.Bukkit;
-
-import java.util.UUID;
 
 public class BlacklistWarning extends AutoWarning {
 
-    public BlacklistWarning(UUID uuid, String message, int id) {
-        super(Bukkit.getOfflinePlayer(uuid), StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
+    public BlacklistWarning(IngameUser user, String message, int id) {
+        super(user, StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
+        points = Integer.valueOf(SinkLibrary.getInstance().getSettings().get("SinkAntiSpam.Points.Blacklist").toString());
     }
 }

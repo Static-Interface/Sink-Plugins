@@ -61,7 +61,7 @@ public class Settings extends Configuration {
         addDefault("SinkAntiSpam.WhitelistedDomainsCheck.Domains", defaultDomainWiteList);
 
         addDefault("SinkAntiSpam.IPCheck.Enabled", true);
-        addDefault("SinkAntiSpam.AutoBanTime", 5);
+
         List<String> defaultExcludedCommands = new ArrayList<>();
         defaultExcludedCommands.add("msg");
         defaultExcludedCommands.add("tell");
@@ -70,7 +70,10 @@ public class Settings extends Configuration {
         defaultExcludedCommands.add("t");
 
         addDefault("SinkAntiSpam.ExcludedCommands.Commands", defaultExcludedCommands);
-        addDefault("SinkAntiSpam.MaxWarnings", 5);
+
+        addDefault("SinkAntiSpam.Points.Domain", 5);
+        addDefault("SinkAntiSpam.Points.IP", 5);
+        addDefault("SinkAntiSpam.Points.Blacklist", 5);
 
         addDefault("SinkChat.LocalChatRange", 50);
         addDefault("SinkChat.DefaultChatFormat", "&7{CHANNEL} [{RANK}] {DISPLAYNAME}&7:&f {MESSAGE}");

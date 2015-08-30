@@ -15,18 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkantispam.warning;
+package de.static_interface.sinkantispam.database.row;
 
-import de.static_interface.sinkantispam.WarnUtil;
-import de.static_interface.sinkantispam.database.row.Warning;
-import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.database.Row;
+import de.static_interface.sinklibrary.database.annotation.Column;
 
-public abstract class AutoWarning extends Warning {
+import javax.annotation.Nullable;
 
-    public AutoWarning(IngameUser user, String reason, int id) {
-        this.reason = reason;
-        this.userWarningId = id;
-        this.isAutoWarning = true;
-        this.userId = WarnUtil.getWarnedPlayer(user).id;
-    }
+public class WarnedPlayer implements Row {
+
+    @Column(primaryKey = true, autoIncrement = true)
+    public Integer id;
+
+    @Column(name = "player_uuid")
+    @Nullable
+    public String playerUuid;
+
+    @Column(name = "player_name")
+    public String playerName;
+
+    @Column
+    public int points;
 }

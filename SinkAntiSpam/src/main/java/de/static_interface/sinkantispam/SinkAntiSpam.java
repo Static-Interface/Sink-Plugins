@@ -24,6 +24,7 @@ import de.static_interface.sinkantispam.command.ListWarnsCommand;
 import de.static_interface.sinkantispam.command.PredefinedWarningsListCommand;
 import de.static_interface.sinkantispam.command.WarnCommand;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
+import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
 import de.static_interface.sinkantispam.database.table.WarningsTable;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.database.Database;
@@ -40,6 +41,7 @@ public class SinkAntiSpam extends JavaPlugin {
     private static SinkAntiSpam instance;
     private WarningsTable warningsTable;
     private PredefinedWarningsTable predefinedWarningsTable;
+    private WarnedPlayersTable warnedPlayersTable;
     private Database db;
 
     public static SinkAntiSpam getInstance() {
@@ -58,6 +60,14 @@ public class SinkAntiSpam extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        warnedPlayersTable = new WarnedPlayersTable(db);
+        try {
+            warnedPlayersTable.create();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         predefinedWarningsTable = new PredefinedWarningsTable(db);
         try {
             predefinedWarningsTable.create();
@@ -111,5 +121,9 @@ public class SinkAntiSpam extends JavaPlugin {
 
     public PredefinedWarningsTable getPredefinedWarningsTable() {
         return predefinedWarningsTable;
+    }
+
+    public WarnedPlayersTable getWarnedPlayersTable() {
+        return warnedPlayersTable;
     }
 }
