@@ -36,6 +36,7 @@ public class CreatePredefinedWarningCommand extends SinkCommand {
 
     public CreatePredefinedWarningCommand(@Nonnull Plugin plugin) {
         super(plugin);
+        getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
         getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <WarningName>");
     }

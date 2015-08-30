@@ -36,8 +36,6 @@ public class ListWarnsCommand extends SinkCommand {
 
     public ListWarnsCommand(Plugin plugin) {
         super(plugin);
-
-        getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class ListWarnsCommand extends SinkCommand {
                     continue;
                 }
                 if (warning.isDeleted) {
-                    if (!sender.hasPermission("sinkantispam.canseedeleted")) {
+                    if (!sender.hasPermission("sinkantispam.canseedeleted") || (user instanceof IrcUser && !user.isOp())) {
                         out.add(hidden);
                         continue;
                     }

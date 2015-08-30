@@ -36,6 +36,7 @@ public class DeletePredefinedWarningCommand extends SinkCommand {
 
     public DeletePredefinedWarningCommand(@Nonnull Plugin plugin) {
         super(plugin);
+        getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(new Options());
         getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [WarningName]");
     }
