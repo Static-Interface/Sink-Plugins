@@ -21,6 +21,7 @@ import de.static_interface.sinkantispam.command.CreatePredefinedWarningCommand;
 import de.static_interface.sinkantispam.command.DeletePredefinedWarningCommand;
 import de.static_interface.sinkantispam.command.DeleteWarnCommand;
 import de.static_interface.sinkantispam.command.ListWarnsCommand;
+import de.static_interface.sinkantispam.command.PredefinedWarningsListCommand;
 import de.static_interface.sinkantispam.command.WarnCommand;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.database.table.WarningsTable;
@@ -78,6 +79,7 @@ public class SinkAntiSpam extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("deletewarn", new DeleteWarnCommand(this));
         SinkLibrary.getInstance().registerCommand("createpwarn", new CreatePredefinedWarningCommand(this));
         SinkLibrary.getInstance().registerCommand("deletepwarn", new DeletePredefinedWarningCommand(this));
+        SinkLibrary.getInstance().registerCommand("pwarnlist", new PredefinedWarningsListCommand(this));
     }
 
     @Override

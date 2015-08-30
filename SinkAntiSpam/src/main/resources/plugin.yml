@@ -11,6 +11,11 @@ commands:
      description: Warn a player
      permission: sinkantispam.warn
 
+  pwarnlist:
+     description: List predefined warnings
+     aliases: [predefinedwarninglist, pwarninglist]
+     permission: sinkantispam.warn
+
   listwarns:
      description: List a players warns
      aliases: [listwarnings]

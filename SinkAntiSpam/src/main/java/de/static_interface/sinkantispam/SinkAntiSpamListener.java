@@ -86,7 +86,7 @@ public class SinkAntiSpamListener implements Listener {
                     continue;
                 }
 
-                if (isBlackListed(word, whiteListDomains) != null) {
+                if (isBlackListed(word, whiteListDomains, false) != null) {
                     return result;
                 }
                 WarnUtil.performWarning(new DomainWarning(user.getUniqueId(), word, WarnUtil.getNextWarningId(user)));
@@ -96,7 +96,7 @@ public class SinkAntiSpamListener implements Listener {
             return result;
         }
         if (SinkLibrary.getInstance().getSettings().isBlacklistedWordsEnabled()) {
-            String blacklistWord = isBlackListed(message, blacklistedWords);
+            String blacklistWord = isBlackListed(message, blacklistedWords, true);
             if (blacklistWord != null) {
                 blacklistWord = blacklistWord.trim();
                 String
@@ -116,18 +116,24 @@ public class SinkAntiSpamListener implements Listener {
         return result;
     }
 
-    private static String isBlackListed(String input, List<String> blacklistedWords) {
-        for (String regex : blacklistedWords) {
-            Pattern pattern;
-            try {
-                pattern = Pattern.compile(regex);
-            } catch (PatternSyntaxException e) {
-                SinkAntiSpam.getInstance().getLogger().warning("Wrong regex: " + regex);
-                continue;
-            }
-            Matcher matcher = pattern.matcher(input);
-            if (matcher.find()) {
-                return input;
+    private static String isBlackListed(String input, List<String> blacklistedWords, boolean isRegex) {
+        for (String s : blacklistedWords) {
+            if (isRegex) {
+                Pattern pattern;
+                try {
+                    pattern = Pattern.compile(s);
+                } catch (PatternSyntaxException e) {
+                    SinkAntiSpam.getInstance().getLogger().warning("Wrong regex: " + s);
+                    continue;
+                }
+                Matcher matcher = pattern.matcher(input);
+                if (matcher.find()) {
+                    return input;
+                }
+            } else {
+                if (input.contains(s)) {
+                    return s;
+                }
             }
         }
         return null;
