@@ -85,9 +85,13 @@ public class WarnUtil {
     }
 
     public static void addWarning(Warning warning) {
-        SinkAntiSpam.getInstance().getWarningsTable().insert(warning);
         WarnedPlayer wPlayer = getWarnedPlayer(warning.userId);
-        setPoints(wPlayer, wPlayer.points + warning.points);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser(UUID.fromString(wPlayer.playerUuid));
+        if (wPlayer.deleted_points > 0 && getWarnings(user, false).size() == 0) {
+            setDeletedPoints(wPlayer, 0);
+        }
+
+        SinkAntiSpam.getInstance().getWarningsTable().insert(warning);
     }
 
     @Nullable
@@ -132,15 +136,29 @@ public class WarnUtil {
         return result[0];
     }
 
-    public static void setPoints(WarnedPlayer wPlayer, int points) {
-        SinkAntiSpam.getInstance().getWarnedPlayersTable().executeUpdate("UPDATE `{TABLE}` SET `points` = ? WHERE `id` = ?", points, wPlayer.id);
+    public static void setDeletedPoints(WarnedPlayer wPlayer, int points) {
+        if (points < 0) {
+            return;
+        }
+        SinkAntiSpam.getInstance().getWarnedPlayersTable()
+                .executeUpdate("UPDATE `{TABLE}` SET `deleted_points` = ? WHERE `id` = ?", points, wPlayer.id);
+    }
+
+    public static int getPoints(WarnedPlayer player) {
+        int points = 0;
+        for (Warning warning : getWarnings(SinkLibrary.getInstance().getIngameUser(UUID.fromString(player.playerUuid)), false)) {
+            points += warning.points;
+        }
+
+        points -= player.deleted_points;
+        return points;
     }
 
     private static WarnedPlayer insertWarnedUser(IngameUser user) {
         WarnedPlayer wPlayer = new WarnedPlayer();
         wPlayer.playerName = user.getDisplayName();
         wPlayer.playerUuid = user.getUniqueId().toString();
-        wPlayer.points = 0;
+        wPlayer.deleted_points = 0;
         return SinkAntiSpam.getInstance().getWarnedPlayersTable().insert(wPlayer);
     }
 }

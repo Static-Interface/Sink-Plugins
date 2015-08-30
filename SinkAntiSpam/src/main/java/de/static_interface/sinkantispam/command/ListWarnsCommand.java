@@ -56,16 +56,10 @@ public class ListWarnsCommand extends SinkCommand {
         List<String> out = new ArrayList<>();
         out.add(ChatColor.RED + "Warnings: " + target.getDisplayName());
 
-
-        int points = 0;
         List<Warning> warnings = WarnUtil.getWarnings(target, true);
 
         if (warnings.size() > 0) {
             for (Warning warning : warnings) {
-                if(!warning.isDeleted && warning.expireTime > System.currentTimeMillis()) {
-                    points += warning.points;
-                }
-
                 String hidden = ChatColor.GOLD + "#" + warning.userWarningId + " - " + ChatColor.GRAY + " [Hidden]";
                 if (warning.isAutoWarning && !sender.hasPermission("sinkantispam.autowarnmessage")) {
                     sender.sendMessage(hidden);
@@ -97,7 +91,7 @@ public class ListWarnsCommand extends SinkCommand {
             out.add(ChatColor.RED + "No warnings found");
         }
 
-        out.add(ChatColor.DARK_RED + "Points: " +ChatColor.RED + points);
+        out.add(ChatColor.DARK_RED + "Points: " + ChatColor.RED + WarnUtil.getPoints(WarnUtil.getWarnedPlayer(target)));
         sender.sendMessage(out.toArray(new String[out.size()]));
         return true;
     }

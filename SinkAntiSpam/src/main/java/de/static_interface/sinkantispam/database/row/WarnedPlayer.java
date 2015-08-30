@@ -35,5 +35,5 @@ public class WarnedPlayer implements Row {
     public String playerName;
 
     @Column
-    public int points;
+    public int deleted_points;
 }
