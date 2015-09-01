@@ -26,14 +26,6 @@ import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang.Validate;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.ResultQuery;
-import org.jooq.SQLDialect;
-import org.jooq.SelectField;
-import org.jooq.SelectJoinStep;
-import org.jooq.impl.DSL;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -54,16 +46,10 @@ public abstract class AbstractTable<T extends Row> {
 
     private final String name;
     protected Database db;
-    private DSLContext context;
 
     public AbstractTable(String name, Database db) {
         this.name = name;
         this.db = db;
-        context = DSL.using(db.getConnection(), db.getDialect());
-    }
-
-    public static boolean hasColumn(Record r, String columnName) throws SQLException {
-        return r.field(columnName) != null;
     }
 
     public static boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
@@ -201,7 +187,7 @@ public abstract class AbstractTable<T extends Row> {
         }
 
         sql += ")";
-        if (db.getDialect() == SQLDialect.MYSQL || db.getDialect() == SQLDialect.MARIADB) {
+        if (db.getDialect() == SQLDialect.MySQL || db.getDialect() == SQLDialect.MariaDB) {
             //Todo: do other SQL databases support engines?
             sql += " ENGINE=" + getEngine();
         }
@@ -313,74 +299,6 @@ public abstract class AbstractTable<T extends Row> {
     public T insert(T row) {
         Validate.notNull(row);
         return deserialize(serialize(row))[0];
-    }
-
-    public SelectJoinStep select(SelectField... selectFields) {
-        return context.select(selectFields).from(name);
-    }
-
-    public T fetch(ResultQuery query) {
-        List<T> result = fetchList(query);
-        if (result == null || result.size() < 1) {
-            return null;
-        }
-        return result.get(0);
-    }
-
-    public List<T> fetchList(ResultQuery query) {
-        List<T> result = new ArrayList<>();
-        Result<Record> queryResult = query.fetch();
-        if (queryResult == null || queryResult.size() < 1) {
-            return null;
-        }
-        for (Record r : queryResult) {
-            result.add(deserializeRecord(r));
-        }
-        return result;
-    }
-
-    protected T deserializeRecord(Record r) {
-        Constructor<?> ctor;
-        Object instance;
-        try {
-            ctor = getRowClass().getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Invalid row class: " + getRowClass().getName() + ": Constructor shouldn't accept arguments!");
-        }
-        try {
-            instance = ctor.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Deserializing failed: ", e);
-        }
-
-        List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
-        for (Field f : fields) {
-            Column column = FieldCache.getAnnotation(f, Column.class);
-            if (column == null) {
-                continue;
-            }
-            String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-            Object value = null;
-            try {
-                if (!hasColumn(r, name)) {
-                    //Select query may not include this column
-                    continue;
-                }
-                value = r.getValue(name);
-                if (f.getType() == boolean.class || f.getType() == Boolean.class) {
-                    value = ((int) value) != 0; // for some reason this is returned as int on TINYINT(1)..
-                }
-                if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
-                    throw new RuntimeException("Trying to set null value on a not nullable and not autoincrement column");
-                }
-                f.set(instance, value);
-            } catch (Exception e) {
-                throw new RuntimeException(
-                        "Couldn't set value \"" + (value == null ? "null" : value.toString()) + "\" for field: " + getRowClass().getName() + "." + f
-                                .getName() + ": ", e);
-            }
-        }
-        return (T) instance;
     }
 
     protected List<T> deserializeResultSet(ResultSet r) {

@@ -21,15 +21,15 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
+import de.static_interface.sinklibrary.database.SQLDialect;
 import org.bukkit.plugin.Plugin;
-import org.jooq.SQLDialect;
 
 import java.sql.SQLException;
 
 public class MySqlDatabase extends Database {
 
     public MySqlDatabase(DatabaseConnectionInfo info, Plugin plugin) {
-        super(info, plugin, SQLDialect.MYSQL, '`');
+        super(info, plugin, SQLDialect.MySQL, '`');
     }
 
     @Override

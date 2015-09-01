@@ -22,8 +22,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
+import de.static_interface.sinklibrary.database.SQLDialect;
 import org.bukkit.plugin.Plugin;
-import org.jooq.SQLDialect;
 
 import java.io.File;
 import java.sql.SQLException;

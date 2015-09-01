@@ -21,7 +21,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.annotation.Column;
 import de.static_interface.sinklibrary.database.annotation.ForeignKey;
 import org.bukkit.plugin.Plugin;
-import org.jooq.SQLDialect;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;

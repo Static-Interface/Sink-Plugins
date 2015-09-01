@@ -18,7 +18,6 @@
 package de.static_interface.sinklibrary.database;
 
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import org.jooq.SQLDialect;
 
 import java.io.File;
 

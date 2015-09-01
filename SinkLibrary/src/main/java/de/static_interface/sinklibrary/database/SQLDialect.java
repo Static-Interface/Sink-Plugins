@@ -17,22 +17,8 @@
 
 package de.static_interface.sinklibrary.database;
 
-import javax.annotation.Nonnull;
-
-public interface DatabaseConnectionInfo {
-
-    SQLDialect getDatabaseType();
-
-    String getAddress();
-
-    int getPort();
-
-    String getUsername();
-
-    String getPassword();
-
-    @Nonnull
-    String getTablePrefix();
-
-    String getDatabaseName();
+public enum SQLDialect {
+    MySQL,
+    MariaDB,
+    H2
 }
