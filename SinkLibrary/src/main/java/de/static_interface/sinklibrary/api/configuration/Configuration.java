@@ -30,6 +30,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +45,8 @@ public abstract class Configuration {
     protected File yamlFile = null;
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
-    Map<String, String> comments = new HashMap<>();
-    List<YamlOption> options = null;
+    private Map<String, String> comments = new HashMap<>();
+    private List<YamlOption> options = null;
 
     /**
      * Create a new configuration
@@ -505,6 +506,7 @@ public abstract class Configuration {
 
     public List<YamlOption> getOptions() {
         if (options == null) {
+            options = new ArrayList<>();
             List<Field> fields = ReflectionUtil.getAllFields(getClass());
             for (Field f : fields) {
                 if (!YamlOption.class.isAssignableFrom(f.getType())) {
