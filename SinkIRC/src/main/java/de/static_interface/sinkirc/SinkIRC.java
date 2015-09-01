@@ -26,6 +26,7 @@ import de.static_interface.sinkirc.irc_command.SayCommand;
 import de.static_interface.sinkirc.irc_command.SetCommand;
 import de.static_interface.sinkirc.queue.IrcQueue;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -81,23 +82,25 @@ public class SinkIRC extends JavaPlugin {
 
                     threadStarted = true;
 
-                    mainChannel = SinkLibrary.getInstance().getSettings().getIrcChannel();
+                    mainChannel = SinkLibrary.getInstance().getSettings().SI_SERVER_CHANNEL.getValue();
 
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
-                            .setName(SinkLibrary.getInstance().getSettings().getIrcBotUsername())
+                            .setName(SinkLibrary.getInstance().getSettings().SI_NICKNAME.getValue())
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
                             .setAutoReconnect(true)
                             .setMessageDelay(1)
                             .setShutdownHookEnabled(true)
-                            .setServer(SinkLibrary.getInstance().getSettings().getIrcAddress(), SinkLibrary.getInstance().getSettings().getIrcPort())
+                            .setServer(SinkLibrary.getInstance().getSettings().SI_SERVER_ADDRESS.getValue(),
+                                       SinkLibrary.getInstance().getSettings().SI_SERVER_PORT.getValue())
                             .addListener(new PircBotXLinkListener())
                             .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
 
-                    if (SinkLibrary.getInstance().getSettings().isIrcPasswordEnabled()) {
-                        configBuilder = configBuilder.setServerPassword(SinkLibrary.getInstance().getSettings().getIrcPassword());
+                    String password = SinkLibrary.getInstance().getSettings().SI_SERVER_PASSWORD.getValue();
+                    if (!StringUtil.isEmptyOrNull(password)) {
+                        configBuilder = configBuilder.setServerPassword(password);
                     }
-                    if (!SinkLibrary.getInstance().getSettings().isIrcAuthentificationEnabled()) {
+                    if (!SinkLibrary.getInstance().getSettings().SI_AUTHENTIFICATION_ENABLED.getValue()) {
                         configBuilder = configBuilder.addAutoJoinChannel(mainChannel);
                     }
 
@@ -105,14 +108,15 @@ public class SinkIRC extends JavaPlugin {
                     try {
                         ircBot.startBot();
                     } catch (SocketException e) {
-                        getLogger().log(Level.SEVERE, "Couldn't connect to host: " + SinkLibrary.getInstance().getSettings().getIrcAddress(), e);
+                        getLogger().log(Level.SEVERE,
+                                        "Couldn't connect to host: " + SinkLibrary.getInstance().getSettings().SI_SERVER_ADDRESS.getValue(), e);
                         Bukkit.getPluginManager().disablePlugin(SinkIRC.this);
                         return;
                     }
                     WaitForQueue queue = new WaitForQueue(ircBot);
-                    if (SinkLibrary.getInstance().getSettings().isIrcAuthentificationEnabled()) {
-                        ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().getIrcAuthBot(),
-                                                 SinkLibrary.getInstance().getSettings().getIrcAuthMessage());
+                    if (SinkLibrary.getInstance().getSettings().SI_AUTHENTIFICATION_ENABLED.getValue()) {
+                        ircBot.sendIRC().message(SinkLibrary.getInstance().getSettings().SI_AUTHENTIFICATION_AUTHBOT.getValue(),
+                                                 SinkLibrary.getInstance().getSettings().SI_AUTHENTIFICATION_MESSAGE.getValue());
                         //Wait for AuthBot reply before joining
                         while (true) {
                             PrivateMessageEvent event;
@@ -123,11 +127,11 @@ public class SinkIRC extends JavaPlugin {
                                 break;
                             }
 
-                            if (event.getUser().getNick().equals(SinkLibrary.getInstance().getSettings().getIrcAuthBot())) {
+                            if (event.getUser().getNick().equals(SinkLibrary.getInstance().getSettings().SI_AUTHENTIFICATION_AUTHBOT.getValue())) {
                                 break;
                             }
                         }
-                        ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().getIrcChannel());
+                        ircBot.sendIRC().joinChannel(SinkLibrary.getInstance().getSettings().SI_SERVER_CHANNEL.getValue());
                     }
 
                     //wait for bot join

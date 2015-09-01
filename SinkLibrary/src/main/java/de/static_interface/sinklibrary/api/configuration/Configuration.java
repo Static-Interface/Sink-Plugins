@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-@SuppressWarnings(
-        {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention"})
 public abstract class Configuration {
 
     private static Map<String, Configuration> configs = new ConcurrentHashMap<>();
@@ -302,7 +300,7 @@ public abstract class Configuration {
         try {
             writeToFile(getFile());
         } catch (IOException e) {
-            if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+            if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
             } else {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');

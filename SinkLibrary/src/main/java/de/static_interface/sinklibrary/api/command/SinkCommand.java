@@ -251,7 +251,7 @@ public abstract class SinkCommand implements CommandExecutor {
                 exception.printStackTrace();
             }
 
-            if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+            if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
                 sender.sendMessage(exception.getMessage());
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");

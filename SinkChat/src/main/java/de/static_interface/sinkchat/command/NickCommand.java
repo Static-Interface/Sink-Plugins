@@ -45,7 +45,7 @@ public class NickCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled()) {
+        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue()) {
             sender.sendMessage(PREFIX + "DisplayNames have been disabled in the config.");
             return true;
         }

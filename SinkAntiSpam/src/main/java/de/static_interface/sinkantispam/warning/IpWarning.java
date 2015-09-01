@@ -27,6 +27,6 @@ public class IpWarning extends AutoWarning {
 
     public IpWarning(IngameUser user, String ip, int id) {
         super(user, StringUtil.format(m("SinkAntiSpam.Reasons.IP"), ip), id);
-        points = Integer.valueOf(SinkLibrary.getInstance().getSettings().get("SinkAntiSpam.Points.IP").toString());
+        points = SinkLibrary.getInstance().getSettings().SAS_POINTS_IP.getValue();
     }
 }

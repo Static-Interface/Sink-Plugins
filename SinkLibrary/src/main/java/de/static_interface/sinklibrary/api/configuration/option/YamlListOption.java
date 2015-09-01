@@ -31,11 +31,11 @@ public class YamlListOption extends YamlOption<List<?>> {
         super(path, defaultValue, comment);
     }
 
-    public YamlListOption(@Nullable YamlOption parent, String path, List<?> defaultValue) {
+    public YamlListOption(@Nullable YamlParentOption parent, String path, List<?> defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlListOption(@Nullable YamlOption parent, String path, List<?> defaultValue, @Nullable String comment) {
+    public YamlListOption(@Nullable YamlParentOption parent, String path, List<?> defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

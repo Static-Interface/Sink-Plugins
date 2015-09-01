@@ -27,6 +27,6 @@ public class BlacklistWarning extends AutoWarning {
 
     public BlacklistWarning(IngameUser user, String message, int id) {
         super(user, StringUtil.format(m("SinkAntiSpam.Reasons.BlacklistedWord"), message), id);
-        points = Integer.valueOf(SinkLibrary.getInstance().getSettings().get("SinkAntiSpam.Points.Blacklist").toString());
+        points = SinkLibrary.getInstance().getSettings().SAS_POINTS_BLACKLIST.getValue();
     }
 }

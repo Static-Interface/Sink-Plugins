@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 public abstract class YamlOption<T> extends Option<T> {
 
-    protected final YamlOption parent;
+    protected final YamlParentOption parent;
     private final String path;
     private final String comment;
     private Configuration config;
@@ -38,18 +38,18 @@ public abstract class YamlOption<T> extends Option<T> {
     }
 
 
-    public YamlOption(@Nullable YamlOption parent, String path, T defaultValue) {
+    public YamlOption(@Nullable YamlParentOption parent, String path, T defaultValue) {
         this(parent, path, defaultValue, null);
     }
 
-    public YamlOption(@Nullable YamlOption parent, String path, T defaultValue, @Nullable String comment) {
+    public YamlOption(@Nullable YamlParentOption parent, String path, T defaultValue, @Nullable String comment) {
         super(path, defaultValue);
         this.parent = parent;
         this.comment = comment;
         if (parent != null) {
-            this.path = parent.getPath() + "." + path;
+            this.path = parent.getPath() + "." + getName();
         } else {
-            this.path = path;
+            this.path = getName();
         }
     }
 

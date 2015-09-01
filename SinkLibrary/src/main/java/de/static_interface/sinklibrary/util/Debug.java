@@ -17,6 +17,12 @@
 
 package de.static_interface.sinklibrary.util;
 
+import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.annotation.Unstable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,13 +32,6 @@ import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.annotation.Unstable;
 
 /**
  * Does not work correctly when reloading server
@@ -49,7 +48,7 @@ public class Debug {
      * @return True if debug is enabled in the config
      */
     public static boolean isEnabled() {
-        return ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isDebugEnabled()));
+        return ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()));
     }
 
     /**
@@ -126,7 +125,9 @@ public class Debug {
     }
 
     private static void logInternal(@Nonnull Level level, @Nonnull String message, @Nullable Throwable throwable) {
-        boolean debugEnabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isDebugEnabled()));
+        boolean
+                debugEnabled =
+                ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()));
         /*
          * TODO: Fails on a first launch (endless loop)
          */
@@ -151,7 +152,7 @@ public class Debug {
          */
         boolean enabled;
         try {
-            enabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().isLogEnabled()));
+            enabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_LOG.getValue()));
         } catch (Exception ignored) {
             return;
         }

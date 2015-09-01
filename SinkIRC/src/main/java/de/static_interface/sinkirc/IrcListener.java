@@ -49,7 +49,7 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        int maxUsers = SinkLibrary.getInstance().getSettings().SI_MAX_JOIN_LEAVE_USERS.getValue();
         if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
             return;
         }
@@ -63,7 +63,7 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        int maxUsers = SinkLibrary.getInstance().getSettings().SI_MAX_JOIN_LEAVE_USERS.getValue();
         if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
             return;
         }
@@ -78,7 +78,7 @@ public class IrcListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerKick(PlayerKickEvent event) {
-        int maxUsers = SinkLibrary.getInstance().getSettings().getIrcJoinLeaveMaxUsers();
+        int maxUsers = SinkLibrary.getInstance().getSettings().SI_MAX_JOIN_LEAVE_USERS.getValue();
         if (maxUsers > 0 && Bukkit.getOnlinePlayers().size() > maxUsers) {
             return;
         }

@@ -29,11 +29,11 @@ public class YamlDoubleOption extends YamlOption<Double> {
         super(path, defaultValue, comment);
     }
 
-    public YamlDoubleOption(@Nullable YamlOption parent, String path, Double defaultValue) {
+    public YamlDoubleOption(@Nullable YamlParentOption parent, String path, Double defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlDoubleOption(@Nullable YamlOption parent, String path, Double defaultValue, @Nullable String comment) {
+    public YamlDoubleOption(@Nullable YamlParentOption parent, String path, Double defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

@@ -29,11 +29,11 @@ public class YamlBooleanOption extends YamlOption<Boolean> {
         super(path, defaultValue, comment);
     }
 
-    public YamlBooleanOption(@Nullable YamlOption parent, String path, boolean defaultValue) {
+    public YamlBooleanOption(@Nullable YamlParentOption parent, String path, boolean defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlBooleanOption(@Nullable YamlOption parent, String path, boolean defaultValue, @Nullable String comment) {
+    public YamlBooleanOption(@Nullable YamlParentOption parent, String path, boolean defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

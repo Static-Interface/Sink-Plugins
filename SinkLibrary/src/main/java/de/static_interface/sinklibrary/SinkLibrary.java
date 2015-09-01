@@ -215,9 +215,6 @@ public class SinkLibrary extends JavaPlugin {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, getSinkTimer(), 1000, 50);
 
-        // Check for updates
-        update();
-
         // Init players (reload etc)
         for (Player p : BukkitUtil.getOnlinePlayers()) {
             onRefreshDisplayName(p);
@@ -322,7 +319,7 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
         try {
-            if (SinkLibrary.getInstance().getSettings().isLogEnabled()) {
+            if (SinkLibrary.getInstance().getSettings().GENERAL_LOG.getValue()) {
                 Debug.getDebugLogFileWriter().close();
             }
         } catch (Exception ignored) {
@@ -739,7 +736,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player that needs to refresh DisplayName
      */
     public void onRefreshDisplayName(Player player) {
-        if (!getSettings().isDisplayNamesEnabled()) {
+        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue()) {
             return;
         }
 
@@ -981,23 +978,6 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
         return cmd;
-    }
-
-    private void update() {
-        Updater updater = new Updater(getSettings().getUpdateType());
-        String permission = "sinklibrary.updatenotification";
-        String versionType = ' ' + updater.getLatestGameVersion() + ' ';
-        if (versionType.equalsIgnoreCase("release")) {
-            versionType = " ";
-        }
-        if (updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE) {
-            BukkitUtil
-                    .broadcast(Updater.CONSOLEPREFIX + "A new" + versionType + "update is available: " + updater.getLatestName(), permission, false);
-        } else if (updater.getResult() == Updater.UpdateResult.NO_UPDATE) {
-            getLogger().info(Updater.CONSOLEPREFIX + "No new updates found...");
-        } else if (updater.getResult() == Updater.UpdateResult.SUCCESS) {
-            getLogger().info(Updater.CONSOLEPREFIX + "Updates downloaded, please restart or reload the server to take effect...");
-        }
     }
 
     private boolean setupChat() {

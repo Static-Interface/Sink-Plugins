@@ -31,11 +31,11 @@ public class YamlColorOption extends YamlOption<Color> {
         super(path, defaultValue, comment);
     }
 
-    public YamlColorOption(@Nullable YamlOption parent, String path, Color defaultValue) {
+    public YamlColorOption(@Nullable YamlParentOption parent, String path, Color defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlColorOption(@Nullable YamlOption parent, String path, Color defaultValue, @Nullable String comment) {
+    public YamlColorOption(@Nullable YamlParentOption parent, String path, Color defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

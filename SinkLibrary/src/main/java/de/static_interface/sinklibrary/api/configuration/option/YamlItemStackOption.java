@@ -31,11 +31,11 @@ public class YamlItemStackOption extends YamlOption<ItemStack> {
         super(path, defaultValue, comment);
     }
 
-    public YamlItemStackOption(@Nullable YamlOption parent, String path, ItemStack defaultValue) {
+    public YamlItemStackOption(@Nullable YamlParentOption parent, String path, ItemStack defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlItemStackOption(@Nullable YamlOption parent, String path, ItemStack defaultValue, @Nullable String comment) {
+    public YamlItemStackOption(@Nullable YamlParentOption parent, String path, ItemStack defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

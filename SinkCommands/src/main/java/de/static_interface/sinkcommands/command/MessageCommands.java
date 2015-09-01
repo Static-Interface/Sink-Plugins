@@ -48,7 +48,7 @@ public class MessageCommands {
             }
         }
         //Todo: add @Name Message Support
-        String format = SinkLibrary.getInstance().getSettings().getMessageSendFormat();
+        String format = SinkLibrary.getInstance().getSettings().SCMD_MESSAGE_SEND_FORMAT.getValue();
         HashMap<String, Object> customValues = new HashMap<>();
         if (target instanceof IrcUser) {
             customValues.put("T(ARGET)?IRC(PREFIX)?", ChatColor.GRAY + "(IRC)");
@@ -68,7 +68,7 @@ public class MessageCommands {
             executor.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
         }
 
-        format = SinkLibrary.getInstance().getSettings().getMessageReceivedFormat();
+        format = SinkLibrary.getInstance().getSettings().SCMD_MESSAGE_RECEIVED_FORMAT.getValue();
         if (target instanceof IrcUser) {
             ((IrcUser) target).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
         } else {

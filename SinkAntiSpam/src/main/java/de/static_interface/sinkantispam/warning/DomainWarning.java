@@ -27,6 +27,6 @@ public class DomainWarning extends AutoWarning {
 
     public DomainWarning(IngameUser user, String domain, int id) {
         super(user, StringUtil.format(m("SinkAntiSpam.Reasons.Domain"), domain), id);
-        points = Integer.valueOf(SinkLibrary.getInstance().getSettings().get("SinkAntiSpam.Points.Domain").toString());
+        points = SinkLibrary.getInstance().getSettings().SAS_POINTS_DOMAIN.getValue();
     }
 }

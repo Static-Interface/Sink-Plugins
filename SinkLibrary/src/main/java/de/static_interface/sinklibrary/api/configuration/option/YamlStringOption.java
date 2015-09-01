@@ -29,11 +29,11 @@ public class YamlStringOption extends YamlOption<String> {
         super(path, defaultValue, comment);
     }
 
-    public YamlStringOption(@Nullable YamlOption parent, String path, String defaultValue) {
+    public YamlStringOption(@Nullable YamlParentOption parent, String path, String defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlStringOption(@Nullable YamlOption parent, String path, String defaultValue, @Nullable String comment) {
+    public YamlStringOption(@Nullable YamlParentOption parent, String path, String defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

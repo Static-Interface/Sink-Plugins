@@ -31,11 +31,11 @@ public class YamlVectorOption extends YamlOption<Vector> {
         super(path, defaultValue, comment);
     }
 
-    public YamlVectorOption(@Nullable YamlOption parent, String path, Vector defaultValue) {
+    public YamlVectorOption(@Nullable YamlParentOption parent, String path, Vector defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlVectorOption(@Nullable YamlOption parent, String path, Vector defaultValue, @Nullable String comment) {
+    public YamlVectorOption(@Nullable YamlParentOption parent, String path, Vector defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

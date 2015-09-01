@@ -18,35 +18,33 @@
 package de.static_interface.sinklibrary.api.configuration.option;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class YamlMapListOption extends YamlOption<List<Map<?, ?>>> {
+public class YamlStringListOption extends YamlOption<List<String>> {
 
-    public YamlMapListOption(String path,
-                             List<Map<?, ?>> defaultValue) {
+    public YamlStringListOption(String path, List<String> defaultValue) {
         super(path, defaultValue);
     }
 
-    public YamlMapListOption(String path, List<Map<?, ?>> defaultValue, String comment) {
+    public YamlStringListOption(String path, List<String> defaultValue, String comment) {
         super(path, defaultValue, comment);
     }
 
-    public YamlMapListOption(@Nullable YamlParentOption parent, String path, List<Map<?, ?>> defaultValue) {
+    public YamlStringListOption(@Nullable YamlParentOption parent, String path, List<String> defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlMapListOption(@Nullable YamlParentOption parent, String path, List<Map<?, ?>> defaultValue, @Nullable String comment) {
+    public YamlStringListOption(@Nullable YamlParentOption parent, String path, List<String> defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 
-
     @Override
-    public List<Map<?, ?>> getValue() {
-        if (getConfig().getYamlConfiguration().getList(getPath()) == null) {
+    public List<String> getValue() {
+        List<?> list = getConfig().getYamlConfiguration().getList(getPath());
+        if (list == null) {
             return getDefaultValue();
         }
-        return getConfig().getYamlConfiguration().getMapList(getPath());
+        return getConfig().getYamlConfiguration().getStringList(getPath());
     }
 }

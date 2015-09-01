@@ -99,7 +99,7 @@ public class ConsoleUser extends SinkUser<ConsoleCommandSender> {
 
     @Override
     public void sendDebugMessage(String msg) {
-        if (SinkLibrary.getInstance().getSettings().isDebugEnabled()) {
+        if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + msg);
         }
     }

@@ -94,7 +94,7 @@ public class ChatListener implements Listener {
             }
         }
 
-        int range = SinkLibrary.getInstance().getSettings().getLocalChatRange();
+        int range = SinkLibrary.getInstance().getSettings().SC_LOCAL_CHAT_RANGE.getValue();
 
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.getInstance().isTownyAvailable()) {
@@ -105,8 +105,7 @@ public class ChatListener implements Listener {
         }
         customParams.put("CHANNEL", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
 
-        String format = SinkLibrary.getInstance().getSettings().getDefaultChatFormat();
-        String eventFormat = format;
+        String eventFormat = SinkLibrary.getInstance().getSettings().SC_DEFAULT_CHAT_FORMAT.getValue();
         //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
         //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
         eventFormat = StringUtil.format(eventFormat, user, null, message, customParams, false, null);

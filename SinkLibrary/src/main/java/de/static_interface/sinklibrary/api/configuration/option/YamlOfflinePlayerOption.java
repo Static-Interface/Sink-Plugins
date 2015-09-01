@@ -31,11 +31,11 @@ public class YamlOfflinePlayerOption extends YamlOption<OfflinePlayer> {
         super(path, defaultValue, comment);
     }
 
-    public YamlOfflinePlayerOption(@Nullable YamlOption parent, String path, OfflinePlayer defaultValue) {
+    public YamlOfflinePlayerOption(@Nullable YamlParentOption parent, String path, OfflinePlayer defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlOfflinePlayerOption(@Nullable YamlOption parent, String path, OfflinePlayer defaultValue,
+    public YamlOfflinePlayerOption(@Nullable YamlParentOption parent, String path, OfflinePlayer defaultValue,
                                    @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }

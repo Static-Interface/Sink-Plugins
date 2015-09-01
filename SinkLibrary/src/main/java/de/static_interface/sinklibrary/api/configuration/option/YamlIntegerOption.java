@@ -29,11 +29,11 @@ public class YamlIntegerOption extends YamlOption<Integer> {
         super(path, defaultValue, comment);
     }
 
-    public YamlIntegerOption(@Nullable YamlOption parent, String path, Integer defaultValue) {
+    public YamlIntegerOption(@Nullable YamlParentOption parent, String path, Integer defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlIntegerOption(@Nullable YamlOption parent, String path, Integer defaultValue, @Nullable String comment) {
+    public YamlIntegerOption(@Nullable YamlParentOption parent, String path, Integer defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

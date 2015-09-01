@@ -29,11 +29,11 @@ public class YamlLongOption extends YamlOption<Long> {
         super(path, defaultValue, comment);
     }
 
-    public YamlLongOption(@Nullable YamlOption parent, String path, Long defaultValue) {
+    public YamlLongOption(@Nullable YamlParentOption parent, String path, Long defaultValue) {
         super(parent, path, defaultValue);
     }
 
-    public YamlLongOption(@Nullable YamlOption parent, String path, Long defaultValue, @Nullable String comment) {
+    public YamlLongOption(@Nullable YamlParentOption parent, String path, Long defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
     }
 

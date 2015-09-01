@@ -242,7 +242,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         if (!isOnline()) {
             return playerName;
         }
-        if (!SinkLibrary.getInstance().getSettings().isDisplayNamesEnabled() || !getConfiguration().getHasDisplayName()) {
+        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName()) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
                 prefix =
