@@ -19,14 +19,19 @@ package de.static_interface.sinklibrary.api.configuration;
 
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.option.YamlOption;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.FileUtil;
+import de.static_interface.sinklibrary.util.ReflectionUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -40,6 +45,7 @@ public abstract class Configuration {
     protected YamlConfiguration yamlConfiguration = null;
     protected HashMap<String, Object> defaultValues = null;
     Map<String, String> comments = new HashMap<>();
+    List<YamlOption> options = null;
 
     /**
      * Create a new configuration
@@ -99,6 +105,12 @@ public abstract class Configuration {
                 yamlConfiguration.load(yamlFile);
             }
             addDefaults();
+
+            for (YamlOption option : getOptions()) {
+                option.setConfig(this);
+                addDefault(option.getPath(), option.getDefaultValue(), option.getComment());
+            }
+
             if (createNewConfiguration) {
                 onCreate();
             }
@@ -260,7 +272,6 @@ public abstract class Configuration {
     public void setComment(String path, String comment) {
         comments.put(path, comment);
     }
-
 
     /**
      * Create Configuration File
@@ -426,13 +437,12 @@ public abstract class Configuration {
 
         if (!getYamlConfiguration().isSet(path) || getYamlConfiguration().get(path) == null) {
             getYamlConfiguration().set(path, value);
-            if (comment != null) {
+            if (!StringUtil.isEmptyOrNull(comment)) {
                 setComment(path, comment);
             }
         }
         getDefaults().put(path, value);
     }
-
 
     /**
      * Get Defaults
@@ -491,5 +501,24 @@ public abstract class Configuration {
             return;
         }
         init();
+    }
+
+    public List<YamlOption> getOptions() {
+        if (options == null) {
+            List<Field> fields = ReflectionUtil.getAllFields(getClass());
+            for (Field f : fields) {
+                if (!YamlOption.class.isAssignableFrom(f.getType())) {
+                    continue;
+                }
+
+                try {
+                    options.add((YamlOption) f.get(this));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return options;
     }
 }
