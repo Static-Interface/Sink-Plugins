@@ -21,12 +21,8 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.configuration.option.YamlI18nOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlParentOption;
-import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.ChatColor;
 
 import java.io.File;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings(
         {"OverlyBroadCatchBlock", "InstanceMethodNamingConvention", "BooleanMethodNameMustStartWithQuestion", "InstanceMethodNamingConvention",
@@ -116,34 +112,6 @@ public class LanguageConfiguration extends Configuration {
             instance.init();
         }
         return instance;
-    }
-
-    /**
-     * Get language as String from key
-     *
-     * @param path Path to language variable
-     * @return Language String
-     */
-    @Deprecated
-    public static String m(String path) {
-        return m(path, null);
-    }
-
-    /**
-     * Get language as String from key
-     *
-     * @param path Path to language variable
-     * @param paramValues Varargs for {@link StringUtil#format(String, Object...)}
-     * @return Language String
-     */
-    @Deprecated
-    public static String m(String path, @Nullable Object... paramValues) {
-        String s = (String) getInstance().get(path);
-        if (paramValues != null) {
-            s = StringUtil.format(s, paramValues);
-        }
-        s = s.replace("\\n", System.lineSeparator());
-        return ChatColor.translateAlternateColorCodes('&', s);
     }
 
     public static String formatError(String msg) {
