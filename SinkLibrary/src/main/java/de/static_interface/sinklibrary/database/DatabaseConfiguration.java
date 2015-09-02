@@ -42,7 +42,6 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
         addDefault("DatabaseName", "ReallifePlugin");
     }
 
-    @Override
     public SQLDialect getDatabaseType() {
         try {
             return SQLDialect.valueOf(((String) get("Type")).toUpperCase());

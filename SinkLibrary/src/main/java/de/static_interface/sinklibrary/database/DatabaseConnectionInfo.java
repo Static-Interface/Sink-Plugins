@@ -21,8 +21,6 @@ import javax.annotation.Nonnull;
 
 public interface DatabaseConnectionInfo {
 
-    SQLDialect getDatabaseType();
-
     String getAddress();
 
     int getPort();
