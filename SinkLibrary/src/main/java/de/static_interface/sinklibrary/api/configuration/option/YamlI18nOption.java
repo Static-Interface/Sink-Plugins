@@ -18,9 +18,9 @@
 package de.static_interface.sinklibrary.api.configuration.option;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
 
@@ -44,36 +44,52 @@ public class YamlI18nOption extends YamlStringOption {
         super(parent, path, defaultValue, comment);
     }
 
-    public String format(Player player, Object... bindings) {
-        return StringUtil.format(getValue(), SinkLibrary.getInstance().getIngameUser(player), bindings);
+    public String format(CommandSender sender, Object... bindings) {
+        return StringUtil.format(getValue(), getUser(sender), bindings);
     }
 
-    public String format(Player player, Player target, Object... bindings) {
-        return StringUtil.format(getValue(), SinkLibrary.getInstance().getIngameUser(player),
-                                 SinkLibrary.getInstance().getIngameUser(target), null, null, bindings);
+    public String format(CommandSender sender, CommandSender target, Object... bindings) {
+        return StringUtil.format(getValue(), getUser(sender), getUser(target), null, null, bindings);
     }
 
-    public String format(IngameUser user, Object... bindings) {
+    public String format(CommandSender sender, CommandSender target, String userMessage, Object... bindings) {
+        return StringUtil.format(getValue(), getUser(sender), getUser(target), userMessage, null, bindings);
+    }
+
+    public String format(CommandSender sender, CommandSender target, String userMessage, HashMap<String, Object> customPlaceHolders,
+                         Object... bindings) {
+        return StringUtil.format(getValue(), getUser(sender), getUser(target), userMessage, customPlaceHolders, bindings);
+    }
+
+    public String format(CommandSender sender, String userMessage, Object... bindings) {
+        return StringUtil.format(getValue(), getUser(sender), userMessage, bindings);
+    }
+
+    public String format(SinkUser user, Object... bindings) {
         return StringUtil.format(getValue(), user, bindings);
     }
 
-    public String format(IngameUser user, IngameUser target, Object... bindings) {
+    public String format(SinkUser user, SinkUser target, Object... bindings) {
         return StringUtil.format(getValue(), user, target, null, null, bindings);
     }
 
-    public String format(IngameUser user, IngameUser target, String userMessage, Object... bindings) {
+    public String format(SinkUser user, SinkUser target, String userMessage, Object... bindings) {
         return StringUtil.format(getValue(), user, target, userMessage, null, bindings);
     }
 
-    public String format(IngameUser user, IngameUser target, String userMessage, HashMap<String, Object> customPlaceHolders, Object... bindings) {
+    public String format(SinkUser user, SinkUser target, String userMessage, HashMap<String, Object> customPlaceHolders, Object... bindings) {
         return StringUtil.format(getValue(), user, target, userMessage, customPlaceHolders, bindings);
     }
 
-    public String format(IngameUser user, String userMessage, Object... bindings) {
+    public String format(SinkUser user, String userMessage, Object... bindings) {
         return StringUtil.format(getValue(), user, userMessage, bindings);
     }
 
     public String format(Object... bindings) {
         return StringUtil.format(getValue(), bindings);
+    }
+
+    private SinkUser getUser(CommandSender sender) {
+        return SinkLibrary.getInstance().getUser((Object) sender);
     }
 }
