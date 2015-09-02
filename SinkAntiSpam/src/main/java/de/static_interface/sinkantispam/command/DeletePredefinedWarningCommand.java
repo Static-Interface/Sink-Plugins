@@ -17,13 +17,12 @@
 
 package de.static_interface.sinkantispam.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
@@ -49,7 +48,7 @@ public class DeletePredefinedWarningCommand extends SinkCommand {
 
         PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
         if (pWarning == null) {
-            sender.sendMessage(m("SinkAntiSpam.UnknownWarning", args[1]));
+            sender.sendMessage(LanguageConfiguration.GENERAL_UNKNOWN_VALUE.format(args[1]));
             return true;
         }
 

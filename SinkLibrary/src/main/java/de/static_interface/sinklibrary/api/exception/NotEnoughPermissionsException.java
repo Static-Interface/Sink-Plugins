@@ -18,9 +18,9 @@
 package de.static_interface.sinklibrary.api.exception;
 
 @SuppressWarnings("serial")
-public class UnauthorizedAccessException extends RuntimeException {
+public class NotEnoughPermissionsException extends RuntimeException {
 
-    public UnauthorizedAccessException() {
+    public NotEnoughPermissionsException() {
         super();
     }
 }

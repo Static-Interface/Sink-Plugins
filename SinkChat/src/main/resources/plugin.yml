@@ -13,12 +13,6 @@ commands:
       permission: sinkchat.nick
       usage: "§4Usage: /<command> [Player] <New Name|off>"
 
-   channel:
-      description: Access the channels plugin.
-      usage: "§4Usage: /<command> help"
-      aliases: ch
-      permission: sinkchat.channel.use
-
    enablespy:
       description: Enable spy chat.
       aliases: es

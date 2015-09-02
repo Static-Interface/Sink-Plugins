@@ -53,6 +53,11 @@ public abstract class YamlOption<T> extends Option<T> {
         }
     }
 
+    @Nullable
+    public YamlParentOption getParent() {
+        return parent;
+    }
+
     public Configuration getConfig() {
         return config;
     }

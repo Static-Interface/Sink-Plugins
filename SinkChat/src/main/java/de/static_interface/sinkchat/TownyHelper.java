@@ -17,14 +17,13 @@
 
 package de.static_interface.sinkchat;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -164,7 +163,7 @@ public class TownyHelper {
             return "";
         }
 
-        return m("SinkChat.Prefix.Nation", ChatColor.stripColor(nation.getTag())) + ' ' + ChatColor.RESET;
+        return LanguageConfiguration.SC_PREFIX_NATION.format(ChatColor.stripColor(nation.getTag())) + ' ' + ChatColor.RESET;
     }
 
     /**
@@ -207,7 +206,7 @@ public class TownyHelper {
             return "";
         }
 
-        return m("SinkChat.Prefix.Nation", ChatColor.stripColor(nation.getName())) + ' ' + ChatColor.RESET;
+        return LanguageConfiguration.SC_PREFIX_NATION.format(ChatColor.stripColor(nation.getName())) + ' ' + ChatColor.RESET;
     }
 
     /**
@@ -236,7 +235,7 @@ public class TownyHelper {
             return "";
         }
 
-        return m("SinkChat.Prefix.Town", ChatColor.stripColor(town.getTag())) + ' ' + ChatColor.RESET;
+        return LanguageConfiguration.SC_PREFIX_TOWN.format(ChatColor.stripColor(town.getTag())) + ' ' + ChatColor.RESET;
     }
 
     /**
@@ -265,6 +264,6 @@ public class TownyHelper {
             return "";
         }
 
-        return m("SinkChat.Prefix.Town", ChatColor.stripColor(town.getName())) + ' ' + ChatColor.RESET;
+        return LanguageConfiguration.SC_PREFIX_TOWN.format(ChatColor.stripColor(town.getName())) + ' ' + ChatColor.RESET;
     }
 }

@@ -17,4 +17,6 @@ Contribution Guidelines
 ToDo List
 ==============
 - [x] Add config files for plugins (Done)
-- [ ] Add translation option for plugins (by using the LanguageConfiguration Class) (SinkChat, SinkLibrary and SinkAntiSpam are done) 
+- [x] New SQL API
+- [X] New Options API for very easy configuration creations
+- [ ] Add translations for all modules (by using the LanguageConfiguration Class) (SinkChat, SinkLibrary and SinkAntiSpam are done) 

@@ -17,8 +17,6 @@
 
 package de.static_interface.sinklibrary.util;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.ConsoleUser;
@@ -26,9 +24,6 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -378,67 +373,5 @@ public class StringUtil {
      */
     public static boolean isEmptyOrNull(@Nullable String s) {
         return s == null || s.trim().length() == 0 || s.trim().isEmpty();
-    }
-
-    /**
-     * @param s String to check
-     * @return True if a string is null or if the string is empty (length == 0)
-     * @deprecated Use {@link #isEmptyOrNull(String)} instead
-     */
-    @Deprecated
-    public static boolean isStringEmptyOrNull(@Nullable String s) {
-        return isEmptyOrNull(s);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static String timeLeftDateToString(Date date) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        int years = calendar.get(Calendar.YEAR) - 1970;
-        int months = calendar.get(Calendar.MONTH) - 1;
-        int days = calendar.get(Calendar.DAY_OF_MONTH) - 1;
-        int hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
-        int minutes = calendar.get(Calendar.MINUTE);
-        int seconds = calendar.get(Calendar.SECOND);
-        boolean showHours = true;
-        boolean showMinutes = true;
-        boolean showSeconds = true;
-
-        String out = "";
-
-        if (years > 0) {
-            out += " " + years + " " + m("TimeUnit.Years");
-            showMinutes = false;
-            showHours = false;
-            showSeconds = false;
-        }
-
-        if (months > 0) {
-            out += " " + months + " " + m("TimeUnit.Months");
-            showMinutes = false;
-            showHours = false;
-            showSeconds = false;
-        }
-
-        if (days > 0) {
-            showMinutes = false;
-            showSeconds = false;
-            out += " " + days + " " + m("TimeUnit.Days");
-        }
-
-        if (hours > 0 && showHours) {
-            showSeconds = false;
-            out += " " + hours + " " + m("TimeUnit.Hours");
-        }
-
-        if (minutes > 0 && showMinutes) {
-            out += " " + minutes + " " + m("TimeUnit.Minutes");
-        }
-
-        if (seconds > 0 && showSeconds) {
-            out += " " + seconds + " " + m("TimeUnit.Seconds");
-        }
-
-        return out.trim();
     }
 }

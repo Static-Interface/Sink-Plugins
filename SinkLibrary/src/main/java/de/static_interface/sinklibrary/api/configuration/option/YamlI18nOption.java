@@ -19,7 +19,9 @@ package de.static_interface.sinklibrary.api.configuration.option;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import javax.annotation.Nullable;
 
 public class YamlI18nOption extends YamlStringOption {
 
+    private boolean isError;
     public YamlI18nOption(String path, String defaultValue) {
         super(path, defaultValue);
     }
@@ -42,6 +45,11 @@ public class YamlI18nOption extends YamlStringOption {
 
     public YamlI18nOption(@Nullable YamlParentOption parent, String path, String defaultValue, @Nullable String comment) {
         super(parent, path, defaultValue, comment);
+    }
+
+    public YamlI18nOption(YamlParentOption parent, String path, String defaultValue, boolean isError) {
+        super(parent, path, defaultValue);
+        this.isError = isError;
     }
 
     public String format(CommandSender sender, Object... bindings) {
@@ -91,5 +99,18 @@ public class YamlI18nOption extends YamlStringOption {
 
     private SinkUser getUser(CommandSender sender) {
         return SinkLibrary.getInstance().getUser((Object) sender);
+    }
+
+    @Override
+    public String getValue() {
+        String s = ChatColor.translateAlternateColorCodes('&', super.getValue());
+        if (isErrorMessage()) {
+            s = LanguageConfiguration.formatError(s);
+        }
+        return s;
+    }
+
+    public boolean isErrorMessage() {
+        return isError;
     }
 }

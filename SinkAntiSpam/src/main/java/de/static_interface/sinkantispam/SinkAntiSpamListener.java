@@ -19,12 +19,12 @@ package de.static_interface.sinkantispam;
 
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
 
 import de.static_interface.sinkantispam.warning.BlacklistWarning;
 import de.static_interface.sinkantispam.warning.DomainWarning;
 import de.static_interface.sinkantispam.warning.IpWarning;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.DomainValidator;
 import org.bukkit.ChatColor;
@@ -63,9 +63,9 @@ public class SinkAntiSpamListener implements Listener {
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
-                WarnUtil.performWarning(new IpWarning(user, ip, WarnUtil.getNextWarningId(user)));
+                WarnUtil.performWarning(new IpWarning(user, ip, WarnUtil.getNextWarningId(user)), SinkLibrary.getInstance().getConsoleUser());
                 result.setResultcode(WarnResult.CENSOR);
-                result.setCensoredMessage(message.replace(ip, m("SinkAntiSpam.ReplaceIP")));
+                result.setCensoredMessage(message.replace(ip, LanguageConfiguration.SAS_REPLACE_IP.format()));
                 return result;
             }
         }
@@ -80,9 +80,9 @@ public class SinkAntiSpamListener implements Listener {
                 if (isBlackListed(word, SinkLibrary.getInstance().getSettings().SAS_WHITELISTED_DOMAINS.getValue(), false) != null) {
                     return result;
                 }
-                WarnUtil.performWarning(new DomainWarning(user, word, WarnUtil.getNextWarningId(user)));
+                WarnUtil.performWarning(new DomainWarning(user, word, WarnUtil.getNextWarningId(user)), SinkLibrary.getInstance().getConsoleUser());
                 result.setResultcode(WarnResult.CENSOR);
-                result.setCensoredMessage(message.replace(word, m("SinkAntiSpam.ReplaceDomain")));
+                result.setCensoredMessage(message.replace(word, LanguageConfiguration.SAS_REPLACE_DOMAIN.format()));
             }
             return result;
         }
@@ -93,7 +93,8 @@ public class SinkAntiSpamListener implements Listener {
                 String
                         warnMessage =
                         message.replace(blacklistWord, ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + blacklistWord + ChatColor.RESET);
-                WarnUtil.performWarning(new BlacklistWarning(user, warnMessage, WarnUtil.getNextWarningId(user)));
+                WarnUtil.performWarning(new BlacklistWarning(user, warnMessage, WarnUtil.getNextWarningId(user)),
+                                        SinkLibrary.getInstance().getConsoleUser());
                 result.setResultcode(WarnResult.CANCEL);
                 String tmp = "";
                 for (int i = 0; i < blacklistWord.length(); i++) {
@@ -159,7 +160,7 @@ public class SinkAntiSpamListener implements Listener {
         }
 
         if(lastMsg != null && lastMsg.equalsIgnoreCase(msg)) {
-            event.getPlayer().sendMessage(m("SinkAntiSpam.RepeatingMessage"));
+            event.getPlayer().sendMessage(LanguageConfiguration.SAS_REPEATING_MESSAGE.format());
             event.setCancelled(true);
             return;
         }
@@ -170,7 +171,7 @@ public class SinkAntiSpamListener implements Listener {
 
         long difference = System.currentTimeMillis() - lastMsgTime;
         if(lastMsgTime != null && difference < SPAM_DELAY) {
-            event.getPlayer().sendMessage(m("SinkAntiSpam.SpamMessage", SPAM_DELAY - difference));
+            event.getPlayer().sendMessage(LanguageConfiguration.SAS_COOLDOWN_MESSAGE.format(SPAM_DELAY - difference));
             event.setCancelled(true);
         }
     }

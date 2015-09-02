@@ -17,13 +17,13 @@
 
 package de.static_interface.sinkchat.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
@@ -59,8 +59,7 @@ public class NickCommand extends SinkCommand {
 
         if (args.length > 1) {
             if (!user.hasPermission("sinkchat.nick.others")) {
-                sender.sendMessage(m("Permissions.SinkChat.Nick.Other"));
-                return true;
+                throw new NotEnoughPermissionsException();
             }
 
             String playerName = args[0];
@@ -68,8 +67,7 @@ public class NickCommand extends SinkCommand {
 
             newDisplayName = ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET;
             if (target == null) {
-                sender.sendMessage(PREFIX + m("General.NotOnline", args[0]));
-                return true;
+                throw new UserNotFoundException(args[0]);
             }
 
             if (sender instanceof Player) {
@@ -80,7 +78,7 @@ public class NickCommand extends SinkCommand {
 
             if (setDisplayName(target, newDisplayName, sender)) {
                 user = SinkLibrary.getInstance().getIngameUser(target);
-                sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.OtherChanged", playerName, user.getDisplayName()));
+                sender.sendMessage(PREFIX + LanguageConfiguration.SC_NICK_OTHER_CHANGED.format(playerName, user.getDisplayName()));
             }
             return true;
         }
@@ -88,7 +86,7 @@ public class NickCommand extends SinkCommand {
         newDisplayName = ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[0]) + ChatColor.RESET;
         Player player = ((IngameUser) user).getPlayer();
         if (setDisplayName(player, newDisplayName, sender)) {
-            sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.SelfChanged", newDisplayName));
+            sender.sendMessage(PREFIX + LanguageConfiguration.SC_NICK_SELF_CHANGED.format(newDisplayName));
         }
         return true;
     }
@@ -98,12 +96,12 @@ public class NickCommand extends SinkCommand {
         IngameUser user = SinkLibrary.getInstance().getIngameUser(target);
         String cleanDisplayName = ChatColor.stripColor(newDisplayName);
         if (!NICKNAME_PATTERN.matcher(cleanDisplayName).matches()) {
-            sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.IllegalNickname"));
+            sender.sendMessage(PREFIX + LanguageConfiguration.SC_NICK_ILLEGAL_NICKNAME.format());
             return false;
         }
 
         if (cleanDisplayName.length() > 16) {
-            sender.sendMessage(PREFIX + m("SinkChat.Commands.Nick.TooLong"));
+            sender.sendMessage(PREFIX + LanguageConfiguration.SC_NICK_TOO_LONG.format());
             return false;
         }
 
@@ -121,7 +119,7 @@ public class NickCommand extends SinkCommand {
             String onlinePlayerName = ChatColor.stripColor(onlinePlayer.getName().toLowerCase());
             String displayName = ChatColor.stripColor(newDisplayName.toLowerCase());
             if (displayName.equals(onlinePlayerDisplayName) || displayName.equals(onlinePlayerName)) {
-                target.sendMessage(PREFIX + m("SinkChat.Commands.Nick.Used"));
+                target.sendMessage(PREFIX + LanguageConfiguration.SC_NICK_ALREADY_USED.format());
                 return false;
             }
         }

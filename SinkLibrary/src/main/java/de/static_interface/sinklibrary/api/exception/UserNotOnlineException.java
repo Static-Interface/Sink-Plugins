@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary.api.exception;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 
 @SuppressWarnings("serial")
 public class UserNotOnlineException extends RuntimeException {
@@ -30,6 +30,6 @@ public class UserNotOnlineException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return m("General.NotOnline", name);
+        return LanguageConfiguration.GENERAL_NOT_ONLINE.format(name);
     }
 }

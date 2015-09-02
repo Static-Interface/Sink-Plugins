@@ -17,15 +17,8 @@
 
 package de.static_interface.sinkchat.channel;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinkchat.ChannelConfiguration;
 import de.static_interface.sinkchat.SinkChat;
-import de.static_interface.sinkchat.command.ChannelCommand;
-import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
-import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,13 +61,6 @@ public class ChannelHandler {
     private static boolean deleteChannel(Channel channel) {
         if (channel == null) {
             return false;
-        }
-
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
-            if ((channel != null) && (user.getUniqueId() != null) && channel.enabledForPlayer(user.getUniqueId())) {
-                user.sendMessage(ChannelCommand.PREFIX + m("SinkChat.DeletedChannel", channel.getName()));
-            }
         }
 
         SinkChat.getInstance().getChannelConfigs().set("Channels." + channel.getName(), null);

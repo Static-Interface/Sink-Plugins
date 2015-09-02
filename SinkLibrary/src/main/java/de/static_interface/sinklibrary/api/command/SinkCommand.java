@@ -17,14 +17,13 @@
 
 package de.static_interface.sinklibrary.api.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.api.exception.UnauthorizedAccessException;
+import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UserNotOnlineException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -76,7 +75,7 @@ public abstract class SinkCommand implements CommandExecutor {
     public final boolean onCommand(final CommandSender sender, @Nullable Command command, final String label, final String[] args) {
         this.sender = sender;
         if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
-            throw new UnauthorizedAccessException();
+            throw new NotEnoughPermissionsException();
         }
 
         if (!(sender instanceof IrcCommandSender) && getCommandOptions().isIrcOnly()) {
@@ -105,7 +104,7 @@ public abstract class SinkCommand implements CommandExecutor {
             }
 
             if (!(localSender instanceof IrcCommandSender) && permission != null && !localSender.hasPermission(permission) && !localSender.isOp()) {
-                sender.sendMessage(m("Permissions.General"));
+                sender.sendMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
                 return true;
             }
         }
@@ -225,11 +224,11 @@ public abstract class SinkCommand implements CommandExecutor {
 
         if (handleException(sender, command, label, args, exception)) {
             return true;
-        } else if (exception instanceof UnauthorizedAccessException) {
-            sender.sendMessage(m("Permissions.General"));
+        } else if (exception instanceof NotEnoughPermissionsException) {
+            sender.sendMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
             reportException = false;
         } else if (exception instanceof NotEnoughArgumentsException) {
-            sender.sendMessage(m("General.TooFewArguments"));
+            sender.sendMessage(LanguageConfiguration.GENERAL_NOT_ENOUGH_ARGUMENTS.format());
             reportException = false;
         } else if (exception instanceof UserNotFoundException || exception instanceof UserNotOnlineException) {
             sender.sendMessage(exception.getMessage());

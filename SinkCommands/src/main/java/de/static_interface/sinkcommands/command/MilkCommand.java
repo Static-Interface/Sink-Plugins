@@ -17,10 +17,10 @@
 
 package de.static_interface.sinkcommands.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
+import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -44,8 +44,7 @@ public class MilkCommand extends SinkCommand {
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
         if (!user.hasPermission("sinkcommands.milk.all")) {
-            sender.sendMessage(m("Permissions.General"));
-            return true;
+            throw new NotEnoughArgumentsException();
         }
         if (args.length == 0) //Remove all
         {
@@ -85,8 +84,7 @@ public class MilkCommand extends SinkCommand {
 
         boolean equals = user instanceof IngameUser && ((IngameUser) user).getPlayer().equals(target);
         if (!equals && user.hasPermission("sinkcommands.milk.others")) {
-            sender.sendMessage(m("Permissions.General"));
-            return true;
+            throw new NotEnoughPermissionsException();
         }
 
         if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {

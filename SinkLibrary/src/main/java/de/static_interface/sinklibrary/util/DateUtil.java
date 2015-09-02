@@ -17,7 +17,10 @@
 
 package de.static_interface.sinklibrary.util;
 
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -139,9 +142,16 @@ public class DateUtil {
                 {
                         Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND
                 };
+
+        String years = LanguageConfiguration.TIMEUNIT_YEARS.format();
+        String months = LanguageConfiguration.TIMEUNIT_MONTHS.format();
+        String days = LanguageConfiguration.TIMEUNIT_DAYS.format();
+        String hours = LanguageConfiguration.TIMEUNIT_HOURS.format();
+        String minutes = LanguageConfiguration.TIMEUNIT_MINUTES.format();
+        String seconds = LanguageConfiguration.TIMEUNIT_SECONDS.format();
         String[] names = new String[]
                 {
-                        "Jahr", "Jahre", "Monat", "Monate", "Tag", "Tage", "Stunde", "Stunden", "Minute", "Minuten", "Sekunde", "Sekunden"
+                        years, years, months, months, days, days, hours, hours, minutes, minutes, seconds, seconds
                 };
         int accuracy = 0;
         for (int i = 0; i < types.length; i++) {
@@ -162,6 +172,57 @@ public class DateUtil {
             return "now";
         }
         return sb.toString().trim();
+    }
+
+    public static String formatTimeLeft(Date date) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        int years = calendar.get(Calendar.YEAR) - 1970;
+        int months = calendar.get(Calendar.MONTH) - 1;
+        int days = calendar.get(Calendar.DAY_OF_MONTH) - 1;
+        int hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
+        int minutes = calendar.get(Calendar.MINUTE);
+        int seconds = calendar.get(Calendar.SECOND);
+        boolean showHours = true;
+        boolean showMinutes = true;
+        boolean showSeconds = true;
+
+        String out = "";
+
+        if (years > 0) {
+            out += " " + years + " " + LanguageConfiguration.TIMEUNIT_YEARS.format();
+            showMinutes = false;
+            showHours = false;
+            showSeconds = false;
+        }
+
+        if (months > 0) {
+            out += " " + months + " " + LanguageConfiguration.TIMEUNIT_MONTHS.format();
+            showMinutes = false;
+            showHours = false;
+            showSeconds = false;
+        }
+
+        if (days > 0) {
+            showMinutes = false;
+            showSeconds = false;
+            out += " " + days + " " + LanguageConfiguration.TIMEUNIT_DAYS.format();
+        }
+
+        if (hours > 0 && showHours) {
+            showSeconds = false;
+            out += " " + hours + " " + LanguageConfiguration.TIMEUNIT_HOURS.format();
+        }
+
+        if (minutes > 0 && showMinutes) {
+            out += " " + minutes + " " + LanguageConfiguration.TIMEUNIT_MINUTES.format();
+        }
+
+        if (seconds > 0 && showSeconds) {
+            out += " " + seconds + " " + LanguageConfiguration.TIMEUNIT_SECONDS.format();
+        }
+
+        return out.trim();
     }
 
     static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {

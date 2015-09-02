@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary.api.configuration;
 import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.option.YamlOption;
+import de.static_interface.sinklibrary.api.configuration.option.YamlParentOption;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.FileUtil;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
@@ -507,7 +508,7 @@ public abstract class Configuration {
             options = new ArrayList<>();
             List<Field> fields = ReflectionUtil.getAllFields(getClass());
             for (Field f : fields) {
-                if (!YamlOption.class.isAssignableFrom(f.getType())) {
+                if (!YamlOption.class.isAssignableFrom(f.getType()) || YamlParentOption.class.isAssignableFrom(f.getType())) {
                     continue;
                 }
 

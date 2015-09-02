@@ -17,14 +17,13 @@
 
 package de.static_interface.sinkchat.listener;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -103,7 +102,7 @@ public class ChatListener implements Listener {
             customParams.put("TOWN(Y)?", TownyHelper.getTown(event.getPlayer()));
             customParams.put("NATION", TownyHelper.getNation(event.getPlayer()));
         }
-        customParams.put("CHANNEL", m("SinkChat.Prefix.Channel", m("SinkChat.Prefix.Local")));
+        customParams.put("CHANNEL", LanguageConfiguration.SC_PREFIX_LOCAL.format());
 
         String eventFormat = SinkLibrary.getInstance().getSettings().SC_DEFAULT_CHAT_FORMAT.getValue();
         //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
@@ -111,7 +110,7 @@ public class ChatListener implements Listener {
         eventFormat = StringUtil.format(eventFormat, user, null, message, customParams, false, null);
 
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
-            eventFormat = m("SinkChat.Prefix.Local") + ' ' + ChatColor.RESET + eventFormat;
+            eventFormat = LanguageConfiguration.SC_PREFIX_LOCAL.format() + ' ' + ChatColor.RESET + eventFormat;
         }
 
         event.setFormat(eventFormat);

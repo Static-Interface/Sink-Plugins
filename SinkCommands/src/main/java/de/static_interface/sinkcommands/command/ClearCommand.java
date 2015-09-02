@@ -17,10 +17,9 @@
 
 package de.static_interface.sinkcommands.command;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -89,8 +88,7 @@ public class ClearCommand extends SinkCommand {
         String targetName = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ").trim();
         if (!targetName.equalsIgnoreCase("")) {
             if (!user.hasPermission("sinkcommands.clear.others")) {
-                sender.sendMessage(PREFIX + m("Permissions.General"));
-                return true;
+                throw new NotEnoughPermissionsException();
             }
 
             player = Bukkit.getPlayer(targetName);

@@ -17,9 +17,8 @@
 
 package de.static_interface.sinkchat;
 
-import static de.static_interface.sinklibrary.configuration.LanguageConfiguration.m;
-
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,7 +30,7 @@ public class Util {
     }
 
     public static String getSpyPrefix() {
-        return m("SinkChat.Prefix.Spy") + ' ' + ChatColor.RESET;
+        return LanguageConfiguration.SC_PREFIX_SPY.format() + ' ' + ChatColor.RESET;
     }
 
     public static boolean canSpySender(IngameUser user, IngameUser toSpy) {
