@@ -17,9 +17,13 @@
 
 package de.static_interface.sinklibrary.api.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * The field/method annotated with this annotation may not work as excepted
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Unstable {
 
 }
