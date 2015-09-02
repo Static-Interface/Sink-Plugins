@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UserNotOnlineException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -231,12 +232,15 @@ public abstract class SinkCommand implements CommandExecutor {
             sender.sendMessage(LanguageConfiguration.GENERAL_NOT_ENOUGH_ARGUMENTS.format());
             reportException = false;
         } else if (exception instanceof UserNotFoundException || exception instanceof UserNotOnlineException) {
-            sender.sendMessage(exception.getMessage());
+            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
             reportException = false;
         } else if (exception instanceof ParseException) {
             sendUsage(sender, command);
-            sender.sendMessage(ChatColor.DARK_RED + "Error: " + ChatColor.RED + exception.getMessage());
+            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
             return true;
+        } else if (exception instanceof NumberFormatException) {
+            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
+            reportException = false;
         }
 
         if (Debug.isEnabled() && exception != null) {
@@ -321,6 +325,14 @@ public abstract class SinkCommand implements CommandExecutor {
 
     public void setCmdAlias(String cmd) {
         this.cmd = cmd;
+    }
+
+    public <T> T getArg(String[] args, int index, Class<T> returnType) {
+        if (args.length < index) {
+            throw new NotEnoughArgumentsException("Expected length: " + (index + 1) + ", given length:" + args.length);
+        }
+
+        return CommandUtil.parseValue(new String[]{args[index]}, returnType, false);
     }
 
     private abstract class CommandTask implements Runnable {

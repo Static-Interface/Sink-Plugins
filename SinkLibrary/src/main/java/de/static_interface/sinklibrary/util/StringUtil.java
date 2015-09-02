@@ -374,4 +374,15 @@ public class StringUtil {
     public static boolean isEmptyOrNull(@Nullable String s) {
         return s == null || s.trim().length() == 0 || s.trim().isEmpty();
     }
+
+
+    public static String replaceLast(String s, String source, String target) {
+        StringBuilder b = new StringBuilder(s);
+        b.replace(s.lastIndexOf(source), s.lastIndexOf(source) + 1, target);
+        return b.toString();
+    }
+
+    public static String replaceFirst(String s, String source, String target) {
+        return s.replaceFirst("\\Q" + source + "\\E", target);
+    }
 }

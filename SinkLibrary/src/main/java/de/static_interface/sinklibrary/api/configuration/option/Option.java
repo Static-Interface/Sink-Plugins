@@ -38,4 +38,10 @@ public abstract class Option<T> {
     public T getDefaultValue() {
         return defaultValue;
     }
+
+
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
 }

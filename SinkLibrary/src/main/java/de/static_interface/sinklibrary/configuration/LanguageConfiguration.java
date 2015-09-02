@@ -29,6 +29,7 @@ import java.io.File;
          "StaticMethodNamingConvention"})
 public class LanguageConfiguration extends Configuration {
 
+    //TimeUnits
     public static YamlParentOption TIMEUNIT_PARENT = new YamlParentOption("TimeUnit");
     public static YamlI18nOption TIMEUNIT_YEARS = new YamlI18nOption(TIMEUNIT_PARENT, "Years", "Year(s)");
     public static YamlI18nOption TIMEUNIT_MONTHS = new YamlI18nOption(TIMEUNIT_PARENT, "Months", "Month(s)");
@@ -37,6 +38,8 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption TIMEUNIT_HOURS = new YamlI18nOption(TIMEUNIT_PARENT, "Hours", "Hour(s)");
     public static YamlI18nOption TIMEUNIT_MINUTES = new YamlI18nOption(TIMEUNIT_PARENT, "Minutes", "Minute(s)");
     public static YamlI18nOption TIMEUNIT_SECONDS = new YamlI18nOption(TIMEUNIT_PARENT, "Seconds", "Second(s)");
+
+    //General stuff
     public static YamlParentOption GENERAL_PARENT = new YamlParentOption("General");
     public static YamlI18nOption GENERAL_NOT_ONLINE = new YamlI18nOption(GENERAL_PARENT, "NotOnline", "&c{0} is not online!");
     public static YamlI18nOption GENERAL_USER_NOT_FOUND = new YamlI18nOption(GENERAL_PARENT, "UserNotFound", "&cUser not found: {0}");
@@ -45,8 +48,19 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption GENERAL_NOT_ENOUGH_ARGUMENTS = new YamlI18nOption(GENERAL_PARENT, "TooFewArguments", "Too few arguments!", true);
     public static YamlI18nOption GENERAL_TIME_LEFT = new YamlI18nOption(GENERAL_PARENT, "TimeLeft", "Time Left: {0}");
     public static YamlI18nOption GENERAL_UNKNOWN_VALUE = new YamlI18nOption(GENERAL_PARENT, "UnknownValue", "Unknown value: {0}", true);
+    public static YamlI18nOption GENERAL_NOT_ENOUGH_MONEY = new YamlI18nOption(GENERAL_PARENT, "NotEnoughMoney", "You don't have enough money", true);
+    public static YamlI18nOption GENERAL_INVALID_VALUE = new YamlI18nOption(GENERAL_PARENT, "InvalidValue", "Invalid value: {0}", true);
+    public static YamlI18nOption GENERAL_SUCCESS = new YamlI18nOption(GENERAL_PARENT, "Success", "&aSuccess");
+    public static YamlI18nOption
+            GENERAL_SUCCESS_SET =
+            new YamlI18nOption(GENERAL_PARENT, "SuccessSet", "&aSuccessfully set \"{0}\"&r&a to \"{1}\"&r&a!");
+
+
+    //SinkChat
     public static YamlParentOption SC_PARENT = new YamlParentOption("SinkChat");
     public static YamlParentOption SC_COMMANDS_PARENT = new YamlParentOption(SC_PARENT, "Commands");
+
+    //SinkChat /nick
     public static YamlParentOption SC_NICK_COMMAND_PARENT = new YamlParentOption(SC_COMMANDS_PARENT, "Nick");
     public static YamlI18nOption SC_NICK_OTHER_CHANGED = new YamlI18nOption(SC_NICK_COMMAND_PARENT, "OthersChanged", "{0}'s name is now {1}!)");
     public static YamlI18nOption SC_NICK_SELF_CHANGED = new YamlI18nOption(SC_NICK_COMMAND_PARENT, "SelfChanged", "Your nickname is now {0}!");
@@ -55,6 +69,8 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption
             SC_NICK_ALREADY_USED =
             new YamlI18nOption(SC_NICK_COMMAND_PARENT, "AlreadyUsed", "Nickname is already used by someone!", true);
+
+    //SinkChat /spy
     public static YamlParentOption SC_SPY_COMMAND_PARENT = new YamlParentOption(SC_COMMANDS_PARENT, "Spy");
     public static YamlI18nOption SC_SPY_ENABLED = new YamlI18nOption(SC_SPY_COMMAND_PARENT, "Enabled", "&aSpy chat has been enabled!");
     public static YamlI18nOption
@@ -64,6 +80,8 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption
             SC_SPY_ALREADY_DISABLED =
             new YamlI18nOption(SC_SPY_COMMAND_PARENT, "AlreadyDisabled", "Spy chat has been already disabled!", true);
+
+    //SinkChat prefixes
     public static YamlParentOption SC_PREFIX_PARENT = new YamlParentOption(SC_PARENT, "Prefix");
     public static YamlI18nOption SC_PREFIX_SPY = new YamlI18nOption(SC_PREFIX_PARENT, "Spy", "&7[Spy]");
     public static YamlI18nOption SC_PREFIX_TOWN = new YamlI18nOption(SC_PREFIX_PARENT, "Town", "&7[&6{0}&7]");
@@ -74,10 +92,14 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption
             SC_TOWNY_NOT_IN_NATION =
             new YamlI18nOption(SC_TOWNY_PARENT, "NotInNation", "You or your town is not a member any nation", true);
+
+    //Permission messages
     public static YamlParentOption PERMISSIONS_PARENT = new YamlParentOption("Permissions");
     public static YamlI18nOption
             PERMISSIONS_GENERAL =
             new YamlI18nOption(PERMISSIONS_PARENT, "General", "You don't have permissions to do that.", true);
+
+    //SinkAntiSpam
     public static YamlParentOption SAS_PARENT = new YamlParentOption("SinkAntiSpam");
     public static YamlI18nOption SAS_PREFIX = new YamlI18nOption(SAS_PARENT, "Prefix", "&4[SinkAntiSpam]");
     public static YamlI18nOption
@@ -92,6 +114,8 @@ public class LanguageConfiguration extends Configuration {
     public static YamlI18nOption
             SAS_COOLDOWN_MESSAGE =
             new YamlI18nOption(SAS_PARENT, "CooldownMessage", "Please wait {0} ms before sending a message again", true);
+
+    //SinkAntiSpam Auto-warn reasons
     public static YamlParentOption SAS_REASONS_PARENT = new YamlParentOption(SAS_PARENT, "Reasons");
     public static YamlI18nOption
             SAS_REASONS_BLACKLISED_WORDS =
