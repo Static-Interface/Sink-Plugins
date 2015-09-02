@@ -21,7 +21,6 @@ import com.palmergames.bukkit.towny.Towny;
 import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinkchat.channel.ChannelValues;
-import de.static_interface.sinkchat.command.ChannelCommand;
 import de.static_interface.sinkchat.command.NationChatCommand;
 import de.static_interface.sinkchat.command.NickCommand;
 import de.static_interface.sinkchat.command.SpyCommands;
@@ -127,7 +126,6 @@ public class SinkChat extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("nick", new NickCommand(this));
         SinkLibrary.getInstance().registerCommand("enablespy", new SpyCommands.EnableSpyCommand(this));
         SinkLibrary.getInstance().registerCommand("disablespy", new SpyCommands.DisablSpyCommand(this));
-        SinkLibrary.getInstance().registerCommand("channel", new ChannelCommand(this));
 
         if (towny != null) {
             getCommand("nationchat").setExecutor(new NationChatCommand());
