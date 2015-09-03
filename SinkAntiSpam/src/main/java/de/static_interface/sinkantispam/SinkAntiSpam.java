@@ -54,7 +54,10 @@ public class SinkAntiSpam extends JavaPlugin {
             return;
         }
 
-        db = new MySqlDatabase(new DatabaseConfiguration(SinkLibrary.getInstance().getCustomDataFolder(), "SinkAntiSpamDB.yml"), this);
+        db =
+                new MySqlDatabase(
+                        new DatabaseConfiguration(SinkLibrary.getInstance().getCustomDataFolder(), "SinkAntiSpamDB.yml", "SAS_", "SinkAntiSpam"),
+                        this);
         try {
             db.connect();
         } catch (SQLException e) {
