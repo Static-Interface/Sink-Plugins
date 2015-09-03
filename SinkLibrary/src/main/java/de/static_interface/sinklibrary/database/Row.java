@@ -17,6 +17,9 @@
 
 package de.static_interface.sinklibrary.database;
 
+/**
+ * DatabaseObject which also describes how the database is structured
+ */
 public interface Row {
 
 }

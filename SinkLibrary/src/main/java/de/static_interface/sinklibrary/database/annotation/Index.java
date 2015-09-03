@@ -17,6 +17,8 @@
 
 package de.static_interface.sinklibrary.database.annotation;
 
+import de.static_interface.sinklibrary.database.AbstractTable;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,5 +28,17 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Index {
 
-    String name() default ""; //will add the _I suffix to the name of the column
+    /**
+     * The name of the index. Default will be the <code>columname_I</code> if no other name has been specified.<br/><br/>
+     * <b>Example:</b><br/>
+     * <code>
+     *     &#64;Column(name = "user_id")<br/>
+     *     &#64;Index<br/>
+     *     public int userId;<br/>
+     * </code>
+     * The default <code>name</code> would be in this case <code>user_id_I</code><br/><br/>
+     * Throws an exception on {@link AbstractTable#create()} if an index with this name already exists
+     * @return the name of the index
+     */
+    String name() default "";
 }

@@ -17,6 +17,11 @@
 
 package de.static_interface.sinklibrary.database.annotation;
 
+import de.static_interface.sinklibrary.database.AbstractTable;
+import de.static_interface.sinklibrary.database.CascadeAction;
+import de.static_interface.sinklibrary.database.Row;
+import de.static_interface.sinklibrary.util.ReflectionUtil;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,19 +31,76 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Column {
 
+    /**
+     * The name of the column. Default will be the <i>fieldname</i> if no other name has been specified.<br/><br/>
+     * <b>Example:</b><br/>
+     * <code>
+     *     &#64;Column(name = "user_id")<br/>
+     *     public int userId;
+     * </code>
+     * @return the name of the column
+     */
     String name() default "";
 
+    /**
+     * True means that the value  will be auto incremented when {@link AbstractTable#insert(Row)} is called. <br/><br/>
+     * Throws an exception on {@link AbstractTable#create()} if {@link ReflectionUtil#isNumber(Class)} returns false on this field
+     * @return true if auto increment the column value on insert
+     */
     boolean autoIncrement() default false;
 
+    /**
+     * Will make the column a SQL <code>PRIMARY KEY</code>. <b>Only one <code>PRIMARY KEY</code> per table is allowed</b><br/><br/>
+     * Throws an exception on {@link AbstractTable#create()} if there are more than one columns defined as <code>PRIMARY KEY</code>
+     * @return true if they column is a SQL <code>PRIMARY KEY</code>
+     */
     boolean primaryKey() default false;
 
+    /**
+     * Doesn't allows rows with the same value on this column. Can be used on unique names, UUID's etc...<br/>
+     * The SQL type is <code>UNIQUE KEY</code><br/><br/>
+     * Throws an exception on {@link AbstractTable#insert(Row)} if a row with the same value on this column already exists
+     * @return true if the column is a SQL <code>UNIQUE KEY</code>
+     */
     boolean uniqueKey() default false;
 
+    /**
+     * Not escaped SQL comment. Shouldn't use not escaped quotation marks.
+     * The SQL type is <code>COMMENT</code><br/><br/>
+     * @return the SQL <code>COMMENT</code> of this column
+     */
     String comment() default "";
 
+    /**
+     * Only useful with {@link CascadeAction#SET_DEFAULT}<br/>
+     * <b>This is plain SQL</b><br/><br/>
+     * <b>Example:</b><br/>
+     * <code>
+     *     &#64;Column(defaultValue = "123")<br/>
+     *     public int userId;<br/><br/>
+     *
+     *     &#64;Column(defaultValue = "\"noname\"")<br/>
+     *     public String name;<br/><br/>
+     * </code>
+     * @return the default value as SQL
+     */
     String defaultValue() default "";
 
+    /**
+     * Makes the number type <code>UNSIGNED</code>.<br/>
+     * <b>Note: </b>Java doesn't support unsigned bytes, floats, doubles, shorts, integers and longs. So this should be used carefully. <br/><br/>
+     * Throws an exception on {@link AbstractTable#create()} if {@link ReflectionUtil#isNumber(Class)} returns false for the annotated field.<br/>
+     * Throws an exception on {@link AbstractTable#insert(Row)} if the value is less than 0.
+     * @return true if the field is an <code>UNSIGNED</code> number
+     */
     boolean unsigned() default false;
 
+    /**
+     * Makes the number type <code>ZEROFILL</code>.<br/>
+     * <b>Note: <code>ZEROFILL</code> values are also {@link Column#unsigned()}</b><br/><br/>
+     * Throws an exception on {@link AbstractTable#create()} if {@link ReflectionUtil#isNumber(Class)} returns false for the annotated field.<br/>
+     * Throws an exception on {@link AbstractTable#insert(Row)} if the value is less than 0.
+     * @return the if the field should be <code>ZEROFILL</code>
+     */
     boolean zerofill() default false;
 }

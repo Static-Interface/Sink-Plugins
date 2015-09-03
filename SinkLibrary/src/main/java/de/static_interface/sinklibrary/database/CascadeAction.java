@@ -17,10 +17,29 @@
 
 package de.static_interface.sinklibrary.database;
 
+/**
+ * See <a href="http://dev.mysql.com/doc/refman/5.6/en/create-table-foreign-keys.html">MySQL documentation</a> for more information
+ */
 public enum CascadeAction {
+    /**
+     * Rejects the delete or update operation for the parent table. Specifying RESTRICT (or NO ACTION) is the same as omitting the ON DELETE or ON UPDATE clause.
+     */
     RESTRICT,
+    /**
+     * Delete or update the row from the parent table, and automatically delete or update the matching rows in the child table
+     */
     CASCADE,
+    /**
+     * Delete or update the row from the parent table, and set the foreign key column or columns in the child table to NULL
+     */
     SET_NULL,
+    /**
+     * Delete or update the row from the parent table, and set the foreign key column or columns in the child table to NULL.
+     */
+    SET_DEFAULT,
+    /**
+     * A keyword from standard SQL. In MySQL, equivalent to RESTRICT.
+     */
     NO_ACTION;
 
     public String toSql() {

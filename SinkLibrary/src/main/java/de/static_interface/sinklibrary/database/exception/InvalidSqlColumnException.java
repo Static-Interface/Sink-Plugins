@@ -19,18 +19,25 @@ package de.static_interface.sinklibrary.database.exception;
 
 
 import de.static_interface.sinklibrary.database.AbstractTable;
+import de.static_interface.sinklibrary.database.Row;
+import de.static_interface.sinklibrary.database.annotation.Column;
+import de.static_interface.sinklibrary.database.annotation.ForeignKey;
+import de.static_interface.sinklibrary.database.annotation.Index;
 
 import java.lang.reflect.Field;
 
 public class InvalidSqlColumnException extends RuntimeException {
 
     /**
-     * This is thrown when an invalid SQL table is trying to be created.
-     * Examples: A boolean which was annotated as UNSIGNED, Strings with ZEROFILL, etc...
+     * This is thrown when an SQL table with an invalid {@link Row} implementation called {@link AbstractTable#create()}
+     * Examples: A boolean which was annotated as <code>UNSIGNED</code>, Strings with <code>ZEROFILL</code>, etc...
      * @param table The parent table of the coulm which couldn't be created
      * @param columnField The wrapper Field of the column which couldn't be created
      * @param columName The name of the column which couldn't be created
      * @param reason The reason why it failed
+     * @see Column
+     * @see ForeignKey
+     * @see Index
      */
     public InvalidSqlColumnException(AbstractTable table, Field columnField, String columName, String reason) {
         super("Column \"" + columName + "\" " + "(wrapper: " + columnField.getType().getName() + ") on table \"" + table.getName() + "\" (wrapper: "

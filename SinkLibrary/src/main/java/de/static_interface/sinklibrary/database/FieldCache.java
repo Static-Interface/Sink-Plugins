@@ -24,6 +24,9 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+/**
+ * The FieldCache has been added to improve SQL deserialisation speed
+ */
 public class FieldCache {
 
     private static Map<String, Annotation> cache = new HashMap<>();

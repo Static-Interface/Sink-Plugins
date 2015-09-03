@@ -17,8 +17,20 @@
 
 package de.static_interface.sinklibrary.database;
 
+import de.static_interface.sinklibrary.database.impl.database.H2Database;
+import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
+
 public enum SQLDialect {
+    /**
+     * @see MySqlDatabase
+     */
     MySQL,
+    /**
+     * @see MySqlDatabase
+     */
     MariaDB,
+    /**
+     * @see H2Database
+     */
     H2
 }

@@ -23,12 +23,28 @@ import java.io.File;
 
 public class DatabaseConfiguration extends Configuration implements DatabaseConnectionInfo {
 
-    public DatabaseConfiguration(File baseFolder) {
-        super(new File(baseFolder, "Database.yml"), true);
+    private String defaultDatabase;
+    private String defaultTablePrefix;
+
+    /**
+     * @param baseFolder the parent directory for the configuration
+     * @param defaultDatabase the default database name
+     * @param defaultTablePrefix the default table prefix
+     */
+    public DatabaseConfiguration(File baseFolder, String defaultDatabase, String defaultTablePrefix) {
+        this(baseFolder, "Database.yml", defaultDatabase, defaultTablePrefix);
     }
 
-    public DatabaseConfiguration(File baseFolder, String fileName) {
+    /**
+     * @param baseFolder the parent directory for the configuration
+     * @param fileName the name of the configuration file
+     * @param defaultDatabase the default database name
+     * @param defaultTablePrefix the default table prefix
+     */
+    public DatabaseConfiguration(File baseFolder, String fileName, String defaultDatabase, String defaultTablePrefix) {
         super(new File(baseFolder, fileName), true);
+        this.defaultDatabase = defaultDatabase;
+        this.defaultTablePrefix = defaultTablePrefix;
     }
 
     @Override
@@ -38,10 +54,13 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
         addDefault("Port", 3306);
         addDefault("Username", "root");
         addDefault("Password", "");
-        addDefault("TablePrefix", "RP_");
-        addDefault("DatabaseName", "ReallifePlugin");
+        addDefault("TablePrefix", defaultTablePrefix);
+        addDefault("DatabaseName", defaultDatabase);
     }
 
+    /**
+     * @return the database type
+     */
     public SQLDialect getDatabaseType() {
         try {
             return SQLDialect.valueOf(((String) get("Type")).toUpperCase());
@@ -50,31 +69,49 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
         }
     }
 
+    /**
+     * @return the address to connect to
+     */
     @Override
     public String getAddress() {
         return (String) get("Address");
     }
 
+    /**
+     * @return the port of the connection
+     */
     @Override
     public int getPort() {
         return Integer.valueOf(String.valueOf(get("Port")));
     }
 
+    /**
+     * @return the username for authentification
+     */
     @Override
     public String getUsername() {
         return (String) get("Username");
     }
 
+    /**
+     * @return the password for authentification
+     */
     @Override
     public String getPassword() {
         return (String) get("Password");
     }
 
+    /**
+     * @return the prefix for the tables
+     */
     @Override
     public String getTablePrefix() {
         return (String) get("TablePrefix");
     }
 
+    /**
+     * @return the name of the database
+     */
     @Override
     public String getDatabaseName() {
         return (String) get("DatabaseName");

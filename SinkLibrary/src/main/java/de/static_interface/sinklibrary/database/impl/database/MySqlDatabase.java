@@ -26,8 +26,16 @@ import org.bukkit.plugin.Plugin;
 
 import java.sql.SQLException;
 
+/**
+ * MySQL database implementation<br/>
+ * See <a href="https://www.mysql.com/">MySQL homepage</a> for more information about MySQL
+ */
 public class MySqlDatabase extends Database {
 
+    /**
+     * @param info the connection info
+     * @param plugin the plugin creating the database
+     */
     public MySqlDatabase(DatabaseConnectionInfo info, Plugin plugin) {
         super(info, plugin, SQLDialect.MySQL, '`');
     }

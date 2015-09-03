@@ -42,16 +42,30 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+/**
+ * A class which allows interaction with a SQL table
+ * @param <T> See {@link Row}
+ */
 public abstract class AbstractTable<T extends Row> {
 
     private final String name;
     protected Database db;
 
+    /**
+     * @param name the name of the table
+     * @param db the database of this table
+     */
     public AbstractTable(String name, Database db) {
         this.name = name;
         this.db = db;
     }
 
+    /**
+     * @param rs the ResulSet to check
+     * @param columnName the name of the column to check
+     * @return thrue if the ResultSet contains the columnNmae
+     * @throws SQLException
+     */
     public static boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columns = rsmd.getColumnCount();
@@ -63,10 +77,20 @@ public abstract class AbstractTable<T extends Row> {
         return false;
     }
 
+    /**
+     * @return the prefixed name of the table
+     */
     public final String getName() {
         return db.getConnectionInfo().getTablePrefix() + name;
     }
 
+    /**
+     * Create the table
+     * @see ForeignKey
+     * @see Column
+     * @see Index
+     * @throws SQLException if the {@link Row} class is malformed
+     */
     public void create() throws SQLException {
         char bt = db.getBacktick();
         String sql = "CREATE TABLE IF NOT EXISTS " + bt + getName() + bt + " (";
@@ -219,11 +243,14 @@ public abstract class AbstractTable<T extends Row> {
         return sql;
     }
 
+    /**
+     * @return the SQL storage engine
+     */
     public String getEngine() {
         return "InnoDB"; // Table implemetations may override this
     }
 
-    public ResultSet serialize(T row) {
+    protected ResultSet serialize(T row) {
         String columns = "";
         char bt = db.getBacktick();
         int i = 0;
@@ -277,13 +304,19 @@ public abstract class AbstractTable<T extends Row> {
         return result.toArray(array);
     }
 
-    public T[] get(String query, Object... paramObjects) {
+    /**
+     * Get the result as deserialized {@link T}[] from the given query
+     * @param query The SQL query, <code>{TABLE}</code> will be replaced with {@link #getName()}
+     * @param bindings the {@link PreparedStatement} bindings
+     * @return the {@link ResultSet} deserialized as {@link T}
+     */
+    public T[] get(String query, Object... bindings) {
         try {
             query = query.replaceAll("\\Q{TABLE}\\E", getName());
             PreparedStatement statement = db.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            if (paramObjects != null && paramObjects.length > 0) {
+            if (bindings != null && bindings.length > 0) {
                 int i = 1;
-                for (Object s : paramObjects) {
+                for (Object s : bindings) {
                     statement.setObject(i, s);
                     i++;
                 }
@@ -291,11 +324,16 @@ public abstract class AbstractTable<T extends Row> {
 
             return deserialize(statement.executeQuery());
         } catch (SQLException e) {
-            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(query, paramObjects));
+            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(query, bindings));
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Insert a row to the table
+     * @param row the row to insert
+     * @return the {@link T} object with auto-incremented fields
+     */
     public T insert(T row) {
         Validate.notNull(row);
         return deserialize(serialize(row))[0];
@@ -361,6 +399,9 @@ public abstract class AbstractTable<T extends Row> {
         return result;
     }
 
+    /**
+     * @return the {@link Class}&lt;{@link T}&gt; representation of {@link T}
+     */
     public Class<T> getRowClass() {
         Object superclass = getClass().getGenericSuperclass();
         if (superclass instanceof Class) {
@@ -376,39 +417,50 @@ public abstract class AbstractTable<T extends Row> {
         throw new IllegalStateException("Unknown type: " + type.getTypeName());
     }
 
-    public ResultSet executeQuery(String sql, @Nullable Object... paramObjects) {
+    /**
+     * Execute a native query without auto deserialisation<br/>
+     * @param sql the sql query, <code>{TABLE}</code> will be replaced with {@link #getName()}
+     * @param bindings the {@link PreparedStatement} bindings
+     * @return the {@link ResultSet} of the query
+     */
+    public ResultSet executeQuery(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
             PreparedStatement statment = db.getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
                                                                              ResultSet.CONCUR_UPDATABLE);
-            if (paramObjects != null) {
+            if (bindings != null) {
                 int i = 1;
-                for (Object s : paramObjects) {
+                for (Object s : bindings) {
                     statment.setObject(i, s);
                     i++;
                 }
             }
             return statment.executeQuery();
         } catch (SQLException e) {
-            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(sql, paramObjects));
+            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
         }
     }
 
-    public void executeUpdate(String sql, @Nullable Object... paramObjects) {
+    /**
+     * Execute a native SQL update without auto deserialisation<br/>
+     * @param sql the sql query, <code>{TABLE}</code> will be replaced with {@link #getName()}
+     * @param bindings the {@link PreparedStatement} bindings
+     */
+    public void executeUpdate(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
             PreparedStatement statment = db.getConnection().prepareStatement(sql);
-            if (paramObjects != null) {
+            if (bindings != null) {
                 int i = 1;
-                for (Object s : paramObjects) {
+                for (Object s : bindings) {
                     statment.setObject(i, s);
                     i++;
                 }
             }
             statment.executeUpdate();
         } catch (SQLException e) {
-            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update: " + sqlToString(sql, paramObjects));
+            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
         }
     }
@@ -425,6 +477,9 @@ public abstract class AbstractTable<T extends Row> {
         return sql;
     }
 
+    /**
+     * @return true if the table exists
+     */
     public boolean exists() {
         try {
             DatabaseMetaData dbm = db.getConnection().getMetaData();

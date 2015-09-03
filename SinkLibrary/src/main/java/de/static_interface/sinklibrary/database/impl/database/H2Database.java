@@ -28,18 +28,22 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.sql.SQLException;
 
+/**
+ * H2 database implementation<br/>
+ * See <a href="http://www.h2database.com/html/main.html">H2 homepage</a> for more information about H2
+ */
 @Unstable
 public class H2Database extends Database {
 
     private final File dbFile;
 
+    /**
+     * @param file the file to be used for storage
+     * @param prefix the prefix for tables
+     * @param plugin the plugin creating the database
+     */
     public H2Database(File file, final String prefix, Plugin plugin) {
         super(new DatabaseConnectionInfo() {
-            @Override
-            public SQLDialect getDatabaseType() {
-                return SQLDialect.H2;
-            }
-
             @Override
             public String getAddress() {
                 return null;
@@ -73,6 +77,10 @@ public class H2Database extends Database {
         dbFile = file;
     }
 
+    /**
+     * @param info the connection info
+     * @param plugin the plugin creating the database
+     */
     @Deprecated
     public H2Database(DatabaseConnectionInfo info, Plugin plugin) {
         super(info, plugin, SQLDialect.H2, '\0');

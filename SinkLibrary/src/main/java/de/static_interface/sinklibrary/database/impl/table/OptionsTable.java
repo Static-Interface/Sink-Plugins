@@ -33,14 +33,30 @@ import javax.annotation.Nullable;
 
 public abstract class OptionsTable extends AbstractTable<OptionsRow> {
 
+    /**
+     * A predefined table for options
+     * @param name the name of the table
+     * @param db the database
+     */
     public OptionsTable(String name, Database db) {
         super(name, db);
     }
 
+    /**
+     * Set an options value
+     * @param key the option key
+     * @param value the option value. Any Java-POJO object is supported
+     */
     public void setOption(String key, Object value) {
         setOption(key, value, null);
     }
 
+    /**
+     * Set an options value
+     * @param key the option key
+     * @param value the option value. Any Java-POJO object is supported
+     * @param foreignTarget the associated foreignkey target (for example, a userId if it is an user-based option)
+     */
     public void setOption(String key, Object value, @Nullable Integer foreignTarget) {
         if (value != null && value.equals("null")) {
             value = null;
@@ -64,10 +80,19 @@ public abstract class OptionsTable extends AbstractTable<OptionsRow> {
         }
     }
 
+    /**
+     * @param key the option key
+     * @return the deserialized option value which was set using {@link #setOption(String, Object)}
+     */
     public Object getOption(String key) {
         return getOptionInternal("SELECT * FROM {TABLE} WHERE `key`=?", Object.class, false, key);
     }
 
+    /**
+     * @param key the option key
+     * @param foreignId the foreignkey associated with the option (for example, a users id)
+     * @return the deserialized option value which was set using {@link #setOption(String, Object, Integer)}
+     */
     public Object getOption(String key, Integer foreignId) {
         return getOptionInternal("SELECT * FROM `{TABLE}` WHERE `key`=? AND `foreignTarget`=?", Object.class, false, key, foreignId);
     }
@@ -77,6 +102,13 @@ public abstract class OptionsTable extends AbstractTable<OptionsRow> {
         return OptionsRow.class;
     }
 
+    /**
+     * @param key the option key
+     * @param clazz the return type
+     * @param defaultValue the default value if no option with this key exists
+     * @param <K> the return type
+     * @return the {@link K} value of the option
+     */
     public <K> K getOption(String key, Class<K> clazz, K defaultValue) {
         try {
             return getOptionInternal("SELECT * FROM {TABLE} WHERE `key`=?", clazz, true, key);
@@ -85,6 +117,14 @@ public abstract class OptionsTable extends AbstractTable<OptionsRow> {
         }
     }
 
+    /**
+     * @param key the option key
+     * @param foreignId the foreignkey associated with the option (for example, a users id)
+     * @param clazz the return type
+     * @param defaultValue the default value if no option with this key exists
+     * @param <K> the return type
+     * @return the {@link K} value of the option
+     */
     public <K> K getOption(String key, @Nullable Integer foreignId, Class<K> clazz, K defaultValue) {
         try {
             return getOptionInternal("SELECT * FROM {TABLE} WHERE `key`=? AND `foreignTarget`=?", clazz, true, key, foreignId);
@@ -120,11 +160,23 @@ public abstract class OptionsTable extends AbstractTable<OptionsRow> {
     }
 
     @Nullable
-    public abstract Class<?> getForeignTable();
+    /**
+     * @return the table for the {@link OptionsRow#foreignTarget}
+     */
+    public abstract Class<? extends AbstractTable> getForeignTable();
 
+    /**
+     * @return the column for the {@link OptionsRow#foreignTarget}
+     */
     public abstract String getForeignColumn();
 
+    /**
+     * @return the onUpdate {@link CascadeAction} for the {@link OptionsRow#foreignTarget}
+     */
     public abstract CascadeAction getForeignOnUpdateAction();
 
+    /**
+     * @return the onDelete {@link CascadeAction} for the {@link OptionsRow#foreignTarget}
+     */
     public abstract CascadeAction getForeignOnDeleteAction();
 }

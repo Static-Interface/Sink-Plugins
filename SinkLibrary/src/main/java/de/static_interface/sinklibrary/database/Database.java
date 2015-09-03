@@ -38,6 +38,13 @@ public abstract class Database {
     protected Plugin plugin;
     protected Connection connection;
 
+    /**
+     *
+     * @param info the connection info
+     * @param plugin the plugin creating the database
+     * @param dialect the sql dialect
+     * @param backtick the backtick used by the database sql synrax
+     */
     public Database(@Nullable DatabaseConnectionInfo info, Plugin plugin, SQLDialect dialect, char backtick) {
         this.plugin = plugin;
         this.info = info;
@@ -45,20 +52,29 @@ public abstract class Database {
         this.backtick = backtick;
     }
 
+    /**
+     * @return The backtick used by the database sql syntax
+     */
     public char getBacktick() {
         return backtick;
     }
 
+    /**
+     * Get the SQL type of a field
+     * @param f the Field to convert
+     * @return the SQL type
+     * @throws RuntimeException if there is no native SQL type representation
+     */
     public String toDatabaseType(Field f) {
         Class clazz = f.getType();
         Column column = FieldCache.getAnnotation(f, Column.class);
         boolean isForeignKey = FieldCache.getAnnotation(f, ForeignKey.class) != null;
 
         if (clazz == Date.class) {
-            throw new RuntimeException("Date is for now not supported!");
+            throw new RuntimeException("Date is not supported for now !");
         }
         if (clazz == java.sql.Date.class) {
-            throw new RuntimeException("Date is for now not supported!");
+            throw new RuntimeException("Date is not supported for now!");
         }
         if (clazz == Integer.class || clazz == int.class) {
             return "INT";
@@ -89,19 +105,36 @@ public abstract class Database {
 
     protected abstract void setupConfig();
 
+    /**
+     * Connect to the database
+     * @throws SQLException
+     */
     public abstract void connect() throws SQLException;
 
+    /**
+     * Close the connection of the database
+     * @throws SQLException
+     */
     public abstract void close() throws SQLException;
 
+    /**
+     * @return the {@link DatabaseConnectionInfo}
+     */
     @Nullable
     public DatabaseConnectionInfo getConnectionInfo() {
         return info;
     }
 
+    /**
+     * @return the {@link Connection}
+     */
     public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * @return the {@link SQLDialect}
+     */
     public SQLDialect getDialect() {
         return dialect;
     }

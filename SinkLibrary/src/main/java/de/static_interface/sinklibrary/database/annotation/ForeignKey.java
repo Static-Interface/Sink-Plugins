@@ -30,11 +30,29 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ForeignKey {
 
+    /**
+     * The table which is referenced by this foreign key
+     * @return the referenced table
+     */
     Class<? extends AbstractTable> table();
 
+    /**
+     * The column of the table which is referenced by this foreign key
+     * @return the referenced column
+     */
     String column();
 
+    /**
+     * The action which is performed when the referenced row got deleted
+     * @see CascadeAction
+     * @return the onDelete cascade action
+     */
     CascadeAction onDelete() default CascadeAction.RESTRICT; //MySQL default
 
+    /**
+     * The action which is performed when the referenced row got updated
+     * @see CascadeAction
+     * @return the onUpdate cascade action
+     */
     CascadeAction onUpdate() default CascadeAction.RESTRICT; //MySQL default
 }

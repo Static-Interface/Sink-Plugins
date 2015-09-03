@@ -27,12 +27,21 @@ public final class OptionsRow implements Row {
     @Column(autoIncrement = true, primaryKey = true)
     public Integer id;
 
+    /**
+     * The option key
+     */
     @Column
     public String key;
 
+    /**
+     * The binary serialized option value
+     */
     @Column
     public String value;
 
+    /**
+     * The optional foreignkey target associated with this option
+     */
     @Column
     @Nullable
     public Integer foreignTarget;

@@ -17,20 +17,35 @@
 
 package de.static_interface.sinklibrary.database;
 
-import javax.annotation.Nonnull;
-
 public interface DatabaseConnectionInfo {
 
+    /**
+     * @return the address to connect to
+     */
     String getAddress();
 
+    /**
+     * @return the port of the connection
+     */
     int getPort();
 
+    /**
+     * @return the username for authentification
+     */
     String getUsername();
 
+    /**
+     * @return the password for authentification
+     */
     String getPassword();
 
-    @Nonnull
+    /**
+     * @return the prefix for the tables
+     */
     String getTablePrefix();
 
+    /**
+     * @return the name of the database
+     */
     String getDatabaseName();
 }
