@@ -63,7 +63,7 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
      */
     public SQLDialect getDatabaseType() {
         try {
-            return SQLDialect.valueOf(((String) get("Type")).toUpperCase());
+            return SQLDialect.parse(((String) get("Type")));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }

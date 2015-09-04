@@ -32,5 +32,14 @@ public enum SQLDialect {
     /**
      * @see H2Database
      */
-    H2
+    H2;
+
+    public static SQLDialect parse(String s) {
+        for (SQLDialect dialect : values()) {
+            if (dialect.name().equalsIgnoreCase(s.trim())) {
+                return dialect;
+            }
+        }
+        throw new IllegalArgumentException("Unknown value: " + s);
+    }
 }
