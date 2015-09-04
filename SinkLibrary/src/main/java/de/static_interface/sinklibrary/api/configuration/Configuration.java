@@ -348,7 +348,7 @@ public abstract class Configuration {
             }
         } catch (Exception e) {
             value = getDefault(path);
-            e.printStackTrace();
+            Debug.log(e);
         }
 
         if (value instanceof String) {
