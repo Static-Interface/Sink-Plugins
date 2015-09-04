@@ -21,6 +21,7 @@ import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.option.YamlOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlParentOption;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.FileUtil;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
@@ -31,6 +32,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +109,6 @@ public abstract class Configuration {
             addDefaults();
 
             for (YamlOption option : getOptions()) {
-                option.setConfig(this);
                 addDefault(option.getPath(), option.getDefaultValue(), option.getComment());
             }
 
@@ -301,7 +302,7 @@ public abstract class Configuration {
         try {
             writeToFile(getFile());
         } catch (IOException e) {
-            if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
+            if (Settings.GENERAL_DEBUG.getValue()) {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
             } else {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');
@@ -347,6 +348,7 @@ public abstract class Configuration {
             }
         } catch (Exception e) {
             value = getDefault(path);
+            e.printStackTrace();
         }
 
         if (value instanceof String) {
@@ -512,8 +514,19 @@ public abstract class Configuration {
                     continue;
                 }
 
+                if (!Modifier.isStatic(f.getModifiers())) {
+                    Debug.log(Level.WARNING, "Non-static options are not supported");
+                }
+
                 try {
-                    options.add((YamlOption) f.get(this));
+                    f.setAccessible(true);
+                    YamlOption option = (YamlOption) f.get(this);
+                    if (option == null) {
+                        Debug.log(Level.WARNING, "Null option: " + f.getName());
+                        continue;
+                    }
+                    option.setConfig(this);
+                    options.add(option);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

@@ -17,14 +17,14 @@
 
 package de.static_interface.sinkantispam.warning;
 
-import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 
 public class BlacklistWarning extends AutoWarning {
 
     public BlacklistWarning(IngameUser user, String message, int id) {
         super(user, LanguageConfiguration.SAS_REASONS_BLACKLISED_WORDS.format(message), id);
-        points = SinkLibrary.getInstance().getSettings().SAS_POINTS_BLACKLIST.getValue();
+        points = Settings.SAS_POINTS_BLACKLIST.getValue();
     }
 }

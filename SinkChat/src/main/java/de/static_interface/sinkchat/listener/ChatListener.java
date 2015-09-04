@@ -24,6 +24,7 @@ import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -93,7 +94,7 @@ public class ChatListener implements Listener {
             }
         }
 
-        int range = SinkLibrary.getInstance().getSettings().SC_LOCAL_CHAT_RANGE.getValue();
+        int range = Settings.SC_LOCAL_CHAT_RANGE.getValue();
 
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.getInstance().isTownyAvailable()) {
@@ -104,7 +105,7 @@ public class ChatListener implements Listener {
         }
         customParams.put("CHANNEL", LanguageConfiguration.SC_PREFIX_LOCAL.format());
 
-        String eventFormat = SinkLibrary.getInstance().getSettings().SC_DEFAULT_CHAT_FORMAT.getValue();
+        String eventFormat = Settings.SC_DEFAULT_CHAT_FORMAT.getValue();
         //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
         //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
         eventFormat = StringUtil.format(eventFormat, user, null, message, customParams, false, null);

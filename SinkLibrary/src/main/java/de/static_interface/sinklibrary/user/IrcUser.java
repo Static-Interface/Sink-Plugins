@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.bukkit.ChatColor;
@@ -121,7 +122,7 @@ public class IrcUser extends SinkUser<User> {
 
     @Override
     public void sendDebugMessage(String msg) {
-        if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
+        if (Settings.GENERAL_DEBUG.getValue()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
                         + Debug.getCallerClassName() + "#" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg, false);
         }

@@ -17,14 +17,14 @@
 
 package de.static_interface.sinkantispam.warning;
 
-import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 
 public class IpWarning extends AutoWarning {
 
     public IpWarning(IngameUser user, String ip, int id) {
         super(user, LanguageConfiguration.SAS_REASONS_IP.format(ip), id);
-        points = SinkLibrary.getInstance().getSettings().SAS_POINTS_IP.getValue();
+        points = Settings.SAS_POINTS_IP.getValue();
     }
 }

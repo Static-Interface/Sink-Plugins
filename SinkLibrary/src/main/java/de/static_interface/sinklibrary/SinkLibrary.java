@@ -141,14 +141,7 @@ public class SinkLibrary extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         getLogger().info("Loading...");
-        loadedLibs = new CopyOnWriteArrayList<>();
-
-        ingameUserProvider = new IngameUserProvider();
-        consoleUserProvider = new ConsoleUserProvider();
-        ircUserProvider = new IrcUserProvider();
-
         if (settings == null) {
             if (!getCustomDataFolder().exists()) {
                 try {
@@ -161,7 +154,15 @@ public class SinkLibrary extends JavaPlugin {
                 }
             }
             settings = new Settings();
+            settings.init();
         }
+
+
+        loadedLibs = new CopyOnWriteArrayList<>();
+
+        ingameUserProvider = new IngameUserProvider();
+        consoleUserProvider = new ConsoleUserProvider();
+        ircUserProvider = new IrcUserProvider();
 
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
@@ -319,7 +320,7 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
         try {
-            if (SinkLibrary.getInstance().getSettings().GENERAL_LOG.getValue()) {
+            if (Settings.GENERAL_LOG.getValue()) {
                 Debug.getDebugLogFileWriter().close();
             }
         } catch (Exception ignored) {
@@ -471,6 +472,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @return Settings
      */
+    @Deprecated
     public Settings getSettings() {
         return settings;
     }
@@ -736,7 +738,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player that needs to refresh DisplayName
      */
     public void onRefreshDisplayName(Player player) {
-        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue()) {
+        if (!Settings.GENERAL_DISPLAYNAMES.getValue()) {
             return;
         }
 

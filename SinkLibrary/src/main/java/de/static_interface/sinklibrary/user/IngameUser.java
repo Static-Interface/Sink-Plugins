@@ -27,6 +27,7 @@ import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.VaultBridge;
 import org.bukkit.Bukkit;
@@ -242,7 +243,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         if (!isOnline()) {
             return playerName;
         }
-        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName()) {
+        if (!Settings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName()) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
                 prefix =

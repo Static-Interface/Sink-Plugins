@@ -22,10 +22,11 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
-import de.static_interface.sinklibrary.user.ProxiedUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
+import de.static_interface.sinklibrary.user.ProxiedUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -48,7 +49,7 @@ public class MessageCommands {
             }
         }
         //Todo: add @Name Message Support
-        String format = SinkLibrary.getInstance().getSettings().SCMD_MESSAGE_SEND_FORMAT.getValue();
+        String format = Settings.SCMD_MESSAGE_SEND_FORMAT.getValue();
         HashMap<String, Object> customValues = new HashMap<>();
         if (target instanceof IrcUser) {
             customValues.put("T(ARGET)?IRC(PREFIX)?", ChatColor.GRAY + "(IRC)");
@@ -68,7 +69,7 @@ public class MessageCommands {
             executor.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
         }
 
-        format = SinkLibrary.getInstance().getSettings().SCMD_MESSAGE_RECEIVED_FORMAT.getValue();
+        format = Settings.SCMD_MESSAGE_RECEIVED_FORMAT.getValue();
         if (target instanceof IrcUser) {
             ((IrcUser) target).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
         } else {

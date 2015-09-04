@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.api.configuration.option;
 
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.util.Debug;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,6 +69,7 @@ public abstract class YamlOption<T> extends Option<T> {
 
     @Nonnull
     public String getPath() {
+        Debug.log("path value: " + path);
         return path;
     }
 

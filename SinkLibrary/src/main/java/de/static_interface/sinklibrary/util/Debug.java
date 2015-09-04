@@ -48,7 +48,17 @@ public class Debug {
      * @return True if debug is enabled in the config
      */
     public static boolean isEnabled() {
-        return ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()));
+        //We have to use the default get() method because debug is called before settings were loaded
+        if (SinkLibrary.getInstance().getSettings() == null) {
+            return false;
+        }
+        if (SinkLibrary.getInstance().getSettings().getFile() == null) {
+            return false;
+        }
+        if (SinkLibrary.getInstance().getSettings().getYamlConfiguration() == null) {
+            return false;
+        }
+        return SinkLibrary.getInstance().getSettings().getYamlConfiguration().getBoolean("General.EnableDebug", false);
     }
 
     /**
@@ -125,13 +135,7 @@ public class Debug {
     }
 
     private static void logInternal(@Nonnull Level level, @Nonnull String message, @Nullable Throwable throwable) {
-        boolean
-                debugEnabled =
-                ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()));
-        /*
-         * TODO: Fails on a first launch (endless loop)
-         */
-        if (debugEnabled) {
+        if (!isEnabled()) {
             return;
         }
         if (throwable != null) {
@@ -141,22 +145,11 @@ public class Debug {
             logToFile(level, ChatColor.stripColor(message));
         }
 
-        if (debugEnabled) {
-            Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
-        }
+        Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
     }
 
     public static void logToFile(@Nonnull Level level, @Nonnull String message) {
-        /*
-         * TODO: Fix endless loop
-         */
-        boolean enabled;
-        try {
-            enabled = ((SinkLibrary.getInstance().getSettings() != null) && (SinkLibrary.getInstance().getSettings().GENERAL_LOG.getValue()));
-        } catch (Exception ignored) {
-            return;
-        }
-        if (!enabled) {
+        if (!isEnabled()) {
             return;
         }
 
@@ -176,7 +169,7 @@ public class Debug {
             try {
                 fileWriter = new FileWriter(logFile, true);
             } catch (IOException e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Couldn't create FileWriter: ", e);
+                SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't create FileWriter: ", e);
                 return;
             }
         }

@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
@@ -45,7 +46,7 @@ public class NickCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (!SinkLibrary.getInstance().getSettings().GENERAL_DISPLAYNAMES.getValue()) {
+        if (!Settings.GENERAL_DISPLAYNAMES.getValue()) {
             sender.sendMessage(PREFIX + "DisplayNames have been disabled in the config.");
             return true;
         }

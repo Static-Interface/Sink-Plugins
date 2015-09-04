@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UserNotOnlineException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
@@ -254,7 +255,7 @@ public abstract class SinkCommand implements CommandExecutor {
                 exception.printStackTrace();
             }
 
-            if (SinkLibrary.getInstance().getSettings().GENERAL_DEBUG.getValue()) {
+            if (Settings.GENERAL_DEBUG.getValue()) {
                 sender.sendMessage(exception.getMessage());
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");

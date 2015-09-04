@@ -25,6 +25,7 @@ import de.static_interface.sinkantispam.warning.DomainWarning;
 import de.static_interface.sinkantispam.warning.IpWarning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.DomainValidator;
 import org.bukkit.ChatColor;
@@ -58,7 +59,7 @@ public class SinkAntiSpamListener implements Listener {
 
         Pattern pattern;
         Matcher matcher;
-        if (SinkLibrary.getInstance().getSettings().SAS_IPFILTER_ENABLED.getValue()) {
+        if (Settings.SAS_IPFILTER_ENABLED.getValue()) {
             pattern = Pattern.compile("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
             matcher = pattern.matcher(message);
             if (matcher.find()) {
@@ -69,7 +70,7 @@ public class SinkAntiSpamListener implements Listener {
                 return result;
             }
         }
-        if (SinkLibrary.getInstance().getSettings().SAS_WHITELISTED_DOMAINS_ENABLED.getValue()) {
+        if (Settings.SAS_WHITELISTED_DOMAINS_ENABLED.getValue()) {
             String[] words = message.split(" ");
 
             for (String word : words) {
@@ -77,7 +78,7 @@ public class SinkAntiSpamListener implements Listener {
                     continue;
                 }
 
-                if (isBlackListed(word, SinkLibrary.getInstance().getSettings().SAS_WHITELISTED_DOMAINS.getValue(), false) != null) {
+                if (isBlackListed(word, Settings.SAS_WHITELISTED_DOMAINS.getValue(), false) != null) {
                     return result;
                 }
                 WarnUtil.performWarning(new DomainWarning(user, word, WarnUtil.getNextWarningId(user)), SinkLibrary.getInstance().getConsoleUser());
@@ -86,8 +87,8 @@ public class SinkAntiSpamListener implements Listener {
             }
             return result;
         }
-        if (SinkLibrary.getInstance().getSettings().SAS_BLACKLIST_ENABLED.getValue()) {
-            String blacklistWord = isBlackListed(message, SinkLibrary.getInstance().getSettings().SAS_BLACKLISED_WORDS.getValue(), true);
+        if (Settings.SAS_BLACKLIST_ENABLED.getValue()) {
+            String blacklistWord = isBlackListed(message, Settings.SAS_BLACKLISED_WORDS.getValue(), true);
             if (blacklistWord != null) {
                 blacklistWord = blacklistWord.trim();
                 String
@@ -178,7 +179,7 @@ public class SinkAntiSpamListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        for (String command : SinkLibrary.getInstance().getSettings().SAS_EXCLUDED_COMMANDS.getValue()) {
+        for (String command : Settings.SAS_EXCLUDED_COMMANDS.getValue()) {
             if (event.getMessage().startsWith(COMMAND_PREFIX + command)
                 || event.getMessage().startsWith(command)) {
                 return;
