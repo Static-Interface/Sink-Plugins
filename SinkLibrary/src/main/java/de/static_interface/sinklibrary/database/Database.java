@@ -98,7 +98,7 @@ public abstract class Database {
             return "TINYINT";
         }
         if (clazz == String.class) {
-            return column.primaryKey() || column.uniqueKey() || isForeignKey ? "VARCHAR(255)" : "TEXT(999)";
+            return column.primaryKey() || column.uniqueKey() || isForeignKey ? "VARCHAR(255)" : "VARCHAR(999)";
         }
         throw new RuntimeException("No database type available for: " + clazz.getName());
     }
