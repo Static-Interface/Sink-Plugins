@@ -46,7 +46,7 @@ public class WarnUtil {
         IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(wPlayer.playerUuid));
         addWarning(warning);
 
-        String message = prefix + LanguageConfiguration.SAS_WARN_MESSAGE.format(warner, target, warning.reason, warning.points);
+        String message = prefix + LanguageConfiguration.SAS_WARN_MESSAGE.format(warner, target, new Object[]{warning.reason, warning.points});
         String perm;
         if (warning.isAutoWarning) {
             perm = "sinkantispam.autowarnmessage";
