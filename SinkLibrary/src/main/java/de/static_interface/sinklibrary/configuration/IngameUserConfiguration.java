@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 
 import java.io.File;
+import java.util.UUID;
 
 public class IngameUserConfiguration extends Configuration {
 
@@ -187,5 +188,25 @@ public class IngameUserConfiguration extends Configuration {
 
     public void setBanTimeOut(long unbantime) {
         set("BanData.Timeout", unbantime);
+    }
+
+    public String getBannerDisplayName() {
+        return (String) get("BanData.BannerDisplayName");
+    }
+
+    public void setBannerDisplayName(String s) {
+        set("BanData.BannerDisplayName", s);
+    }
+
+    public UUID getBannerUniqueId() {
+        String s = (String) get("BanData.BannerUUID");
+        if (s == null) {
+            return null;
+        }
+        return UUID.fromString(s);
+    }
+
+    public void setBannerUniqueId(UUID id) {
+        set("BanData.BannerUUID", id.toString());
     }
 }

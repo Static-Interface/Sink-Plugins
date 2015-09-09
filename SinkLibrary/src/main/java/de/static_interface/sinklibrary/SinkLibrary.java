@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
+import de.static_interface.sinklibrary.api.provider.BanProvider;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -36,6 +37,7 @@ import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
+import de.static_interface.sinklibrary.provider.SimpleBanProvider;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import de.static_interface.sinklibrary.user.ConsoleUser;
@@ -114,7 +116,9 @@ public class SinkLibrary extends JavaPlugin {
     private ConsoleUserProvider consoleUserProvider;
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
+    private BanProvider banProvider;
     private boolean ircExceptionOccured = false;
+    private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
     /**
      * Get the instance of this plugin
      * @return instance
@@ -126,6 +130,24 @@ public class SinkLibrary extends JavaPlugin {
             //throw new NotInitializedException("SinkLibrary is not initalized");
         }
         return instance;
+    }
+
+    public boolean registerBanProvider(BanProvider provider) {
+        if (banProvider != null) {
+            return false;
+        }
+
+        banProvider = provider;
+        return true;
+    }
+
+    @Nonnull
+    public BanProvider getBanProvider() {
+        if (banProvider == null) {
+            return defaultBanProvider;
+        }
+
+        return banProvider;
     }
 
     public boolean validateApiVersion(int compileVersion, Plugin plugin) {

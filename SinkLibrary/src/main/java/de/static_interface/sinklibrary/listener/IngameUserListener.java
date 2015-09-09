@@ -18,7 +18,6 @@
 package de.static_interface.sinklibrary.listener;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.model.BanData;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -47,16 +46,14 @@ public class IngameUserListener implements Listener {
             config.init();
         }
 
-        BanData result = user.getBanData();
-        Debug.log(result);
-        if (!result.isBanned()) {
+        if (!user.isBanned()) {
             Debug.log("Player is not banned.");
             return;
         }
 
         String timeLeft = "";
 
-        if (result.getTimeOut() < System.currentTimeMillis()) {
+        if (user.getBanTimeOut() < System.currentTimeMillis()) {
             Debug.log("Bantimeout occurred. Unbanning player.");
             user.unban();
             return;
@@ -64,11 +61,11 @@ public class IngameUserListener implements Listener {
 
         Debug.log("User is banned, calculating time left...");
 
-        if (result.getTimeOut() > 0) {
-            long t = result.getTimeOut() - System.currentTimeMillis();
+        if (user.getBanTimeOut() > 0) {
+            long t = user.getBanTimeOut() - System.currentTimeMillis();
             timeLeft = ", " + ChatColor.GOLD + LanguageConfiguration.GENERAL_TIME_LEFT.format(DateUtil.formatTimeLeft(new Date(t)));
         }
-        String kickMessage = LanguageConfiguration.GENERAL_BANNED.format(result.getReason() + timeLeft);
+        String kickMessage = LanguageConfiguration.GENERAL_BANNED.format(user.getBanReason() + timeLeft);
         Debug.log("Denying user: " + user.getName() + "(KICK_BANNED, kickMessage: " + kickMessage + ")");
         event.setKickMessage(kickMessage);
         event.setResult(PlayerLoginEvent.Result.KICK_BANNED);

@@ -21,8 +21,6 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
-import de.static_interface.sinklibrary.api.model.BanData;
-import de.static_interface.sinklibrary.api.user.Bannable;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -35,6 +33,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
@@ -45,7 +44,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable, Bannable {
+public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable {
 
     private Player player = null;
     private OfflinePlayer base = null;
@@ -274,36 +273,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         return base.getUniqueId();
     }
 
-    public void ban(String reason, long timeout) {
-        boolean isOnline = isOnline();
-        if (isOnline) {
-            getPlayer().kickPlayer(reason);
-        }
-
-        if (getBanData().isBanned()) {
-            if (isOnline) {
-                throw new IllegalStateException("User already has been banned and was online. Please report this.");
-            }
-            throw new IllegalStateException("User already has been banned");
-        }
-
-        getConfiguration().setBanned(true);
-        getConfiguration().setBanTime(System.currentTimeMillis());
-        getConfiguration().setBanTimeOut(timeout);
-        getConfiguration().setBanReason(reason);
-    }
-
-    public void unban() {
-        getConfiguration().setBanned(false);
-        getConfiguration().setUnbanTime(System.currentTimeMillis());
-    }
-
-    public BanData getBanData() {
-        return new BanData(this, getConfiguration().isBanned(), getConfiguration().getBanTime(), getConfiguration().getBanTimeOut(),
-                           getConfiguration().getUnbanTime(), getConfiguration().getBanReason());
-    }
-
-    public double getDistance(Player p, boolean use2d) {
+    public double getDistance(Entity p, boolean use2d) {
         double x = getPlayer().getLocation().getX();
         double y = getPlayer().getLocation().getY();
         double z = getPlayer().getLocation().getZ();
@@ -318,7 +288,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
         return range;
     }
 
-    public double getDistance(Player p) {
+    public double getDistance(Entity p) {
         return getDistance(p, false);
     }
 
@@ -346,5 +316,98 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable,
             }
         }
         return playersInRange;
+    }
+
+    public void ban() {
+        SinkLibrary.getInstance().getBanProvider().ban(this);
+    }
+
+    public void ban(@Nullable SinkUser banner) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, banner);
+    }
+
+    public void ban(@Nullable String reason) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, reason);
+    }
+
+    public void ban(@Nullable SinkUser banner, @Nullable String reason) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, banner, reason);
+    }
+
+    public void ban(@Nullable Long unbanTime) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, unbanTime);
+    }
+
+    public void ban(@Nullable SinkUser banner, @Nullable Long unbanTime) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, banner, unbanTime);
+    }
+
+    public void ban(@Nullable String reason, @Nullable Long unbanTime) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, reason, unbanTime);
+    }
+
+    public void ban(@Nullable SinkUser banner, @Nullable String reason, @Nullable Long unbanTime) {
+        SinkLibrary.getInstance().getBanProvider().ban(this, banner, reason, unbanTime);
+    }
+
+    public void unban() {
+        SinkLibrary.getInstance().getBanProvider().unban(this);
+        setUnbanTime(System.currentTimeMillis());
+    }
+
+    public boolean isBanned() {
+        return SinkLibrary.getInstance().getBanProvider().isBanned(this);
+    }
+
+    @Nullable
+    public String getBanReason() {
+        return SinkLibrary.getInstance().getBanProvider().getReason(this);
+    }
+
+    public void setBanReason(String reason) {
+        SinkLibrary.getInstance().getBanProvider().setReason(this, reason);
+    }
+
+    @Nullable
+    public Long getBanTime() {
+        return SinkLibrary.getInstance().getBanProvider().getBanTime(this);
+    }
+
+    @Nullable
+    public Long getUnbanTime() {
+        return SinkLibrary.getInstance().getBanProvider().getUnbanTime(this);
+    }
+
+    public void setUnbanTime(@Nullable Long unbanTime) {
+        SinkLibrary.getInstance().getBanProvider().setUnbanTime(this, unbanTime);
+        if (unbanTime != null && unbanTime <= System.currentTimeMillis()) {
+            unban();
+        }
+    }
+
+    @Nullable
+    public Long getBanTimeOut() {
+        return SinkLibrary.getInstance().getBanProvider().getTimeOut(this);
+    }
+
+    public void setBanTimeOut(@Nullable Long timeOut) {
+        SinkLibrary.getInstance().getBanProvider().setTimeOut(this, timeOut);
+        if (timeOut != null && timeOut <= System.currentTimeMillis()) {
+            unban();
+        }
+    }
+
+    @Nullable
+    public String getBannerDisplayName() {
+        return SinkLibrary.getInstance().getBanProvider().getBannerDisplayName(this);
+    }
+
+    @Nullable
+    public UUID getBannerUniqueId() {
+        return SinkLibrary.getInstance().getBanProvider().getBannerUniqueId(this);
+    }
+
+    public void setBanner(@Nullable SinkUser user) {
+        SinkLibrary.getInstance().getBanProvider().setBanner(this, user);
     }
 }
