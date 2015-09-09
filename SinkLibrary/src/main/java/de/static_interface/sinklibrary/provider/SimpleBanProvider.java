@@ -85,13 +85,13 @@ public class SimpleBanProvider implements BanProvider {
 
     @Override
     public void unban(IngameUser user) {
-        user.getConfiguration().setBanned(false);
-        user.getConfiguration().setUnbanTime(System.currentTimeMillis());
+        unban(user, null);
     }
 
     @Override
     public void unban(IngameUser user, SinkUser unbanner) {
-        unban(user);
+        user.getConfiguration().setBanned(false);
+        setUnbanTime(user, System.currentTimeMillis());
         setUnbanner(user, unbanner);
     }
 
