@@ -209,4 +209,24 @@ public class IngameUserConfiguration extends Configuration {
     public void setBannerUniqueId(UUID id) {
         set("BanData.BannerUUID", id.toString());
     }
+
+    public String getUnbannerDisplayName() {
+        return (String) get("BanData.UnbannerDisplayName");
+    }
+
+    public void setUnbannerDisplayName(String s) {
+        set("BanData.UnbannerDisplayName", s);
+    }
+
+    public UUID getUnbannerUniqueId() {
+        String s = (String) get("BanData.UnbannerUUID");
+        if (s == null) {
+            return null;
+        }
+        return UUID.fromString(s);
+    }
+
+    public void setUnbannerUniqueId(UUID id) {
+        set("BanData.UnbannerUUID", id.toString());
+    }
 }

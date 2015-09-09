@@ -90,6 +90,12 @@ public class SimpleBanProvider implements BanProvider {
     }
 
     @Override
+    public void unban(IngameUser user, SinkUser unbanner) {
+        unban(user);
+        setUnbanner(user, unbanner);
+    }
+
+    @Override
     public boolean isBanned(IngameUser user) {
         return user.getConfiguration().isBanned();
     }
@@ -160,6 +166,18 @@ public class SimpleBanProvider implements BanProvider {
         return user.getConfiguration().getBannerUniqueId();
     }
 
+    @Nullable
+    @Override
+    public String getUnbannerDisplayName(IngameUser user) {
+        return user.getConfiguration().getUnbannerDisplayName();
+    }
+
+    @Nullable
+    @Override
+    public UUID getUnbannerUniqueId(IngameUser user) {
+        return user.getConfiguration().getUnbannerUniqueId();
+    }
+
     @Override
     public void setBanner(IngameUser user, SinkUser banner) {
         UUID id = null;
@@ -169,5 +187,16 @@ public class SimpleBanProvider implements BanProvider {
 
         user.getConfiguration().setBannerUniqueId(id);
         user.getConfiguration().setBannerDisplayName(banner == null ? null : banner.getDisplayName());
+    }
+
+    @Override
+    public void setUnbanner(IngameUser user, SinkUser unbanner) {
+        UUID id = null;
+        if (unbanner instanceof Identifiable) {
+            id = ((Identifiable) unbanner).getUniqueId();
+        }
+
+        user.getConfiguration().setUnbannerUniqueId(id);
+        user.getConfiguration().setUnbannerDisplayName(unbanner == null ? null : unbanner.getDisplayName());
     }
 }

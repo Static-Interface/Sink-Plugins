@@ -44,6 +44,8 @@ public interface BanProvider {
 
     void unban(IngameUser user);
 
+    void unban(IngameUser user, SinkUser unbanner);
+
     boolean isBanned(IngameUser user);
 
     void setUnbanTime(IngameUser user, @Nullable Long timeOut);
@@ -69,5 +71,13 @@ public interface BanProvider {
     @Nullable
     UUID getBannerUniqueId(IngameUser user);
 
+    @Nullable
+    String getUnbannerDisplayName(IngameUser user);
+
+    @Nullable
+    UUID getUnbannerUniqueId(IngameUser user);
+
     void setBanner(IngameUser user, SinkUser banner);
+
+    void setUnbanner(IngameUser user, SinkUser unbanner);
 }
