@@ -27,6 +27,7 @@ import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import de.static_interface.sinklibrary.util.VaultBridge;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -107,7 +108,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
     }
 
     /**
-     * @return The PlayerConfiguration of the Player
+     * @return The configuration file of the Player
      */
     public File getConfigurationFile() {
         return configurationFile;
@@ -247,7 +248,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
      */
     public String getDisplayName() {
         String name = "";
-        if (!Settings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName()) {
+        if (isOnline() && (!Settings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName())) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
                 prefix =
@@ -255,8 +256,12 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
                                 .getPlayerPrefix(BukkitUtil.getMainWorld().getName(), base));
             }
             name = prefix + player.getDisplayName();
-        } else {
+        } else if (getConfiguration() != null) {
             name = getConfiguration().getDisplayName();
+        }
+
+        if (StringUtil.isEmptyOrNull(name)) {
+            name = getName();
         }
 
         if (!isOnline()) {
