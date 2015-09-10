@@ -847,8 +847,10 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * @return Online players as Users
+     * @deprecated Unstable implementation
      */
     @Unstable
+    @Deprecated
     public Collection<IngameUser> getOnlineUsers() {
         Set<IngameUser> users = new HashSet<>();
         for (SinkUser user : getIngameUserProvider().getUserInstances()) {
@@ -862,11 +864,7 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Unstable
     public Collection<IrcUser> getOnlineIrcUsers() {
-        Set<IrcUser> users = new HashSet<>();
-        for (SinkUser user : getIrcUserProvider().getUserInstances()) {
-            users.add((IrcUser) user);
-        }
-        return users;
+        return getIrcUserProvider().getUserInstances();
     }
 
     @Deprecated
@@ -878,7 +876,6 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public synchronized void registerCommand(@Nonnull String name, @Nonnull SinkCommand command) {
-        name = name.toLowerCase();
         Debug.logMethodCall(name, command);
         Plugin p = command.getPlugin();
         PluginCommand cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
@@ -892,14 +889,11 @@ public class SinkLibrary extends JavaPlugin {
             cmd.setTabCompleter(getDefaultTabCompleter());
             for (String alias : cmd.getAliases()) // Register alias commands
             {
-                alias = alias.toLowerCase();
-                if (alias.equals(name)) {
+                if (alias.equalsIgnoreCase(name)) {
                     continue;
                 }
 
-                if (!commandAliases.containsKey(alias) || commandAliases.get(alias) == null) {
-                    commandAliases.put(alias, command);
-                }
+                commandAliases.put(alias.toLowerCase(), command);
             }
             command.setUsage(cmd.getUsage());
             command.setPermission(cmd.getPermission());
@@ -908,17 +902,8 @@ public class SinkLibrary extends JavaPlugin {
             Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
 
-        synchronized (commandAliases) {
-            if (!commandAliases.containsKey(name) || commandAliases.get(name) == null) {
-                commandAliases.put(name, command);
-            }
-        }
-
-        synchronized (commands) {
-            if (!commands.containsKey(name) || commands.get(name) == null) {
-                commands.put(name, command);
-            }
-        }
+        commandAliases.put(name.toLowerCase(), command);
+        commands.put(name.toLowerCase(), command);
     }
 
     public synchronized void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
@@ -951,8 +936,8 @@ public class SinkLibrary extends JavaPlugin {
             commandAliases.remove(alias);
         }
 
-        commands.remove(name);
-        commandAliases.remove(name);
+        commands.remove(name.toLowerCase());
+        commandAliases.remove(name.toLowerCase());
 
         if (unregisterBukkit) {
             unregisterCommandBukkit(cmd);
@@ -987,16 +972,11 @@ public class SinkLibrary extends JavaPlugin {
         }
     }
 
-    public synchronized SinkCommand getCustomCommand(String name) {
-        SinkCommand cmd;
-
-        synchronized (commands) {
-            cmd = commands.get(name.toLowerCase());
-        }
+    @Nullable
+    public SinkCommand getCustomCommand(String name) {
+        SinkCommand cmd = commands.get(name.toLowerCase());
         if (cmd == null) {
-            synchronized (commandAliases) {
-                cmd = commandAliases.get(name.toLowerCase());
-            }
+            cmd = commandAliases.get(name.toLowerCase());
         }
         return cmd;
     }

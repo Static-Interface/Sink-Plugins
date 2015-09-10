@@ -141,4 +141,13 @@ public class IrcUser extends SinkUser<User> {
     public User getBase() {
         return base;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof IrcUser)) {
+            return false;
+        }
+
+        return ((IrcUser) o).getName().equals(getName());
+    }
 }
