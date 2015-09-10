@@ -24,7 +24,6 @@ public class UserNotFoundException extends RuntimeException {
 
     private String name;
 
-    @Deprecated
     public UserNotFoundException() {
     }
 

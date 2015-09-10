@@ -107,6 +107,13 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
     }
 
     /**
+     * @return The PlayerConfiguration of the Player
+     */
+    public File getConfigurationFile() {
+        return configurationFile;
+    }
+
+    /**
      * @return CommandSender
      */
     public CommandSender getSender() {

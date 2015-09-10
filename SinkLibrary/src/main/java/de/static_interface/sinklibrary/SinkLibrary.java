@@ -526,8 +526,6 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nonnull
     public IngameUser getIngameUser(String partialPlayerName, boolean throwExceptionIfNotFound) {
-        throwExceptionIfNotFound = false;
-
         for (Player p : Bukkit.getOnlinePlayers()) {
             IngameUser onlineUser = getIngameUser(p);
             if (p.getName().startsWith(partialPlayerName) || onlineUser.getName().startsWith(partialPlayerName)
@@ -537,7 +535,7 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(partialPlayerName));
-        if (throwExceptionIfNotFound && !user.hasPlayedBefore()) {
+        if (throwExceptionIfNotFound && !user.hasPlayedBefore() && !user.getConfigurationFile().exists()) {
             throw new UserNotFoundException();
         }
 
@@ -678,7 +676,6 @@ public class SinkLibrary extends JavaPlugin {
      * @deprecated Use {@link SinkLibrary#getUser(Object) instead}
      * @return {@link SinkUser} instance of the sender
      */
-    @Deprecated
     public SinkUser getUser(CommandSender sender) {
         return getUser((Object) sender);
     }
