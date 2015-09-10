@@ -18,12 +18,43 @@
 package de.static_interface.sinklibrary.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReflectionUtil {
+
+    public final static Map<Class<?>, Class<?>> primitiveMap = new HashMap<>();
+    public final static Map<Class<?>, Method> primiviteMethods = new HashMap<>();
+
+    static {
+        primitiveMap.put(boolean.class, Boolean.class);
+        primitiveMap.put(byte.class, Byte.class);
+        primitiveMap.put(short.class, Short.class);
+        primitiveMap.put(char.class, Character.class);
+        primitiveMap.put(int.class, Integer.class);
+        primitiveMap.put(long.class, Long.class);
+        primitiveMap.put(float.class, Float.class);
+        primitiveMap.put(double.class, Double.class);
+    }
+
+    static {
+        Class<?> numberClass = Number.class;
+        try {
+            primiviteMethods.put(byte.class, numberClass.getMethod("byteValue"));
+            primiviteMethods.put(short.class, numberClass.getMethod("shortValue"));
+            primiviteMethods.put(int.class, numberClass.getMethod("intValue"));
+            primiviteMethods.put(long.class, numberClass.getMethod("longValue"));
+            primiviteMethods.put(float.class, numberClass.getMethod("floatValue"));
+            primiviteMethods.put(double.class, numberClass.getMethod("doubleValue"));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static List<Field> getAllFields(Class<?> type) {
         List<Field> fieldz = new ArrayList<>();
@@ -37,7 +68,7 @@ public class ReflectionUtil {
         return fieldz;
     }
 
-    public static <T> T Invoke(Object object, String methodName, Class<T> returnClass, Object... args) {
+    public static <T> T invoke(Object object, String methodName, Class<T> returnClass, Object... args) {
         try {
             Method method = object.getClass().getMethod(methodName);
             method.setAccessible(true);
@@ -47,7 +78,7 @@ public class ReflectionUtil {
         }
     }
 
-    public static <T> T InvokeStatic(Class<?> clazz, String methodName, Class<T> returnClass, Object... args) {
+    public static <T> T invokeStatic(Class<?> clazz, String methodName, Class<T> returnClass, Object... args) {
         try {
             Method method = clazz.getMethod(methodName);
             method.setAccessible(true);
@@ -57,18 +88,58 @@ public class ReflectionUtil {
         }
     }
 
-    public static boolean isPrimitiveClass(Class clazz) {
-        return clazz == byte.class
-               || clazz == short.class
-               || clazz == int.class
-               || clazz == long.class
-               || clazz == float.class
-               || clazz == double.class
-               || clazz == boolean.class
-               || clazz == char.class;
+    public static boolean isPrimitiveClass(Class<?> clazz) {
+        return clazz.isPrimitive();
     }
 
     public static boolean isNumber(Class<?> type) {
         return Number.class.isAssignableFrom(type);
+    }
+
+    public static Object primitiveToWrapper(Object c) {
+        if (isWrapperClass(c.getClass())) {
+            return c;
+        }
+        Class<?> wrapperClass = primitiveMap.get(c.getClass());
+
+        if (char.class.isAssignableFrom(c.getClass())) {
+            return Character.valueOf((char) c);
+        }
+
+        try {
+            Method m = wrapperClass.getMethod("valueOf", String.class);
+            return m.invoke(null, c.toString());
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean isWrapperClass(Class<?> clazz) {
+        return primitiveMap.values().contains(clazz);
+    }
+
+    public static Object wrapperToPrimitive(Object value) {
+        if (isPrimitiveClass(value.getClass())) {
+            return value;
+        }
+
+        if (primiviteMethods.keySet().contains(value.getClass())) {
+            Method m = primiviteMethods.get(value.getClass());
+            try {
+                return m.invoke(value);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
+        }
+
+        if (value instanceof Character) {
+            return ((Character) value).charValue();
+        }
+
+        return value;
     }
 }

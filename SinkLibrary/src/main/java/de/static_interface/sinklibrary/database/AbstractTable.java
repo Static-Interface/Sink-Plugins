@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.database.annotation.ForeignKey;
 import de.static_interface.sinklibrary.database.annotation.Index;
 import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
 import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
+import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang.Validate;
@@ -39,7 +40,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -269,7 +272,9 @@ public abstract class AbstractTable<T extends Row> {
                 }
             }
 
-            List<T> result = deserializeResultSet(statement.executeQuery());
+            ResultSet rs = statement.executeQuery();
+            List<T> result = deserializeResultSet(rs);
+            rs.close();
             T[] array = (T[]) Array.newInstance(getRowClass(), result.size());
             return result.toArray(array);
         } catch (SQLException e) {
@@ -289,12 +294,19 @@ public abstract class AbstractTable<T extends Row> {
         char bt = db.getBacktick();
         int i = 0;
         List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
+        Map<Field, String> autoIncrements = new HashMap<>();
         for (Field f : fields) {
             Column column = FieldCache.getAnnotation(f, Column.class);
             if (column == null) {
                 continue;
             }
+
             String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
+
+            if (column.autoIncrement()) {
+                autoIncrements.put(f, name);
+            }
+
             name = bt + name + bt;
             if (i == 0) {
                 columns = name;
@@ -329,14 +341,94 @@ public abstract class AbstractTable<T extends Row> {
         }
 
         PreparedStatement ps = createPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS, values.toArray(new Object[values.size()]));
+        try {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         ResultSet rs;
         try {
             rs = ps.getGeneratedKeys();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        setFieldsFromResultSet(row, rs);
+
+        try {
+            rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for (Field f : autoIncrements.keySet()) {
+            setFieldFromResultSet(row, rs, f, autoIncrements.get(f));
+        }
+
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            Debug.log(e);
+        }
+
         return row;
+    }
+
+    protected T setFieldFromResultSet(T instance, ResultSet rs, Field f, String columnName) {
+        Column column = FieldCache.getAnnotation(f, Column.class);
+        Object value;
+        try {
+            value = rs.getObject(columnName, f.getType());
+            if (value == null) {
+                value = rs.getObject(columnName);
+            }
+
+            if (value != null && ReflectionUtil.isWrapperClass(f.getType()) && ReflectionUtil.isPrimitiveClass(value.getClass())) {
+                value = ReflectionUtil.primitiveToWrapper(value);
+            } else if (value != null && ReflectionUtil.isWrapperClass(value.getClass()) && ReflectionUtil.isPrimitiveClass(f.getType())) {
+                value = ReflectionUtil.wrapperToPrimitive(value);
+            }
+
+            if (value != null && f.getType().isAssignableFrom(value.getClass())) {
+                value = f.getType().cast(value);
+            }
+
+            if (value instanceof Long && !f.getType().isAssignableFrom(Long.class)) {
+                if (f.getType().isAssignableFrom(Byte.class)) {
+                    value = ((Number) value).byteValue();
+                } else if (f.getType().isAssignableFrom(Short.class)) {
+                    value = ((Number) value).shortValue();
+                } else if (f.getType().isAssignableFrom(Integer.class)) {
+                    value = ((Number) value).intValue();
+                }
+            } else if (value instanceof Double && !f.getType().isAssignableFrom(Double.class)) {
+                if (f.getType().isAssignableFrom(Float.class)) {
+                    value = ((Number) value).floatValue();
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
+            && value != (Object) false && value != (Object) true && value != Boolean.TRUE
+            && value != Boolean.FALSE) {
+            value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
+        }
+
+        if (value == null && (ReflectionUtil.isPrimitiveClass(f.getType()) || (FieldCache.getAnnotation(f, Nullable.class) == null && !column
+                .autoIncrement()))) {
+            SinkLibrary.getInstance().getLogger().warning(
+                    "Trying to set null value on a not nullable and not autoincrement column: " + getRowClass().getName() + "." + f
+                            .getName());
+        }
+
+        try {
+            f.set(instance, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return instance;
     }
 
     protected T setFieldsFromResultSet(T instance, ResultSet rs) {
@@ -349,26 +441,11 @@ public abstract class AbstractTable<T extends Row> {
             Object value = null;
             try {
                 String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-
                 if (!hasColumn(rs, name)) {
                     //Select query may not include this column
                     continue;
                 }
-
-                value = rs.getObject(name);
-                if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
-                    && value != (Object) false && value != (Object) true && value != Boolean.TRUE
-                    && value != Boolean.FALSE) {
-                    value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
-                }
-
-                if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
-                    SinkLibrary.getInstance().getLogger().warning(
-                            "Trying to set null value on a not nullable and not autoincrement column: " + getRowClass().getName() + "." + f
-                                    .getName());
-                }
-
-                f.set(instance, value);
+                setFieldFromResultSet(instance, rs, f, name);
             } catch (Exception e) {
                 throw new RuntimeException(
                         "Couldn't set value \"" + (value == null ? "null" : value.toString()) + "\" for field: " + getRowClass().getName()
