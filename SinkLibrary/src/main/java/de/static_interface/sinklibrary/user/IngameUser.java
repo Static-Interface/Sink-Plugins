@@ -243,10 +243,14 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
         return Bukkit.getPlayer(base.getUniqueId()) != null;
     }
 
+    public String getDisplayName() {
+        return getDisplayName(true);
+    }
+
     /**
      * @return Player's custom displayname
      */
-    public String getDisplayName() {
+    public String getDisplayName(boolean formatOffline) {
         String name = "";
         if (isOnline() && (!Settings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName())) {
             String prefix = "";
@@ -264,7 +268,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
             name = getName();
         }
 
-        if (!isOnline()) {
+        if (!isOnline() && formatOffline) {
             name = name + ChatColor.GRAY + " (offline)" + ChatColor.RESET;
         }
 
