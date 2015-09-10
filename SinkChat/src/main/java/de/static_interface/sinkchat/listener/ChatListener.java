@@ -83,7 +83,8 @@ public class ChatListener implements Listener {
                     continue;
                 }
 
-                event.setFormat(channel.formatEventFormat(user, message));
+                event.setFormat(channel.formatEventFormat(user));
+                event.setMessage(channel.formatMessage(event.getMessage()));
                 channel.handleRecipients(user, event.getRecipients(), message);
 
                 if (channel.sendToIRC()) {
@@ -108,7 +109,7 @@ public class ChatListener implements Listener {
         String eventFormat = Settings.SC_DEFAULT_CHAT_FORMAT.getValue();
         //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
         //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
-        eventFormat = StringUtil.format(eventFormat, user, null, message, customParams, false, null);
+        eventFormat = StringUtil.format(eventFormat, user, null, "%2$s", customParams, false, null);
 
         if (!SinkLibrary.getInstance().isPermissionsAvailable()) {
             eventFormat = LanguageConfiguration.SC_PREFIX_LOCAL.format() + ' ' + ChatColor.RESET + eventFormat;

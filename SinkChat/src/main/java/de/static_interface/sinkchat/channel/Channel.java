@@ -104,7 +104,7 @@ public class Channel {
         config.set(enabledPath, setEnabled);
     }
 
-    public String formatEventFormat(IngameUser user, String message) {
+    public String formatEventFormat(IngameUser user) {
         String eventFormat = format;
         //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
         //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
@@ -116,7 +116,7 @@ public class Channel {
             customParams.put("Town(y)?", TownyHelper.getTown(user.getPlayer()));
             customParams.put("Nation", TownyHelper.getNation(user.getPlayer()));
         }
-        return StringUtil.format(eventFormat, user, null, message.substring(callCode.length()), customParams, false, null);
+        return StringUtil.format(eventFormat, user, null, "%2$s", customParams, false, null);
     }
 
     public void handleRecipients(IngameUser sender, Set<Player> recipients, String message) {
@@ -139,5 +139,9 @@ public class Channel {
                 p.sendMessage(Util.getSpyPrefix() + message);
             }
         }
+    }
+
+    public String formatMessage(String message) {
+        return message.replaceFirst("\\Q" + getCallCode() + "\\E", "");
     }
 }
