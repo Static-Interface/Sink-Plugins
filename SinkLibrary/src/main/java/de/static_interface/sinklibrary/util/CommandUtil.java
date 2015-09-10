@@ -50,7 +50,7 @@ public class CommandUtil {
             } else if (l <= Short.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Short.class) || returnType
                     .isAssignableFrom(short.class))) {
                 return (T) Short.valueOf(Short.parseShort(arg)); // Value is a Short
-            } else if (l <= Integer.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Long.class) && returnType
+            } else if (l <= Integer.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Integer.class) && returnType
                     .isAssignableFrom(int.class))) {
                 return (T) Integer.valueOf(Integer.parseInt(arg)); // Value is an Integer
             }
