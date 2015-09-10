@@ -37,6 +37,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,7 +251,40 @@ public abstract class AbstractTable<T extends Row> {
         return "InnoDB"; // Table implemetations may override this
     }
 
-    protected ResultSet serialize(T row) {
+    /**
+     * Get the result as deserialized {@link T}[] from the given query
+     * @param query The SQL query, <code>{TABLE}</code> will be replaced with {@link #getName()}
+     * @param bindings the {@link PreparedStatement} bindings
+     * @return the {@link ResultSet} deserialized as {@link T}
+     */
+    public T[] get(String query, Object... bindings) {
+        try {
+            query = query.replaceAll("\\Q{TABLE}\\E", getName());
+            PreparedStatement statement = db.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            if (bindings != null && bindings.length > 0) {
+                int i = 1;
+                for (Object s : bindings) {
+                    statement.setObject(i, s);
+                    i++;
+                }
+            }
+
+            List<T> result = deserializeResultSet(statement.executeQuery());
+            T[] array = (T[]) Array.newInstance(getRowClass(), result.size());
+            return result.toArray(array);
+        } catch (SQLException e) {
+            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(query, bindings));
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Insert a row to the table
+     * @param row the row to insert
+     * @return the {@link T} object with auto-incremented fields
+     */
+    public T insert(T row) {
+        Validate.notNull(row);
         String columns = "";
         char bt = db.getBacktick();
         int i = 0;
@@ -294,49 +328,54 @@ public abstract class AbstractTable<T extends Row> {
             }
         }
 
-        executeUpdate(sql, values.toArray(new Object[values.size()]));
-        return executeQuery("SELECT * FROM `{TABLE}` ORDER BY id DESC LIMIT 1");
-    }
-
-    protected T[] deserialize(ResultSet rs) {
-        List<T> result = deserializeResultSet(rs);
-        T[] array = (T[]) Array.newInstance(getRowClass(), result.size());
-        return result.toArray(array);
-    }
-
-    /**
-     * Get the result as deserialized {@link T}[] from the given query
-     * @param query The SQL query, <code>{TABLE}</code> will be replaced with {@link #getName()}
-     * @param bindings the {@link PreparedStatement} bindings
-     * @return the {@link ResultSet} deserialized as {@link T}
-     */
-    public T[] get(String query, Object... bindings) {
+        PreparedStatement ps = createPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS, values.toArray(new Object[values.size()]));
+        ResultSet rs;
         try {
-            query = query.replaceAll("\\Q{TABLE}\\E", getName());
-            PreparedStatement statement = db.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            if (bindings != null && bindings.length > 0) {
-                int i = 1;
-                for (Object s : bindings) {
-                    statement.setObject(i, s);
-                    i++;
-                }
-            }
-
-            return deserialize(statement.executeQuery());
+            rs = ps.getGeneratedKeys();
         } catch (SQLException e) {
-            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(query, bindings));
             throw new RuntimeException(e);
         }
+        setFieldsFromResultSet(row, rs);
+        return row;
     }
 
-    /**
-     * Insert a row to the table
-     * @param row the row to insert
-     * @return the {@link T} object with auto-incremented fields
-     */
-    public T insert(T row) {
-        Validate.notNull(row);
-        return deserialize(serialize(row))[0];
+    protected T setFieldsFromResultSet(T instance, ResultSet rs) {
+        List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
+        for (Field f : fields) {
+            Column column = FieldCache.getAnnotation(f, Column.class);
+            if (column == null) {
+                continue;
+            }
+            Object value = null;
+            try {
+                String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
+
+                if (!hasColumn(rs, name)) {
+                    //Select query may not include this column
+                    continue;
+                }
+
+                value = rs.getObject(name);
+                if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
+                    && value != (Object) false && value != (Object) true && value != Boolean.TRUE
+                    && value != Boolean.FALSE) {
+                    value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
+                }
+
+                if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
+                    SinkLibrary.getInstance().getLogger().warning(
+                            "Trying to set null value on a not nullable and not autoincrement column: " + getRowClass().getName() + "." + f
+                                    .getName());
+                }
+
+                f.set(instance, value);
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        "Couldn't set value \"" + (value == null ? "null" : value.toString()) + "\" for field: " + getRowClass().getName()
+                        + "." + f.getName() + ": ", e);
+            }
+        }
+        return instance;
     }
 
     protected List<T> deserializeResultSet(ResultSet r) {
@@ -356,41 +395,8 @@ public abstract class AbstractTable<T extends Row> {
                     throw new RuntimeException("Deserializing failed: ", e);
                 }
 
-                List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
-                for (Field f : fields) {
-                    Column column = FieldCache.getAnnotation(f, Column.class);
-                    if (column == null) {
-                        continue;
-                    }
-                    Object value = null;
-                    try {
-                        String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
+                setFieldsFromResultSet((T) instance, r);
 
-                        if (!hasColumn(r, name)) {
-                            //Select query may not include this column
-                            continue;
-                        }
-
-                        value = r.getObject(name);
-                        if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
-                            && value != (Object) false && value != (Object) true && value != Boolean.TRUE
-                            && value != Boolean.FALSE) {
-                            value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
-                        }
-
-                        if (value == null && FieldCache.getAnnotation(f, Nullable.class) == null && !column.autoIncrement()) {
-                            SinkLibrary.getInstance().getLogger().warning(
-                                    "Trying to set null value on a not nullable and not autoincrement column: " + getRowClass().getName() + "." + f
-                                            .getName());
-                        }
-
-                        f.set(instance, value);
-                    } catch (Exception e) {
-                        throw new RuntimeException(
-                                "Couldn't set value \"" + (value == null ? "null" : value.toString()) + "\" for field: " + getRowClass().getName()
-                                + "." + f.getName() + ": ", e);
-                    }
-                }
                 result.add((T) instance);
             }
         } catch (SQLException e) {
@@ -422,7 +428,9 @@ public abstract class AbstractTable<T extends Row> {
      * @param sql the sql query, <code>{TABLE}</code> will be replaced with {@link #getName()}
      * @param bindings the {@link PreparedStatement} bindings
      * @return the {@link ResultSet} of the query
+     * @deprecated Use {@link #get(String, Object...)} instead
      */
+    @Deprecated
     public ResultSet executeQuery(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
@@ -442,28 +450,47 @@ public abstract class AbstractTable<T extends Row> {
         }
     }
 
+    public PreparedStatement createPreparedStatement(String sql, @Nullable Object... bindings) {
+        return createPreparedStatement(sql, null, bindings);
+    }
+
+    public PreparedStatement createPreparedStatement(String sql, Integer flags, @Nullable Object... bindings) {
+        sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
+        try {
+            PreparedStatement statement;
+            if (flags != null) {
+                statement = db.getConnection().prepareStatement(sql, flags);
+            } else {
+                statement = db.getConnection().prepareStatement(sql);
+            }
+            if (bindings != null) {
+                int i = 1;
+                for (Object s : bindings) {
+                    statement.setObject(i, s);
+                    i++;
+                }
+            }
+            return statement;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Execute a native SQL update without auto deserialisation<br/>
      * @param sql the sql query, <code>{TABLE}</code> will be replaced with {@link #getName()}
      * @param bindings the {@link PreparedStatement} bindings
      */
     public void executeUpdate(String sql, @Nullable Object... bindings) {
-        sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
-            PreparedStatement statment = db.getConnection().prepareStatement(sql);
-            if (bindings != null) {
-                int i = 1;
-                for (Object s : bindings) {
-                    statment.setObject(i, s);
-                    i++;
-                }
-            }
+            PreparedStatement statment = createPreparedStatement(sql, bindings);
             statment.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
         }
     }
+
 
     protected String sqlToString(String sql, Object... paramObjects) {
         if (sql == null || paramObjects == null || paramObjects.length < 1) {
