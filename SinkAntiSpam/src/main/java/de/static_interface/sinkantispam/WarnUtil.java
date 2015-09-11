@@ -67,12 +67,12 @@ public class WarnUtil {
         if (!includeDeleted) {
             warnings =
                     Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL);",
+                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL) ORDER BY id ASC;",
                                                userId, System.currentTimeMillis()));
         } else {
             warnings =
                     Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ?", userId));
+                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? ORDER BY id ASC", userId));
         }
 
         Collections.sort(warnings);
