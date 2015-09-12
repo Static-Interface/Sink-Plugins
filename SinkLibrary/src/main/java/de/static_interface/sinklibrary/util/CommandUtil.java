@@ -39,7 +39,7 @@ public class CommandUtil {
     public static <T> T parseValue(String[] args, @Nullable Class<T> returnType, boolean strict) {
         String arg = args[0].trim();
 
-        if (arg.equalsIgnoreCase("null")) {
+        if (strict && arg.equalsIgnoreCase("null")) {
             return null;
         }
 
@@ -50,7 +50,7 @@ public class CommandUtil {
             } else if (l <= Short.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Short.class) || returnType
                     .isAssignableFrom(short.class))) {
                 return (T) Short.valueOf(Short.parseShort(arg)); // Value is a Short
-            } else if (l <= Integer.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Integer.class) && returnType
+            } else if (l <= Integer.MAX_VALUE && (returnType == null || returnType.isAssignableFrom(Integer.class) || returnType
                     .isAssignableFrom(int.class))) {
                 return (T) Integer.valueOf(Integer.parseInt(arg)); // Value is an Integer
             }
@@ -122,6 +122,7 @@ public class CommandUtil {
         if (returnType == Object.class && !strict) {
             return null;
         }
-        throw new IllegalArgumentException("ReturnType " + returnType.getName() + " is not supported!");
+        throw new IllegalArgumentException(
+                "ReturnType " + returnType.getName() + " for args: [" + StringUtil.formatArrayToString(args, ", ") + "] is not supported!");
     }
 }
