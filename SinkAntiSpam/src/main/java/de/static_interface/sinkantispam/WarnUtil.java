@@ -21,18 +21,24 @@ import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinkantispam.database.row.WarnedPlayer;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
+import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -44,6 +50,7 @@ public class WarnUtil {
     public static void performWarning(Warning warning, SinkUser warner) {
         WarnedPlayer wPlayer = getWarnedPlayer(warning.userId);
         IngameUser target = SinkLibrary.getInstance().getIngameUser(UUID.fromString(wPlayer.playerUuid));
+        int pointsBefore = getPoints(target);
         addWarning(warning);
 
         String message = prefix + LanguageConfiguration.SAS_WARN_MESSAGE.format(warner, target, null, warning.reason, warning.points);
@@ -59,6 +66,80 @@ public class WarnUtil {
         if (target.isOnline() && !target.hasPermission(perm)) {
             target.sendMessage(message);
         }
+
+        int pointsNow = getPoints(target);
+        int matched = -1;
+        List<String> strings = null;
+        for (Integer i : getConfigSanctions().keySet()) {
+            if (i == pointsNow) {
+                strings = getConfigSanctions().get(i);
+                break;
+            }
+
+            if (pointsBefore < i && pointsNow > i && i > matched) {
+                matched = i;
+            }
+        }
+
+        if (matched != -1) {
+            strings = getConfigSanctions().get(matched);
+        }
+
+        if (strings == null) {
+            return;
+        }
+
+        String name = strings.get(0);
+        WarningSanction sanction = SinkAntiSpam.getInstance().getWarningSanction(name);
+        if (sanction == null) {
+            SinkAntiSpam.getInstance().getLogger().warning("Sanction type not found: " + name);
+            return;
+        }
+        String[] args = new String[strings.size() - 1];
+
+        int i = 0;
+        boolean skipped = false;
+        for (String s : strings) {
+            if (!skipped) {
+                skipped = true;
+                continue;
+            }
+
+            args[i] = s;
+            i++;
+        }
+
+        sanction.execute(target, args);
+    }
+
+    private static Map<Integer, List<String>> getConfigSanctions() {
+        Map<Integer, List<String>> map = new HashMap<>();
+        for (String s : Settings.SAS_SANCTIONS.getValue()) {
+            String[] splits = s.split(":");
+            if (splits.length < 2 || StringUtil.isEmptyOrNull(splits[1])) {
+                SinkAntiSpam.getInstance().getLogger().warning("Couldn't parse sanction: " + s + ": Invalid format");
+                continue;
+            }
+
+            Integer points;
+            try {
+                points = Integer.valueOf(splits[0]);
+            } catch (Exception e) {
+                SinkAntiSpam.getInstance().getLogger().warning("Couldn't parse sanction: " + s + ": Invalid points: " + splits[0]);
+                continue;
+            }
+
+            if (map.containsKey(points)) {
+                SinkAntiSpam.getInstance().getLogger().warning("Couldn't parse sanction: " + s + ": Points already added: " + points);
+                continue;
+            }
+
+            List<String> args = new ArrayList<>();
+            args.addAll(Arrays.asList(splits).subList(1, splits.length + 1));
+            map.put(points, args);
+        }
+
+        return map;
     }
 
     public static List<Warning> getWarnings(IngameUser user, boolean includeDeleted) {

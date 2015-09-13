@@ -26,6 +26,10 @@ import de.static_interface.sinkantispam.command.WarnCommand;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
 import de.static_interface.sinkantispam.database.table.WarningsTable;
+import de.static_interface.sinkantispam.sanction.WarningSanction;
+import de.static_interface.sinkantispam.sanction.impl.BanWarningSanction;
+import de.static_interface.sinkantispam.sanction.impl.CommandWarningSanction;
+import de.static_interface.sinkantispam.sanction.impl.KickWarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConfiguration;
@@ -34,7 +38,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
+
+import javax.annotation.Nullable;
 
 public class SinkAntiSpam extends JavaPlugin {
 
@@ -43,6 +51,7 @@ public class SinkAntiSpam extends JavaPlugin {
     private PredefinedWarningsTable predefinedWarningsTable;
     private WarnedPlayersTable warnedPlayersTable;
     private Database db;
+    private List<WarningSanction> registeredSanctions = new ArrayList<>();
 
     public static SinkAntiSpam getInstance() {
         return instance;
@@ -84,6 +93,11 @@ public class SinkAntiSpam extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        registerWarningSanction(new BanWarningSanction());
+        registerWarningSanction(new KickWarningSanction());
+        registerWarningSanction(new CommandWarningSanction());
+
         instance = this;
 
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
@@ -95,9 +109,34 @@ public class SinkAntiSpam extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("pwarnlist", new PredefinedWarningsListCommand(this));
     }
 
+    public void registerWarningSanction(WarningSanction sanction) {
+        if (sanction.getId() == null) {
+            throw new RuntimeException("WarningSanction ID equals null!");
+        }
+        if (getWarningSanction(sanction.getId()) != null) {
+            throw new IllegalArgumentException(sanction.getId() + " is already registered!");
+        }
+
+        registeredSanctions.add(sanction);
+    }
+
+    @Nullable
+    public WarningSanction getWarningSanction(String id) {
+        id = id.trim();
+        for (WarningSanction sanction : registeredSanctions) {
+            if (sanction.getId().equalsIgnoreCase(id)) {
+                return sanction;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void onDisable() {
         instance = null;
+        registeredSanctions.clear();
+
         if (db != null) {
             try {
                 db.close();
