@@ -17,6 +17,7 @@
 
 package de.static_interface.sinklibrary.util;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -117,6 +118,10 @@ public class CommandUtil {
                 tmp = StringUtil.replaceLast(tmp, "\"", "");
             }
             return (T) tmp; //is string
+        }
+
+        if (returnType != null && SinkLibrary.getInstance().hasStringConvertProvider(returnType)) {
+            return (T) SinkLibrary.getInstance().getStringConvertProvider(returnType).convert(args, strict);
         }
 
         if (returnType == Object.class && !strict) {

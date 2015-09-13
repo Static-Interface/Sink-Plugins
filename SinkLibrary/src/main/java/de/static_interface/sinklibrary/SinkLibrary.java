@@ -38,6 +38,7 @@ import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
 import de.static_interface.sinklibrary.listener.IrcLinkListener;
 import de.static_interface.sinklibrary.provider.SimpleBanProvider;
+import de.static_interface.sinklibrary.provider.StringConvertProvider;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import de.static_interface.sinklibrary.user.ConsoleUser;
@@ -77,6 +78,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,6 +98,7 @@ public class SinkLibrary extends JavaPlugin {
     public static final int API_VERSION = 2;
     public static File LIB_FOLDER;
     private static SinkLibrary instance;
+    private static HashMap<Class<?>, StringConvertProvider> stringConvertertProviders = new HashMap<>();
     private final Map<String, SinkCommand> commandAliases = new ConcurrentHashMap<>();
     private final Map<String, SinkCommand> commands = new ConcurrentHashMap<>();
     private TpsTimer timer;
@@ -112,13 +115,13 @@ public class SinkLibrary extends JavaPlugin {
     private Settings settings;
     private Logger logger;
     private File customDataFolder;
-
     private ConsoleUserProvider consoleUserProvider;
     private IngameUserProvider ingameUserProvider;
     private IrcUserProvider ircUserProvider;
     private BanProvider banProvider;
     private boolean ircExceptionOccured = false;
     private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
+
     /**
      * Get the instance of this plugin
      * @return instance
@@ -130,6 +133,21 @@ public class SinkLibrary extends JavaPlugin {
             //throw new NotInitializedException("SinkLibrary is not initalized");
         }
         return instance;
+    }
+
+    @SafeVarargs
+    public static <T> void registerStringConvertProvider(StringConvertProvider<T> provider, Class<T>... clazzes) {
+        if (clazzes == null || clazzes.length == 0) {
+            throw new IllegalArgumentException("No implementation classes defined!");
+        }
+        for (Class<T> clazz : clazzes) {
+            StringConvertProvider p = stringConvertertProviders.get(clazz);
+            if (p != null) {
+                throw new IllegalStateException(clazz.getName() + " already has a provider defined! (" + p.getClass().getName() + ")");
+            }
+
+            stringConvertertProviders.put(clazz, provider);
+        }
     }
 
     public boolean registerBanProvider(BanProvider provider) {
@@ -148,6 +166,19 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         return banProvider;
+    }
+
+    @Nullable
+    public StringConvertProvider getStringConvertProvider(Class<?> clazz) {
+        return stringConvertertProviders.get(clazz);
+    }
+
+    public Map<Class<?>, StringConvertProvider> getStringConvertProviders() {
+        return Collections.unmodifiableMap(stringConvertertProviders);
+    }
+
+    public boolean hasStringConvertProvider(Class<?> clazz) {
+        return stringConvertertProviders.get(clazz) != null;
     }
 
     public boolean validateApiVersion(int compileVersion, Plugin plugin) {
@@ -906,11 +937,11 @@ public class SinkLibrary extends JavaPlugin {
         commands.put(name.toLowerCase(), command);
     }
 
-    public synchronized void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
+    public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
         unregisterCommand(name, plugin, true);
     }
 
-    public synchronized void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin, boolean unregisterBukkit) {
+    public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin, boolean unregisterBukkit) {
         Validate.notNull(name);
         Validate.notNull(plugin);
 
