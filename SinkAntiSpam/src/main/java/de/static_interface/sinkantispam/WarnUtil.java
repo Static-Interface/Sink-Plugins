@@ -134,8 +134,21 @@ public class WarnUtil {
                 continue;
             }
 
+            String label = "";
+            for (String a : splits) {
+                if (label.equalsIgnoreCase("")) {
+                    label = a;
+                    continue;
+                }
+                label += ":" + a;
+
+            }
+
+            splits = label.split(" ");
             List<String> args = new ArrayList<>();
-            args.addAll(Arrays.asList(splits).subList(1, splits.length + 1));
+            for (int i = 1; i < splits.length; i++) {
+                args.add(splits[i]);
+            }
             map.put(points, args);
         }
 
@@ -148,7 +161,7 @@ public class WarnUtil {
         if (!includeDeleted) {
             warnings =
                     Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` = NULL) ORDER BY id ASC;",
+                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` IS NULL) ORDER BY id ASC;",
                                                userId, System.currentTimeMillis()));
         } else {
             warnings =

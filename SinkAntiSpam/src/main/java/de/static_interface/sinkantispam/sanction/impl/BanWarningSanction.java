@@ -26,13 +26,14 @@ public class BanWarningSanction implements WarningSanction {
 
     @Override
     public String getId() {
-        return null;
+        return "BAN";
     }
 
     @Override
     public void execute(IngameUser user, String[] args) {
         if (args.length == 0) {
             user.ban();
+            if(user.isOnline()) user.getPlayer().kickPlayer("Too many warnings");
             return;
         }
 
@@ -44,7 +45,7 @@ public class BanWarningSanction implements WarningSanction {
         }
 
         String reason = "";
-        for (int i = 0; i <= commandArgs.length - 1; i++) {
+        for (int i = 0; i < commandArgs.length - 1; i++) {
             if (reason.equalsIgnoreCase("")) {
                 reason = commandArgs[i];
                 continue;
@@ -55,6 +56,7 @@ public class BanWarningSanction implements WarningSanction {
         try {
             long time = DateUtil.parseDateDiff(commandArgs[commandArgs.length - 1], true);
             user.ban(reason, time);
+            if(user.isOnline()) user.getPlayer().kickPlayer(reason);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

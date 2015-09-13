@@ -87,8 +87,8 @@ public class Settings extends Configuration {
         List<String> defaultSanctions = new ArrayList<>();
         defaultSanctions.add("80: BAN Too many warning points (80)");
         defaultSanctions.add("50: BAN Too many warning points (50) : 30d");
-        defaultSanctions.add("10: COMMAND say {NAME} has got 10 warnings!");
-        defaultSanctions.add("5: KICK");
+        defaultSanctions.add("10: CMD say {NAME} has got 10 warning points!");
+        defaultSanctions.add("5: KICK You've got too many warning points! (5)");
         SAS_SANCTIONS = new YamlStringListOption(SAS_PARENT, "Sanctions", defaultSanctions);
     }
     static {

@@ -26,7 +26,7 @@ public class CommandWarningSanction implements WarningSanction {
 
     @Override
     public String getId() {
-        return null;
+        return "CMD";
     }
 
     @Override
