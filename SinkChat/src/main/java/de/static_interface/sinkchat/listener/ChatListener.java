@@ -65,11 +65,13 @@ public class ChatListener implements Listener {
             return;
         }
 
+
         IngameUser user = SinkLibrary.getInstance().getIngameUser(event.getPlayer());
         String message = event.getMessage();
 
         if (user.hasPermission("sinkchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
+            event.setMessage(message);
         }
 
         Channel channel;
