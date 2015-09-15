@@ -138,14 +138,15 @@ public class Debug {
         if (!isEnabled()) {
             return;
         }
+
+        Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
         if (throwable != null) {
             String thr = ExceptionUtils.getStackTrace(throwable);
+            Bukkit.getLogger().log(level, "[Debug] " + thr);
             logToFile(level, String.format(ChatColor.stripColor(message) + "%n%s", thr));
         } else {
             logToFile(level, ChatColor.stripColor(message));
         }
-
-        Bukkit.getLogger().log(level, "[Debug] " + Debug.getCallerClassName() + " #" + getCallerMethodName() + ": " + message);
     }
 
     public static void logToFile(@Nonnull Level level, @Nonnull String message) {
