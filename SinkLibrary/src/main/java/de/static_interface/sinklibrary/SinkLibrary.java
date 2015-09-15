@@ -914,7 +914,7 @@ public class SinkLibrary extends JavaPlugin {
         Command cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
         if (!impl.getCommandOptions().isIrcOnly()) {
             if (cmd == null) {
-                Debug.log("Bukkit Command instance not found: " + p.getName() + ":" + cmd.toString() + ", registering a custom one...");
+                Debug.log("Bukkit Command instance not found: " + p.getName() + ":" + name + ", registering a custom one...");
                 cmd = new NativeCommand(name, p, impl);
                 getCommandMap().register(name, cmd);
             } else {
