@@ -17,8 +17,6 @@
 
 package de.static_interface.sinkcommands;
 
-import static de.static_interface.sinklibrary.Constants.TICK;
-
 import com.earth2me.essentials.Essentials;
 import de.static_interface.sinkcommands.command.ChatCommand;
 import de.static_interface.sinkcommands.command.ClearCommand;
@@ -33,28 +31,15 @@ import de.static_interface.sinkcommands.command.MilkCommand;
 import de.static_interface.sinkcommands.command.NewbiechatCommand;
 import de.static_interface.sinkcommands.command.RawCommands;
 import de.static_interface.sinkcommands.command.RenameCommand;
-import de.static_interface.sinkcommands.command.StatsCommands;
 import de.static_interface.sinkcommands.command.SudoCommand;
 import de.static_interface.sinkcommands.command.TeamchatCommand;
 import de.static_interface.sinkcommands.listener.DrugDeadListener;
 import de.static_interface.sinkcommands.listener.GlobalMuteListener;
-import de.static_interface.sinkcommands.listener.ScoreboardListener;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 
 import java.util.logging.Level;
 
@@ -67,72 +52,6 @@ public class SinkCommands extends JavaPlugin {
 
     public static SinkCommands getInstance() {
         return instance;
-    }
-
-    /**
-     * Refresh Scoreboard for all players
-     */
-    public void onRefreshScoreboard() {
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
-            refreshScoreboard(p);
-        }
-    }
-
-    /**
-     * Refresh scoreboard for specified player
-     *
-     * @param player Refresh scoreboard for this player
-     */
-    @SuppressWarnings("deprecation")
-    public void refreshScoreboard(final Player player) {
-        Bukkit.getScheduler().runTask(SinkCommands.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                if (player == null) {
-                    return;
-                }
-                IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
-                IngameUserConfiguration config = user.getConfiguration();
-
-                if (!config.exists()) {
-                    return;
-                }
-
-                ScoreboardManager manager = Bukkit.getScoreboardManager();
-
-                if (!player.hasPermission("sinkcommands.stats") || !config.isStatsEnabled()) {
-                    player.setScoreboard(manager.getNewScoreboard());
-                    return;
-                }
-
-                Scoreboard board = manager.getNewScoreboard();
-                Team team = board.registerNewTeam(player.getName());
-                Objective objective = board.registerNewObjective(ChatColor.DARK_GREEN + "Statistiken", "dummy");
-                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-                if (SinkLibrary.getInstance().isEconomyAvailable()) {
-                    Score money = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Geld: "));
-                    money.setScore(new Double(user.getBalance()).intValue());
-                }
-
-                Score onlinePlayers = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Online: "));
-
-                int size;
-                try {
-                    size = BukkitUtil.getOnlinePlayersForPlayer(player).size();
-                } catch (Exception e) {
-                    size = Bukkit.getOnlinePlayers().size();
-                }
-
-                onlinePlayers.setScore(size);
-
-                Score date = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GRAY + "Gesundheit: "));
-                date.setScore((int) player.getHealth());
-                team.setAllowFriendlyFire(true);
-                team.setCanSeeFriendlyInvisibles(false);
-                player.setScoreboard(board);
-            }
-        });
     }
 
     @Override
@@ -150,13 +69,6 @@ public class SinkCommands extends JavaPlugin {
             registerCommands();
             initialized = true;
         }
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                onRefreshScoreboard();
-            }
-        }, 0, (long) (TICK * 30)); //Update every 30 seconds
 
     }
 
@@ -187,7 +99,6 @@ public class SinkCommands extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GlobalMuteListener(), this);
         pm.registerEvents(new DrugDeadListener(), this);
-        pm.registerEvents(new ScoreboardListener(), this);
     }
 
     private void registerCommands() {
@@ -199,8 +110,6 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));
         SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));
         SinkLibrary.getInstance().registerCommand("clear", new ClearCommand(this));
-        SinkLibrary.getInstance().registerCommand("enablestats", new StatsCommands.EnableStatsCommand(this));
-        SinkLibrary.getInstance().registerCommand("disablestats", new StatsCommands.DisableStatsCommand(this));
         SinkLibrary.getInstance().registerCommand("drug", new DrugCommand(this));
         SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this));
         SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this));

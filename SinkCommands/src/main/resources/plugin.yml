@@ -39,11 +39,6 @@ commands:
       description: Clear your or an other players inventory
       permission: sinkcommands.clear
       aliases: [ci,invclear]
-   enablestats:
-      permission: sinkcommands.stats
-   disablestats:
-      description: Disable stats scoreboard
-      permission: sinkcommands.stats
    raw:
       description: Send raw user
       permission: sinkcommands.raw
