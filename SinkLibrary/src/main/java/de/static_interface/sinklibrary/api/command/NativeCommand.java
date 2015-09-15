@@ -19,10 +19,12 @@ package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.command.annotation.PermissionMessage;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -55,6 +57,8 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         Permission perm = executor.getClass().getAnnotation(Permission.class);
         if (perm != null) {
             setPermission(perm.value());
+        } else if (executor.getClass().getAnnotation(DefaultPermission.class) != null) {
+            setPermission(getPlugin().getName().replace(" ", "_") + "." + getName());
         }
 
         Aliases aliases = executor.getClass().getAnnotation(Aliases.class);
@@ -70,6 +74,8 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         PermissionMessage permissionMessage = executor.getClass().getAnnotation(PermissionMessage.class);
         if (permissionMessage != null) {
             setPermissionMessage(permissionMessage.value());
+        } else {
+            setPermissionMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
         }
 
         Description description = executor.getClass().getAnnotation(Description.class);
