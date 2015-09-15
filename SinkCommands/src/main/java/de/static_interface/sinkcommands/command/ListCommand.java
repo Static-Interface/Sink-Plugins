@@ -18,18 +18,20 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,13 +41,18 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Nonnull;
+
 @Description("Lists all users")
 @DefaultPermission
 @Aliases({"who", "players", "online"})
-public class ListCommand implements CommandExecutor {
+public class ListCommand extends SinkCommand implements CommandExecutor {
+    public ListCommand(@Nonnull Plugin plugin) {
+        super(plugin);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         //Get essentials
         com.earth2me.essentials.Essentials essentials =
                 (com.earth2me.essentials.Essentials) Bukkit.getPluginManager().getPlugin("Essentials");

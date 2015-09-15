@@ -44,7 +44,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
 public class SinkCommands extends JavaPlugin {
-
     private static SinkCommands instance;
     private boolean globalmuteEnabled;
     private boolean initialized = false;
@@ -103,9 +102,9 @@ public class SinkCommands extends JavaPlugin {
 
     private void registerCommands() {
 
-        getCommand("teamchat").setExecutor(new TeamchatCommand());
-        getCommand("newbiechat").setExecutor(new NewbiechatCommand());
-        getCommand("list").setExecutor(new ListCommand());
+        SinkLibrary.getInstance().registerCommand("teamchat", new TeamchatCommand(this));
+        SinkLibrary.getInstance().registerCommand("newbiechat", new NewbiechatCommand(this));
+        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this));
 
         SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));
         SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));

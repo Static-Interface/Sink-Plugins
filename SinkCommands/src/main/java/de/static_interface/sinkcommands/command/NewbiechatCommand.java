@@ -17,27 +17,34 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nonnull;
 
 @DefaultPermission
 @Usage("Usage: /<command> <Message>")
 @Description("Chat for newbies")
 @Aliases("nc")
-public class NewbiechatCommand implements CommandExecutor {
-
+public class NewbiechatCommand extends SinkCommand implements CommandExecutor {
     public static final String PREFIX = ChatColor.YELLOW + "[SupportChat] " + ChatColor.RESET;
 
+    public NewbiechatCommand(@Nonnull Plugin plugin) {
+        super(plugin);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (args.length < 1) {
             return false;
         }

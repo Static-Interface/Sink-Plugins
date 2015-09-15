@@ -4,7 +4,7 @@ description: General Commands Plugin
 author: Trojaner
 authors: [Diar, _ShadowRaven_, Scary_Block]
 website: http://static-interface.de
-main: de.static_interface.sinkcommand.SinkCommands
+main: de.static_interface.sinkcommands.SinkCommands
 depend: [SinkLibrary, SinkIRC]
 
 permissions:
