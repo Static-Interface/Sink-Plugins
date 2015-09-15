@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary;
 
 import de.static_interface.sinklibrary.api.annotation.Unstable;
+import de.static_interface.sinklibrary.api.command.NativeCommand;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
@@ -60,10 +61,13 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -121,7 +125,6 @@ public class SinkLibrary extends JavaPlugin {
     private BanProvider banProvider;
     private boolean ircExceptionOccured = false;
     private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
-
     /**
      * Get the instance of this plugin
      * @return instance
@@ -906,35 +909,48 @@ public class SinkLibrary extends JavaPlugin {
         return logger;
     }
 
-    public synchronized void registerCommand(@Nonnull String name, @Nonnull SinkCommand command) {
-        Debug.logMethodCall(name, command);
-        Plugin p = command.getPlugin();
-        PluginCommand cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
-        if (cmd != null && !command.getCommandOptions().isIrcOnly()) {
-            //Todo: this may not work correctly
-            //if(command.getPlugin() != cmd.getPlugin()) {
-            //    return;
-            //}
-            Debug.log("Bukkit Command instance found: " + cmd.getPlugin().getName() + ":" + cmd.toString());
-            cmd.setExecutor(command);
-            cmd.setTabCompleter(getDefaultTabCompleter());
-            for (String alias : cmd.getAliases()) // Register alias commands
-            {
+    public void registerCommand(@Nonnull String name, @Nonnull final SinkCommand impl) {
+        Debug.logMethodCall(name, impl);
+        final Plugin p = impl.getPlugin();
+        Command cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
+        if (!impl.getCommandOptions().isIrcOnly()) {
+            if (cmd == null) {
+                Debug.log("Bukkit Command instance not found: " + p.getName() + ":" + cmd.toString() + ", registering a custom one...");
+                cmd = new NativeCommand(name, p, impl);
+                getCommandMap().register(name, cmd);
+            } else {
+                Debug.log("Bukkit Command instance found: " + p.getName() + ":" + cmd.toString());
+                ((PluginCommand) cmd).setExecutor(impl);
+                ((PluginCommand) cmd).setTabCompleter(getDefaultTabCompleter());
+                impl.setPlugin(((PluginIdentifiableCommand) cmd).getPlugin());
+            }
+
+            for (String alias : cmd.getAliases()) {
+                // Register alias commands
                 if (alias.equalsIgnoreCase(name)) {
                     continue;
                 }
-
-                commandAliases.put(alias.toLowerCase(), command);
+                commandAliases.put(alias.toLowerCase(), impl);
             }
-            command.setUsage(cmd.getUsage());
-            command.setPermission(cmd.getPermission());
-            command.setPlugin(cmd.getPlugin());
+
+            impl.setUsage(cmd.getUsage());
+            impl.setPermission(cmd.getPermission());
         } else {
             Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
         }
 
-        commandAliases.put(name.toLowerCase(), command);
-        commands.put(name.toLowerCase(), command);
+        commandAliases.put(name.toLowerCase(), impl);
+        commands.put(name.toLowerCase(), impl);
+    }
+
+    private CommandMap getCommandMap() {
+        try {
+            Field f = CraftServer.class.getDeclaredField("commandMap");
+            f.setAccessible(true);
+            return (CommandMap) f.get(Bukkit.getServer());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
