@@ -70,9 +70,9 @@ public class WarnUtil {
         int pointsNow = getPoints(target);
         int matched = -1;
         List<String> strings = null;
-        for (Integer i : getConfigSanctions().keySet()) {
+        for (int i : getConfigSanctions().keySet()) {
             if (i == pointsNow) {
-                strings = getConfigSanctions().get(i);
+                matched = i;
                 break;
             }
 
