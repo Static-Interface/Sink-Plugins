@@ -19,7 +19,6 @@ package de.static_interface.sinkirc;
 
 import de.static_interface.sinkirc.command.IrcKickCommand;
 import de.static_interface.sinkirc.irc_command.ExecCommand;
-import de.static_interface.sinkirc.irc_command.HelpCommand;
 import de.static_interface.sinkirc.irc_command.KickCommand;
 import de.static_interface.sinkirc.irc_command.ListCommand;
 import de.static_interface.sinkirc.irc_command.SayCommand;
@@ -161,7 +160,6 @@ public class SinkIRC extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
         SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this));
-        SinkLibrary.getInstance().registerCommand("help", new HelpCommand(this));
         SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this));
         SinkLibrary.getInstance().registerCommand("say", new SayCommand(this));
         SinkLibrary.getInstance().registerCommand("kick", new KickCommand(this));
