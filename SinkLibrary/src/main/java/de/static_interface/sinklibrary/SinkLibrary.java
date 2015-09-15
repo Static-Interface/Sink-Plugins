@@ -909,16 +909,33 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public void registerCommand(@Nonnull String name, @Nonnull final SinkCommand impl) {
+        name = name.toLowerCase().trim();
         Debug.logMethodCall(name, impl);
         final Plugin p = impl.getPlugin();
         Command cmd = Bukkit.getPluginCommand((p == null ? "" : p.getName() + ":") + name);
+        if (cmd == null) {
+            cmd = getCommandMap().getCommand(name);
+        }
         if (!impl.getCommandOptions().isIrcOnly()) {
-            if (cmd == null) {
-                Debug.log("Bukkit Command instance not found: " + p.getName() + ":" + name + ", registering a custom one...");
+            if (cmd == null || (cmd instanceof PluginIdentifiableCommand && !((PluginIdentifiableCommand) cmd).getPlugin().getName()
+                    .equals(p.getName()))) {
+                try {
+                    Field f = getCommandMap().getClass().getDeclaredField("knownCommands");
+                    f.setAccessible(true);
+                    Map<String, Command> knownCommands =
+                            (Map<String, Command>) f.get(getCommandMap());
+                    if (knownCommands.containsKey(name)) {
+                        knownCommands.remove(name); //Todo: add setting for override/force
+                    }
+                } catch (Exception e) {
+                    Debug.log(e);
+                }
+                Debug.log(
+                        "Bukkit PluginCommand instance not found or doesn't matches: " + p.getName() + ":" + name + ", registering a custom one...");
                 cmd = new NativeCommand(name, p, impl);
                 getCommandMap().register(name, cmd);
-            } else {
-                Debug.log("Bukkit Command instance found: " + p.getName() + ":" + cmd.toString());
+            } else if (cmd instanceof PluginCommand) {
+                Debug.log("Bukkit PluginCommand instance found: " + p.getName() + ":" + cmd.toString());
                 ((PluginCommand) cmd).setExecutor(impl);
                 ((PluginCommand) cmd).setTabCompleter(getDefaultTabCompleter());
                 impl.setPlugin(((PluginIdentifiableCommand) cmd).getPlugin());
