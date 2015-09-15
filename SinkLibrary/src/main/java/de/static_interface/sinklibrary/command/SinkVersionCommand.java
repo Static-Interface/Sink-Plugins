@@ -27,7 +27,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-@Description("Shows version an license info")
+@Description("Shows version and license info")
 @Aliases("sversion")
 public class SinkVersionCommand extends SinkCommand {
 
