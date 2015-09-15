@@ -157,4 +157,12 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
     public Plugin getPlugin() {
         return owningPlugin;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(super.toString());
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        stringBuilder.append(", ").append(this.owningPlugin.getDescription().getFullName()).append(')');
+        return stringBuilder.toString();
+    }
 }
