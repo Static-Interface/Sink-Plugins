@@ -70,11 +70,33 @@ public class ProxiedPlayer extends CraftPlayer implements ProxiedObject<Player, 
 
     private Player base;
     private CommandSender faker;
+    private boolean silent;
 
     public ProxiedPlayer(Player base, CommandSender faker) {
+        this(base, faker, false);
+    }
+
+    public ProxiedPlayer(Player base, CommandSender faker, boolean silent) {
         super((CraftServer) Bukkit.getServer(), ((CraftPlayer) base).getHandle());
         this.base = base;
         this.faker = faker;
+        this.silent = silent;
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        if (!silent) {
+            base.sendMessage(message);
+        }
+        faker.sendMessage(message);
+    }
+
+    @Override
+    public void sendMessage(String[] messages) {
+        if (!silent) {
+            base.sendMessage(messages);
+        }
+        faker.sendMessage(messages);
     }
 
     @Override
@@ -1168,7 +1190,9 @@ public class ProxiedPlayer extends CraftPlayer implements ProxiedObject<Player, 
 
     @Override
     public void sendPluginMessage(Plugin plugin, String s, byte[] bytes) {
-        getBaseObject().sendPluginMessage(plugin, s, bytes);
+        if (!silent) {
+            getBaseObject().sendPluginMessage(plugin, s, bytes);
+        }
         if (getProxy() instanceof PluginMessageRecipient) {
             ((PluginMessageRecipient) getProxy()).sendPluginMessage(plugin, s, bytes);
         }

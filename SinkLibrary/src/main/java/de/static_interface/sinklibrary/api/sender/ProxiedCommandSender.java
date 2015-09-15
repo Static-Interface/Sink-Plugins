@@ -43,8 +43,13 @@ import java.util.Set;
 public class ProxiedCommandSender<K extends CommandSender, E extends CommandSender> extends ProxiedNativeCommandSender
         implements ProxiedObject<K, E>, CommandSender {
 
+    private boolean silent;
     public ProxiedCommandSender(CommandSender base, CommandSender faker) {
+        this(base, faker, false);
+    }
+    public ProxiedCommandSender(CommandSender base, CommandSender faker, boolean silent) {
         super(getListener(base), faker, base);
+        this.silent = silent;
     }
 
     private static ICommandListener getListener(CommandSender sender) {
@@ -71,13 +76,13 @@ public class ProxiedCommandSender<K extends CommandSender, E extends CommandSend
 
     @Override
     public void sendMessage(String s) {
-        getCallee().sendMessage(s);
+        if(!silent) getCallee().sendMessage(s);
         getCaller().sendMessage(s);
     }
 
     @Override
     public void sendMessage(String[] strings) {
-        getCallee().sendMessage(strings);
+        if(!silent) getCallee().sendMessage(strings);
         getCaller().sendMessage(strings);
     }
 

@@ -33,6 +33,13 @@ public class ProxiedCommandSenderConversable<K extends CommandSender, E extends 
         }
     }
 
+    public ProxiedCommandSenderConversable(CommandSender base, CommandSender faker, boolean silent) {
+        super(base, faker, silent);
+        if (!(base instanceof Conversable)) {
+            throw new IllegalArgumentException("Base is not instanceof conversable (use ProxiedCommandSender.class)!");
+        }
+    }
+
     @Override
     public boolean isConversing() {
         return ((Conversable) getCallee()).isConversing();

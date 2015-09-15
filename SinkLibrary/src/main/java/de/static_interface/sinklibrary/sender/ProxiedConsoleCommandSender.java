@@ -25,4 +25,8 @@ public class ProxiedConsoleCommandSender extends ProxiedCommandSenderConversable
     public ProxiedConsoleCommandSender(ConsoleCommandSender base, CommandSender faker) {
         super(base, faker);
     }
+
+    public ProxiedConsoleCommandSender(ConsoleCommandSender base, CommandSender faker, boolean silent) {
+        super(base, faker, silent);
+    }
 }
