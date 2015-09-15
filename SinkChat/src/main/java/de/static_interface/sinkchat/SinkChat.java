@@ -128,8 +128,8 @@ public class SinkChat extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("disablespy", new SpyCommands.DisablSpyCommand(this));
 
         if (towny != null) {
-            getCommand("nationchat").setExecutor(new NationChatCommand());
-            getCommand("townchat").setExecutor(new TownChatCommand());
+            SinkLibrary.getInstance().registerCommand("nationchat", new NationChatCommand(this));
+            SinkLibrary.getInstance().registerCommand("townchat", new TownChatCommand(this));
         }
     }
 }

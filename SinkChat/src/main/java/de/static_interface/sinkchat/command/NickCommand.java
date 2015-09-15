@@ -19,6 +19,9 @@ package de.static_interface.sinkchat.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -34,6 +37,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.regex.Pattern;
 
+@Description("Change your nickname")
+@DefaultPermission
+@Usage("/<command> [Player] <New Name|off>")
 public class NickCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.GREEN + "[Nick]" + ' ' + ChatColor.RESET;

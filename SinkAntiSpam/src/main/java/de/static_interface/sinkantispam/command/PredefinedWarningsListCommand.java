@@ -20,6 +20,8 @@ package de.static_interface.sinkantispam.command;
 import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -27,6 +29,8 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 
+@DefaultPermission
+@Aliases({"pwarnlist", "pwarninglist"})
 public class PredefinedWarningsListCommand extends SinkCommand {
 
     public PredefinedWarningsListCommand(@Nonnull Plugin plugin) {

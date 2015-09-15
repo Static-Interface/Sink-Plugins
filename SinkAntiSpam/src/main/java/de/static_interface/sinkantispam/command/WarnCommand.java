@@ -22,6 +22,8 @@ import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
@@ -40,6 +42,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
 
+@Description("Warn naughty players")
+@DefaultPermission
 public class WarnCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.RED + "[Warn] " + ChatColor.RESET;

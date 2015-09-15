@@ -21,12 +21,18 @@ import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.pircbotx.Channel;
 
+@DefaultPermission
+@Description("Kicks an user from IRC")
+@Aliases("ikick")
 public class IrcKickCommand extends SinkCommand {
 
     public IrcKickCommand(Plugin plugin) {

@@ -19,6 +19,9 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -33,9 +36,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+@DefaultPermission
+@Aliases({"clear", "invclear", "ci"})
+@Description("Clear your or an other players inventory")
 public class ClearCommand extends SinkCommand {
-    //Todo: convert to command
-
     public static final String PREFIX = ChatColor.RED + "[Clear] " + ChatColor.RESET;
 
     public ClearCommand(Plugin plugin) {
@@ -87,7 +91,7 @@ public class ClearCommand extends SinkCommand {
         IngameUser user = (IngameUser) SinkLibrary.getInstance().getUser(sender);
         String targetName = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ").trim();
         if (!targetName.equalsIgnoreCase("")) {
-            if (!user.hasPermission("sinkcommands.clear.others")) {
+            if (!user.hasPermission("sinkcommands.commands.clear.others")) {
                 throw new NotEnoughPermissionsException();
             }
 

@@ -20,6 +20,8 @@ package de.static_interface.sinkcommands.command;
 import static de.static_interface.sinklibrary.Constants.TICK;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.ChatColor;
@@ -29,6 +31,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+@DefaultPermission
+@Description("Take drugs!")
 public class DrugCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Drogen] " + ChatColor.RESET;

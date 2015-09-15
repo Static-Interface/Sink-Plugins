@@ -21,6 +21,9 @@ import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import org.apache.commons.cli.Options;
@@ -31,6 +34,9 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 
+@Description("Delete a predefined warning")
+@Permission("SinkAntiSpam.Command.PredefinedWarnings")
+@Aliases({"delpwarn", "deletepwarn"})
 public class DeletePredefinedWarningCommand extends SinkCommand {
 
     public DeletePredefinedWarningCommand(@Nonnull Plugin plugin) {

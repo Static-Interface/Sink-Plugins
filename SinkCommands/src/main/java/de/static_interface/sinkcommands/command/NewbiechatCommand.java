@@ -17,6 +17,10 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
@@ -24,6 +28,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+@DefaultPermission
+@Usage("Usage: /<command> <Message>")
+@Description("Chat for newbies")
+@Aliases("nc")
 public class NewbiechatCommand implements CommandExecutor {
 
     public static final String PREFIX = ChatColor.YELLOW + "[SupportChat] " + ChatColor.RESET;

@@ -707,7 +707,6 @@ public class SinkLibrary extends JavaPlugin {
 
     /**
      * @param sender Sender of the User
-     * @deprecated Use {@link SinkLibrary#getUser(Object) instead}
      * @return {@link SinkUser} instance of the sender
      */
     public SinkUser getUser(CommandSender sender) {
@@ -1059,7 +1058,7 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     private void registerCommands() {
-        registerCommand("sdebug", new SinkDebugCommand(this));
+        registerCommand("sinkdebug", new SinkDebugCommand(this));
         registerCommand("sinkreload", new SinkReloadCommand(this));
         registerCommand("sinkversion", new SinkVersionCommand(this));
     }

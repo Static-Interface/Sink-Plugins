@@ -19,6 +19,8 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -31,8 +33,9 @@ import org.bukkit.plugin.Plugin;
 
 public class RawCommands {
 
+    @DefaultPermission
+    @Description("Send raw messages")
     public static class RawCommand extends SinkCommand {
-
         public RawCommand(Plugin plugin) {
             super(plugin);
             getCommandOptions().setIrcOpOnly(true);
@@ -48,6 +51,8 @@ public class RawCommands {
         }
     }
 
+    @DefaultPermission
+    @Description("Send raw messages to an user")
     public static class RawUserCommand extends SinkCommand {
 
         public RawUserCommand(Plugin plugin) {

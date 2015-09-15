@@ -6,55 +6,12 @@ website: http://static-interface.de
 main: de.static_interface.sinklibrary.SinkLibrary
 soft-depend: [Vault]
 
-commands:
-  sinkdebug:
-    description: Debug Plugin
-    permission: sinklibrary.debug
-    usage: "Wrong usage! Correct Usage: /<command> <option> <args>"
-    aliases: sdebug
-
-  sinkreload:
-    description: Reload SinkPlugins Configurations
-    permission: sinklibrary.reload
-    aliases: sreload
-
-  sinkversion:
-    description: Shows Version
-    permission: sinklibrary.version
-    aliases: [sver, sversion, sinkver]
-
 permissions:
-  sinklibrary.*:
-     default: op
-     description: Access all SinkLibrary commands
-     children:
-        sinklibrary.updatenotification: true
-        sinklibrary.debug: true
-        sinklibrary.reload: true
-        sinklibrary.ver: true
-        sinklibrary.script: true
-        sinklibrary.bypassvanish: true
-
-  sinklibrary.updatenotification:
-     default: op
-     description: Receive update notifications
-
   sinklibrary.bypassvanish:
      default: op
-     description: Allows to bypass vanish
 
-  sinklibrary.debug:
+  sinklibrary.command.sinkreload:
      default: op
-     description: Permission required for debugging
 
-  sinklibrary.reload:
+  sinklibrary.command.debug:
      default: op
-     description: Permission required for reloading SinkPlugins Configurations
-
-  sinklibrary.script:
-     default: op
-     description: Allows to use groovy scripts.
-
-  sinklibrary.ver:
-     description: Allows to use version command
-     default: true

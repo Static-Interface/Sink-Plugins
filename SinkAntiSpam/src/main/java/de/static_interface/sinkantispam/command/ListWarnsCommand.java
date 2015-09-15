@@ -21,6 +21,9 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -32,6 +35,9 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+@Description("List a players warns")
+@Aliases("listwarns")
+@Usage("/<command> <player>")
 public class ListWarnsCommand extends SinkCommand {
 
     public ListWarnsCommand(Plugin plugin) {

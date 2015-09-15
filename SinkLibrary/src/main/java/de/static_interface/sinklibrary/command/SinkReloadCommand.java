@@ -19,6 +19,9 @@ package de.static_interface.sinklibrary.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.bukkit.Bukkit;
@@ -28,6 +31,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.pircbotx.User;
 
+@Description("Reload all SinkLibrary-based configuration files")
+@DefaultPermission
+@Aliases("sreload")
 public class SinkReloadCommand extends SinkCommand {
     //Todo: fix exceptions on reload
 

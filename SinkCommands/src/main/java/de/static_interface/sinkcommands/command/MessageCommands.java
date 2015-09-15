@@ -19,6 +19,9 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -80,6 +83,9 @@ public class MessageCommands {
         lastReplies.put(target, executor);
     }
 
+    @DefaultPermission
+    @Description("Send messages to other users")
+    @Aliases({"m", "msg", "tell", "whisper"})
     public static class MessageCommand extends SinkCommand {
 
         public MessageCommand(Plugin plugin) {
@@ -120,6 +126,9 @@ public class MessageCommands {
         }
     }
 
+    @DefaultPermission
+    @Description("Send a reply to the last message")
+    @Aliases("r")
     public static class ReplyCommand extends SinkCommand {
 
         public ReplyCommand(Plugin plugin) {

@@ -18,6 +18,9 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -36,6 +39,9 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@Description("Lists all users")
+@DefaultPermission
+@Aliases({"who", "players", "online"})
 public class ListCommand implements CommandExecutor {
 
     @Override
@@ -151,10 +157,6 @@ public class ListCommand implements CommandExecutor {
                 }
             }
         }
-
-        /*
-
-         */
 
         int onlineUsersCount = onlineUsers.size() - vanishUsers;
         String tmp = onlineUsersCount == 1 ? "ist" : "sind";

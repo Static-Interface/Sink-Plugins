@@ -18,6 +18,9 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -29,6 +32,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+@DefaultPermission
+@Description("Rename an item")
+@Usage("/<command <name>")
 public class RenameCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Rename] " + ChatColor.RESET;

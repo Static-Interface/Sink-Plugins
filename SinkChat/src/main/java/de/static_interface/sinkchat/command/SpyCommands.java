@@ -19,6 +19,8 @@ package de.static_interface.sinkchat.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -31,6 +33,8 @@ public class SpyCommands {
 
     public static final String PREFIX = LanguageConfiguration.SC_PREFIX_SPY.format() + ' ' + ChatColor.RESET;
 
+    @Permission("SinkChat.Command.Spy")
+    @Description("Enable local chats spy")
     public static class EnableSpyCommand extends SinkCommand {
 
         public EnableSpyCommand(Plugin plugin) {
@@ -57,6 +61,8 @@ public class SpyCommands {
         }
     }
 
+    @Permission("SinkChat.Command.Spy")
+    @Description("Disable local chats spy")
     public static class DisablSpyCommand extends SinkCommand {
 
         public DisablSpyCommand(Plugin plugin) {

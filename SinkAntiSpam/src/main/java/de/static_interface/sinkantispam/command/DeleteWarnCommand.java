@@ -21,6 +21,9 @@ import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.apache.commons.cli.ParseException;
@@ -30,6 +33,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
+@Usage("/<command> <player> <warning-id>")
+@Aliases({"delwarn", "deletewarn", "delwarning"})
+@DefaultPermission
 public class DeleteWarnCommand extends SinkCommand {
 
     public DeleteWarnCommand(Plugin plugin) {
@@ -45,12 +51,7 @@ public class DeleteWarnCommand extends SinkCommand {
 
         IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
 
-        int id;
-        try {
-            id = Integer.parseInt(args[1]);
-        } catch (Exception e) {
-            return false;
-        }
+        int id = getArg(args, 1, Integer.class);
 
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
 

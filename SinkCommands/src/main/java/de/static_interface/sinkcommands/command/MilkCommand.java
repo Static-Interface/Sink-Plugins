@@ -19,6 +19,8 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
@@ -31,6 +33,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+@DefaultPermission
+@Description("Remove invisibility effects")
 public class MilkCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
@@ -43,7 +47,7 @@ public class MilkCommand extends SinkCommand {
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
-        if (!user.hasPermission("sinkcommands.milk.all")) {
+        if (!user.hasPermission("sinkcommands.commands.milk.all")) {
             throw new NotEnoughArgumentsException();
         }
         if (args.length == 0) //Remove all
@@ -83,7 +87,7 @@ public class MilkCommand extends SinkCommand {
         }
 
         boolean equals = user instanceof IngameUser && ((IngameUser) user).getPlayer().equals(target);
-        if (!equals && user.hasPermission("sinkcommands.milk.others")) {
+        if (!equals && user.hasPermission("sinkcommands.commands.milk.others")) {
             throw new NotEnoughPermissionsException();
         }
 

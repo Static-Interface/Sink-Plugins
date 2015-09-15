@@ -4,159 +4,50 @@ description: General Commands Plugin
 author: Trojaner
 authors: [Diar, _ShadowRaven_, Scary_Block]
 website: http://static-interface.de
-main: de.static_interface.sinkcommands.SinkCommands
+main: de.static_interface.sinkcommand.SinkCommands
 depend: [SinkLibrary, SinkIRC]
 
-commands:
-   drug:
-      description: Take drugs!
-      permission: sinkcommands.drug
-   milk:
-      description: Remove the invisibility potion of players
-      permission: sinkcommands.milk
-   globalmute:
-      descripion: Mutes all players
-      usage: "Falsche Benutzung! Korrekte Benutzung: /<command>[Grund]"
-      permission: sinkcommands.globalmute
-   teamchat:
-      description: Staff only chat
-      usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Nachricht>"
-      permission: sinkcommands.teamchat
-      aliases: tc
-   newbiechat:
-      description: Chat for new users
-      usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Nachricht>"
-      permission: sinkcommands.newbiechat
-      aliases: nc
-   lag:
-      description: Shows information about server lag
-      permission: sinkcommands.lag
-   rename:
-      description: Rename an item
-      permission: sinkcommands.rename
-      usage: "Falsche Benutzung! Korrekte Benutzung: /<command> <Neuer Name>"
-   clear:
-      description: Clear your or an other players inventory
-      permission: sinkcommands.clear
-      aliases: [ci,invclear]
-   raw:
-      description: Send raw user
-      permission: sinkcommands.raw
-   rawuser:
-      description: Send raw message to an user
-      permission: sinkcommands.raw
-   countdown:
-      description: Start a countdown
-      permission: sinkcommands.countdown
-      aliases: cd
-   gup:
-      description: Go up!
-      permission: sinkcommands.gup
-   list:
-      description: Lists all users with specified prefix
-      permission: sinkcommands.list
-      aliases: [online, who]
-   sudo:
-      description: Execute commands as other players
-      permission: sinkcommands.sudo
-   message:
-      description: Send messages to other users
-      permission: sinkcommands.message
-      aliases: [tell, msg, m, whisper]
-   reply:
-      description: Reply to the latest message
-      permission: sinkcommands.message
-      aliases: r
-   chat:
-      description: Chat lel
-      permission: sinkcommands.chat
-
 permissions:
-   sinkcommands.*:
-      description: Gives access to all commands
-      default: op
-      children:
-         sinkcommands.drug: true
-         sinkcommands.sudo: true
-         sinkcommands.milk.*: true
-         sinkcommands.message: true
-         sinkcommands.freeze: true
-         sinkcommands.globalmute: true
-         sinkcommands.chat: true
-         sinkcommands.teamchat: true
-         sinkcommands.message: true
-         sinkcommands.teamchat.color: true
-         sinkcommands.newbiechat: true
-         sinkcommands.newbiechat.color: true
-         sinkcommands.rename: true
-         sinkcommands.clear: true
-         sinkcommands.clear.others: true
-         sinkcommands.stats: true
-         sinkcommands.countdown: true
-         sinkcommands.list: true
-         sinkcommands.gup: true
-   sinkcommands.drug:
+   sinkcommand.command.drug:
       default: true
-   sinkcommands.gup:
+   sinkcommand.command.gup:
       default: op
-   sinkcommands.sudo:
+   sinkcommand.command.sudo:
       default: op
-   sinkcommands.message:
+   sinkcommand.command.message:
       default: op
-   sinkcommands.chat:
+   sinkcommand.command.chat:
       default: op
-   sinkcommands.milk.*:
-      default: op
-      children:
-         sinkcommands.milk: true
-         sinkcommands.milk.others: true
-         sinkcommands.milk.message: true
-         sinkcommands.milk.all: true
-   sinkcommands.milk.others:
+   sinkcommand.command.milk.others:
       default: op
       children:
-         sinkcommands.milk: true
-         sinkcommands.milk.message: true
-   sinkcommands.milk.all:
+         sinkcommand.command.milk: true
+         sinkcommand.command.milk.message: true
+   sinkcommand.command.milk.message:
       default: op
-      children:
-         sinkcommands.milk: true
-         sinkcommands.milk.others: true
-         sinkcommands.milk.message: true
-   sinkcommands.milk.message:
+   sinkcommand.command.milk:
       default: op
-   sinkcommands.milk:
+   sinkcommand.command.globalmute:
       default: op
-   sinkcommands.globalmute:
+   sinkcommand.command.globalmute.bypass:
       default: op
-      children:
-         sinkcommands.globalmute.never: true
-   sinkcommands.globalmute.bypass:
+   sinkcommand.command.teamchat:
       default: op
-   sinkcommands.teamchat:
+   sinkcommand.command.teamchat.color:
       default: op
-   sinkcommands.teamchat.color:
-      default: op
-   sinkcommands.newbiechat:
+   sinkcommand.command.newbiechat:
       default: false
-   sinkcommands.newbiechat.color:
-      description: Allows you to use color on newbiechat
+   sinkcommand.command.rename:
       default: op
-   sinkcommands.dutytime.others:
+   sinkcommand.command.clear:
       default: op
-   sinkcommands.rename:
-      default: op
-   sinkcommands.clear:
-      default: op
-   sinkcommands.clear.others:
+   sinkcommand.command.clear.others:
       default: op
       children:
-         sinkcommands.clear: true
-   sinkcommands.stats:
-      default: true
-   sinkcommands.raw:
+         sinkcommand.command.clear: true
+   sinkcommand.command.raw:
       default: op
-   sinkcommands.countdown:
+   sinkcommand.command.countdown:
       default: op
-   sinkcommands.list:
+   sinkcommand.command.list:
       default: true

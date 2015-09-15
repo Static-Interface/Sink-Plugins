@@ -102,11 +102,11 @@ public class SinkAntiSpam extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
         SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
-        SinkLibrary.getInstance().registerCommand("listwarns", new ListWarnsCommand(this));
-        SinkLibrary.getInstance().registerCommand("deletewarn", new DeleteWarnCommand(this));
-        SinkLibrary.getInstance().registerCommand("createpwarn", new CreatePredefinedWarningCommand(this));
-        SinkLibrary.getInstance().registerCommand("deletepwarn", new DeletePredefinedWarningCommand(this));
-        SinkLibrary.getInstance().registerCommand("pwarnlist", new PredefinedWarningsListCommand(this));
+        SinkLibrary.getInstance().registerCommand("listwarnings", new ListWarnsCommand(this));
+        SinkLibrary.getInstance().registerCommand("deletewarning", new DeleteWarnCommand(this));
+        SinkLibrary.getInstance().registerCommand("createpredefinedwarning", new CreatePredefinedWarningCommand(this));
+        SinkLibrary.getInstance().registerCommand("deletepredefinedwarning", new DeletePredefinedWarningCommand(this));
+        SinkLibrary.getInstance().registerCommand("predefinedwarninglist", new PredefinedWarningsListCommand(this));
     }
 
     public void registerWarningSanction(WarningSanction sanction) {

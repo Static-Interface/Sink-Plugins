@@ -22,22 +22,34 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
+import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TownChatCommand implements CommandExecutor {
+import javax.annotation.Nonnull;
+
+@Description("Chat Channel for Towny Towns")
+@Aliases("ttc")
+public class TownChatCommand extends SinkCommand implements CommandExecutor {
+
+    public TownChatCommand(@Nonnull Plugin plugin) {
+        super(plugin);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (!(sender instanceof Player)) {
             return true;
         }

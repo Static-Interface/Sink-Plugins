@@ -18,6 +18,8 @@
 package de.static_interface.sinklibrary.command;
 
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +27,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
+@Description("Shows version an license info")
+@Aliases("sversion")
 public class SinkVersionCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[SinkLibrary] " + ChatColor.RESET;

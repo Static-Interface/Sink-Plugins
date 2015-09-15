@@ -19,12 +19,16 @@ package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.text.DecimalFormat;
 
+@DefaultPermission
+@Description("Shows information about server lag")
 public class LagCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;

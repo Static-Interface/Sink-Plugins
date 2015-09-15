@@ -109,7 +109,7 @@ public class SinkCommands extends JavaPlugin {
 
         SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));
         SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));
-        SinkLibrary.getInstance().registerCommand("clear", new ClearCommand(this));
+        SinkLibrary.getInstance().registerCommand("clearinventory", new ClearCommand(this));
         SinkLibrary.getInstance().registerCommand("drug", new DrugCommand(this));
         SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this));
         SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this));

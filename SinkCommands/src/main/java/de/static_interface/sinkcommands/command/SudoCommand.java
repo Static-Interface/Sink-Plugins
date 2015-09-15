@@ -21,6 +21,8 @@ import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
@@ -42,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Description("Execute commands as other players")
+@DefaultPermission
 public class SudoCommand extends SinkCommand {
 
     public SudoCommand(Plugin plugin) {

@@ -21,6 +21,10 @@ import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
@@ -31,6 +35,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+@Description("Debug SinkLibrary")
+@DefaultPermission
+@Usage("Wrong usage! Correct Usage: /<command> <option> <args>")
+@Aliases("sdebug")
 public class SinkDebugCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Debug] " + ChatColor.RESET;
