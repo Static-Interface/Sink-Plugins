@@ -33,6 +33,8 @@ import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,6 +53,13 @@ public class SudoCommand extends SinkCommand {
     public SudoCommand(Plugin plugin) {
         super(plugin);
         getCommandOptions().setIrcOpOnly(true);
+        Options options = new Options();
+        Option silent = Option.builder("s")
+                .desc("Don't send any messages to target")
+                .longOpt("silent")
+                .build();
+        options.addOption(silent);
+        getCommandOptions().setCliOptions(options);
     }
 
     @Override
@@ -75,19 +84,20 @@ public class SudoCommand extends SinkCommand {
             }
         }
 
+        boolean silent = getCommandLine().hasOption('s');
         if (target instanceof IrcUser && user instanceof IrcUser) {
             fakeSender = target.getSender();
         } else if (target.getBase() instanceof Player) {
-            fakeSender = new ProxiedPlayer((Player) target.getBase(), sender);
+            fakeSender = new ProxiedPlayer((Player) target.getBase(), sender, silent);
         }
         else if (target instanceof ConsoleUser) {
-            fakeSender = new ProxiedConsoleCommandSender(Bukkit.getConsoleSender(), sender);
+            fakeSender = new ProxiedConsoleCommandSender(Bukkit.getConsoleSender(), sender, silent);
         }
         else if (target.getSender() instanceof Conversable) {
-            fakeSender = new ProxiedCommandSenderConversable(target.getSender(), sender);
+            fakeSender = new ProxiedCommandSenderConversable(target.getSender(), sender, silent);
         }
         else {
-            fakeSender = new ProxiedCommandSender(target.getSender(), sender);
+            fakeSender = new ProxiedCommandSender(target.getSender(), sender, silent);
         }
 
         String commandLine = StringUtil.formatArrayToString(args, " ", 1);
