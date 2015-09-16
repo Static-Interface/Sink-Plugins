@@ -191,7 +191,7 @@ public class IrcUtil {
         }
         final IrcCommandSender sender = new IrcCommandSender(SinkLibrary.getInstance().getIrcUser(user, source), source);
 
-        final SinkCommand cmd = SinkLibrary.getInstance().getCustomCommand(command);
+        final SinkCommand cmd = SinkLibrary.getInstance().getSinkCommand(SinkLibrary.IRC_COMMAND_INTERNAL_PREFIX + command);
 
         boolean isQueryCommand = !source.startsWith("#");
 
