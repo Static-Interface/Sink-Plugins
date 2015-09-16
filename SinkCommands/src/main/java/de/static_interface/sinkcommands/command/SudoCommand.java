@@ -60,6 +60,7 @@ public class SudoCommand extends SinkCommand {
                 .build();
         options.addOption(silent);
         getCommandOptions().setCliOptions(options);
+        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <User> <Command> [CommandArgs] [-s]");
     }
 
     @Override
@@ -72,7 +73,7 @@ public class SudoCommand extends SinkCommand {
 
         CommandSender fakeSender;
 
-        SinkUser target = SinkLibrary.getInstance().getUser(args[0]);
+        SinkUser target = getArg(args, 0, SinkUser.class);
 
         if (!target.isOnline()) {
             throw new UserNotFoundException(args[0]);

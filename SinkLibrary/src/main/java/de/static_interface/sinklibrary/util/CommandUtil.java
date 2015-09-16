@@ -18,6 +18,9 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.user.IrcUser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -109,6 +112,18 @@ public class CommandUtil {
 
         if (returnType.isAssignableFrom(Player.class)) {
             return (T) Bukkit.getPlayer(args[0]);
+        }
+
+        if (returnType.isAssignableFrom(IngameUser.class)) {
+            return (T) SinkLibrary.getInstance().getIngameUser(args[0]);
+        }
+
+        if (returnType.isAssignableFrom(IrcUser.class)) {
+            return (T) SinkLibrary.getInstance().getIrcUser(args[0]);
+        }
+
+        if (returnType.isAssignableFrom(SinkUser.class)) {
+            return (T) SinkLibrary.getInstance().getUser(args[0]);
         }
 
         if ((returnType == null || returnType.isAssignableFrom(String.class)) && (!strict || (strict && tmp.startsWith("\"") && tmp
