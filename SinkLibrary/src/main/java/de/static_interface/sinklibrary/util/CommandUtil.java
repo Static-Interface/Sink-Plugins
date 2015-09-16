@@ -106,12 +106,12 @@ public class CommandUtil {
             }
         }
 
-        if (returnType.isAssignableFrom(OfflinePlayer.class)) {
-            return (T) Bukkit.getOfflinePlayer(args[0]);
-        }
-
         if (returnType.isAssignableFrom(Player.class)) {
             return (T) Bukkit.getPlayer(args[0]);
+        }
+
+        if (returnType.isAssignableFrom(OfflinePlayer.class)) {
+            return (T) Bukkit.getOfflinePlayer(args[0]);
         }
 
         if (returnType.isAssignableFrom(IngameUser.class)) {
