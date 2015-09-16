@@ -40,6 +40,7 @@ public class SinkCommandOptions {
     private HelpFormatter cliHelpFormatter = null;
     private CommandLineParser cliParser = null;
     private SinkCommand parentCommand;
+    private boolean ircEnabled;
 
     public SinkCommandOptions(SinkCommand parentCommand) {
         if (isPlayerOnly && isIrcOnly) {
@@ -49,6 +50,8 @@ public class SinkCommandOptions {
         if (cmdLineSyntax == null) {
             cmdLineSyntax = "";
         }
+
+        ircEnabled = true;
 
         this.parentCommand = parentCommand;
     }
@@ -71,6 +74,9 @@ public class SinkCommandOptions {
 
     public void setPlayerOnly(boolean value) {
         this.isPlayerOnly = value;
+        if(value) {
+            setIrcEnabled(false);
+        }
     }
 
     public boolean isIrcOnly() {
@@ -79,6 +85,9 @@ public class SinkCommandOptions {
 
     public void setIrcOnly(boolean value) {
         this.isIrcOnly = value;
+        if(value) {
+            setIrcEnabled(true);
+        }
     }
 
     public boolean isIrcOpOnly() {
@@ -150,5 +159,13 @@ public class SinkCommandOptions {
 
     public void setDefaultHelpEnabled(boolean defaultHelpEnabled) {
         this.defaultHelpEnabled = defaultHelpEnabled;
+    }
+
+    public boolean isIrcEnabled() {
+        return ircEnabled;
+    }
+
+    public void setIrcEnabled(boolean ircEnabled) {
+        this.ircEnabled = ircEnabled;
     }
 }

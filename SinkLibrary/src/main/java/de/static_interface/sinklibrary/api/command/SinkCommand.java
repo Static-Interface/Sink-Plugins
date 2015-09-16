@@ -75,6 +75,10 @@ public abstract class SinkCommand implements CommandExecutor {
 
     @Override
     public final boolean onCommand(final CommandSender sender, @Nullable Command command, final String label, final String[] args) {
+        if (getCommandOptions().isIrcOnly() && !(sender instanceof IrcCommandSender)) {
+            return true; // do nothing
+        }
+
         this.sender = sender;
         if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
             throw new NotEnoughPermissionsException();
@@ -329,7 +333,7 @@ public abstract class SinkCommand implements CommandExecutor {
     }
 
     public <T> T getArg(String[] args, int index, Class<T> returnType) {
-        if (args.length < index) {
+        if (args.length - 1 < index) {
             throw new NotEnoughArgumentsException("Expected length: " + (index + 1) + ", given length:" + args.length);
         }
 

@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.command.NativeCommand;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.SinkTabCompleter;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.exception.NotInitializedException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.provider.BanProvider;
@@ -61,12 +62,12 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -81,13 +82,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -100,11 +101,10 @@ import javax.annotation.Nullable;
 public class SinkLibrary extends JavaPlugin {
 
     public static final int API_VERSION = 2;
+    public static final String IRC_COMMAND_INTERNAL_PREFIX = "!irc_";
     public static File LIB_FOLDER;
     private static SinkLibrary instance;
     private static HashMap<Class<?>, StringConvertProvider> stringConvertertProviders = new HashMap<>();
-    private final Map<String, SinkCommand> commandAliases = new ConcurrentHashMap<>();
-    private final Map<String, SinkCommand> commands = new ConcurrentHashMap<>();
     private TpsTimer timer;
     private Economy econ;
     private Permission perm;
@@ -125,6 +125,7 @@ public class SinkLibrary extends JavaPlugin {
     private BanProvider banProvider;
     private boolean ircExceptionOccured = false;
     private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
+
     /**
      * Get the instance of this plugin
      * @return instance
@@ -369,7 +370,7 @@ public class SinkLibrary extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("Saving players...");
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             IngameUser user = getIngameUser(p);
             if (user.getConfiguration().exists()) {
                 user.getConfiguration().save();
@@ -383,10 +384,6 @@ public class SinkLibrary extends JavaPlugin {
         }
         instance = null;
         getLogger().info("Disabled.");
-    }
-
-    public Map<String, SinkCommand> getCommands() {
-        return commands;
     }
 
     public boolean isIrcAvailable() {
@@ -593,14 +590,13 @@ public class SinkLibrary extends JavaPlugin {
      */
     @Nonnull
     public IngameUser getIngameUserExact(String playerName, boolean throwExceptionIfNotFound) {
-        throwExceptionIfNotFound = false;
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
             return getIngameUser(p);
         }
 
         IngameUser user = getIngameUser(BukkitUtil.getUniqueIdByName(playerName));
-        if (throwExceptionIfNotFound && !user.hasPlayedBefore()) {
+        if (throwExceptionIfNotFound && !user.hasPlayedBefore() && !user.getConfigurationFile().exists()) {
             throw new UserNotFoundException();
         }
         return user;
@@ -622,7 +618,6 @@ public class SinkLibrary extends JavaPlugin {
      */
     public SinkUser getUser(String partialName, boolean throwExceptionIfNotFound) {
         boolean hasSuffix = false;
-        throwExceptionIfNotFound = false;
 
         if (partialName.equalsIgnoreCase("console")) {
             return getConsoleUser();
@@ -879,20 +874,6 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * @return Online players as Users
-     * @deprecated Unstable implementation
-     */
-    @Unstable
-    @Deprecated
-    public Collection<IngameUser> getOnlineUsers() {
-        Set<IngameUser> users = new HashSet<>();
-        for (SinkUser user : getIngameUserProvider().getUserInstances()) {
-            users.add((IngameUser) user);
-        }
-        return users;
-    }
-
-    /**
      * @return Online IRC users as Users
      */
     @Unstable
@@ -916,48 +897,74 @@ public class SinkLibrary extends JavaPlugin {
         if (cmd == null) {
             cmd = getCommandMap().getCommand(name);
         }
-        if (!impl.getCommandOptions().isIrcOnly()) {
-            if (cmd == null || (cmd instanceof PluginIdentifiableCommand && !((PluginIdentifiableCommand) cmd).getPlugin().getName()
-                    .equals(p.getName()))) {
-                try {
-                    Field f = getCommandMap().getClass().getDeclaredField("knownCommands");
-                    f.setAccessible(true);
-                    Map<String, Command> knownCommands =
-                            (Map<String, Command>) f.get(getCommandMap());
-                    if (knownCommands.containsKey(name)) {
-                        knownCommands.remove(name); //Todo: add setting for override/force
+
+        Aliases ann = impl.getClass().getAnnotation(Aliases.class);
+        List<String> aliases = new ArrayList<>();
+        if (ann != null) {
+            aliases = Arrays.asList(ann.value());
+        }
+        if (!impl.getCommandOptions().isIrcOnly() && (cmd == null || (cmd instanceof PluginIdentifiableCommand && !((PluginIdentifiableCommand) cmd)
+                .getPlugin().getName()
+                .equals(p.getName())))) {
+            try {
+                //Fix for Essentials and smiliar plugins which use reflection too
+                //Todo: add setting for override/force
+
+                Map<String, Command> knownCommands =
+                        (Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
+                for (String s : aliases) {
+                    if (knownCommands.containsKey(s)) {
+                        knownCommands.remove(s);
                     }
-                } catch (Exception e) {
-                    Debug.log(e);
                 }
-                Debug.log(
-                        "Bukkit PluginCommand instance not found or doesn't matches: " + p.getName() + ":" + name + ", registering a custom one...");
-                cmd = new NativeCommand(name, p, impl);
-                getCommandMap().register(name, cmd);
-            } else if (cmd instanceof PluginCommand) {
-                Debug.log("Bukkit PluginCommand instance found: " + p.getName() + ":" + cmd.toString());
-                ((PluginCommand) cmd).setExecutor(impl);
-                ((PluginCommand) cmd).setTabCompleter(getDefaultTabCompleter());
-                impl.setPlugin(((PluginIdentifiableCommand) cmd).getPlugin());
+                knownCommands.remove(name);
+            } catch (Exception e) {
+                Debug.log(e);
             }
-
-            for (String alias : cmd.getAliases()) {
-                // Register alias commands
-                if (alias.equalsIgnoreCase(name)) {
-                    continue;
-                }
-                commandAliases.put(alias.toLowerCase(), impl);
-            }
-
-            impl.setUsage(cmd.getUsage());
-            impl.setPermission(cmd.getPermission());
-        } else {
-            Debug.log("Command is ircOnly. Skipping search for Bukkit Command instance");
+            Debug.log(
+                    "Bukkit PluginCommand instance not found or doesn't matches: " + p.getName() + ":" + name
+                    + ", registering a custom one...");
+            cmd = new NativeCommand(name, p, impl);
+            getCommandMap().register(name, cmd);
+        } else if (cmd instanceof PluginCommand) {
+            Debug.log("Bukkit PluginCommand instance found: " + p.getName() + ":" + cmd.toString());
+            ((PluginCommand) cmd).setExecutor(impl);
+            ((PluginCommand) cmd).setTabCompleter(getDefaultTabCompleter());
+            impl.setPlugin(((PluginIdentifiableCommand) cmd).getPlugin());
         }
 
-        commandAliases.put(name.toLowerCase(), impl);
-        commands.put(name.toLowerCase(), impl);
+        if (cmd == null) {
+            cmd = new NativeCommand(name, p, impl);
+        }
+        if (impl.getCommandOptions().isIrcEnabled()) {
+            Map<String, Command> knownCommands;
+            try {
+                knownCommands = (Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
+            } catch (Exception e) {
+                Debug.log(e);
+                knownCommands = new HashMap<>();
+            }
+            List<String> ircAliases = new ArrayList<>();
+            for (String s : aliases) {
+                if (StringUtil.isEmptyOrNull(s)) {
+                    continue;
+                }
+                ircAliases.add(IRC_COMMAND_INTERNAL_PREFIX + s);
+            }
+            cmd.setAliases(ircAliases);
+            getCommandMap().register(IRC_COMMAND_INTERNAL_PREFIX + name, cmd);
+            knownCommands.put(IRC_COMMAND_INTERNAL_PREFIX + name, cmd);
+            for (String s : ircAliases) {
+                knownCommands.put(s, cmd);
+            }
+            cmd.setAliases(aliases);
+        }
+
+        impl.setUsage(cmd.getUsage());
+        impl.setPermission(cmd.getPermission());
+
     }
+
 
     private CommandMap getCommandMap() {
         try {
@@ -970,41 +977,18 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
-        unregisterCommand(name, plugin, true);
-    }
-
-    public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin, boolean unregisterBukkit) {
-        Validate.notNull(name);
-        Validate.notNull(plugin);
-
-        name = name.toLowerCase();
-
-        SinkCommand sinkCommand = commands.get(name);
-        if (sinkCommand != null && sinkCommand.getCommandOptions().isIrcOnly()) {
-            commands.remove(name);
-            return;
-        }
-
-        PluginCommand cmd = Bukkit.getPluginCommand(plugin.getName() + ":" + name);
+        Command cmd = getCommandMap().getCommand(plugin.getName() + ":" + name);
         if (cmd == null) {
-            return;
-        }
-
-        for (String alias : cmd.getAliases()) // Register alias commands
-        {
-            alias = alias.toLowerCase();
-            if (alias.equals(name)) {
-                continue;
+            cmd = getCommandMap().getCommand(name);
+            if (cmd instanceof PluginIdentifiableCommand && !((PluginIdentifiableCommand) cmd).getPlugin().equals(plugin)) {
+                cmd = null;
             }
-            commandAliases.remove(alias);
+        }
+        if (cmd == null) {
+            throw new IllegalArgumentException("Command \"" + name + "\" not found for plugin: " + plugin.getName());
         }
 
-        commands.remove(name.toLowerCase());
-        commandAliases.remove(name.toLowerCase());
-
-        if (unregisterBukkit) {
-            unregisterCommandBukkit(cmd);
-        }
+        unregisterCommandBukkit(cmd);
     }
 
     private Object getPrivateField(Object object, String field) throws SecurityException,
@@ -1017,13 +1001,9 @@ public class SinkLibrary extends JavaPlugin {
         return result;
     }
 
-    private void unregisterCommandBukkit(PluginCommand cmd) {
+    private void unregisterCommandBukkit(Command cmd) {
         try {
-            Object result = getPrivateField(this.getServer().getPluginManager(), "commandMap");
-            SimpleCommandMap commandMap = (SimpleCommandMap) result;
-            Object map = getPrivateField(commandMap, "knownCommands");
-            @SuppressWarnings("unchecked")
-            HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
+            HashMap<String, Command> knownCommands = (HashMap<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
             knownCommands.remove(cmd.getName());
             for (String alias : cmd.getAliases()) {
                 if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
@@ -1036,12 +1016,38 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     @Nullable
-    public SinkCommand getCustomCommand(String name) {
-        SinkCommand cmd = commands.get(name.toLowerCase());
-        if (cmd == null) {
-            cmd = commandAliases.get(name.toLowerCase());
+    public SinkCommand getSinkCommand(String name) {
+        Command cmd = null;
+        try {
+            cmd = ((Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands")).get(name);
+        } catch (Exception e) {
+            Debug.log(e);
         }
-        return cmd;
+        if (cmd == null) {
+            Debug.log("cmd == null! arg: " + name);
+            return null;
+        }
+
+        if (cmd instanceof NativeCommand) {
+            CommandExecutor exec = ((NativeCommand) cmd).getExecutor();
+            if (exec instanceof SinkCommand) {
+                return (SinkCommand) exec;
+            }
+            Debug.log("NativeCommad but executor is not SinkCommand");
+            return null;
+        }
+
+        if (cmd instanceof PluginCommand) {
+            CommandExecutor exec = ((PluginCommand) cmd).getExecutor();
+            if (exec instanceof SinkCommand) {
+                return (SinkCommand) exec;
+            }
+            Debug.log("PluginCommand but executor is not SinkCommand");
+            return null;
+        }
+
+        Debug.log("Unknown command type: " + cmd.getClass().getName());
+        return null;
     }
 
     private boolean setupChat() {

@@ -40,7 +40,7 @@ public class SinkTabCompleter implements TabCompleter {
                                       String[] args) {
         List<String> result = new ArrayList<>();
 
-        SinkCommand command = SinkLibrary.getInstance().getCustomCommand(cmd.getName());
+        SinkCommand command = SinkLibrary.getInstance().getSinkCommand(cmd.getName());
 
         SinkTabCompleterOptions options;
         if (command != null) {
