@@ -49,6 +49,7 @@ import javax.annotation.Nonnull;
 public class ListCommand extends SinkCommand implements CommandExecutor {
     public ListCommand(@Nonnull Plugin plugin) {
         super(plugin);
+        getCommandOptions().setIrcEnabled(false);
     }
 
     @Override
