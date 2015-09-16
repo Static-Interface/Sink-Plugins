@@ -58,7 +58,7 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         if (perm != null) {
             setPermission(perm.value());
         } else if (executor.getClass().getAnnotation(DefaultPermission.class) != null) {
-            setPermission(getPlugin().getName().replace(" ", "_") + ".Command." + getName());
+            setPermission(getPlugin().getName().replace(" ", "_").toLowerCase() + ".command." + getName().toLowerCase());
         }
 
         Aliases aliases = executor.getClass().getAnnotation(Aliases.class);
