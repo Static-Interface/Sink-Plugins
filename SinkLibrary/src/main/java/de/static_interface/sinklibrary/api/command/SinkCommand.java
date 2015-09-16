@@ -57,12 +57,11 @@ public abstract class SinkCommand implements CommandExecutor {
     protected Plugin plugin;
     private SinkTabCompleterOptions defaultTabOptions = new SinkTabCompleterOptions(true, false, false);
     private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(this);
-    private String usage = null;
     private String permission;
     private CommandLineParser parser = getCommandOptions().getCliParser();
     private CommandLine cmdLine = null;
     private String cmd = null;
-
+    private String commandUsage = null;
     public SinkCommand(@Nonnull Plugin plugin) {
         this(plugin, false);
     }
@@ -103,7 +102,7 @@ public abstract class SinkCommand implements CommandExecutor {
         command = Bukkit.getPluginCommand(plugin.getName() + ":" + cmd);
         if (command != null) {
             permission = command.getPermission();
-            usage = command.getUsage();
+            commandUsage = command.getUsage();
 
             if (localSender instanceof ProxiedNativeCommandSender) {
                 localSender = ((ProxiedNativeCommandSender) localSender).getCallee();
@@ -296,16 +295,23 @@ public abstract class SinkCommand implements CommandExecutor {
 
     public String getUsage() {
         Options options = getCommandOptions().getCliOptions();
-        if (StringUtil.isEmptyOrNull(usage) && options != null) {
+        String usage = commandUsage;
+        if (options != null) {
+            if (StringUtil.isEmptyOrNull(getCommandOptions().getCmdLineSyntax())) {
+                getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options>");
+            }
             StringWriter writer = new StringWriter();
             getCommandOptions().getCliHelpFormatter(writer);
             usage = writer.toString();
+            if (!StringUtil.isEmptyOrNull(commandUsage)) {
+                usage += System.lineSeparator() + commandUsage;
+            }
         }
         return usage;
     }
 
     public void setUsage(String usage) {
-        this.usage = usage;
+        this.commandUsage = usage;
     }
 
     public String getPermission() {
