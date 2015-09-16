@@ -276,7 +276,15 @@ public abstract class SinkCommand implements CommandExecutor {
     }
 
     protected void sendUsage(CommandSender sender, Command command) {
-        sender.sendMessage(getUsage().split(System.lineSeparator().replace("<command>", command.getName())));
+        String usage = getUsage();
+        if (usage == null) {
+            return;
+        }
+
+        if (command != null) {
+            usage = getUsage().replace("<command>", command.getName());
+        }
+        sender.sendMessage(usage.split(System.lineSeparator()));
     }
 
     protected String getCommandPrefix() {
