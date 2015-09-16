@@ -20,6 +20,20 @@ package de.static_interface.sinklibrary.database;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.annotation.Column;
 import de.static_interface.sinklibrary.database.annotation.ForeignKey;
+import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.condition.EqualsCondition;
+import de.static_interface.sinklibrary.database.query.condition.GreaterThanCondition;
+import de.static_interface.sinklibrary.database.query.condition.GreaterThanEqualsCondition;
+import de.static_interface.sinklibrary.database.query.condition.LikeCondition;
+import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
+import de.static_interface.sinklibrary.database.query.impl.AndQuery;
+import de.static_interface.sinklibrary.database.query.impl.FromQuery;
+import de.static_interface.sinklibrary.database.query.impl.LimitQuery;
+import de.static_interface.sinklibrary.database.query.impl.OrQuery;
+import de.static_interface.sinklibrary.database.query.impl.OrderByQuery;
+import de.static_interface.sinklibrary.database.query.impl.SelectQuery;
+import de.static_interface.sinklibrary.database.query.impl.WhereQuery;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
@@ -137,5 +151,107 @@ public abstract class Database {
      */
     public SQLDialect getDialect() {
         return dialect;
+    }
+
+    /**
+     * @param tQuery the query to build
+     * @return the query in sql
+     */
+    public String buildQuery(Query tQuery) {
+        String sql = "";
+        while (tQuery != null) {
+            sql += toSql(tQuery);
+
+            tQuery = tQuery.getChild();
+        }
+        return sql.trim();
+    }
+
+    protected String toSql(Query tQuery) {
+        char bt = getBacktick();
+        if (tQuery instanceof FromQuery) {
+            return "";
+        }
+
+        if (tQuery instanceof SelectQuery) {
+            return "SELECT " + StringUtil.formatArrayToString(((SelectQuery) tQuery).getColumns(), ",") + " FROM " + bt + "{TABLE}" + bt + " ";
+        }
+
+        if (tQuery instanceof AndQuery) {
+            return "AND " + whereStatementToSql((WhereQuery) tQuery) + " ";
+        }
+
+        if (tQuery instanceof OrQuery) {
+            return "OR " + whereStatementToSql((WhereQuery) tQuery) + " ";
+        }
+
+        if (tQuery instanceof WhereQuery) {
+            return "WHERE " + whereStatementToSql((WhereQuery) tQuery) + " ";
+        }
+
+        if (tQuery instanceof OrderByQuery) {
+            String columnName = ((OrderByQuery) tQuery).getColumn();
+            String order = ((OrderByQuery) tQuery).getOrder().name().toUpperCase();
+            return "ORDER BY " + bt + columnName + bt + " " + order + " ";
+        }
+
+        if (tQuery instanceof LimitQuery) {
+            return "LIMIT " + ((LimitQuery) tQuery).getOffset() + "," + ((LimitQuery) tQuery).getRowCount() + " ";
+        }
+
+        throw new IllegalStateException("Query not supported: " + tQuery.getClass().getName());
+    }
+
+    protected String whereStatementToSql(WhereQuery tQuery) {
+        WhereCondition condition = tQuery.getCondition();
+
+        char bt = getBacktick();
+        String columName = bt + tQuery.getColumn() + bt;
+
+        if (condition instanceof GreaterThanCondition) {
+            String operator = "";
+            boolean isInverted = ((GreaterThanCondition) condition).isInverted();
+            boolean isNegated = condition.isNegated();
+            if (isInverted && !isNegated || !isInverted && condition.isNegated()) {
+                operator = "<";
+            } else if (isInverted && isNegated) {
+                operator = ">";
+            } else if (!isInverted && !isNegated) {
+                operator = ">";
+            }
+
+            boolean isEquals = condition instanceof GreaterThanEqualsCondition;
+            if ((isEquals && !isNegated) || (!isEquals && condition.isNegated())) {
+                operator += "=";
+            }
+            return columName + " " + operator + " " + condition.getValue().toString();
+        }
+
+        if (condition instanceof EqualsCondition) {
+            String equalsOperator = "=";
+            if (condition.isNegated()) {
+                equalsOperator = "!=";
+            }
+            Object o = condition.getValue();
+            if (o == null) {
+                equalsOperator = "IS";
+                if (condition.isNegated()) {
+                    equalsOperator = "IS NOT";
+                }
+            }
+
+            return columName + " " + equalsOperator + " " + (o == null ? "NULL" : o.toString());
+        }
+
+        if (condition instanceof LikeCondition) {
+            String likeOperator = "LIKE";
+            if (condition.isNegated()) {
+                likeOperator = "NOT LIKE";
+            }
+
+            return columName + " " + likeOperator + ((LikeCondition) condition).getPattern();
+        }
+
+        throw new IllegalStateException("Condition not supported: " + condition.getClass().getName());
     }
 }

@@ -89,6 +89,14 @@ public abstract class AbstractTable<T extends Row> {
     }
 
     /**
+     * Get the database of this table
+     * @return the database of this table
+     */
+    public final Database getDatabase() {
+        return db;
+    }
+
+    /**
      * Create the table
      * @see ForeignKey
      * @see Column
