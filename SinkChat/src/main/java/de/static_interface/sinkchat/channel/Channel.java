@@ -123,7 +123,7 @@ public class Channel {
         for (Player p : new HashSet<>(recipients)) {
             if ((getRange() > 0 && !Util.isInRange(sender, p, getRange()))
                 || (!enabledForPlayer(p.getUniqueId()))
-                || !p.hasPermission(getPermission())) {
+                || (StringUtil.isEmptyOrNull(getPermission()) && !p.hasPermission(getPermission()))) {
                 recipients.remove(p);
             }
         }
