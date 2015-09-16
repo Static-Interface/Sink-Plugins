@@ -112,9 +112,10 @@ public class SudoCommand extends SinkCommand {
             commandLine = commandLine.replaceFirst("/", "");
         }
 
-        String cmd = args[0].trim();
+        String cmd = args[1].toLowerCase().trim();
         List<String> tmp = new ArrayList<>(Arrays.asList(args));
-        tmp.remove(cmd);
+        tmp.remove(0);
+        tmp.remove(1);
         args = tmp.toArray(new String[tmp.size()]);
 
         if (shouldBeOp) {
