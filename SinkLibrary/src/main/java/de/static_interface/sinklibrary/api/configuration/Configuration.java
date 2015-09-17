@@ -21,7 +21,7 @@ import com.google.common.io.Files;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.option.YamlOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlParentOption;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.FileUtil;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
@@ -302,7 +302,7 @@ public abstract class Configuration {
         try {
             writeToFile(getFile());
         } catch (IOException e) {
-            if (Settings.GENERAL_DEBUG.getValue()) {
+            if (GeneralSettings.GENERAL_DEBUG.getValue()) {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!', e);
             } else {
                 SinkLibrary.getInstance().getLogger().log(Level.SEVERE, "Couldn't save configuration file: " + getFile() + '!');

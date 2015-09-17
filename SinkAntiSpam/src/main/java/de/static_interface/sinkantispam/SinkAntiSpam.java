@@ -23,6 +23,8 @@ import de.static_interface.sinkantispam.command.DeleteWarnCommand;
 import de.static_interface.sinkantispam.command.ListWarnsCommand;
 import de.static_interface.sinkantispam.command.PredefinedWarningsListCommand;
 import de.static_interface.sinkantispam.command.WarnCommand;
+import de.static_interface.sinkantispam.config.SasLanguage;
+import de.static_interface.sinkantispam.config.SasSettings;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
 import de.static_interface.sinkantispam.database.table.WarningsTable;
@@ -37,6 +39,7 @@ import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +65,14 @@ public class SinkAntiSpam extends JavaPlugin {
         if (!checkDependencies()) {
             return;
         }
+        File sinkAntiSpamDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkAntiSpam");
+
+        new SasSettings(new File(sinkAntiSpamDirectory, "Settings.yml")).init();
+        new SasLanguage(new File(sinkAntiSpamDirectory, "Language.yml")).init();
 
         db =
                 new MySqlDatabase(
-                        new DatabaseConfiguration(SinkLibrary.getInstance().getCustomDataFolder(), "SinkAntiSpamDB.yml", "SAS_", "SinkAntiSpam"),
+                        new DatabaseConfiguration(sinkAntiSpamDirectory, "Database.yml", "SAS_", "SinkPlugins"),
                         this);
         try {
             db.connect();

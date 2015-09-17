@@ -33,6 +33,7 @@ import de.static_interface.sinkcommands.command.RawCommands;
 import de.static_interface.sinkcommands.command.RenameCommand;
 import de.static_interface.sinkcommands.command.SudoCommand;
 import de.static_interface.sinkcommands.command.TeamchatCommand;
+import de.static_interface.sinkcommands.config.ScmdSettings;
 import de.static_interface.sinkcommands.listener.DrugDeadListener;
 import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -41,6 +42,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.logging.Level;
 
 public class SinkCommands extends JavaPlugin {
@@ -55,10 +57,15 @@ public class SinkCommands extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
+
         if (!checkDependencies()) {
             return;
         }
+
+        instance = this;
+
+        File sinkCommandsDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkCommands");
+        new ScmdSettings(new File(sinkCommandsDirectory, "Settings.yml")).init();
 
         LagTimer lagTimer = new LagTimer();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);

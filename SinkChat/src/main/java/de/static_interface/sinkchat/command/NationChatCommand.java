@@ -23,11 +23,11 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
+import de.static_interface.sinkchat.config.ScLanguage;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
@@ -59,12 +59,12 @@ public class NationChatCommand extends SinkCommand implements CommandExecutor {
         Resident resident = TownyHelper.getResident(player.getName());
 
         if (!resident.hasTown()) {
-            player.sendMessage(LanguageConfiguration.SC_TOWNY_NOT_IN_TOWN.format());
+            player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
             return true;
         }
 
         if (!resident.hasNation()) {
-            player.sendMessage(LanguageConfiguration.SC_TOWNY_NOT_IN_NATION.format());
+            player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_NATION.format());
             return true;
         }
 

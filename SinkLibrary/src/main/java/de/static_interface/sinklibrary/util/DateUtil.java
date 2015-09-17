@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary.util;
 
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -143,12 +143,12 @@ public class DateUtil {
                         Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND
                 };
 
-        String years = LanguageConfiguration.TIMEUNIT_YEARS.format();
-        String months = LanguageConfiguration.TIMEUNIT_MONTHS.format();
-        String days = LanguageConfiguration.TIMEUNIT_DAYS.format();
-        String hours = LanguageConfiguration.TIMEUNIT_HOURS.format();
-        String minutes = LanguageConfiguration.TIMEUNIT_MINUTES.format();
-        String seconds = LanguageConfiguration.TIMEUNIT_SECONDS.format();
+        String years = GeneralLanguage.TIMEUNIT_YEARS.format();
+        String months = GeneralLanguage.TIMEUNIT_MONTHS.format();
+        String days = GeneralLanguage.TIMEUNIT_DAYS.format();
+        String hours = GeneralLanguage.TIMEUNIT_HOURS.format();
+        String minutes = GeneralLanguage.TIMEUNIT_MINUTES.format();
+        String seconds = GeneralLanguage.TIMEUNIT_SECONDS.format();
         String[] names = new String[]
                 {
                         years, years, months, months, days, days, hours, hours, minutes, minutes, seconds, seconds
@@ -190,14 +190,14 @@ public class DateUtil {
         String out = "";
 
         if (years > 0) {
-            out += " " + years + " " + LanguageConfiguration.TIMEUNIT_YEARS.format();
+            out += " " + years + " " + GeneralLanguage.TIMEUNIT_YEARS.format();
             showMinutes = false;
             showHours = false;
             showSeconds = false;
         }
 
         if (months > 0) {
-            out += " " + months + " " + LanguageConfiguration.TIMEUNIT_MONTHS.format();
+            out += " " + months + " " + GeneralLanguage.TIMEUNIT_MONTHS.format();
             showMinutes = false;
             showHours = false;
             showSeconds = false;
@@ -206,20 +206,20 @@ public class DateUtil {
         if (days > 0) {
             showMinutes = false;
             showSeconds = false;
-            out += " " + days + " " + LanguageConfiguration.TIMEUNIT_DAYS.format();
+            out += " " + days + " " + GeneralLanguage.TIMEUNIT_DAYS.format();
         }
 
         if (hours > 0 && showHours) {
             showSeconds = false;
-            out += " " + hours + " " + LanguageConfiguration.TIMEUNIT_HOURS.format();
+            out += " " + hours + " " + GeneralLanguage.TIMEUNIT_HOURS.format();
         }
 
         if (minutes > 0 && showMinutes) {
-            out += " " + minutes + " " + LanguageConfiguration.TIMEUNIT_MINUTES.format();
+            out += " " + minutes + " " + GeneralLanguage.TIMEUNIT_MINUTES.format();
         }
 
         if (seconds > 0 && showSeconds) {
-            out += " " + seconds + " " + LanguageConfiguration.TIMEUNIT_SECONDS.format();
+            out += " " + seconds + " " + GeneralLanguage.TIMEUNIT_SECONDS.format();
         }
 
         return out.trim();

@@ -33,8 +33,8 @@ import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
@@ -116,7 +116,7 @@ public class SinkLibrary extends JavaPlugin {
     private Map<Class<?>, SinkUserProvider> userImplementations;
     private SinkTabCompleter defaultCompleter;
     private List<String> loadedLibs;
-    private Settings settings;
+    private GeneralSettings generalSettings;
     private Logger logger;
     private File customDataFolder;
     private ConsoleUserProvider consoleUserProvider;
@@ -199,7 +199,7 @@ public class SinkLibrary extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("Loading...");
-        if (settings == null) {
+        if (generalSettings == null) {
             if (!getCustomDataFolder().exists()) {
                 try {
                     boolean success = getCustomDataFolder().mkdirs();
@@ -210,8 +210,8 @@ public class SinkLibrary extends JavaPlugin {
                     Bukkit.getLogger().log(Level.SEVERE, "Couldn't create Data Folder!", e); // Log via Bukkits Logger, because Log File doesnt exists
                 }
             }
-            settings = new Settings();
-            settings.init();
+            generalSettings = new GeneralSettings();
+            generalSettings.init();
         }
 
 
@@ -234,9 +234,9 @@ public class SinkLibrary extends JavaPlugin {
             getLogger().warning("Coudln't create lib directory");
         }
 
-        LanguageConfiguration languageConfiguration =
-                new LanguageConfiguration();
-        languageConfiguration.init();
+        GeneralLanguage generalLanguage =
+                new GeneralLanguage();
+        generalLanguage.init();
 
         // Check optional dependencies
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
@@ -377,7 +377,7 @@ public class SinkLibrary extends JavaPlugin {
             }
         }
         try {
-            if (Settings.GENERAL_LOG.getValue()) {
+            if (GeneralSettings.GENERAL_LOG.getValue()) {
                 Debug.getDebugLogFileWriter().close();
             }
         } catch (Exception ignored) {
@@ -526,8 +526,8 @@ public class SinkLibrary extends JavaPlugin {
      * @return Settings
      */
     @Deprecated
-    public Settings getSettings() {
-        return settings;
+    public GeneralSettings getSettings() {
+        return generalSettings;
     }
 
     /**
@@ -785,7 +785,7 @@ public class SinkLibrary extends JavaPlugin {
      * @param player Player that needs to refresh DisplayName
      */
     public void onRefreshDisplayName(Player player) {
-        if (!Settings.GENERAL_DISPLAYNAMES.getValue()) {
+        if (!GeneralSettings.GENERAL_DISPLAYNAMES.getValue()) {
             return;
         }
 

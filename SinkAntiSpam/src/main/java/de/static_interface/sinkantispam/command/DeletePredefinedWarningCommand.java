@@ -25,7 +25,7 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.ChatColor;
@@ -54,7 +54,7 @@ public class DeletePredefinedWarningCommand extends SinkCommand {
 
         PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
         if (pWarning == null) {
-            sender.sendMessage(LanguageConfiguration.GENERAL_UNKNOWN_VALUE.format(args[1]));
+            sender.sendMessage(GeneralLanguage.GENERAL_UNKNOWN_VALUE.format(args[1]));
             return true;
         }
 

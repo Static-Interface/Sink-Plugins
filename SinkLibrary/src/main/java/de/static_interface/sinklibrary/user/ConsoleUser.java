@@ -21,7 +21,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -99,7 +99,7 @@ public class ConsoleUser extends SinkUser<ConsoleCommandSender> {
 
     @Override
     public void sendDebugMessage(String msg) {
-        if (Settings.GENERAL_DEBUG.getValue()) {
+        if (GeneralSettings.GENERAL_DEBUG.getValue()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] " + ChatColor.RESET + msg);
         }
     }

@@ -18,6 +18,7 @@
 package de.static_interface.sinkantispam.command;
 
 import de.static_interface.sinkantispam.WarnUtil;
+import de.static_interface.sinkantispam.config.SasLanguage;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinklibrary.SinkLibrary;
@@ -29,7 +30,7 @@ import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsExcepti
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.DateUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -102,7 +103,7 @@ public class WarnCommand extends SinkCommand {
         IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
 
         if (target.getName().equals(sender.getName())) {
-            sender.sendMessage(PREFIX + LanguageConfiguration.SAS_WARN_SELF.format());
+            sender.sendMessage(PREFIX + SasLanguage.SAS_WARN_SELF.format());
             return true;
         }
 
@@ -155,7 +156,7 @@ public class WarnCommand extends SinkCommand {
             }
             PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
             if (pWarning == null) {
-                sender.sendMessage(LanguageConfiguration.GENERAL_UNKNOWN_VALUE.format(args[1]));
+                sender.sendMessage(GeneralLanguage.GENERAL_UNKNOWN_VALUE.format(args[1]));
                 return true;
             }
             warning.reason = pWarning.reason;

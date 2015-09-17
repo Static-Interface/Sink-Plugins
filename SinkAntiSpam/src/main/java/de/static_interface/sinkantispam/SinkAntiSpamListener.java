@@ -20,12 +20,12 @@ package de.static_interface.sinkantispam;
 
 import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
+import de.static_interface.sinkantispam.config.SasLanguage;
+import de.static_interface.sinkantispam.config.SasSettings;
 import de.static_interface.sinkantispam.warning.BlacklistWarning;
 import de.static_interface.sinkantispam.warning.DomainWarning;
 import de.static_interface.sinkantispam.warning.IpWarning;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.DomainValidator;
 import org.bukkit.ChatColor;
@@ -59,18 +59,18 @@ public class SinkAntiSpamListener implements Listener {
 
         Pattern pattern;
         Matcher matcher;
-        if (Settings.SAS_IPFILTER_ENABLED.getValue()) {
+        if (SasSettings.SAS_IPFILTER_ENABLED.getValue()) {
             pattern = Pattern.compile("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
             matcher = pattern.matcher(message);
             if (matcher.find()) {
                 String ip = matcher.group(0);
                 WarnUtil.performWarning(new IpWarning(user, ip, WarnUtil.getNextWarningId(user)), SinkLibrary.getInstance().getConsoleUser());
                 result.setResultcode(WarnResult.CENSOR);
-                result.setCensoredMessage(message.replace(ip, LanguageConfiguration.SAS_REPLACE_IP.format()));
+                result.setCensoredMessage(message.replace(ip, SasLanguage.SAS_REPLACE_IP.format()));
                 return result;
             }
         }
-        if (Settings.SAS_WHITELISTED_DOMAINS_ENABLED.getValue()) {
+        if (SasSettings.SAS_WHITELISTED_DOMAINS_ENABLED.getValue()) {
             String[] words = message.split(" ");
 
             for (String word : words) {
@@ -78,17 +78,17 @@ public class SinkAntiSpamListener implements Listener {
                     continue;
                 }
 
-                if (isBlackListed(word, Settings.SAS_WHITELISTED_DOMAINS.getValue(), false) != null) {
+                if (isBlackListed(word, SasSettings.SAS_WHITELISTED_DOMAINS.getValue(), false) != null) {
                     return result;
                 }
                 WarnUtil.performWarning(new DomainWarning(user, word, WarnUtil.getNextWarningId(user)), SinkLibrary.getInstance().getConsoleUser());
                 result.setResultcode(WarnResult.CENSOR);
-                result.setCensoredMessage(message.replace(word, LanguageConfiguration.SAS_REPLACE_DOMAIN.format()));
+                result.setCensoredMessage(message.replace(word, SasLanguage.SAS_REPLACE_DOMAIN.format()));
             }
             return result;
         }
-        if (Settings.SAS_BLACKLIST_ENABLED.getValue()) {
-            String blacklistWord = isBlackListed(message, Settings.SAS_BLACKLISED_WORDS.getValue(), true);
+        if (SasSettings.SAS_BLACKLIST_ENABLED.getValue()) {
+            String blacklistWord = isBlackListed(message, SasSettings.SAS_BLACKLISED_WORDS.getValue(), true);
             if (blacklistWord != null) {
                 blacklistWord = blacklistWord.trim();
                 String
@@ -161,7 +161,7 @@ public class SinkAntiSpamListener implements Listener {
         }
 
         if(lastMsg != null && lastMsg.equalsIgnoreCase(msg)) {
-            event.getPlayer().sendMessage(LanguageConfiguration.SAS_REPEATING_MESSAGE.format());
+            event.getPlayer().sendMessage(SasLanguage.SAS_REPEATING_MESSAGE.format());
             event.setCancelled(true);
             return;
         }
@@ -172,14 +172,14 @@ public class SinkAntiSpamListener implements Listener {
 
         long difference = System.currentTimeMillis() - lastMsgTime;
         if(lastMsgTime != null && difference < SPAM_DELAY) {
-            event.getPlayer().sendMessage(LanguageConfiguration.SAS_COOLDOWN_MESSAGE.format(SPAM_DELAY - difference));
+            event.getPlayer().sendMessage(SasLanguage.SAS_COOLDOWN_MESSAGE.format(SPAM_DELAY - difference));
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        for (String command : Settings.SAS_EXCLUDED_COMMANDS.getValue()) {
+        for (String command : SasSettings.SAS_EXCLUDED_COMMANDS.getValue()) {
             if (event.getMessage().startsWith(COMMAND_PREFIX + command)
                 || event.getMessage().startsWith(command)) {
                 return;

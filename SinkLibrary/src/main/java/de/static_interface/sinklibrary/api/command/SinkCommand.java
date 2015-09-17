@@ -23,8 +23,8 @@ import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsExcepti
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UserNotOnlineException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
@@ -109,7 +109,7 @@ public abstract class SinkCommand implements CommandExecutor {
             }
 
             if (!(localSender instanceof IrcCommandSender) && permission != null && !localSender.hasPermission(permission) && !localSender.isOp()) {
-                sender.sendMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
+                sender.sendMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
                 return true;
             }
         }
@@ -230,20 +230,20 @@ public abstract class SinkCommand implements CommandExecutor {
         if (handleException(sender, command, label, args, exception)) {
             return true;
         } else if (exception instanceof NotEnoughPermissionsException) {
-            sender.sendMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
+            sender.sendMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
             reportException = false;
         } else if (exception instanceof NotEnoughArgumentsException) {
-            sender.sendMessage(LanguageConfiguration.GENERAL_NOT_ENOUGH_ARGUMENTS.format());
+            sender.sendMessage(GeneralLanguage.GENERAL_NOT_ENOUGH_ARGUMENTS.format());
             reportException = false;
         } else if (exception instanceof UserNotFoundException || exception instanceof UserNotOnlineException) {
-            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
+            sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             reportException = false;
         } else if (exception instanceof ParseException) {
             sendUsage(sender, command);
-            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
+            sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             return true;
         } else if (exception instanceof NumberFormatException) {
-            sender.sendMessage(LanguageConfiguration.GENERAL_ERROR.format(exception.getMessage()));
+            sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             reportException = false;
         }
 
@@ -258,7 +258,7 @@ public abstract class SinkCommand implements CommandExecutor {
                 exception.printStackTrace();
             }
 
-            if (Settings.GENERAL_DEBUG.getValue()) {
+            if (GeneralSettings.GENERAL_DEBUG.getValue()) {
                 sender.sendMessage(exception.getMessage());
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");

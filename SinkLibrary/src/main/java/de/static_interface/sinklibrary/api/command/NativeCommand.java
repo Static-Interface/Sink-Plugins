@@ -24,7 +24,7 @@ import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.command.annotation.PermissionMessage;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -75,7 +75,7 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         if (permissionMessage != null) {
             setPermissionMessage(permissionMessage.value());
         } else {
-            setPermissionMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
+            setPermissionMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
         }
 
         Description description = executor.getClass().getAnnotation(Description.class);

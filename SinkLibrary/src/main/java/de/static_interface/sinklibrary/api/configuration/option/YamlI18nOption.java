@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.api.configuration.option;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -49,6 +49,11 @@ public class YamlI18nOption extends YamlStringOption {
 
     public YamlI18nOption(YamlParentOption parent, String path, String defaultValue, boolean isError) {
         super(parent, path, defaultValue);
+        this.isError = isError;
+    }
+
+    public YamlI18nOption(String path, String defaultValue, boolean isError) {
+        super(path, defaultValue);
         this.isError = isError;
     }
 
@@ -105,7 +110,7 @@ public class YamlI18nOption extends YamlStringOption {
     public String getValue() {
         String s = ChatColor.translateAlternateColorCodes('&', super.getValue());
         if (isErrorMessage()) {
-            s = LanguageConfiguration.formatError(s);
+            s = GeneralLanguage.formatError(s);
         }
         return s;
     }

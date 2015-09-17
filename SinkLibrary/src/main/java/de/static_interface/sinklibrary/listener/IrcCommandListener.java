@@ -21,7 +21,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -47,7 +47,7 @@ public class IrcCommandListener implements Listener {
                 try {
                     command.onCommand(sender, Bukkit.getPluginCommand(rawCmd), label, args);
                 } catch (NotEnoughPermissionsException exception) {
-                    sender.sendMessage(LanguageConfiguration.PERMISSIONS_GENERAL.format());
+                    sender.sendMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
                 } catch (Exception e) {
                     sender.sendMessage(ChatColor.RED + "An error occurred. Please check the console");
                     e.printStackTrace();

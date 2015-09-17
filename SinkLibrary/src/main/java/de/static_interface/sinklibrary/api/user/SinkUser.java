@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary.api.user;
 
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.Debug;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
@@ -73,7 +73,7 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
     public abstract void sendMessage(String msg);
 
     public void sendDebugMessage(String msg) {
-        if (Settings.GENERAL_DEBUG.getValue()) {
+        if (GeneralSettings.GENERAL_DEBUG.getValue()) {
             sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "Debug" + ChatColor.GRAY + "] "
                         + Debug.getCallerClassName() + " #" + Debug.getCallerMethodName() + ": " + ChatColor.RESET + msg);
         }

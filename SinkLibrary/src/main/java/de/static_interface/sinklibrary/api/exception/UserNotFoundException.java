@@ -17,7 +17,7 @@
 
 package de.static_interface.sinklibrary.api.exception;
 
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 
 @SuppressWarnings("serial")
 public class UserNotFoundException extends RuntimeException {
@@ -33,6 +33,6 @@ public class UserNotFoundException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return LanguageConfiguration.GENERAL_USER_NOT_FOUND.format(name);
+        return GeneralLanguage.GENERAL_USER_NOT_FOUND.format(name);
     }
 }

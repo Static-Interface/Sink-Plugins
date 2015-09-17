@@ -25,7 +25,7 @@ import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.configuration.Settings;
+import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import de.static_interface.sinklibrary.util.VaultBridge;
@@ -252,7 +252,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
      */
     public String getDisplayName(boolean formatOffline) {
         String name = "";
-        if (isOnline() && (!Settings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName())) {
+        if (isOnline() && (!GeneralSettings.GENERAL_DISPLAYNAMES.getValue() || !getConfiguration().getHasDisplayName())) {
             String prefix = "";
             if (SinkLibrary.getInstance().isChatAvailable()) {
                 prefix =

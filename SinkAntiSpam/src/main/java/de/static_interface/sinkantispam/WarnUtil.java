@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkantispam;
 
+import de.static_interface.sinkantispam.config.SasLanguage;
+import de.static_interface.sinkantispam.config.SasSettings;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinkantispam.database.row.WarnedPlayer;
 import de.static_interface.sinkantispam.database.row.Warning;
@@ -25,8 +27,6 @@ import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
-import de.static_interface.sinklibrary.configuration.Settings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 
 public class WarnUtil {
 
-    static String prefix = LanguageConfiguration.SAS_PREFIX.format() + ' ' + ChatColor.RESET;
+    static String prefix = SasLanguage.SAS_PREFIX.format() + ' ' + ChatColor.RESET;
 
     public static void performWarning(Warning warning, SinkUser warner) {
         WarnedPlayer wPlayer = getWarnedPlayer(warning.userId);
@@ -53,7 +53,7 @@ public class WarnUtil {
         int pointsBefore = getPoints(target);
         addWarning(warning);
 
-        String message = prefix + LanguageConfiguration.SAS_WARN_MESSAGE.format(warner, target, null, warning.reason, warning.points);
+        String message = prefix + SasLanguage.SAS_WARN_MESSAGE.format(warner, target, null, warning.reason, warning.points);
         String perm;
         if (warning.isAutoWarning) {
             perm = "sinkantispam.autowarnmessage";
@@ -114,7 +114,7 @@ public class WarnUtil {
 
     private static Map<Integer, List<String>> getConfigSanctions() {
         Map<Integer, List<String>> map = new HashMap<>();
-        for (String s : Settings.SAS_SANCTIONS.getValue()) {
+        for (String s : SasSettings.SAS_SANCTIONS.getValue()) {
             String[] splits = s.split(":");
             if (splits.length < 2 || StringUtil.isEmptyOrNull(splits[1])) {
                 SinkAntiSpam.getInstance().getLogger().warning("Couldn't parse sanction: " + s + ": Invalid format");

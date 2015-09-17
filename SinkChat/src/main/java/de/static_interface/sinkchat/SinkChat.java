@@ -25,6 +25,8 @@ import de.static_interface.sinkchat.command.NationChatCommand;
 import de.static_interface.sinkchat.command.NickCommand;
 import de.static_interface.sinkchat.command.SpyCommands;
 import de.static_interface.sinkchat.command.TownChatCommand;
+import de.static_interface.sinkchat.config.ScLanguage;
+import de.static_interface.sinkchat.config.ScSettings;
 import de.static_interface.sinkchat.listener.ChatListener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import org.bukkit.Bukkit;
@@ -33,6 +35,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.logging.Level;
 
 public class SinkChat extends JavaPlugin {
@@ -63,11 +66,16 @@ public class SinkChat extends JavaPlugin {
             return;
         }
 
+        File sinkChatDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkChat");
+
+        new ScSettings(new File(sinkChatDirectory, "Settings.yml")).init();
+        new ScLanguage(new File(sinkChatDirectory, "Language.yml")).init();
+
         instance = this;
 
         registerEvents();
         registerCommands();
-        registerChannels();
+        registerChannels(sinkChatDirectory);
     }
 
     @Override
@@ -75,8 +83,8 @@ public class SinkChat extends JavaPlugin {
         instance = null;
     }
 
-    private void registerChannels() {
-        channelconfigs = new ChannelConfiguration();
+    private void registerChannels(File baseFolder) {
+        channelconfigs = new ChannelConfiguration(baseFolder);
         YamlConfiguration yamlConfig = channelconfigs.getYamlConfiguration();
         ConfigurationSection section = yamlConfig.getConfigurationSection("Channels");
         Channel channel;

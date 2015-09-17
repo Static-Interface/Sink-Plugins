@@ -27,7 +27,6 @@ import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinklibrary.configuration.LanguageConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.MathUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -102,17 +101,6 @@ public class SinkDebugCommand extends SinkCommand {
 
                 }
 
-                case "backuplanguage": {
-                    try {
-                        LanguageConfiguration.getInstance().backup();
-                        sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
-                    } catch (Exception e) {
-                        sender.sendMessage(PREFIX + ChatColor.RED + "Failed: ");
-                        sender.sendMessage(PREFIX + ChatColor.RED + e.getMessage());
-                    }
-                    break;
-                }
-
                 case "isop": {
                     boolean isOp = sender.isOp();
                     sender.sendMessage(option + ": " + isOp);
@@ -142,7 +130,7 @@ public class SinkDebugCommand extends SinkCommand {
                 }
 
                 default: {
-                    sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, backuplanguage, isop, testop, whoami");
+                    sender.sendMessage(PREFIX + "Available options: getplayervalue, setplayervalue, isop, testop, whoami");
                 }
             }
         } catch (Exception e) {
