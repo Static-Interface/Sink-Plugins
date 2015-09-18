@@ -73,6 +73,9 @@ public class SinkIRC extends JavaPlugin {
 
         instance = this;
 
+        File sinkIrcDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkIRC");
+        new SiSettings(new File(sinkIrcDirectory, "Settings.yml")).init();
+
         ircThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -160,7 +163,6 @@ public class SinkIRC extends JavaPlugin {
         IrcQueue.getInstance().start();
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
-        File sinkIrcDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkIRC");
         de.static_interface.sinklibrary.api.configuration.Configuration
                 commandsConfig = new de.static_interface.sinklibrary.api.configuration.Configuration(new File(sinkIrcDirectory, "Commands.yml")) {
             @Override
