@@ -65,14 +65,16 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         String commandPrefix = "Commands." + WordUtils.capitalizeFully(getName()) + ".";
 
         Permission perm = executor.getClass().getAnnotation(Permission.class);
-        boolean hasPerm = false;
         if (perm != null) {
             setPermission(perm.value());
         } else if (executor.getClass().getAnnotation(DefaultPermission.class) != null) {
             setPermission(getPlugin().getName().replace(" ", "_").toLowerCase() + ".command." + getName().toLowerCase());
         }
         if (config != null) {
-            config.addDefault(commandPrefix + "Permission", getPermission());
+            String value = (String) config.get(commandPrefix + "Permission");
+            if (value == null) {
+                config.set(commandPrefix + "Permission", getPermission());
+            }
             setPermission((String) config.get(commandPrefix + "Permission", getPermission()));
         }
 
@@ -83,7 +85,10 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
             setAliases(new ArrayList<String>());
         }
         if (config != null) {
-            config.addDefault(commandPrefix + "Aliases", getAliases());
+            Object value = config.get(commandPrefix + "Aliases");
+            if (value == null) {
+                config.set(commandPrefix + "Aliases", getAliases());
+            }
             setAliases((List<String>) config.get(commandPrefix + "Aliases"));
         }
 
@@ -94,7 +99,10 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
 
         //If the command doesn't support usages we don't need to make it configurable, so check first if an @Usage annotation exists
         if (usage != null && config != null) {
-            config.addDefault(commandPrefix + "Usage", getUsage());
+            String value = (String) config.get(commandPrefix + "Usage");
+            if (value == null) {
+                config.set(commandPrefix + "Usage", getUsage());
+            }
             setUsage((String) config.get(commandPrefix + "Usage"));
         }
 
@@ -110,8 +118,15 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
             setDescription(description.value());
         }
         if (config != null) {
-            config.addDefault(commandPrefix + "Description", getDescription());
+            String value = (String) config.get(commandPrefix + "Description");
+            if (value == null) {
+                config.set(commandPrefix + "Description", getDescription());
+            }
             setDescription((String) config.get(commandPrefix + "Description"));
+        }
+
+        if (config != null) {
+            config.save();
         }
     }
 
