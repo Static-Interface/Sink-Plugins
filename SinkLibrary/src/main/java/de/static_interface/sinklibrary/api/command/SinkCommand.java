@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
@@ -59,17 +60,29 @@ public abstract class SinkCommand implements CommandExecutor {
     private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(this);
     private String permission;
     private CommandLineParser parser = getCommandOptions().getCliParser();
-    private CommandLine cmdLine = null;
-    private String cmd = null;
-    private String commandUsage = null;
+    private CommandLine cmdLine;
+    private String cmd;
+    private String commandUsage;
+    @Nullable
+    private Configuration config;
+
     public SinkCommand(@Nonnull Plugin plugin) {
-        this(plugin, false);
+        this(plugin, null, false);
     }
 
     public SinkCommand(@Nonnull Plugin plugin, boolean async) {
+        this(plugin, null, async);
+    }
+
+    public SinkCommand(@Nonnull Plugin plugin, @Nullable Configuration config) {
+        this(plugin, config, false);
+    }
+
+    public SinkCommand(@Nonnull Plugin plugin, @Nullable Configuration config, boolean async) {
         Validate.notNull(plugin);
         this.plugin = plugin;
         this.async = async;
+        this.config = config;
     }
 
     @Override
@@ -352,6 +365,11 @@ public abstract class SinkCommand implements CommandExecutor {
         }
 
         return CommandUtil.parseValue(new String[]{args[index]}, returnType, false);
+    }
+
+    @Nullable
+    public Configuration getConfig() {
+        return config;
     }
 
     private abstract class CommandTask implements Runnable {

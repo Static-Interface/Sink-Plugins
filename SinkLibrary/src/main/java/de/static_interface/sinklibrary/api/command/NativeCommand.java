@@ -24,8 +24,10 @@ import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.command.annotation.PermissionMessage;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandExecutor;
@@ -34,6 +36,7 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,21 +57,45 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
     }
 
     private void initAnnotations() {
+        Configuration config = null;
+        if (executor instanceof SinkCommand) {
+            config = ((SinkCommand) executor).getConfig();
+        }
+
+        String commandPrefix = "Commands." + WordUtils.capitalizeFully(getName()) + ".";
+
         Permission perm = executor.getClass().getAnnotation(Permission.class);
+        boolean hasPerm = false;
         if (perm != null) {
             setPermission(perm.value());
         } else if (executor.getClass().getAnnotation(DefaultPermission.class) != null) {
             setPermission(getPlugin().getName().replace(" ", "_").toLowerCase() + ".command." + getName().toLowerCase());
         }
+        if (config != null) {
+            config.addDefault(commandPrefix + "Permission", getPermission());
+            setPermission((String) config.get(commandPrefix + "Permission", getPermission()));
+        }
 
         Aliases aliases = executor.getClass().getAnnotation(Aliases.class);
         if (aliases != null) {
             setAliases(Arrays.asList(aliases.value()));
+        } else {
+            setAliases(new ArrayList<String>());
+        }
+        if (config != null) {
+            config.addDefault(commandPrefix + "Aliases", getAliases());
+            setAliases((List<String>) config.get(commandPrefix + "Aliases"));
         }
 
         Usage usage = executor.getClass().getAnnotation(Usage.class);
         if (usage != null) {
             setUsage(usage.value());
+        }
+
+        //If the command doesn't support usages we don't need to make it configurable, so check first if an @Usage annotation exists
+        if (usage != null && config != null) {
+            config.addDefault(commandPrefix + "Usage", getUsage());
+            setUsage((String) config.get(commandPrefix + "Usage"));
         }
 
         PermissionMessage permissionMessage = executor.getClass().getAnnotation(PermissionMessage.class);
@@ -81,6 +108,10 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         Description description = executor.getClass().getAnnotation(Description.class);
         if (description != null) {
             setDescription(description.value());
+        }
+        if (config != null) {
+            config.addDefault(commandPrefix + "Description", getDescription());
+            setDescription((String) config.get(commandPrefix + "Description"));
         }
     }
 
