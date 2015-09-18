@@ -92,7 +92,6 @@ public class SinkIRC extends JavaPlugin {
                             .setName(SiSettings.SI_NICKNAME.getValue())
                             .setLogin("SinkIRC")
                             .setAutoNickChange(true)
-                            .setAutoReconnect(true)
                             .setMessageDelay(1)
                             .setShutdownHookEnabled(true)
                             .setServer(SiSettings.SI_SERVER_ADDRESS.getValue(),
