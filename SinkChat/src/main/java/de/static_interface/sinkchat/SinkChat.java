@@ -29,6 +29,7 @@ import de.static_interface.sinkchat.config.ScLanguage;
 import de.static_interface.sinkchat.config.ScSettings;
 import de.static_interface.sinkchat.listener.ChatListener;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -71,10 +72,18 @@ public class SinkChat extends JavaPlugin {
         new ScSettings(new File(sinkChatDirectory, "Settings.yml")).init();
         new ScLanguage(new File(sinkChatDirectory, "Language.yml")).init();
 
+        Configuration commandsConfig = new Configuration(new File(sinkChatDirectory, "Commands.yml")) {
+            @Override
+            public void addDefaults() {
+
+            }
+        };
+        commandsConfig.init();
+
         instance = this;
 
         registerEvents();
-        registerCommands();
+        registerCommands(commandsConfig);
         registerChannels(sinkChatDirectory);
     }
 
@@ -130,14 +139,14 @@ public class SinkChat extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
     }
 
-    private void registerCommands() {
-        SinkLibrary.getInstance().registerCommand("nick", new NickCommand(this));
-        SinkLibrary.getInstance().registerCommand("enablespy", new SpyCommands.EnableSpyCommand(this));
-        SinkLibrary.getInstance().registerCommand("disablespy", new SpyCommands.DisablSpyCommand(this));
+    private void registerCommands(Configuration config) {
+        SinkLibrary.getInstance().registerCommand("nick", new NickCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("enablespy", new SpyCommands.EnableSpyCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("disablespy", new SpyCommands.DisablSpyCommand(this, config));
 
         if (towny != null) {
-            SinkLibrary.getInstance().registerCommand("nationchat", new NationChatCommand(this));
-            SinkLibrary.getInstance().registerCommand("townchat", new TownChatCommand(this));
+            SinkLibrary.getInstance().registerCommand("nationchat", new NationChatCommand(this, config));
+            SinkLibrary.getInstance().registerCommand("townchat", new TownChatCommand(this, config));
         }
     }
 }

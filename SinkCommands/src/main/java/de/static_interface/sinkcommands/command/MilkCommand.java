@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
@@ -39,8 +40,8 @@ public class MilkCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
 
-    public MilkCommand(Plugin plugin) {
-        super(plugin);
+    public MilkCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
     }
 

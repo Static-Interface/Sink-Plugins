@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -33,8 +34,8 @@ public class LagCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_PURPLE + "[Lag] " + ChatColor.RESET;
 
-    public LagCommand(Plugin plugin) {
-        super(plugin);
+    public LagCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

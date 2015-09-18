@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.apache.commons.cli.Options;
@@ -39,8 +40,8 @@ import javax.annotation.Nonnull;
 @Aliases({"delpwarn", "deletepwarn"})
 public class DeletePredefinedWarningCommand extends SinkCommand {
 
-    public DeletePredefinedWarningCommand(@Nonnull Plugin plugin) {
-        super(plugin);
+    public DeletePredefinedWarningCommand(@Nonnull Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(new Options());
         getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [WarningName]");

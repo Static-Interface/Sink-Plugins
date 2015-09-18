@@ -22,6 +22,7 @@ import static de.static_interface.sinklibrary.Constants.TICK;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import org.bukkit.ChatColor;
@@ -39,8 +40,8 @@ public class DrugCommand extends SinkCommand {
 
     public static Player lastPlayer;
 
-    public DrugCommand(Plugin plugin) {
-        super(plugin);
+    public DrugCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
     }
 

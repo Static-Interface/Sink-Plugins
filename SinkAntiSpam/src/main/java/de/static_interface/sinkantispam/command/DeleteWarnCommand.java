@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.apache.commons.cli.ParseException;
@@ -38,8 +39,8 @@ import java.util.List;
 @DefaultPermission
 public class DeleteWarnCommand extends SinkCommand {
 
-    public DeleteWarnCommand(Plugin plugin) {
-        super(plugin);
+    public DeleteWarnCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
     }
 

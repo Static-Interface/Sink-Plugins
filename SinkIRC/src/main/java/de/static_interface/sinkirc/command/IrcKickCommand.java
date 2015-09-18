@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.command.CommandSender;
@@ -35,8 +36,8 @@ import org.pircbotx.Channel;
 @Aliases("ikick")
 public class IrcKickCommand extends SinkCommand {
 
-    public IrcKickCommand(Plugin plugin) {
-        super(plugin);
+    public IrcKickCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getTabCompleterOptions().setIncludeIngameUsers(false);
         getTabCompleterOptions().setIncludeIrcUsers(true);
         getTabCompleterOptions().setIncludeSuffix(false);

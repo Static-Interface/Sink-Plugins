@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -45,8 +46,8 @@ public class CountdownCommand extends SinkCommand {
 
     //Todo: allow multiple local countdowns at the same time
 
-    public CountdownCommand(Plugin plugin) {
-        super(plugin);
+    public CountdownCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
         getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <reason>");

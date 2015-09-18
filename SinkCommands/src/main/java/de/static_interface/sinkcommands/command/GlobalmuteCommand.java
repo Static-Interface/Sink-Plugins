@@ -21,6 +21,7 @@ import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -32,8 +33,8 @@ public class GlobalmuteCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_RED + "[GlobalMute] " + ChatColor.RESET;
 
-    public GlobalmuteCommand(Plugin plugin) {
-        super(plugin);
+    public GlobalmuteCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
     }
 

@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -47,8 +48,9 @@ import javax.annotation.Nonnull;
 @DefaultPermission
 @Aliases({"who", "players", "online"})
 public class ListCommand extends SinkCommand implements CommandExecutor {
-    public ListCommand(@Nonnull Plugin plugin) {
-        super(plugin);
+
+    public ListCommand(@Nonnull Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcEnabled(false);
     }
 

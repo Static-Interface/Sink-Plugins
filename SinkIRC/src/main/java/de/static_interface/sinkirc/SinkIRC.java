@@ -38,6 +38,7 @@ import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
@@ -159,12 +160,22 @@ public class SinkIRC extends JavaPlugin {
         IrcQueue.getInstance().start();
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
-        SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this));
-        SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this));
-        SinkLibrary.getInstance().registerCommand("say", new SayCommand(this));
-        SinkLibrary.getInstance().registerCommand("kick", new KickCommand(this));
-        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this));
-        SinkLibrary.getInstance().registerCommand("set", new SetCommand(this));
+        File sinkIrcDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkIRC");
+        de.static_interface.sinklibrary.api.configuration.Configuration
+                commandsConfig = new de.static_interface.sinklibrary.api.configuration.Configuration(new File(sinkIrcDirectory, "Commands.yml")) {
+            @Override
+            public void addDefaults() {
+
+            }
+        };
+        commandsConfig.init();
+
+        SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("say", new SayCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("kick", new KickCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("set", new SetCommand(this, commandsConfig));
 
         initialized = true;
     }

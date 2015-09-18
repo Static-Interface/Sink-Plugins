@@ -37,6 +37,7 @@ import de.static_interface.sinkcommands.config.ScmdSettings;
 import de.static_interface.sinkcommands.listener.DrugDeadListener;
 import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -67,12 +68,20 @@ public class SinkCommands extends JavaPlugin {
         File sinkCommandsDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkCommands");
         new ScmdSettings(new File(sinkCommandsDirectory, "Settings.yml")).init();
 
+        Configuration commandsConfig = new Configuration(new File(sinkCommandsDirectory, "Commands.yml")) {
+            @Override
+            public void addDefaults() {
+
+            }
+        };
+        commandsConfig.init();
+
         LagTimer lagTimer = new LagTimer();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, lagTimer, 15000, 15000);
 
         if (!initialized) {
             registerEvents();
-            registerCommands();
+            registerCommands(commandsConfig);
             initialized = true;
         }
 
@@ -107,26 +116,25 @@ public class SinkCommands extends JavaPlugin {
         pm.registerEvents(new DrugDeadListener(), this);
     }
 
-    private void registerCommands() {
+    private void registerCommands(Configuration config) {
 
-        SinkLibrary.getInstance().registerCommand("teamchat", new TeamchatCommand(this));
-        SinkLibrary.getInstance().registerCommand("newbiechat", new NewbiechatCommand(this));
-        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this));
-
-        SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this));
-        SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this));
-        SinkLibrary.getInstance().registerCommand("clearinventory", new ClearCommand(this));
-        SinkLibrary.getInstance().registerCommand("drug", new DrugCommand(this));
-        SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this));
-        SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this));
-        SinkLibrary.getInstance().registerCommand("lag", new LagCommand(this));
-        SinkLibrary.getInstance().registerCommand("raw", new RawCommands.RawCommand(this));
-        SinkLibrary.getInstance().registerCommand("rawuser", new RawCommands.RawUserCommand(this));
-        SinkLibrary.getInstance().registerCommand("gup", new GupCommand(this));
-        SinkLibrary.getInstance().registerCommand("sudo", new SudoCommand(this));
-        SinkLibrary.getInstance().registerCommand("chat", new ChatCommand(this));
-        SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this));
-        SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this));
+        SinkLibrary.getInstance().registerCommand("teamchat", new TeamchatCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("newbiechat", new NewbiechatCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("clearinventory", new ClearCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("drug", new DrugCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("countdown", new CountdownCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("globalmute", new GlobalmuteCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("lag", new LagCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("raw", new RawCommands.RawCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("rawuser", new RawCommands.RawUserCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("gup", new GupCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("sudo", new SudoCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("chat", new ChatCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this, config));
+        SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this, config));
     }
 
     public Essentials getEssentialsPlugin() {

@@ -18,6 +18,8 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
@@ -29,10 +31,11 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+@Description("List all players ingame")
 public class ListCommand extends IrcCommand {
 
-    public ListCommand(Plugin plugin) {
-        super(plugin);
+    public ListCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

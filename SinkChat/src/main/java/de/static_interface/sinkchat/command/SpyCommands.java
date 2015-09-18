@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
@@ -38,8 +39,8 @@ public class SpyCommands {
     @Description("Enable local chats spy")
     public static class EnableSpyCommand extends SinkCommand {
 
-        public EnableSpyCommand(Plugin plugin) {
-            super(plugin);
+        public EnableSpyCommand(Plugin plugin, Configuration config) {
+            super(plugin, config);
             getCommandOptions().setPlayerOnly(true);
         }
 
@@ -66,8 +67,8 @@ public class SpyCommands {
     @Description("Disable local chats spy")
     public static class DisablSpyCommand extends SinkCommand {
 
-        public DisablSpyCommand(Plugin plugin) {
-            super(plugin);
+        public DisablSpyCommand(Plugin plugin, Configuration config) {
+            super(plugin, config);
             getCommandOptions().setPlayerOnly(true);
         }
 

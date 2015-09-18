@@ -17,7 +17,9 @@
 
 package de.static_interface.sinkirc.irc_command;
 
-import de.static_interface.sinkirc.IrcUtil;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,11 +27,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+@Description("Kick a player ingame")
+@Usage("kick <player> [reason]")
 public class KickCommand extends IrcCommand {
 
-    public KickCommand(Plugin plugin) {
-        super(plugin);
-        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "kick <player> <reason>");
+    public KickCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
     }
 

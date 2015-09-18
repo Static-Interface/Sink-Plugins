@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -39,8 +40,8 @@ public class RenameCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Rename] " + ChatColor.RESET;
 
-    public RenameCommand(Plugin plugin) {
-        super(plugin);
+    public RenameCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
     }
 

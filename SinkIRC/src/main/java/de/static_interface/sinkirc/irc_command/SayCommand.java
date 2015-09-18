@@ -18,17 +18,21 @@
 package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinkirc.IrcUtil;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+@Description("Chat with the people ingame")
+@Usage("say <text>")
 public class SayCommand extends IrcCommand {
 
-    public SayCommand(Plugin plugin) {
-        super(plugin);
-        setUsage("Usage: " + IrcUtil.getCommandPrefix() + "say <text>");
+    public SayCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

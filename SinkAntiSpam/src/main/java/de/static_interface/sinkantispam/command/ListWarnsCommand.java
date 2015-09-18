@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -40,8 +41,8 @@ import java.util.List;
 @Usage("/<command> <player>")
 public class ListWarnsCommand extends SinkCommand {
 
-    public ListWarnsCommand(Plugin plugin) {
-        super(plugin);
+    public ListWarnsCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

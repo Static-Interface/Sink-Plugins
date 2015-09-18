@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.util.DateUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -40,8 +41,8 @@ import javax.annotation.Nonnull;
 @Aliases({"createpwarn", "createpwarning"})
 public class CreatePredefinedWarningCommand extends SinkCommand {
 
-    public CreatePredefinedWarningCommand(@Nonnull Plugin plugin) {
-        super(plugin);
+    public CreatePredefinedWarningCommand(@Nonnull Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
         getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <WarningName>");

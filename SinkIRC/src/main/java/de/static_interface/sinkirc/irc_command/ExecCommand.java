@@ -17,15 +17,21 @@
 
 package de.static_interface.sinkirc.irc_command;
 
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+
+@Description("Execute a command as console")
+@Usage("exec <command> <args>")
 public class ExecCommand extends IrcCommand {
 
-    public ExecCommand(Plugin plugin) {
-        super(plugin);
+    public ExecCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setUseNotices(true);
     }

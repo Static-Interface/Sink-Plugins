@@ -33,6 +33,7 @@ import de.static_interface.sinkantispam.sanction.impl.BanWarningSanction;
 import de.static_interface.sinkantispam.sanction.impl.CommandWarningSanction;
 import de.static_interface.sinkantispam.sanction.impl.KickWarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConfiguration;
 import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
@@ -69,6 +70,14 @@ public class SinkAntiSpam extends JavaPlugin {
 
         new SasSettings(new File(sinkAntiSpamDirectory, "Settings.yml")).init();
         new SasLanguage(new File(sinkAntiSpamDirectory, "Language.yml")).init();
+
+        Configuration commandsConfig = new Configuration(new File(sinkAntiSpamDirectory, "Commands.yml")) {
+            @Override
+            public void addDefaults() {
+
+            }
+        };
+        commandsConfig.init();
 
         db =
                 new MySqlDatabase(
@@ -108,12 +117,12 @@ public class SinkAntiSpam extends JavaPlugin {
         instance = this;
 
         Bukkit.getPluginManager().registerEvents(new SinkAntiSpamListener(), this);
-        SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this));
-        SinkLibrary.getInstance().registerCommand("listwarnings", new ListWarnsCommand(this));
-        SinkLibrary.getInstance().registerCommand("deletewarning", new DeleteWarnCommand(this));
-        SinkLibrary.getInstance().registerCommand("createpredefinedwarning", new CreatePredefinedWarningCommand(this));
-        SinkLibrary.getInstance().registerCommand("deletepredefinedwarning", new DeletePredefinedWarningCommand(this));
-        SinkLibrary.getInstance().registerCommand("predefinedwarninglist", new PredefinedWarningsListCommand(this));
+        SinkLibrary.getInstance().registerCommand("warn", new WarnCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("listwarnings", new ListWarnsCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("deletewarning", new DeleteWarnCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("createpredefinedwarning", new CreatePredefinedWarningCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("deletepredefinedwarning", new DeletePredefinedWarningCommand(this, commandsConfig));
+        SinkLibrary.getInstance().registerCommand("predefinedwarninglist", new PredefinedWarningsListCommand(this, commandsConfig));
     }
 
     public void registerWarningSanction(WarningSanction sanction) {

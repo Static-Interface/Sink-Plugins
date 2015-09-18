@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
@@ -50,8 +51,8 @@ import java.util.List;
 @DefaultPermission
 public class SudoCommand extends SinkCommand {
 
-    public SudoCommand(Plugin plugin) {
-        super(plugin);
+    public SudoCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         Options options = new Options();
         Option silent = Option.builder("s")

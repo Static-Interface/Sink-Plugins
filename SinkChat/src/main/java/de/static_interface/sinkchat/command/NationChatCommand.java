@@ -27,6 +27,7 @@ import de.static_interface.sinkchat.config.ScLanguage;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.apache.commons.cli.ParseException;
@@ -45,8 +46,8 @@ import javax.annotation.Nonnull;
 @Aliases("tnc")
 public class NationChatCommand extends SinkCommand implements CommandExecutor {
 
-    public NationChatCommand(@Nonnull Plugin plugin) {
-        super(plugin);
+    public NationChatCommand(@Nonnull Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.command.CommandSender;
@@ -30,8 +31,8 @@ import org.bukkit.plugin.Plugin;
 @Description("Chat command for usage with other commands like sudo")
 public class ChatCommand extends SinkCommand {
 
-    public ChatCommand(Plugin plugin) {
-        super(plugin);
+    public ChatCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
     }
 

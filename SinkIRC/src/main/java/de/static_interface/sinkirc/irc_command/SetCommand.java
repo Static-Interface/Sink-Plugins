@@ -19,14 +19,18 @@ package de.static_interface.sinkirc.irc_command;
 
 import de.static_interface.sinkirc.IrcUtil;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+@Description("Set an option value")
+@Usage("set <option> <value>")
 public class SetCommand extends SinkCommand {
 
-    public SetCommand(Plugin plugin) {
-        super(plugin);
-        setUsage("Wrong usage! Usage: " + getCommandPrefix() + "set <option> <value>");
+    public SetCommand(Plugin plugin, Configuration config) {
+        super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
     }
 

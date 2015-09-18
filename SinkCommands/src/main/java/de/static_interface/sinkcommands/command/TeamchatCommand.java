@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
@@ -42,8 +43,8 @@ public class TeamchatCommand extends SinkCommand implements CommandExecutor {
             ChatColor.GRAY + "[" + ChatColor.DARK_RED + 'T' + ChatColor.RED + "eam" + ChatColor.DARK_RED + 'C' + ChatColor.RED + "hat"
             + ChatColor.GRAY + "] " + ChatColor.RESET;
 
-    public TeamchatCommand(@Nonnull Plugin plugin) {
-        super(plugin);
+    public TeamchatCommand(@Nonnull Plugin plugin, Configuration config) {
+        super(plugin, config);
     }
 
     @Override

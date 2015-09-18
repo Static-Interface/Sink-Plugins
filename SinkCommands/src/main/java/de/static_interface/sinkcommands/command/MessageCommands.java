@@ -23,6 +23,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -88,8 +89,8 @@ public class MessageCommands {
     @Aliases({"m", "msg", "tell", "whisper"})
     public static class MessageCommand extends SinkCommand {
 
-        public MessageCommand(Plugin plugin) {
-            super(plugin);
+        public MessageCommand(Plugin plugin, Configuration config) {
+            super(plugin, config);
             getTabCompleterOptions().setIncludeIrcUsers(true);
             getTabCompleterOptions().setIncludeSuffix(true);
             getCommandOptions().setIrcQueryOnly(true);
@@ -131,8 +132,8 @@ public class MessageCommands {
     @Aliases("r")
     public static class ReplyCommand extends SinkCommand {
 
-        public ReplyCommand(Plugin plugin) {
-            super(plugin);
+        public ReplyCommand(Plugin plugin, Configuration config) {
+            super(plugin, config);
             getCommandOptions().setIrcQueryOnly(true);
         }
 
