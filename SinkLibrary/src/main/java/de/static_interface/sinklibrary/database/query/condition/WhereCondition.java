@@ -26,6 +26,9 @@ public abstract class WhereCondition {
         this.value = o;
         if (o instanceof String) {
             value = ((String) value).replaceAll("['\"\\\\]", "\\\\$0");
+            if (o.equals("?")) {
+                return;
+            }
             value = "\"" + o + "\"";
         }
     }
