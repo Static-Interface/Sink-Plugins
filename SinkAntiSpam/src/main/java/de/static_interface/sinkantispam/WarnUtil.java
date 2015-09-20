@@ -174,7 +174,7 @@ public class WarnUtil {
             warnings = from(SinkAntiSpam.getInstance().getWarningsTable()).select()
                     .where("user_id", eq("?"))
                     .orderBy("id", Order.ASC)
-                    .getResults(userId, System.currentTimeMillis());
+                    .getResults(userId);
         }
 
         List<Warning> sortedWarnings = Arrays.asList(warnings);
@@ -223,7 +223,10 @@ public class WarnUtil {
     public static WarnedPlayer getWarnedPlayer(IngameUser user) {
         WarnedPlayer
                 result =
-                from(SinkAntiSpam.getInstance().getWarnedPlayersTable()).select().where("player_uuid", eq("?")).get(user.getUniqueId().toString());
+                from(SinkAntiSpam.getInstance().getWarnedPlayersTable())
+                        .select()
+                        .where("player_uuid", eq("?"))
+                        .get(user.getUniqueId().toString());
         if (result == null) {
             return insertWarnedUser(user);
         }
