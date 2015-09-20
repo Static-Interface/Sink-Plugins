@@ -196,7 +196,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 subCmd.onCommand(sender, command, label, args);
                 return true;
             } else if (getCommandOptions().isDefaultHelpEnabled() && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?"))) {
-                sendSubCommandList(sender);
+                sendSubCommandList(sender, true);
                 return true;
             }
         }
@@ -261,7 +261,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 }
 
                 boolean postHandled = onPostExecute(sender, finalCommand, label, finalArgs, success, exception);
-                return postHandled || success || StringUtil.isEmptyOrNull(getUsage(sender));
+                return postHandled || success;
 
             }
         };
@@ -278,13 +278,15 @@ public abstract class SinkCommandBase implements CommandExecutor {
         }
     }
 
-    private void sendSubCommandList(CommandSender sender) {
-        sender.sendMessage(ChatColor.GOLD + "+++++ Help: " + getCommandPrefix(sender) + getName() + " +++++");
-        if (getUsage(sender) != null) {
-            String
-                    description =
-                    StringUtil.isEmptyOrNull(getDescription()) ? "" : ChatColor.RESET.toString() + ChatColor.GRAY + ": " + getDescription();
-            sender.sendMessage(ChatColor.GOLD + getUsage(sender) + description);
+    private void sendSubCommandList(CommandSender sender, boolean includeSelf) {
+        if (includeSelf) {
+            sender.sendMessage(ChatColor.GOLD + "+++++ Help: " + getCommandPrefix(sender) + getName() + " +++++");
+            if (getUsage(sender) != null) {
+                String
+                        description =
+                        StringUtil.isEmptyOrNull(getDescription()) ? "" : ChatColor.RESET.toString() + ChatColor.GRAY + ": " + getDescription();
+                sender.sendMessage(ChatColor.GOLD + getUsage(sender) + description);
+            }
         }
 
         if (hasSubCommands()) {
@@ -362,7 +364,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");
             }
-        } else if (!success && !StringUtil.isEmptyOrNull(getUsage(sender)) && reportException) {
+        } else if (!success && reportException) {
             sendUsage(sender, command);
             return true;
         }
@@ -428,18 +430,21 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     protected void sendUsage(CommandSender sender, Command command) {
         Options options = getCommandOptions().getCliOptions();
-        String usage = getUsage(sender);
+        String commandLineUsage;
         if (options != null) {
             if (StringUtil.isEmptyOrNull(getCommandOptions().getCmdLineSyntax())) {
                 getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options>");
             }
             StringWriter writer = new StringWriter();
             getCommandOptions().getCliHelpFormatter(sender, command, writer);
-            usage = writer.toString();
-            if (!StringUtil.isEmptyOrNull(usage)) {
-                usage += System.lineSeparator() + usage;
+            commandLineUsage = writer.toString();
+            if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
+                commandLineUsage += System.lineSeparator() + commandLineUsage;
+                sender.sendMessage(commandLineUsage);
             }
         }
+
+        String usage = getUsage(sender);
 
         if (usage == null) {
             return;
@@ -450,6 +455,11 @@ public abstract class SinkCommandBase implements CommandExecutor {
         }
 
         sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
+
+        if (hasSubCommands()) {
+            sender.sendMessage("SubCommands:");
+            sendSubCommandList(sender, false);
+        }
     }
 
 
