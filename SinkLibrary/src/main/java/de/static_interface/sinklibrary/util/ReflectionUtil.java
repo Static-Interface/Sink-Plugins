@@ -118,6 +118,33 @@ public class ReflectionUtil {
         return primitiveMap.values().contains(clazz);
     }
 
+    public static Method getDeclaredMethod(Class<?> type, String name, Class<?>... params) throws NoSuchMethodException {
+        Method m = null;
+        try {
+            m = type.getDeclaredMethod(name, params);
+        } catch (NoSuchMethodException ignored) {
+
+        }
+
+        if (m != null) {
+            return m;
+        }
+        while (type.getSuperclass() != null) {
+            type = type.getSuperclass();
+            try {
+                m = type.getDeclaredMethod(name, params);
+            } catch (NoSuchMethodException ignored) {
+
+            }
+
+            if (m != null) {
+                return m;
+            }
+        }
+
+        throw new NoSuchMethodException();
+    }
+
     public static Object wrapperToPrimitive(Object value) {
         if (isPrimitiveClass(value.getClass())) {
             return value;

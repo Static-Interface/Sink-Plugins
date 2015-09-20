@@ -18,6 +18,13 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.command.ConfigurableCommand;
+import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
+import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -25,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -144,5 +152,83 @@ public class CommandUtil {
         }
         throw new IllegalArgumentException(
                 "ReturnType " + returnType.getName() + " for args: [" + StringUtil.formatArrayToString(args, ", ") + "] is not supported!");
+    }
+
+    public static void initAnnotations(ConfigurableCommand command, AnnotatedElement annonatedElement) {
+        Configuration config = command.getConfig();
+
+        String commandPathPrefix = command.getConfigPath() + ".";
+
+        Permission perm = annonatedElement.getAnnotation(Permission.class);
+        if (perm != null) {
+            command.setCommandPermission(perm.value());
+        } else if (annonatedElement.getAnnotation(DefaultPermission.class) != null) {
+            if (command.getDefaultPermission() != null) {
+                command.setCommandPermission(command.getDefaultPermission());
+            }
+        }
+        if (config != null) {
+            String value = (String) config.get(commandPathPrefix + "Permission");
+            if (StringUtil.isEmptyOrNull(value)) {
+                config.set(commandPathPrefix + "Permission", getDefaultValue(command.getCommandPermission()));
+            }
+            command.setCommandPermission((String) config.get(commandPathPrefix + "Permission", command.getCommandPermission()));
+        }
+
+        Aliases aliases = annonatedElement.getAnnotation(Aliases.class);
+        if (aliases != null) {
+            command.setCommandAliases(Arrays.asList(aliases.value()));
+        } else {
+            command.setCommandAliases(new ArrayList<String>());
+        }
+        if (config != null) {
+            Object value = config.get(commandPathPrefix + "Aliases");
+            if (value == null) {
+                List<String> defaultAliases = command.getCommandAliases();
+                if (defaultAliases == null) {
+                    defaultAliases = new ArrayList<>();
+                }
+                config.set(commandPathPrefix + "Aliases", defaultAliases);
+            }
+            command.setCommandAliases((List<String>) config.get(commandPathPrefix + "Aliases"));
+        }
+
+        Usage usage = annonatedElement.getAnnotation(Usage.class);
+        if (usage != null) {
+            command.setCommandUsage(usage.value());
+        }
+
+        //If the command doesn't support usages we don't need to make it configurable, so check first if an @Usage annotation exists
+        if (usage != null && config != null) {
+            String value = (String) config.get(commandPathPrefix + "Usage");
+            if (StringUtil.isEmptyOrNull(value)) {
+                config.set(commandPathPrefix + "Usage", getDefaultValue(command.getCommandUsage()));
+            }
+            command.setCommandUsage((String) config.get(commandPathPrefix + "Usage"));
+        }
+
+        Description description = annonatedElement.getAnnotation(Description.class);
+        if (description != null) {
+            command.setCommandDescription(description.value());
+        }
+        if (config != null) {
+            String value = (String) config.get(commandPathPrefix + "Description");
+            if (StringUtil.isEmptyOrNull(value)) {
+                config.set(commandPathPrefix + "Description", getDefaultValue(command.getCommandDescription()));
+            }
+            command.setCommandDescription((String) config.get(commandPathPrefix + "Description"));
+        }
+
+        if (config != null) {
+            config.save();
+        }
+    }
+
+    private static String getDefaultValue(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value;
     }
 }

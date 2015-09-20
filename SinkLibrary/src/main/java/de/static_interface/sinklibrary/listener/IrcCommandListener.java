@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.event.IrcCommandEvent;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
+import de.static_interface.sinklibrary.util.Debug;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -32,6 +33,7 @@ public class IrcCommandListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onCommand(IrcCommandEvent event) {
+        Debug.logMethodCall(event);
         final IrcCommandSender sender = event.getCommandSender();
         final SinkCommand command = event.getCommand();
         final String label = event.getLabel();

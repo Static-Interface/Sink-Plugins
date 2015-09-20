@@ -17,10 +17,13 @@
 
 package de.static_interface.sinklibrary.api.command;
 
+import de.static_interface.sinklibrary.api.annotation.Unstable;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -39,10 +42,10 @@ public class SinkCommandOptions {
     private String cmdLineSyntax = "";
     private HelpFormatter cliHelpFormatter = null;
     private CommandLineParser cliParser = null;
-    private SinkCommand parentCommand;
-    private boolean ircEnabled;
+    private SinkCommandBase parentCommand;
+    private boolean ircEnabled = true;
 
-    public SinkCommandOptions(SinkCommand parentCommand) {
+    public SinkCommandOptions(SinkCommandBase parentCommand) {
         if (isPlayerOnly && isIrcOnly) {
             throw new IllegalStateException("A command can't be player only and irc only at the same time");
         }
@@ -50,8 +53,6 @@ public class SinkCommandOptions {
         if (cmdLineSyntax == null) {
             cmdLineSyntax = "";
         }
-
-        ircEnabled = true;
 
         this.parentCommand = parentCommand;
     }
@@ -95,6 +96,7 @@ public class SinkCommandOptions {
     }
 
     public void setIrcOpOnly(boolean value) {
+        setIrcEnabled(true);
         this.isIrcOpOnly = value;
     }
 
@@ -103,10 +105,13 @@ public class SinkCommandOptions {
     }
 
     public void setIrcQueryOnly(boolean value) {
+        setIrcEnabled(true);
         this.isIrcQueryOnly = value;
     }
 
+    @Unstable
     public void setUseNotices(boolean useNotices) {
+        setIrcEnabled(true);
         this.useNotices = useNotices;
     }
 
@@ -140,14 +145,14 @@ public class SinkCommandOptions {
         this.cliHelpFormatter = cliHelpFormatter;
     }
 
-    public HelpFormatter getCliHelpFormatter(Writer writer) {
+    public HelpFormatter getCliHelpFormatter(CommandSender sender, Command cmd, Writer writer) {
         if (cliHelpFormatter == null) {
             cliHelpFormatter = new HelpFormatter();
             cliHelpFormatter.setNewLine(System.lineSeparator());
             cliHelpFormatter.printHelp(new PrintWriter(writer), HelpFormatter.DEFAULT_WIDTH,
                                        getCmdLineSyntax()
-                                               .replaceAll("\\{ALIAS\\}", parentCommand.getCmdAlias())
-                                               .replaceAll("\\{PREFIX\\}", parentCommand.getCommandPrefix()), null, getCliOptions(),
+                                               .replaceAll("\\{ALIAS\\}", cmd.getName())
+                                               .replaceAll("\\{PREFIX\\}", parentCommand.getCommandPrefix(sender)), null, getCliOptions(),
                                        HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
         }
         return cliHelpFormatter;
@@ -166,6 +171,9 @@ public class SinkCommandOptions {
     }
 
     public void setIrcEnabled(boolean ircEnabled) {
+        if (ircEnabled && isPlayerOnly) {
+            throw new IllegalStateException("Command is player only, can not enable IRC features!");
+        }
         this.ircEnabled = ircEnabled;
     }
 }

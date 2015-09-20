@@ -18,14 +18,10 @@
 package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.command.annotation.Aliases;
-import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
-import de.static_interface.sinklibrary.api.command.annotation.Description;
-import de.static_interface.sinklibrary.api.command.annotation.Permission;
 import de.static_interface.sinklibrary.api.command.annotation.PermissionMessage;
-import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
+import de.static_interface.sinklibrary.util.CommandUtil;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
@@ -36,11 +32,11 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class NativeCommand extends Command implements PluginIdentifiableCommand {
+import javax.annotation.Nullable;
+
+public class NativeCommand extends Command implements PluginIdentifiableCommand, ConfigurableCommand {
 
     private Plugin owningPlugin;
     private CommandExecutor executor;
@@ -53,59 +49,7 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
         this.owningPlugin = plugin;
         this.executor = executor;
         completer = SinkLibrary.getInstance().getDefaultTabCompleter();
-        initAnnotations();
-    }
-
-    private void initAnnotations() {
-        Configuration config = null;
-        if (executor instanceof SinkCommand) {
-            config = ((SinkCommand) executor).getConfig();
-        }
-
-        String commandPrefix = "Commands." + WordUtils.capitalizeFully(getName()) + ".";
-
-        Permission perm = executor.getClass().getAnnotation(Permission.class);
-        if (perm != null) {
-            setPermission(perm.value());
-        } else if (executor.getClass().getAnnotation(DefaultPermission.class) != null) {
-            setPermission(getPlugin().getName().replace(" ", "_").toLowerCase() + ".command." + getName().toLowerCase());
-        }
-        if (config != null) {
-            String value = (String) config.get(commandPrefix + "Permission");
-            if (value == null) {
-                config.set(commandPrefix + "Permission", getPermission());
-            }
-            setPermission((String) config.get(commandPrefix + "Permission", getPermission()));
-        }
-
-        Aliases aliases = executor.getClass().getAnnotation(Aliases.class);
-        if (aliases != null) {
-            setAliases(Arrays.asList(aliases.value()));
-        } else {
-            setAliases(new ArrayList<String>());
-        }
-        if (config != null) {
-            Object value = config.get(commandPrefix + "Aliases");
-            if (value == null) {
-                config.set(commandPrefix + "Aliases", getAliases());
-            }
-            setAliases((List<String>) config.get(commandPrefix + "Aliases"));
-        }
-
-        Usage usage = executor.getClass().getAnnotation(Usage.class);
-        if (usage != null) {
-            setUsage(usage.value());
-        }
-
-        //If the command doesn't support usages we don't need to make it configurable, so check first if an @Usage annotation exists
-        if (usage != null && config != null) {
-            String value = (String) config.get(commandPrefix + "Usage");
-            if (value == null) {
-                config.set(commandPrefix + "Usage", getUsage());
-            }
-            setUsage((String) config.get(commandPrefix + "Usage"));
-        }
-
+        CommandUtil.initAnnotations(this, executor.getClass());
         PermissionMessage permissionMessage = executor.getClass().getAnnotation(PermissionMessage.class);
         if (permissionMessage != null) {
             setPermissionMessage(permissionMessage.value());
@@ -113,21 +57,6 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
             setPermissionMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
         }
 
-        Description description = executor.getClass().getAnnotation(Description.class);
-        if (description != null) {
-            setDescription(description.value());
-        }
-        if (config != null) {
-            String value = (String) config.get(commandPrefix + "Description");
-            if (value == null) {
-                config.set(commandPrefix + "Description", getDescription());
-            }
-            setDescription((String) config.get(commandPrefix + "Description"));
-        }
-
-        if (config != null) {
-            config.save();
-        }
     }
 
     public TabCompleter getTabCompleter() {
@@ -145,7 +74,6 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
     public void setExecutor(CommandExecutor executor) {
         this.executor = executor == null ? this.owningPlugin : executor;
     }
-
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws CommandException, IllegalArgumentException {
@@ -211,10 +139,74 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand 
     }
 
     @Override
+    public String getConfigPath() {
+        return "Commands." + WordUtils.capitalizeFully(getName());
+    }
+
+    @Nullable
+    @Override
+    public List<String> getCommandAliases() {
+        return getAliases();
+    }
+
+    @Override
+    public void setCommandAliases(List<String> aliases) {
+        setAliases(aliases);
+    }
+
+    @Nullable
+    @Override
+    public String getCommandUsage() {
+        return getUsage();
+    }
+
+    @Override
+    public void setCommandUsage(String usage) {
+        setUsage(usage);
+    }
+
+    @Nullable
+    @Override
+    public String getCommandDescription() {
+        return getDescription();
+    }
+
+    @Override
+    public void setCommandDescription(String description) {
+        setDescription(description);
+    }
+
+    @Nullable
+    @Override
+    public String getDefaultPermission() {
+        return getPlugin().getName().replace(" ", "_").toLowerCase() + ".command." + getName().toLowerCase();
+    }
+
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder(super.toString());
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         stringBuilder.append(", ").append(this.owningPlugin.getDescription().getFullName()).append(')');
         return stringBuilder.toString();
+    }
+
+    @Nullable
+    @Override
+    public Configuration getConfig() {
+        if (executor instanceof SinkCommand) {
+            return ((SinkCommand) executor).getConfig();
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getCommandPermission() {
+        return getPermission();
+    }
+
+    @Override
+    public void setCommandPermission(String permission) {
+        setPermission(permission);
     }
 }

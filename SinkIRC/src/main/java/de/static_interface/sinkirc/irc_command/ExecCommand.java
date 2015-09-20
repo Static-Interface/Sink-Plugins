@@ -55,7 +55,7 @@ public class ExecCommand extends IrcCommand {
 
         final String finalCommandWithArgs = commandWithArgs;
 
-        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+        Bukkit.getScheduler().runTask(getPlugin(), new Runnable() {
             @Override
             public void run() {
                 Bukkit.dispatchCommand(sender, finalCommandWithArgs);

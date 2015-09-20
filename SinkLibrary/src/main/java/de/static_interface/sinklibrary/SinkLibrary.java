@@ -930,12 +930,14 @@ public class SinkLibrary extends JavaPlugin {
             Debug.log("Bukkit PluginCommand instance found: " + p.getName() + ":" + cmd.toString());
             ((PluginCommand) cmd).setExecutor(impl);
             ((PluginCommand) cmd).setTabCompleter(getDefaultTabCompleter());
-            impl.setPlugin(((PluginIdentifiableCommand) cmd).getPlugin());
         }
 
         if (cmd == null) {
             cmd = new NativeCommand(name, p, impl);
         }
+
+        impl.setCommand(cmd);
+
         if (impl.getCommandOptions().isIrcEnabled()) {
             Map<String, Command> knownCommands;
             try {
@@ -960,9 +962,7 @@ public class SinkLibrary extends JavaPlugin {
             cmd.setAliases(aliases);
         }
 
-        impl.setUsage(cmd.getUsage());
-        impl.setPermission(cmd.getPermission());
-
+        impl.onRegistered();
     }
 
 

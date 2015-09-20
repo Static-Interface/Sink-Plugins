@@ -44,7 +44,7 @@ public class SayCommand extends IrcCommand {
 
         String source;
 
-        if (isQueryCommand()) {
+        if (isQueryCommand(sender)) {
             source = "Query";
         } else {
             source = sender.getSource();

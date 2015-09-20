@@ -183,7 +183,7 @@ public class IrcUtil {
 
         Bukkit.getLogger().log(Level.INFO, user.getNick() + " issued IRC command: " + label);
 
-        Debug.logMethodCall(label);
+        Debug.logMethodCall(user.getNick(), label);
         if (IrcUtil.isOp(user)) {
             label = ChatColor.translateAlternateColorCodes('&', label);
         } else {
@@ -204,6 +204,7 @@ public class IrcUtil {
         Bukkit.getScheduler().runTaskAsynchronously(SinkIRC.getInstance(), new Runnable() {
             @Override
             public void run() {
+                Debug.log("Firing event...");
                 IrcCommandEvent event = new IrcCommandEvent(sender, cmd, finalLabel, args, SinkIRC.getInstance().getIrcBot());
                 Bukkit.getPluginManager().callEvent(event);
             }

@@ -21,6 +21,7 @@ import static de.static_interface.sinklibrary.Constants.COMMAND_PREFIX;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
+import de.static_interface.sinklibrary.api.command.SinkSubCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
@@ -29,6 +30,8 @@ import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.MathUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -36,23 +39,62 @@ import org.bukkit.plugin.Plugin;
 
 @Description("Debug SinkLibrary")
 @DefaultPermission
-@Usage("Wrong usage! Correct Usage: /<command> <option> <args>")
+@Usage("<option> <args>")
 @Aliases("sdebug")
 public class SinkDebugCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Debug] " + ChatColor.RESET;
-
-    String cmd = getCommandPrefix() + "sdebug";
 
     public SinkDebugCommand(Plugin plugin) {
         super(plugin);
         getCommandOptions().setIrcOpOnly(true);
     }
 
+    @Override
+    public void onRegistered() {
+        registerSubCommand(new SinkSubCommand<SinkDebugCommand>(this, "anonymoustest") {
+            @Usage("<option> <key>")
+            @Description("Anonymous SinkSubCommand test")
+            @Override
+            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+                if (args.length < 2) {
+                    return false;
+                }
+                sender.sendMessage("Yay!");
+                return true;
+            }
+        });
+
+        SinkSubCommand inner = new SinkSubCommand<SinkDebugCommand>(this, "inner") {
+            @Usage("<args/nestedinner>")
+            @Override
+            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+                sender.sendMessage("inner: Args: [" + StringUtil.formatArrayToString(args, ", ") + "]");
+                return args.length >= 1;
+            }
+        };
+
+        SinkSubCommand nestedinner = new SinkSubCommand<SinkSubCommand>(inner, "nestedinner") {
+            @Usage("<args>")
+            @Override
+            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+                sender.sendMessage("nestedinner: Args: [" + StringUtil.formatArrayToString(args, ", ") + "]");
+                return args.length >= 1;
+            }
+        };
+
+        inner.registerSubCommand(nestedinner);
+        registerSubCommand(inner);
+
+        registerSubCommand(new InnerClassTestCommand(this));
+    }
+
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         if (args.length < 1) {
             return false;
         }
+
+        String cmd = getCommandPrefix(sender) + "sdebug";
 
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
         String option = args[0];
@@ -151,5 +193,24 @@ public class SinkDebugCommand extends SinkCommand {
             return Integer.parseInt(value);
         }
         return value;
+    }
+
+    @DefaultPermission
+    private class InnerClassTestCommand extends SinkSubCommand<SinkDebugCommand> {
+
+        public InnerClassTestCommand(SinkDebugCommand parentCommand) {
+            super(parentCommand, "innerclasstest");
+        }
+
+
+        @Override
+        protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+            sender.sendMessage("Inner working too? Permission:" + getPermission());
+            sender.sendMessage("List of all subcommand: ");
+            for (SinkSubCommand cmd : getParentCommand().getSubCommands()) {
+                sender.sendMessage(cmd.getName() + ": " + cmd.getCommandDescription());
+            }
+            return true;
+        }
     }
 }

@@ -156,7 +156,7 @@ public class CountdownCommand extends SinkCommand {
         SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
         if (!(executor instanceof IngameUser)) {
             sender.sendMessage(ChatColor.DARK_RED + "Only ingame players can use this without the -g flag");
-            sender.sendMessage(ChatColor.DARK_RED + "Please use " + getCommandPrefix() + "countdown -g <options> <message>");
+            sender.sendMessage(ChatColor.DARK_RED + "Please use " + getCommandPrefix(sender) + "countdown -g <options> <message>");
             return true;
         }
         broadcastCounterLocal((IngameUser) executor, message, command, radius, skipLastMsg, seconds);
@@ -188,7 +188,7 @@ public class CountdownCommand extends SinkCommand {
                 }
                 secondsLeftGlobal--;
             }
-        }.runTaskTimer(plugin, 0, 20L);
+        }.runTaskTimer(getPlugin(), 0, 20L);
     }
 
     private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg,
@@ -226,6 +226,6 @@ public class CountdownCommand extends SinkCommand {
                 }
                 secondsLeft[0]--;
             }
-        }.runTaskTimer(plugin, 0, 20L);
+        }.runTaskTimer(getPlugin(), 0, 20L);
     }
 }

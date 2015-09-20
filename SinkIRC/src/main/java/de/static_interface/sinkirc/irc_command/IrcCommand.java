@@ -21,6 +21,7 @@ import de.static_interface.sinkirc.IrcListener;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public abstract class IrcCommand extends SinkCommand {
@@ -32,7 +33,10 @@ public abstract class IrcCommand extends SinkCommand {
         getCommandOptions().setIrcOnly(true);
     }
 
-    public boolean isQueryCommand() {
+    public boolean isQueryCommand(CommandSender sender) {
+        if (!(sender instanceof IrcCommandSender)) {
+            return false;
+        }
         IrcCommandSender ircSender = (IrcCommandSender) sender;
         String source = ircSender.getSource();
         return source != null && !ircSender.getSource().startsWith("#"); //todo: may be a bad way
