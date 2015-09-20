@@ -17,6 +17,10 @@
 
 package de.static_interface.sinkantispam;
 
+import static de.static_interface.sinklibrary.database.query.Query.eq;
+import static de.static_interface.sinklibrary.database.query.Query.from;
+import static de.static_interface.sinklibrary.database.query.Query.gt;
+
 import de.static_interface.sinkantispam.config.SasLanguage;
 import de.static_interface.sinkantispam.config.SasSettings;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
@@ -27,6 +31,7 @@ import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.database.query.Order;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -157,21 +162,25 @@ public class WarnUtil {
 
     public static List<Warning> getWarnings(IngameUser user, boolean includeDeleted) {
         int userId = getWarnedPlayer(user).id;
-        List<Warning> warnings;
+        Warning[] warnings;
         if (!includeDeleted) {
-            warnings =
-                    Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? AND `is_deleted` = 0 AND (`expire_time` > ? OR `expire_time` IS NULL) ORDER BY id ASC;",
-                                               userId, System.currentTimeMillis()));
+            warnings = from(SinkAntiSpam.getInstance().getWarningsTable()).select()
+                    .where("user_id", eq("?"))
+                    .and("expireTime", gt("?")).openParanthesis()
+                    .or("expire_time", eq(null)).closeParanthesis()
+                    .orderBy("id", Order.ASC)
+                    .getResults(userId, System.currentTimeMillis());
         } else {
-            warnings =
-                    Arrays.asList(SinkAntiSpam.getInstance().getWarningsTable()
-                                          .get("SELECT * FROM `{TABLE}` WHERE `user_id` = ? ORDER BY id ASC", userId));
+            warnings = from(SinkAntiSpam.getInstance().getWarningsTable()).select()
+                    .where("user_id", eq("?"))
+                    .orderBy("id", Order.ASC)
+                    .getResults(userId, System.currentTimeMillis());
         }
 
-        Collections.sort(warnings);
+        List<Warning> sortedWarnings = Arrays.asList(warnings);
+        Collections.sort(sortedWarnings);
 
-        return warnings;
+        return sortedWarnings;
     }
 
     public static int getNextWarningId(IngameUser user) {
@@ -190,11 +199,7 @@ public class WarnUtil {
 
     @Nullable
     private static WarnedPlayer getWarnedPlayer(int userId) {
-        WarnedPlayer[] result = SinkAntiSpam.getInstance().getWarnedPlayersTable().get("SELECT * FROM `{TABLE}` WHERE `id` = ?", userId);
-        if (result == null || result.length < 1) {
-            return null;
-        }
-        return result[0];
+        return from(SinkAntiSpam.getInstance().getWarnedPlayersTable()).select().where("id", eq("?")).get(userId);
     }
 
     public static void deleteWarning(Warning warning, @Nullable SinkUser deleter) {
@@ -212,22 +217,17 @@ public class WarnUtil {
 
     public static PredefinedWarning getPredefinedWarning(String name) {
         PredefinedWarningsTable tbl = SinkAntiSpam.getInstance().getPredefinedWarningsTable();
-        PredefinedWarning[] res = tbl.get("SELECT * FROM `{TABLE}` WHERE `nameId` = ?", name);
-        if (res == null || res.length < 1) {
-            return null;
-        }
-        return res[0];
+        return from(tbl).select().where("nameId", eq("?")).get(name);
     }
 
     public static WarnedPlayer getWarnedPlayer(IngameUser user) {
-        WarnedPlayer[]
+        WarnedPlayer
                 result =
-                SinkAntiSpam.getInstance().getWarnedPlayersTable()
-                        .get("SELECT * FROM `{TABLE}` WHERE `player_uuid` = ?", user.getUniqueId().toString());
-        if (result == null || result.length < 1) {
+                from(SinkAntiSpam.getInstance().getWarnedPlayersTable()).select().where("player_uuid", eq("?")).get(user.getUniqueId().toString());
+        if (result == null) {
             return insertWarnedUser(user);
         }
-        return result[0];
+        return result;
     }
 
     public static void setDeletedPoints(WarnedPlayer wPlayer, int points) {

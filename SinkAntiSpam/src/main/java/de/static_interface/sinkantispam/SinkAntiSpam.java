@@ -71,12 +71,7 @@ public class SinkAntiSpam extends JavaPlugin {
         new SasSettings(new File(sinkAntiSpamDirectory, "Settings.yml")).init();
         new SasLanguage(new File(sinkAntiSpamDirectory, "Language.yml")).init();
 
-        Configuration commandsConfig = new Configuration(new File(sinkAntiSpamDirectory, "Commands.yml")) {
-            @Override
-            public void addDefaults() {
-
-            }
-        };
+        Configuration commandsConfig = new Configuration(new File(sinkAntiSpamDirectory, "Commands.yml"));
         commandsConfig.init();
 
         db =

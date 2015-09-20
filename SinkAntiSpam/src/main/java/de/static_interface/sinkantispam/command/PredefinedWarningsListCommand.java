@@ -17,6 +17,8 @@
 
 package de.static_interface.sinkantispam.command;
 
+import static de.static_interface.sinklibrary.database.query.Query.*;
+
 import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
@@ -40,7 +42,7 @@ public class PredefinedWarningsListCommand extends SinkCommand {
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        PredefinedWarning[] pWarnings = SinkAntiSpam.getInstance().getPredefinedWarningsTable().get("SELECT * FROM `{TABLE}`");
+        PredefinedWarning[] pWarnings = from(SinkAntiSpam.getInstance().getPredefinedWarningsTable()).select().getResults();
         if (pWarnings.length < 1) {
             sender.sendMessage(ChatColor.RED + "No predefined warnings found");
             return true;
