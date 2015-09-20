@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public abstract class Configuration {
+public class Configuration {
 
     private static Map<String, Configuration> configs = new ConcurrentHashMap<>();
     protected File yamlFile = null;
@@ -286,7 +286,9 @@ public abstract class Configuration {
     /**
      * Add default values to the configuration using {@link #addDefault(String, Object)}
      */
-    public abstract void addDefaults();
+    public void addDefaults() {
+
+    }
 
     /**
      * Save config file
