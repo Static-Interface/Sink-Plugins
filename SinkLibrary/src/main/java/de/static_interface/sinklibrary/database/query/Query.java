@@ -186,7 +186,11 @@ public abstract class Query<T> {
      */
     @Nonnull
     public T get(Object... bindings) {
-        return getResults(bindings)[0];
+        T[] results = getResults(bindings);
+        if (results.length < 1) {
+            return null;
+        }
+        return results[0];
     }
 
     public Query<T> getMasterQuery() {
