@@ -165,7 +165,7 @@ public abstract class Query<T> {
     }
 
     private FromQuery<T> getFromQuery() {
-        Query q = this;
+        Query<T> q = this;
         while (q != null) {
             if (q instanceof FromQuery) {
                 break;
@@ -177,7 +177,7 @@ public abstract class Query<T> {
             throw new IllegalStateException("Query is not a from() query!");
         }
 
-        return (FromQuery) q;
+        return (FromQuery<T>) q;
     }
 
     /**
