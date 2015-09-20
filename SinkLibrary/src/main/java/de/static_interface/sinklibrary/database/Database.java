@@ -204,6 +204,15 @@ public abstract class Database {
 
     protected String whereStatementToSql(WhereQuery tQuery) {
         WhereCondition condition = tQuery.getCondition();
+        String prefix = "";
+        String suffix = "";
+        if (tQuery.getParanthesisState() == 1) {
+            prefix = "(";
+        }
+
+        if (tQuery.getParanthesisState() == 2) {
+            suffix = ")";
+        }
 
         char bt = getBacktick();
         String columName = bt + tQuery.getColumn() + bt;
@@ -224,7 +233,7 @@ public abstract class Database {
             if ((isEquals && !isNegated) || (!isEquals && condition.isNegated())) {
                 operator += "=";
             }
-            return columName + " " + operator + " " + condition.getValue().toString();
+            return prefix + columName + " " + operator + " " + condition.getValue().toString() + suffix;
         }
 
         if (condition instanceof EqualsCondition) {
@@ -240,7 +249,7 @@ public abstract class Database {
                 }
             }
 
-            return columName + " " + equalsOperator + " " + (o == null ? "NULL" : o.toString());
+            return prefix + columName + " " + equalsOperator + " " + (o == null ? "NULL" : o.toString()) + suffix;
         }
 
         if (condition instanceof LikeCondition) {
@@ -249,7 +258,7 @@ public abstract class Database {
                 likeOperator = "NOT LIKE";
             }
 
-            return columName + " " + likeOperator + ((LikeCondition) condition).getPattern();
+            return prefix + columName + " " + likeOperator + ((LikeCondition) condition).getPattern() + suffix;
         }
 
         throw new IllegalStateException("Condition not supported: " + condition.getClass().getName());

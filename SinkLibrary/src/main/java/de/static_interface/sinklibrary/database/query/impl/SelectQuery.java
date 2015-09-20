@@ -29,8 +29,8 @@ public class SelectQuery<T> extends Query<T> {
         this.columns = columns;
     }
 
-    public WhereQuery where(String columName, WhereCondition condition) {
-        WhereQuery query = new WhereQuery(this, columName, condition);
+    public WhereQuery<T> where(String columName, WhereCondition condition) {
+        WhereQuery<T> query = new WhereQuery(this, columName, condition);
         setChild(query);
         return query;
     }

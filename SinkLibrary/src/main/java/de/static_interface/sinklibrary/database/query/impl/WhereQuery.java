@@ -24,11 +24,30 @@ public class WhereQuery<T> extends Query<T> {
 
     private WhereCondition condition;
     private String column;
+    private int paranthesisState = 0;
 
     public WhereQuery(Query parent, String column, WhereCondition condition) {
         super(parent);
         this.column = column;
         this.condition = condition;
+    }
+
+    public WhereQuery<T> openParanthesis() {
+        paranthesisState = 1;
+        return this;
+    }
+
+    public WhereQuery<T> closeParanthesis() {
+        paranthesisState = 2;
+        return this;
+    }
+
+    public void resetParanthesisState() {
+        paranthesisState = 0;
+    }
+
+    public int getParanthesisState() {
+        return paranthesisState;
     }
 
     public WhereCondition getCondition() {
@@ -40,8 +59,8 @@ public class WhereQuery<T> extends Query<T> {
      * @param column the column
      * @param condition the condition
      */
-    public AndQuery and(String column, WhereCondition condition) {
-        AndQuery query = new AndQuery(this, column, condition);
+    public AndQuery<T> and(String column, WhereCondition condition) {
+        AndQuery<T> query = new AndQuery(this, column, condition);
         setChild(query);
         return query;
     }
@@ -51,8 +70,8 @@ public class WhereQuery<T> extends Query<T> {
      * @param column the column
      * @param condition the condition
      */
-    public OrQuery or(String column, WhereCondition condition) {
-        OrQuery query = new OrQuery(this, column, condition);
+    public OrQuery<T> or(String column, WhereCondition condition) {
+        OrQuery<T> query = new OrQuery(this, column, condition);
         setChild(query);
         return query;
     }

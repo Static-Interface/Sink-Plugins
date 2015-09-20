@@ -36,7 +36,7 @@ public class FromQuery<T> extends Query<T> {
     /**
      * Start a select query. Calls {@link #select(String...)} with "*" as argument
      */
-    public SelectQuery select() {
+    public SelectQuery<T> select() {
         return select("*");
     }
 
@@ -44,8 +44,8 @@ public class FromQuery<T> extends Query<T> {
      * Start a select query
      @param columns the columns which should be queried or * for all columns
      */
-    public SelectQuery select(String... columns) {
-        SelectQuery query = new SelectQuery(this, columns);
+    public SelectQuery<T> select(String... columns) {
+        SelectQuery<T> query = new SelectQuery(this, columns);
         setChild(query);
         return query;
     }

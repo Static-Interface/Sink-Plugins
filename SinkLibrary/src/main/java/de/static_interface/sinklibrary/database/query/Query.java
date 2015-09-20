@@ -105,7 +105,7 @@ public abstract class Query<T> {
         return new LikeCondition(pattern);
     }
 
-    public Query getChild() {
+    public Query<T> getChild() {
         return child;
     }
 
@@ -113,7 +113,7 @@ public abstract class Query<T> {
         this.child = query;
     }
 
-    public Query getParent() {
+    public Query<T> getParent() {
         return parent;
     }
 
@@ -121,7 +121,7 @@ public abstract class Query<T> {
      * Set the SQL <code>LIMIT</code> for the query
      * @param rowCount the maximal row count
      */
-    public LimitQuery limit(int rowCount) {
+    public LimitQuery<T> limit(int rowCount) {
         return limit(0, rowCount);
     }
 
@@ -130,8 +130,8 @@ public abstract class Query<T> {
      * @param rowCount the maximal row count
      * @param offset the offset for the result
      */
-    public LimitQuery limit(int offset, int rowCount) {
-        LimitQuery query = new LimitQuery(this, offset, rowCount);
+    public LimitQuery<T> limit(int offset, int rowCount) {
+        LimitQuery<T> query = new LimitQuery(this, offset, rowCount);
         setChild(query);
         return query;
     }
@@ -141,8 +141,8 @@ public abstract class Query<T> {
      * @param column the column which is used for ordering
      * @param order the order type
      */
-    public OrderByQuery orderBy(String column, Order order) {
-        OrderByQuery query = new OrderByQuery(this, column, order);
+    public OrderByQuery<T> orderBy(String column, Order order) {
+        OrderByQuery<T> query = new OrderByQuery(this, column, order);
         setChild(query);
         return query;
     }
@@ -152,7 +152,7 @@ public abstract class Query<T> {
      * @param bindings the SQL bindings
      */
     @Nonnull
-    public T[] getResults(String... bindings) {
+    public T[] getResults(Object... bindings) {
         return (T[]) getFromQuery().getTable().get(toSql(), bindings);
     }
 
@@ -164,7 +164,7 @@ public abstract class Query<T> {
         return getFromQuery().getTable().getDatabase().buildQuery(getMasterQuery());
     }
 
-    private FromQuery getFromQuery() {
+    private FromQuery<T> getFromQuery() {
         Query q = this;
         while (q != null) {
             if (q instanceof FromQuery) {
@@ -185,11 +185,11 @@ public abstract class Query<T> {
      * @param bindings the SQL bindings
      */
     @Nonnull
-    public T get(String... bindings) {
+    public T get(Object... bindings) {
         return getResults(bindings)[0];
     }
 
-    public Query getMasterQuery() {
+    public Query<T> getMasterQuery() {
         if (getFromQuery() != null) {
             return getFromQuery();
         }
