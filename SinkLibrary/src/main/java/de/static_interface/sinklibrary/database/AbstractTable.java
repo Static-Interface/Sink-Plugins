@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.database.annotation.Column;
 import de.static_interface.sinklibrary.database.annotation.ForeignKey;
 import de.static_interface.sinklibrary.database.annotation.Index;
+import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
 import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
 import de.static_interface.sinklibrary.util.Debug;
@@ -108,8 +109,11 @@ public abstract class AbstractTable<T extends Row> {
         String sql = "CREATE TABLE IF NOT EXISTS " + bt + getName() + bt + " (";
 
         List<String> primaryKeys = new ArrayList<>();
+        List<String> uniqueKeys = new ArrayList<>();
         List<Field> foreignKeys = new ArrayList<>();
         List<Field> indexes = new ArrayList<>();
+        HashMap<Integer, List<String>> combinedUniqueKeys = new HashMap<>();
+
         Class foreignOptionsTable = null;
 
         if (this instanceof OptionsTable) {
@@ -149,7 +153,21 @@ public abstract class AbstractTable<T extends Row> {
             }
 
             if (column.uniqueKey()) {
-                sql += " UNIQUE KEY";
+                uniqueKeys.add(name);
+            }
+
+            UniqueKey uniqueKey = FieldCache.getAnnotation(f, UniqueKey.class);
+            if (uniqueKey != null) {
+                if (uniqueKey.combinationId() == Integer.MAX_VALUE) {
+                    uniqueKeys.add(name);
+                } else {
+                    List<String> keys = combinedUniqueKeys.get(uniqueKey.combinationId());
+                    if (keys == null) {
+                        keys = new ArrayList<>();
+                    }
+                    keys.add(name);
+                    combinedUniqueKeys.put(uniqueKey.combinationId(), keys);
+                }
             }
 
             if (column.primaryKey()) {
@@ -184,14 +202,37 @@ public abstract class AbstractTable<T extends Row> {
         }
 
         if (primaryKeys.size() > 0) {
-            String fields = "";
+            String columns = "";
             for (String f : primaryKeys) {
-                if (!fields.equals("")) {
-                    fields += ", ";
+                if (!columns.equals("")) {
+                    columns += ", ";
                 }
-                fields += bt + f + bt;
+                columns += bt + f + bt;
             }
-            sql += "PRIMARY KEY (" + fields + "),";
+            sql += "PRIMARY KEY (" + columns + "),";
+        }
+
+        if (uniqueKeys.size() > 0) {
+            for (String s : uniqueKeys) {
+                sql += "UNIQUE KEY " + bt + s + bt + ",";
+            }
+        }
+
+        if (combinedUniqueKeys.size() > 0) {
+            for (List<String> columnsList : combinedUniqueKeys.values()) {
+                String columns = "";
+                String first = null;
+                for (String f : columnsList) {
+                    if (!columns.equals("")) {
+                        columns += ", ";
+                    }
+                    if (first == null) {
+                        first = f;
+                    }
+                    columns += bt + f + bt;
+                }
+                sql += "UNIQUE KEY " + bt + first + "_uk" + bt + " (" + columns + "),";
+            }
         }
 
         for (Field f : foreignKeys) {

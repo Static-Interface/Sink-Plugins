@@ -61,7 +61,9 @@ public @interface Column {
      * The SQL type is <code>UNIQUE KEY</code><br/><br/>
      * Throws an exception on {@link AbstractTable#insert(Row)} if a row with the same value on this column already exists
      * @return true if the column is a SQL <code>UNIQUE KEY</code>
+     * @deprecated Use the {@link UniqueKey} annotation
      */
+    @Deprecated
     boolean uniqueKey() default false;
 
     /**
