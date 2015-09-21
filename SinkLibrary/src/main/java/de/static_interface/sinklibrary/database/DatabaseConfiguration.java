@@ -48,6 +48,12 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
     }
 
     @Override
+    public void onCreate() {
+        set("TablePrefix", defaultTablePrefix);
+        set("DatabaseName", defaultDatabase);
+    }
+
+    @Override
     public void addDefaults() {
         addDefault("Type", "H2");
         addDefault("Address", "localhost");
