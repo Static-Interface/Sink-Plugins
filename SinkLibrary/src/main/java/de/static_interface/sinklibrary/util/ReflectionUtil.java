@@ -145,6 +145,19 @@ public class ReflectionUtil {
         throw new NoSuchMethodException();
     }
 
+    public static Object getDeclaredField(Object object, String field) {
+        try {
+            Class<?> clazz = object.getClass();
+            Field objectField = clazz.getDeclaredField(field);
+            objectField.setAccessible(true);
+            Object result = objectField.get(object);
+            objectField.setAccessible(false);
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Object wrapperToPrimitive(Object value) {
         if (isPrimitiveClass(value.getClass())) {
             return value;

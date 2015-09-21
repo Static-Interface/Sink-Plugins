@@ -53,6 +53,7 @@ import de.static_interface.sinklibrary.user.ProxiedIngameUserProvider;
 import de.static_interface.sinklibrary.user.ProxiedUserProvider;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import net.milkbowl.vault.chat.Chat;
@@ -125,7 +126,7 @@ public class SinkLibrary extends JavaPlugin {
     private BanProvider banProvider;
     private boolean ircExceptionOccured = false;
     private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
-
+    private Map<String, SinkCommand> commands = new HashMap<>();
     /**
      * Get the instance of this plugin
      * @return instance
@@ -903,6 +904,7 @@ public class SinkLibrary extends JavaPlugin {
         if (ann != null) {
             aliases = Arrays.asList(ann.value());
         }
+
         if (!impl.getCommandOptions().isIrcOnly() && (cmd == null || (cmd instanceof PluginIdentifiableCommand && !((PluginIdentifiableCommand) cmd)
                 .getPlugin().getName()
                 .equals(p.getName())))) {
@@ -911,7 +913,7 @@ public class SinkLibrary extends JavaPlugin {
                 //Todo: add setting for override/force
 
                 Map<String, Command> knownCommands =
-                        (Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
+                        (Map<String, Command>) ReflectionUtil.getDeclaredField(getCommandMap(), "knownCommands");
                 for (String s : aliases) {
                     if (knownCommands.containsKey(s)) {
                         knownCommands.remove(s);
@@ -939,13 +941,7 @@ public class SinkLibrary extends JavaPlugin {
         impl.setCommand(cmd);
 
         if (impl.getCommandOptions().isIrcEnabled()) {
-            Map<String, Command> knownCommands;
-            try {
-                knownCommands = (Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
-            } catch (Exception e) {
-                Debug.log(e);
-                knownCommands = new HashMap<>();
-            }
+            Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtil.getDeclaredField(getCommandMap(), "knownCommands");
             List<String> ircAliases = new ArrayList<>();
             for (String s : aliases) {
                 if (StringUtil.isEmptyOrNull(s)) {
@@ -962,11 +958,17 @@ public class SinkLibrary extends JavaPlugin {
             cmd.setAliases(aliases);
         }
 
+        for (String s : aliases) {
+            commands.put(s, impl);
+        }
+
+        commands.put(name, impl);
+
         impl.onRegistered();
     }
 
 
-    private CommandMap getCommandMap() {
+    public CommandMap getCommandMap() {
         try {
             Field f = CraftServer.class.getDeclaredField("commandMap");
             f.setAccessible(true);
@@ -977,6 +979,19 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     public void unregisterCommand(@Nonnull String name, @Nonnull Plugin plugin) {
+        SinkCommand impl = commands.get(name);
+        Aliases ann = impl.getClass().getAnnotation(Aliases.class);
+        List<String> aliases = new ArrayList<>();
+        if (ann != null) {
+            aliases = Arrays.asList(ann.value());
+        }
+
+        for (String s : aliases) {
+            commands.remove(s);
+        }
+
+        commands.remove(name);
+
         Command cmd = getCommandMap().getCommand(plugin.getName() + ":" + name);
         if (cmd == null) {
             cmd = getCommandMap().getCommand(name);
@@ -991,38 +1006,20 @@ public class SinkLibrary extends JavaPlugin {
         unregisterCommandBukkit(cmd);
     }
 
-    private Object getPrivateField(Object object, String field) throws SecurityException,
-                                                                       NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-        Class<?> clazz = object.getClass();
-        Field objectField = clazz.getDeclaredField(field);
-        objectField.setAccessible(true);
-        Object result = objectField.get(object);
-        objectField.setAccessible(false);
-        return result;
-    }
-
     private void unregisterCommandBukkit(Command cmd) {
-        try {
-            HashMap<String, Command> knownCommands = (HashMap<String, Command>) getPrivateField(getCommandMap(), "knownCommands");
-            knownCommands.remove(cmd.getName());
-            for (String alias : cmd.getAliases()) {
-                if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
-                    knownCommands.remove(alias);
-                }
+        HashMap<String, Command> knownCommands = (HashMap<String, Command>) ReflectionUtil.getDeclaredField(getCommandMap(), "knownCommands");
+        knownCommands.remove(cmd.getName());
+        for (String alias : cmd.getAliases()) {
+            if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
+                knownCommands.remove(alias);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
     @Nullable
     public SinkCommand getSinkCommand(String name) {
-        Command cmd = null;
-        try {
-            cmd = ((Map<String, Command>) getPrivateField(getCommandMap(), "knownCommands")).get(name);
-        } catch (Exception e) {
-            Debug.log(e);
-        }
+        Command cmd = ((Map<String, Command>) ReflectionUtil.getDeclaredField(getCommandMap(), "knownCommands")).get(name);
+
         if (cmd == null) {
             Debug.log("cmd == null! arg: " + name);
             return null;
@@ -1104,5 +1101,9 @@ public class SinkLibrary extends JavaPlugin {
 
     private IrcUserProvider getIrcUserProvider() {
         return ircUserProvider;
+    }
+
+    public Map<String, SinkCommand> getCommands() {
+        return Collections.unmodifiableMap(commands);
     }
 }
