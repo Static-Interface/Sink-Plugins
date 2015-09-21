@@ -107,6 +107,7 @@ public abstract class AbstractTable<T extends Row> {
         char bt = db.getBacktick();
         String sql = "CREATE TABLE IF NOT EXISTS " + bt + getName() + bt + " (";
 
+        List<String> primaryKeys = new ArrayList<>();
         List<Field> foreignKeys = new ArrayList<>();
         List<Field> indexes = new ArrayList<>();
         Class foreignOptionsTable = null;
@@ -115,7 +116,6 @@ public abstract class AbstractTable<T extends Row> {
             foreignOptionsTable = ((OptionsTable) this).getForeignTable();
         }
 
-        boolean primarySet = false;
         for (Field f : getRowClass().getFields()) {
             Column column = FieldCache.getAnnotation(f, Column.class);
             if (column == null) {
@@ -153,11 +153,7 @@ public abstract class AbstractTable<T extends Row> {
             }
 
             if (column.primaryKey()) {
-                if (primarySet) {
-                    throw new SQLException("Duplicate primary key");
-                }
-                primarySet = true;
-                sql += " PRIMARY KEY";
+                primaryKeys.add(name);
             }
 
             if (FieldCache.getAnnotation(f, Nullable.class) == null) {
@@ -185,6 +181,17 @@ public abstract class AbstractTable<T extends Row> {
             }
 
             sql += ",";
+        }
+
+        if (primaryKeys.size() > 0) {
+            String fields = "";
+            for (String f : primaryKeys) {
+                if (!fields.equals("")) {
+                    fields += ", ";
+                }
+                fields += bt + f + bt;
+            }
+            sql += "PRIMARY KEY (" + fields + "),";
         }
 
         for (Field f : foreignKeys) {
