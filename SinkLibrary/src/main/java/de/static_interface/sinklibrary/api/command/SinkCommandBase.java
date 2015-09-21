@@ -299,6 +299,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
         if (hasSubCommands()) {
             for (SinkSubCommand subCommand : getSubCommands()) {
+                if (sender instanceof IrcCommandSender && !subCommand.getCommandOptions().isIrcEnabled()) {
+                    continue;
+                }
+
                 if (!subCommand.testPermission(sender, subCommand.getPermission())) {
                     continue;
                 }
@@ -437,8 +441,6 @@ public abstract class SinkCommandBase implements CommandExecutor {
     }
 
     protected void sendUsage(CommandSender sender, Command command) {
-        boolean selfSend = false;
-
         Options options = getCommandOptions().getCliOptions();
         String commandLineUsage;
         if (options != null) {
@@ -448,7 +450,6 @@ public abstract class SinkCommandBase implements CommandExecutor {
             if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
                 commandLineUsage += System.lineSeparator() + commandLineUsage;
                 sender.sendMessage(commandLineUsage);
-                selfSend = true;
             }
         }
 
@@ -460,14 +461,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
             }
 
             sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
-            selfSend = true;
         }
 
 
         if (hasSubCommands()) {
-            if (selfSend) {
-                sender.sendMessage(ChatColor.GOLD + "+++++ " + ChatColor.RED + "SubCommands" + ChatColor.GOLD + " +++++");
-            }
             sendSubCommandList(sender, false);
         }
     }
