@@ -44,7 +44,7 @@ public class SinkCommandOptions {
     private CommandLineParser cliParser = null;
     private SinkCommandBase parentCommand;
     private boolean ircEnabled = true;
-
+    private int minArgs = -1;
     public SinkCommandOptions(SinkCommandBase parentCommand) {
         if (isPlayerOnly && isIrcOnly) {
             throw new IllegalStateException("A command can't be player only and irc only at the same time");
@@ -128,6 +128,14 @@ public class SinkCommandOptions {
 
     public void setCliOptions(Options cliOptions) {
         this.cliOptions = cliOptions;
+    }
+
+    public int getMinRequiredArgs() {
+        return minArgs;
+    }
+
+    public void setMinRequiredArgs(int value) {
+        minArgs = value;
     }
 
     @Deprecated

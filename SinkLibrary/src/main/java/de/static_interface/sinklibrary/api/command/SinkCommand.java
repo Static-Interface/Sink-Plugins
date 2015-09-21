@@ -75,7 +75,13 @@ public abstract class SinkCommand extends SinkCommandBase {
 
     public void setCommand(Command command) {
         this.command = command;
-        setUsageSyntax(command.getUsage());
+        String usageSyntax = command.getUsage();
+        if (usageSyntax != null && (usageSyntax.trim().equalsIgnoreCase("/<command>") || usageSyntax.trim()
+                .equalsIgnoreCase("/" + getCommand().getName()))) {
+            usageSyntax = null;
+        }
+
+        setUsageSyntax(usageSyntax);
         setPermission(command.getPermission());
     }
 }

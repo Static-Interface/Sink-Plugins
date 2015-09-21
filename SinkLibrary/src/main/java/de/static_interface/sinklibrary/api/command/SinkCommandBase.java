@@ -56,7 +56,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     private final boolean async;
     private final Plugin plugin;
-    private final List<SinkSubCommand> subCommands = new ArrayList<>();
+    private final List<SinkSubCommand<?>> subCommands = new ArrayList<>();
     private String permission;
     private Configuration config;
     private SinkCommandOptions defaultCommandOptions = new SinkCommandOptions(this);
@@ -82,7 +82,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
         this.async = async;
     }
 
-    public List<SinkSubCommand> getSubCommands() {
+    public List<SinkSubCommand<?>> getSubCommands() {
         return Collections.unmodifiableList(subCommands);
     }
 
@@ -119,11 +119,11 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     @Nullable
     public String getUsage(CommandSender sender) {
-        if (StringUtil.isEmptyOrNull(usageSyntax)) {
+        if (StringUtil.isEmptyOrNull(getUsageSyntax())) {
             return null;
         }
 
-        return getCommandPrefix(sender) + getName() + " " + usageSyntax;
+        return getCommandPrefix(sender) + getName() + " " + getUsageSyntax();
     }
 
 
@@ -155,7 +155,12 @@ public abstract class SinkCommandBase implements CommandExecutor {
         return subCommands.size() > 0;
     }
 
-    public final void registerSubCommand(SinkSubCommand subCommand) {
+    public final <T extends SinkCommandBase> void registerSubCommand(SinkSubCommand<T> subCommand) {
+        if (this instanceof SinkSubCommand) {
+            if (this == subCommand) {
+                throw new IllegalStateException("Trying to register a command as its own subcommand");
+            }
+        }
         subCommands.add(subCommand);
         subCommand.onRegistered();
     }
@@ -254,7 +259,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
                             parsedCmdArgs = parseCmdArgs(getCommandLine().getArgs());
                             parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
                         }
-                        success = onExecute(sender, parsedLabel, parsedCmdArgs);
+
+                        int minArgs = getCommandOptions().getMinRequiredArgs();
+
+                        success = (minArgs <= 0 || parsedCmdArgs.length >= minArgs) && onExecute(sender, parsedLabel, parsedCmdArgs);
                     } catch (Exception e) {
                         exception = e;
                     }
@@ -278,9 +286,9 @@ public abstract class SinkCommandBase implements CommandExecutor {
         }
     }
 
-    private void sendSubCommandList(CommandSender sender, boolean includeSelf) {
+    public void sendSubCommandList(CommandSender sender, boolean includeSelf) {
         if (includeSelf) {
-            sender.sendMessage(ChatColor.GOLD + "+++++ Help: " + getCommandPrefix(sender) + getName() + " +++++");
+            sender.sendMessage(ChatColor.GOLD + "+++++ Help: " + ChatColor.RED + getCommandPrefix(sender) + getName() + ChatColor.GOLD + " +++++");
             if (getUsage(sender) != null) {
                 String
                         description =
@@ -429,6 +437,8 @@ public abstract class SinkCommandBase implements CommandExecutor {
     }
 
     protected void sendUsage(CommandSender sender, Command command) {
+        boolean selfSend = false;
+
         Options options = getCommandOptions().getCliOptions();
         String commandLineUsage;
         if (options != null) {
@@ -438,31 +448,39 @@ public abstract class SinkCommandBase implements CommandExecutor {
             if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
                 commandLineUsage += System.lineSeparator() + commandLineUsage;
                 sender.sendMessage(commandLineUsage);
+                selfSend = true;
             }
         }
 
         String usage = getUsage(sender);
 
-        if (usage == null) {
-            return;
+        if (usage != null) {
+            if (command != null) {
+                usage = getUsage(sender).replaceAll("\\Q<command>\\E", command.getName());
+            }
+
+            sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
+            selfSend = true;
         }
 
-        if (command != null) {
-            usage = getUsage(sender).replaceAll("\\Q<command>\\E", command.getName());
-        }
-
-        sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
 
         if (hasSubCommands()) {
-            sender.sendMessage("SubCommands:");
+            if (selfSend) {
+                sender.sendMessage(ChatColor.GOLD + "+++++ " + ChatColor.RED + "SubCommands" + ChatColor.GOLD + " +++++");
+            }
             sendSubCommandList(sender, false);
         }
     }
 
+
     public String getSubPermission(String perm) {
+        if (getPermission() == null) {
+            throw new IllegalStateException("Can not get get sub permission if getPermission() == null!");
+        }
         return getPermission() + "." + perm;
     }
 
+    @Nullable
     public String getUsageSyntax() {
         return usageSyntax;
     }
