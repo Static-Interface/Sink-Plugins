@@ -958,10 +958,6 @@ public class SinkLibrary extends JavaPlugin {
             cmd.setAliases(aliases);
         }
 
-        for (String s : aliases) {
-            commands.put(s, impl);
-        }
-
         commands.put(name, impl);
 
         impl.onRegistered();

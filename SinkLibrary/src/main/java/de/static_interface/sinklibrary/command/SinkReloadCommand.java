@@ -23,11 +23,9 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -77,11 +75,8 @@ public class SinkReloadCommand extends SinkCommand {
 
         sender.sendMessage(PREFIX + "Reloading Commands...");
         Map<String, SinkCommand> commands = SinkLibrary.getInstance().getCommands();
-        Map<String, Command>
-                knownCommands =
-                ((Map<String, Command>) ReflectionUtil.getDeclaredField(SinkLibrary.getInstance().getCommandMap(), "knownCommands"));
-        for (String name : commands.keySet()) {
-            knownCommands.put(name, commands.get(name).getCommand());
+        for (String command : commands.keySet()) {
+            SinkLibrary.getInstance().registerCommand(command, commands.get(command));
         }
 
         sender.sendMessage(PREFIX + ChatColor.GREEN + "Done");
