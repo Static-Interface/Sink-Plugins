@@ -31,6 +31,7 @@ import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ import java.util.regex.Pattern;
 
 @Description("Change your nickname")
 @DefaultPermission
-@Usage("/<command> [Player] <New Name|off>")
+@Usage("[player] <new name|off>")
 public class NickCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.GREEN + "[Nick]" + ' ' + ChatColor.RESET;
@@ -67,7 +68,7 @@ public class NickCommand extends SinkCommand {
 
         if (args.length > 1) {
             if (!user.hasPermission("sinkchat.nick.others")) {
-                throw new NotEnoughPermissionsException();
+                throw new NotEnoughPermissionsException("sinkchat.nick.others");
             }
 
             String playerName = args[0];
@@ -119,7 +120,7 @@ public class NickCommand extends SinkCommand {
 
         newDisplayName = user.getChatPrefix() + newDisplayName;
 
-        for (Player onlinePlayer : BukkitUtil.getOnlinePlayers()) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (target.equals(onlinePlayer)) {
                 continue;
             }

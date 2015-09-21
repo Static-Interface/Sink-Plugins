@@ -21,6 +21,7 @@ import de.static_interface.sinkcommands.SinkCommands;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.ChatColor;
@@ -28,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 @Description("Mute all players")
+@Usage("[Reason]")
 @DefaultPermission
 public class GlobalmuteCommand extends SinkCommand {
 

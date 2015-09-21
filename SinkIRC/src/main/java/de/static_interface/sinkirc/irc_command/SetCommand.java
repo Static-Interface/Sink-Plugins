@@ -26,7 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 @Description("Set an option value")
-@Usage("set <option> <value>")
+@Usage("<option> <value>")
 public class SetCommand extends SinkCommand {
 
     public SetCommand(Plugin plugin, Configuration config) {

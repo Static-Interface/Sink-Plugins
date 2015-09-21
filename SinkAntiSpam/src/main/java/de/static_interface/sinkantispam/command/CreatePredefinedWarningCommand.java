@@ -23,8 +23,8 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.util.DateUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.Option;
@@ -39,13 +39,13 @@ import javax.annotation.Nonnull;
 @Description("Create a predefined warning")
 @Permission("SinkAntiSpam.Command.PredefinedWarnings")
 @Aliases({"createpwarn", "createpwarning"})
+@Usage("<options> <warningname>")
 public class CreatePredefinedWarningCommand extends SinkCommand {
 
     public CreatePredefinedWarningCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <WarningName>");
     }
 
     private Options buildOptions() {
@@ -86,7 +86,7 @@ public class CreatePredefinedWarningCommand extends SinkCommand {
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (args.length < 1) {
-            throw new NotEnoughArgumentsException();
+            return false;
         }
         PredefinedWarning warning = new PredefinedWarning();
         if (getCommandLine().hasOption('e')) {

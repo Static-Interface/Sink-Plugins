@@ -130,10 +130,12 @@ public class SinkCommandOptions {
         this.cliOptions = cliOptions;
     }
 
+    @Deprecated
     public String getCmdLineSyntax() {
         return cmdLineSyntax;
     }
 
+    @Deprecated
     public void setCmdLineSyntax(String cmdLineSyntax) {
         if (cmdLineSyntax == null) {
             cmdLineSyntax = "";
@@ -150,9 +152,8 @@ public class SinkCommandOptions {
             cliHelpFormatter = new HelpFormatter();
             cliHelpFormatter.setNewLine(System.lineSeparator());
             cliHelpFormatter.printHelp(new PrintWriter(writer), HelpFormatter.DEFAULT_WIDTH,
-                                       getCmdLineSyntax()
-                                               .replaceAll("\\{ALIAS\\}", cmd.getName())
-                                               .replaceAll("\\{PREFIX\\}", parentCommand.getCommandPrefix(sender)), null, getCliOptions(),
+                                       parentCommand.getCommandPrefix(sender) + parentCommand.getName() + " " + parentCommand.getUsage(sender), null,
+                                       getCliOptions(),
                                        HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
         }
         return cliHelpFormatter;

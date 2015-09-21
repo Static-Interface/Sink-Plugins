@@ -23,13 +23,14 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
+import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.sender.ProxiedCommandSenderConversable;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
-import de.static_interface.sinklibrary.sender.ProxiedCommandSenderConversable;
-import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
@@ -48,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Description("Execute commands as other players")
+@Usage("<player> [*]<command> [command args] [-s]")
 @DefaultPermission
 public class SudoCommand extends SinkCommand {
 
@@ -61,7 +63,6 @@ public class SudoCommand extends SinkCommand {
                 .build();
         options.addOption(silent);
         getCommandOptions().setCliOptions(options);
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <User> <Command> [CommandArgs] [-s]");
     }
 
     @Override

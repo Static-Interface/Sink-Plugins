@@ -21,13 +21,14 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,6 +37,7 @@ import org.bukkit.potion.PotionEffectType;
 
 @DefaultPermission
 @Description("Remove invisibility effects")
+@Usage("[player]")
 public class MilkCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.BLUE + "[Milk] " + ChatColor.RESET;
@@ -49,13 +51,13 @@ public class MilkCommand extends SinkCommand {
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
         if (!user.hasPermission("sinkcommands.commands.milk.all")) {
-            throw new NotEnoughArgumentsException();
+            return false;
         }
         if (args.length == 0) //Remove all
         {
             String s = "";
             int i = 0;
-            for (Player p : BukkitUtil.getOnlinePlayers()) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                     i++;
                     p.removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -88,8 +90,8 @@ public class MilkCommand extends SinkCommand {
         }
 
         boolean equals = user instanceof IngameUser && ((IngameUser) user).getPlayer().equals(target);
-        if (!equals && user.hasPermission("sinkcommands.commands.milk.others")) {
-            throw new NotEnoughPermissionsException();
+        if (!equals && user.hasPermission(getSubPermission("milk.others"))) {
+            throw new NotEnoughPermissionsException(getSubPermission("milk.others"));
         }
 
         if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {

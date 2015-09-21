@@ -133,7 +133,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
         }
 
         if (getCommandOptions().isIrcOpOnly() && sender instanceof IrcCommandSender && !sender.isOp()) {
-            throw new NotEnoughPermissionsException();
+            throw new NotEnoughPermissionsException(getPermission());
         }
 
         if (!getCommandOptions().isIrcEnabled() && sender instanceof IrcCommandSender) {
@@ -239,7 +239,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 if (preExecuteSuccess) {
                     try {
                         if (!testPermission(sender, getPermission())) {
-                            throw new NotEnoughPermissionsException();
+                            throw new NotEnoughPermissionsException(getPermission());
                         }
 
                         String[] parsedCmdArgs = parseCmdArgs(finalArgs);
@@ -432,9 +432,6 @@ public abstract class SinkCommandBase implements CommandExecutor {
         Options options = getCommandOptions().getCliOptions();
         String commandLineUsage;
         if (options != null) {
-            if (StringUtil.isEmptyOrNull(getCommandOptions().getCmdLineSyntax())) {
-                getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options>");
-            }
             StringWriter writer = new StringWriter();
             getCommandOptions().getCliHelpFormatter(sender, command, writer);
             commandLineUsage = writer.toString();
@@ -462,6 +459,9 @@ public abstract class SinkCommandBase implements CommandExecutor {
         }
     }
 
+    public String getSubPermission(String perm) {
+        return getPermission() + "." + perm;
+    }
 
     public String getUsageSyntax() {
         return usageSyntax;

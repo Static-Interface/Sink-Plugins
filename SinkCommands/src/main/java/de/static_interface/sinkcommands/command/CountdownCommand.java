@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -39,6 +40,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @DefaultPermission
 @Aliases("cd")
 @Description("Start a countdown")
+@Usage("[options] <reason>")
 public class CountdownCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.DARK_RED + "[" + ChatColor.RED + "CountDown" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
@@ -50,7 +52,6 @@ public class CountdownCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <reason>");
     }
 
     private Options buildOptions() {
@@ -100,7 +101,9 @@ public class CountdownCommand extends SinkCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-
+        if (args.length < 1) {
+            return false;
+        }
 
         int seconds = 30;
         if (getCommandLine().hasOption('t')) {
@@ -131,10 +134,6 @@ public class CountdownCommand extends SinkCommand {
         }
 
         String message = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ");
-
-        if (message.equalsIgnoreCase("")) {
-            return false;
-        }
 
         String command = null;
         if (getCommandLine().hasOption('c')) {

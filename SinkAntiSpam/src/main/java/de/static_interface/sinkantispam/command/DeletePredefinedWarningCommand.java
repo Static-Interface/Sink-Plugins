@@ -24,8 +24,8 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Permission;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -38,19 +38,19 @@ import javax.annotation.Nonnull;
 @Description("Delete a predefined warning")
 @Permission("SinkAntiSpam.Command.PredefinedWarnings")
 @Aliases({"delpwarn", "deletepwarn"})
+@Usage("<warningname>")
 public class DeletePredefinedWarningCommand extends SinkCommand {
 
     public DeletePredefinedWarningCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(new Options());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [WarningName]");
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (args.length < 1) {
-            throw new NotEnoughArgumentsException();
+            return false;
         }
 
         PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);

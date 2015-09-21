@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nonnull;
 
 @DefaultPermission
-@Usage("/<command> <message>")
+@Usage("<message>")
 @Aliases("tc")
 @Description("Staff chat")
 public class TeamchatCommand extends SinkCommand implements CommandExecutor {

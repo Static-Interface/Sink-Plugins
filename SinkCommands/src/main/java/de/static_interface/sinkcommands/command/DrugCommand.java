@@ -34,6 +34,7 @@ import org.bukkit.potion.PotionEffectType;
 
 @DefaultPermission
 @Description("Take drugs!")
+
 public class DrugCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Drogen] " + ChatColor.RESET;

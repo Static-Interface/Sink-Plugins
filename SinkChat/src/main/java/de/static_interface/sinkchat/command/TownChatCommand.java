@@ -26,10 +26,11 @@ import de.static_interface.sinkchat.config.ScLanguage;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.apache.commons.cli.ParseException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,6 +44,7 @@ import javax.annotation.Nonnull;
 
 @Description("Chat Channel for Towny Towns")
 @Aliases("ttc")
+@Usage("<message>")
 public class TownChatCommand extends SinkCommand implements CommandExecutor {
 
     public TownChatCommand(@Nonnull Plugin plugin, Configuration config) {
@@ -64,7 +66,7 @@ public class TownChatCommand extends SinkCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            throw new NotEnoughArgumentsException();
+            return false;
         }
 
         Town town;
@@ -102,7 +104,7 @@ public class TownChatCommand extends SinkCommand implements CommandExecutor {
             sendPlayers.add(onlineResident);
         }
 
-        for (Player onlinePlayer : BukkitUtil.getOnlinePlayers()) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (!onlinePlayer.hasPermission("sinkchat.townyspy")) {
                 continue;
             }

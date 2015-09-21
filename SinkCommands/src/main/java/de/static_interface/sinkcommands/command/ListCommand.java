@@ -25,7 +25,6 @@ import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,10 +61,10 @@ public class ListCommand extends SinkCommand implements CommandExecutor {
 
         List<String> out = new ArrayList<>(); // Output Message
         HashMap<String, List<IngameUser>> groupUsers = new HashMap<>(); // group - list of users in group
-        List<Player> onlineUsers = BukkitUtil.getOnlinePlayers();
+        Collection<? extends Player> onlineUsers = Bukkit.getOnlinePlayers();
         out.add("");
 
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
             String userGroup;
 

@@ -38,7 +38,7 @@ import java.util.List;
 
 @Description("List a players warns")
 @Aliases("listwarns")
-@Usage("/<command> <player>")
+@Usage("<player>")
 public class ListWarnsCommand extends SinkCommand {
 
     public ListWarnsCommand(Plugin plugin, Configuration config) {

@@ -35,7 +35,7 @@ import org.bukkit.plugin.Plugin;
 
 @DefaultPermission
 @Description("Rename an item")
-@Usage("/<command <name>")
+@Usage("<name>")
 public class RenameCommand extends SinkCommand {
 
     public static final String PREFIX = ChatColor.AQUA + "[Rename] " + ChatColor.RESET;

@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 @Description("Kick a player ingame")
-@Usage("kick <player> [reason]")
+@Usage("<player> [reason]")
 public class KickCommand extends IrcCommand {
 
     public KickCommand(Plugin plugin, Configuration config) {

@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -34,6 +35,7 @@ import org.pircbotx.Channel;
 @DefaultPermission
 @Description("Kicks an user from IRC")
 @Aliases("ikick")
+@Usage("<player>")
 public class IrcKickCommand extends SinkCommand {
 
     public IrcKickCommand(Plugin plugin, Configuration config) {

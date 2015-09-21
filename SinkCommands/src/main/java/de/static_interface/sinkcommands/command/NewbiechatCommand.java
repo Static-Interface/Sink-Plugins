@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nonnull;
 
 @DefaultPermission
-@Usage("Usage: /<command> <Message>")
+@Usage("<Message>")
 @Description("Chat for newbies")
 @Aliases("nc")
 public class NewbiechatCommand extends SinkCommand implements CommandExecutor {
@@ -51,7 +51,7 @@ public class NewbiechatCommand extends SinkCommand implements CommandExecutor {
         }
         String message = StringUtil.formatArrayToString(args, " ");
 
-        BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.newbiechat", false);
+        BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.command.newbiechat", false);
         return true;
     }
 }

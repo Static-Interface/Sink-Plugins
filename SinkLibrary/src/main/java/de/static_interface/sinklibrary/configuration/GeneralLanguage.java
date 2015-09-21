@@ -45,6 +45,7 @@ public class GeneralLanguage extends Configuration {
     public static YamlI18nOption GENERAL_USER_NOT_FOUND = new YamlI18nOption(GENERAL_PARENT, "UserNotFound", "&cUser not found: {0}");
     public static YamlI18nOption GENERAL_BANNED = new YamlI18nOption(GENERAL_PARENT, "Banned", "&4Banned: {0}&c");
     public static YamlI18nOption GENERAL_ERROR = new YamlI18nOption(GENERAL_PARENT, "Error", "&4Error: &c{0}");
+    @Deprecated
     public static YamlI18nOption GENERAL_NOT_ENOUGH_ARGUMENTS = new YamlI18nOption(GENERAL_PARENT, "TooFewArguments", "Too few arguments!", true);
     public static YamlI18nOption GENERAL_TIME_LEFT = new YamlI18nOption(GENERAL_PARENT, "TimeLeft", "Time Left: {0}");
     public static YamlI18nOption GENERAL_UNKNOWN_VALUE = new YamlI18nOption(GENERAL_PARENT, "UnknownValue", "Unknown value: {0}", true);

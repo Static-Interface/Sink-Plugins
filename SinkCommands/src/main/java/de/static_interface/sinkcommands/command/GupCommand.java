@@ -20,6 +20,7 @@ package de.static_interface.sinkcommands.command;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,6 +32,7 @@ import org.bukkit.plugin.Plugin;
 
 @DefaultPermission
 @Description("Go up!")
+@Usage("[height]")
 public class GupCommand extends SinkCommand {
 
     public GupCommand(Plugin plugin, Configuration config) {

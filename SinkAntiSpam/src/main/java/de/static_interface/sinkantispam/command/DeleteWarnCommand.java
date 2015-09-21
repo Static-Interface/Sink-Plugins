@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-@Usage("/<command> <player> <warning-id>")
+@Usage("<player> <warning-id>")
 @Aliases({"delwarn", "deletewarn", "delwarning"})
 @DefaultPermission
 public class DeleteWarnCommand extends SinkCommand {

@@ -24,7 +24,6 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
@@ -47,7 +46,8 @@ public class MessageCommands {
 
     private static void sendMessage(SinkUser executor, SinkUser target, String message) {
         for (SinkUser user : lastReplies.keySet()) {
-            if (user instanceof ProxiedUser && !(executor instanceof ProxiedUser) && ((ProxiedPlayer)((ProxiedUser) user).getBase()).getBaseObject().equals(executor.getSender())) {
+            if (user instanceof ProxiedUser && !(executor instanceof ProxiedUser) && ((ProxiedPlayer) user.getBase()).getBaseObject()
+                    .equals(executor.getSender())) {
                 executor = user;
                 break;
             }
@@ -68,16 +68,16 @@ public class MessageCommands {
         }
 
         if (executor instanceof IrcUser) {
-            ((IrcUser) executor).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
+            ((IrcUser) executor).sendMessage(StringUtil.format(format, executor, target, message, customValues), true);
         } else {
-            executor.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+            executor.sendMessage(StringUtil.format(format, executor, target, message, customValues));
         }
 
         format = ScmdSettings.SCMD_MESSAGE_RECEIVED_FORMAT.getValue();
         if (target instanceof IrcUser) {
-            ((IrcUser) target).sendMessage(StringUtil.format(format, executor, target, message, customValues, null), true);
+            ((IrcUser) target).sendMessage(StringUtil.format(format, executor, target, message, customValues), true);
         } else {
-            target.sendMessage(StringUtil.format(format, executor, target, message, customValues, null));
+            target.sendMessage(StringUtil.format(format, executor, target, message, customValues));
         }
 
         lastReplies.put(executor, target);
@@ -99,7 +99,7 @@ public class MessageCommands {
         @Override
         protected boolean onExecute(CommandSender sender, String label, String[] args) {
             if (args.length < 2 || args[0].trim().length() < 2 || args[1].trim().isEmpty()) {
-                throw new NotEnoughArgumentsException();
+                return false;
             }
 
             SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);
@@ -140,7 +140,7 @@ public class MessageCommands {
         @Override
         protected boolean onExecute(CommandSender sender, String label, String[] args) {
             if (args.length < 1 || StringUtil.isEmptyOrNull(args[0])) {
-                throw new NotEnoughArgumentsException();
+                return false;
             }
 
             SinkUser executor = SinkLibrary.getInstance().getUser((Object) sender);

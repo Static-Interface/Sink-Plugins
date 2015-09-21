@@ -28,7 +28,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 @Description("Chat with the people ingame")
-@Usage("say <text>")
+@Usage("<message>")
 public class SayCommand extends IrcCommand {
 
     public SayCommand(Plugin plugin, Configuration config) {

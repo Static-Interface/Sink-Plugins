@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
@@ -40,6 +41,7 @@ import org.bukkit.potion.PotionEffectType;
 @DefaultPermission
 @Aliases({"clear", "invclear", "ci"})
 @Description("Clear your or an other players inventory")
+@Usage("[options] [player]")
 public class ClearCommand extends SinkCommand {
     public static final String PREFIX = ChatColor.RED + "[Clear] " + ChatColor.RESET;
 
@@ -47,7 +49,6 @@ public class ClearCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} [options] [target]");
     }
 
     private Options buildOptions() {
@@ -93,7 +94,7 @@ public class ClearCommand extends SinkCommand {
         String targetName = StringUtil.formatArrayToString(getCommandLine().getArgs(), " ").trim();
         if (!targetName.equalsIgnoreCase("")) {
             if (!user.hasPermission("sinkcommands.commands.clear.others")) {
-                throw new NotEnoughPermissionsException();
+                throw new NotEnoughPermissionsException("sinkcommands.commands.clear.others");
             }
 
             player = Bukkit.getPlayer(targetName);

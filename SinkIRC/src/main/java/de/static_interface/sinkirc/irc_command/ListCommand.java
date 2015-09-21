@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -40,16 +39,16 @@ public class ListCommand extends IrcCommand {
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (BukkitUtil.getOnlinePlayers().size() == 0) {
+        if (Bukkit.getOnlinePlayers().size() == 0) {
             sender.sendMessage("There are currently no online players");
             return true;
         }
 
         List<String> out = new ArrayList<>();
-        String onlineMessage = "Online Players (" + BukkitUtil.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
+        String onlineMessage = "Online Players (" + Bukkit.getOnlinePlayers().size() + '/' + Bukkit.getMaxPlayers() + "): ";
 
         boolean firstPlayer = true;
-        for (Player player : BukkitUtil.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             IngameUser user = SinkLibrary.getInstance().getIngameUser(player);
             if (firstPlayer) {
                 onlineMessage += user.getDisplayName();

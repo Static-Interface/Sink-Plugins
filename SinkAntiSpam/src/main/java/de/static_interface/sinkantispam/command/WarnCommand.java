@@ -25,8 +25,8 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.api.exception.NotEnoughArgumentsException;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.Identifiable;
@@ -45,6 +45,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.UUID;
 
 @Description("Warn naughty players")
+@Usage("<player> <warning>")
 @DefaultPermission
 public class WarnCommand extends SinkCommand {
 
@@ -54,7 +55,6 @@ public class WarnCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
-        getCommandOptions().setCmdLineSyntax("{PREFIX}{ALIAS} <options> <player> [WarningId]");
     }
 
     private Options buildOptions() {
@@ -98,7 +98,7 @@ public class WarnCommand extends SinkCommand {
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         if (args.length < 2) {
-            throw new NotEnoughArgumentsException();
+            return false;
         }
 
         IngameUser target = SinkLibrary.getInstance().getIngameUser(args[0]);
@@ -129,7 +129,7 @@ public class WarnCommand extends SinkCommand {
 
         if (getCommandLine().hasOption('c')) {
             if (!sender.hasPermission("sinkantispam.warnings.custom")) {
-                throw new NotEnoughPermissionsException();
+                throw new NotEnoughPermissionsException("sinkantispam.warnings.custom");
             }
             if (!getCommandLine().hasOption('r')) {
                 throw new ParseException("Custom warnings require -r <reason> option");
@@ -153,7 +153,7 @@ public class WarnCommand extends SinkCommand {
             warning.predefinedId = null;
         } else {
             if (args.length < 1) {
-                throw new NotEnoughArgumentsException();
+                return false;
             }
             PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
             if (pWarning == null) {

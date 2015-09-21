@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
+import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.user.SinkUser;
@@ -36,6 +37,7 @@ public class RawCommands {
 
     @DefaultPermission
     @Description("Send raw messages")
+    @Usage("<Message>")
     public static class RawCommand extends SinkCommand {
 
         public RawCommand(Plugin plugin, Configuration config) {
@@ -55,6 +57,7 @@ public class RawCommands {
 
     @DefaultPermission
     @Description("Send raw messages to an user")
+    @Usage("<Player> <Message>")
     public static class RawUserCommand extends SinkCommand {
 
         public RawUserCommand(Plugin plugin, Configuration config) {
@@ -64,7 +67,7 @@ public class RawCommands {
 
         @Override
         public boolean onExecute(CommandSender sender, String label, String[] args) {
-            if (args.length < 1) {
+            if (args.length < 2) {
                 return false;
             }
             SinkUser target = SinkLibrary.getInstance().getUser(args[0]);

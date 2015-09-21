@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.api.exception;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class NotEnoughArgumentsException extends RuntimeException {
 
     public NotEnoughArgumentsException() {

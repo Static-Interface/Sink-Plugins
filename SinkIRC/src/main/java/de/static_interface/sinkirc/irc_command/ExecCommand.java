@@ -27,7 +27,7 @@ import org.bukkit.plugin.Plugin;
 
 
 @Description("Execute a command as console")
-@Usage("exec <command> <args>")
+@Usage("<command> <args>")
 public class ExecCommand extends IrcCommand {
 
     public ExecCommand(Plugin plugin, Configuration config) {

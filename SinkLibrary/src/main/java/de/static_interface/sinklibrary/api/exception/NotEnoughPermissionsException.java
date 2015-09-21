@@ -20,7 +20,19 @@ package de.static_interface.sinklibrary.api.exception;
 @SuppressWarnings("serial")
 public class NotEnoughPermissionsException extends RuntimeException {
 
+    private final String permission;
+
+    @Deprecated
     public NotEnoughPermissionsException() {
         super();
+        this.permission = null;
+    }
+
+    public NotEnoughPermissionsException(String permission) {
+        this.permission = permission;
+    }
+
+    public String getPermission() {
+        return permission;
     }
 }
