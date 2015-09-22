@@ -105,4 +105,10 @@ public @interface Column {
      * @return the if the field should be <code>ZEROFILL</code>
      */
     boolean zerofill() default false;
+
+    /**
+     * The SQL key length
+     * @return the key length
+     */
+    int keyLength() default -1;
 }

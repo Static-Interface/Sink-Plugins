@@ -20,6 +20,7 @@ package de.static_interface.sinklibrary.database;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.annotation.Column;
 import de.static_interface.sinklibrary.database.annotation.ForeignKey;
+import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.query.Query;
 import de.static_interface.sinklibrary.database.query.condition.EqualsCondition;
 import de.static_interface.sinklibrary.database.query.condition.GreaterThanCondition;
@@ -82,7 +83,17 @@ public abstract class Database {
     public String toDatabaseType(Field f) {
         Class clazz = f.getType();
         Column column = FieldCache.getAnnotation(f, Column.class);
-        boolean isForeignKey = FieldCache.getAnnotation(f, ForeignKey.class) != null;
+        String keyLength = "";
+        if (column.keyLength() >= 0) {
+            keyLength = "(" + column.keyLength() + ")";
+        }
+
+        boolean isKey = column.primaryKey()
+                        || column.uniqueKey()
+                        || FieldCache.getAnnotation(f, ForeignKey.class) != null
+                        || FieldCache.getAnnotation(f, UniqueKey.class) != null;
+
+
 
         if (clazz == Date.class) {
             throw new RuntimeException("Date is not supported for now !");
@@ -91,28 +102,32 @@ public abstract class Database {
             throw new RuntimeException("Date is not supported for now!");
         }
         if (clazz == Integer.class || clazz == int.class) {
-            return "INT";
+            return "INT" + keyLength;
         }
         if (clazz == Boolean.class || clazz == boolean.class) {
-            return "TINYINT(1)";
+            return keyLength.equals("") ? "TINYINT(1)" : "TINYINT" + keyLength;
         }
         if (clazz == Double.class || clazz == double.class) {
-            return "DOUBLE";
+            return "DOUBLE" + keyLength;
         }
         if (clazz == Float.class || clazz == float.class) {
-            return "FLOAT";
+            return "FLOAT" + keyLength;
         }
         if (clazz == Long.class || clazz == long.class) {
-            return "BIGINT";
+            return "BIGINT" + keyLength;
         }
         if (clazz == Short.class || clazz == short.class) {
-            return "SMALLINT";
+            return "SMALLINT" + keyLength;
         }
         if (clazz == Byte.class || clazz == byte.class) {
-            return "TINYINT";
+            return "TINYINT" + keyLength;
         }
         if (clazz == String.class) {
-            return column.primaryKey() || column.uniqueKey() || isForeignKey ? "VARCHAR(255)" : "VARCHAR(999)";
+            if (keyLength.equals("")) {
+                return isKey ? "VARCHAR(255)" : "VARCHAR(999)";
+            } else {
+                return "VARCHAR" + keyLength;
+            }
         }
         throw new RuntimeException("No database type available for: " + clazz.getName());
     }
