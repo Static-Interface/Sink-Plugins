@@ -166,7 +166,7 @@ public class WarnUtil {
         if (!includeDeleted) {
             warnings = from(SinkAntiSpam.getInstance().getWarningsTable()).select()
                     .where("user_id", eq("?"))
-                    .and("expireTime", gt("?")).openParanthesis()
+                    .and("expire_time", gt("?")).openParanthesis()
                     .or("expire_time", eq(null)).closeParanthesis()
                     .orderBy("id", Order.ASC)
                     .getResults(userId, System.currentTimeMillis());
