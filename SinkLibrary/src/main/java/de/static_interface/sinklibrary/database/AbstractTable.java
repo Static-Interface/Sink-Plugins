@@ -214,7 +214,7 @@ public abstract class AbstractTable<T extends Row> {
 
         if (uniqueKeys.size() > 0) {
             for (String s : uniqueKeys) {
-                sql += "UNIQUE KEY " + bt + s + bt + ",";
+                sql += "UNIQUE (" + bt + s + bt + "),";
             }
         }
 
