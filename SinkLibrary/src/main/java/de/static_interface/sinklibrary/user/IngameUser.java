@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableExce
 import de.static_interface.sinklibrary.api.user.Identifiable;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.BukkitUtil;
@@ -340,34 +341,58 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable 
 
     public void ban() {
         SinkLibrary.getInstance().getBanProvider().ban(this);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format("You have been banned"));
+        }
     }
 
     public void ban(@Nullable SinkUser banner) {
         SinkLibrary.getInstance().getBanProvider().ban(this, banner);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format(ChatColor.DARK_RED + "You have been banned by " + banner.getDisplayName()));
+        }
     }
 
     public void ban(@Nullable String reason) {
         SinkLibrary.getInstance().getBanProvider().ban(this, reason);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format(reason));
+        }
     }
 
     public void ban(@Nullable SinkUser banner, @Nullable String reason) {
         SinkLibrary.getInstance().getBanProvider().ban(this, banner, reason);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format(reason));
+        }
     }
 
     public void ban(@Nullable Long unbanTime) {
         SinkLibrary.getInstance().getBanProvider().ban(this, unbanTime);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format("You have been banned"));
+        }
     }
 
     public void ban(@Nullable SinkUser banner, @Nullable Long unbanTime) {
         SinkLibrary.getInstance().getBanProvider().ban(this, banner, unbanTime);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format(ChatColor.DARK_RED + "You have been banned by " + banner.getDisplayName()));
+        }
     }
 
     public void ban(@Nullable String reason, @Nullable Long unbanTime) {
         SinkLibrary.getInstance().getBanProvider().ban(this, reason, unbanTime);
+        if(isOnline()) {
+            getPlayer().kickPlayer(GeneralLanguage.GENERAL_BANNED.format(reason));
+        }
     }
 
     public void ban(@Nullable SinkUser banner, @Nullable String reason, @Nullable Long unbanTime) {
         SinkLibrary.getInstance().getBanProvider().ban(this, banner, reason, unbanTime);
+        if(isOnline()) {
+            getPlayer().kickPlayer(reason);
+        }
     }
 
     public void unban() {
