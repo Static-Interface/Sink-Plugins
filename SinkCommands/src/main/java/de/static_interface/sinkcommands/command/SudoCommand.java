@@ -44,7 +44,6 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,14 +62,11 @@ public class SudoCommand extends SinkCommand {
                 .build();
         options.addOption(silent);
         getCommandOptions().setCliOptions(options);
+        getCommandOptions().setMinRequiredArgs(2);
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) {
-        if (args.length < 2) {
-            return false;
-        }
-
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
 
         CommandSender fakeSender;
@@ -116,7 +112,7 @@ public class SudoCommand extends SinkCommand {
         }
 
         String cmd = args[1].toLowerCase().trim();
-        List<String> tmp = new ArrayList<>(Arrays.asList(args));
+        List<String> tmp = Arrays.asList(args);
         tmp.remove(0);
         tmp.remove(1);
         args = tmp.toArray(new String[tmp.size()]);
