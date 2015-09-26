@@ -50,14 +50,12 @@ public class NationChatCommand extends SinkCommand implements CommandExecutor {
 
     public NationChatCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
+        getCommandOptions().setPlayerOnly(true);
+        getCommandOptions().setMinRequiredArgs(1);
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (!(sender instanceof Player)) {
-            return true;
-        }
-
         Player player = (Player) sender;
         Resident resident = TownyHelper.getResident(player.getName());
 
@@ -69,10 +67,6 @@ public class NationChatCommand extends SinkCommand implements CommandExecutor {
         if (!resident.hasNation()) {
             player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_NATION.format());
             return true;
-        }
-
-        if (args.length < 1) {
-            return false;
         }
 
         Nation nation;

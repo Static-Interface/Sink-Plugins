@@ -49,24 +49,18 @@ public class TownChatCommand extends SinkCommand implements CommandExecutor {
 
     public TownChatCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
+        getCommandOptions().setPlayerOnly(true);
+        getCommandOptions().setMinRequiredArgs(1);
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (!(sender instanceof Player)) {
-            return true;
-        }
-
         Player player = (Player) sender;
         Resident resident = TownyHelper.getResident(player.getName());
 
         if (!resident.hasTown()) {
             player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
             return true;
-        }
-
-        if (args.length < 1) {
-            return false;
         }
 
         Town town;
