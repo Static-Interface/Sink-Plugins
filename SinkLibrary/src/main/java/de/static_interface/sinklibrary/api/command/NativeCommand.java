@@ -22,6 +22,7 @@ import de.static_interface.sinklibrary.api.command.annotation.PermissionMessage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.util.CommandUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
@@ -51,7 +52,7 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand,
         completer = SinkLibrary.getInstance().getDefaultTabCompleter();
         CommandUtil.initAnnotations(this, executor.getClass());
         PermissionMessage permissionMessage = executor.getClass().getAnnotation(PermissionMessage.class);
-        if (permissionMessage != null) {
+        if (permissionMessage != null && !StringUtil.isEmptyOrNull(permissionMessage.value())) {
             setPermissionMessage(permissionMessage.value());
         } else {
             setPermissionMessage(GeneralLanguage.PERMISSIONS_GENERAL.format());
@@ -111,7 +112,7 @@ public class NativeCommand extends Command implements PluginIdentifiableCommand,
             return false;
         }
 
-        if (!testPermission(sender)) {
+        if (!StringUtil.isEmptyOrNull(getPermission()) && !testPermission(sender)) {
             return false;
         }
 
