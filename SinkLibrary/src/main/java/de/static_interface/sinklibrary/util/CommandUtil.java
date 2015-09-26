@@ -159,12 +159,15 @@ public class CommandUtil {
 
         String commandPathPrefix = command.getConfigPath() + ".";
 
+        boolean permSet = false;
         Permission perm = annonatedElement.getAnnotation(Permission.class);
         if (perm != null) {
             command.setCommandPermission(perm.value());
+            permSet = true;
         } else if (annonatedElement.getAnnotation(DefaultPermission.class) != null) {
             if (command.getDefaultPermission() != null) {
                 command.setCommandPermission(command.getDefaultPermission());
+                permSet = true;
             }
         }
         if (config != null) {
@@ -173,6 +176,11 @@ public class CommandUtil {
                 config.set(commandPathPrefix + "Permission", getDefaultValue(command.getCommandPermission()));
             }
             command.setCommandPermission((String) config.get(commandPathPrefix + "Permission", command.getCommandPermission()));
+            permSet = true;
+        }
+
+        if(!permSet) {
+            command.setCommandPermission(null);
         }
 
         Aliases aliases = annonatedElement.getAnnotation(Aliases.class);
