@@ -39,6 +39,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public abstract class AbstractTable<T extends Row> {
 
     private final String name;
     protected Database db;
+    private boolean reconnected = false;
 
     /**
      * @param name the name of the table
@@ -328,7 +330,8 @@ public abstract class AbstractTable<T extends Row> {
                 }
             }
 
-            ResultSet rs = statement.executeQuery();
+            ResultSet rs = executeQuery(query, bindings);
+
             List<T> result = deserializeResultSet(rs);
             rs.close();
             T[] array = (T[]) Array.newInstance(getRowClass(), result.size());
@@ -567,16 +570,38 @@ public abstract class AbstractTable<T extends Row> {
     public ResultSet executeQuery(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
-            PreparedStatement statment = db.getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-                                                                             ResultSet.CONCUR_UPDATABLE);
+            PreparedStatement statement = db.getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                                                              ResultSet.CONCUR_UPDATABLE);
             if (bindings != null) {
                 int i = 1;
                 for (Object s : bindings) {
-                    statment.setObject(i, s);
+                    statement.setObject(i, s);
                     i++;
                 }
             }
-            return statment.executeQuery();
+            ResultSet rs;
+            try {
+                rs = statement.executeQuery();
+            } catch (Exception e) {
+                Debug.log(e);
+                if (e instanceof SQLNonTransientConnectionException && !reconnected) {
+                    try {
+                        statement.close();
+                        db.close();
+                    } catch (Exception ex) {
+                        Debug.log(ex);
+                    }
+                    db.connect();
+                    reconnected = true;
+                    return executeQuery(sql, bindings);
+                }
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new RuntimeException(e);
+            }
+            reconnected = false;
+            return rs;
         } catch (SQLException e) {
             SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
@@ -616,12 +641,32 @@ public abstract class AbstractTable<T extends Row> {
      */
     public void executeUpdate(String sql, @Nullable Object... bindings) {
         try {
-            PreparedStatement statment = createPreparedStatement(sql, bindings);
-            statment.executeUpdate();
+            PreparedStatement statement = createPreparedStatement(sql, bindings);
+            try {
+                statement.executeQuery();
+            } catch (Exception e) {
+                Debug.log(e);
+                if (e instanceof SQLNonTransientConnectionException && !reconnected) {
+                    try {
+                        statement.close();
+                        db.close();
+                    } catch (Exception ex) {
+                        Debug.log(ex);
+                    }
+                    db.connect();
+                    reconnected = true;
+                    executeUpdate(sql, bindings);
+                }
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new RuntimeException(e);
+            }
         } catch (Exception e) {
             SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
         }
+        reconnected = false;
     }
 
 
