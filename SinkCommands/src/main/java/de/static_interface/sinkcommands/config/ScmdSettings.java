@@ -29,7 +29,7 @@ public class ScmdSettings extends Configuration {
     public final static YamlParentOption SCMD_MESSAGE_PARENT = new YamlParentOption("Message");
     public final static YamlOption<String>
             SCMD_MESSAGE_RECEIVED_FORMAT =
-            new YamlStringOption(SCMD_MESSAGE_PARENT, "MessageReceived", "&7[{TARGETIRCPREFIX} {DISPLAYNAME} &7-> &6Me&7]&r {USERMESSAGE}");
+            new YamlStringOption(SCMD_MESSAGE_PARENT, "MessageReceived", "&7[{DISPLAYNAME} &7-> {TARGETIRCPREFIX}&6Me&7]&r {USERMESSAGE}");
     public final static YamlOption<String>
             SCMD_MESSAGE_SEND_FORMAT =
             new YamlStringOption(SCMD_MESSAGE_PARENT, "MessageSend", "&7[&6Me &7-> {TARGETIRCPREFIX} {TARGETDISPLAYNAME}&7]&r {USERMESSAGE}");

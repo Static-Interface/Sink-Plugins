@@ -28,7 +28,7 @@ public class SasLanguage extends Configuration {
     public static YamlI18nOption SAS_PREFIX = new YamlI18nOption("Prefix", "&4[SinkAntiSpam]");
     public static YamlI18nOption
             SAS_WARN_MESSAGE =
-            new YamlI18nOption("WarnMessage", "{TARGETDISPLAYNAME}&4 has been warned by {DISPLAYNAME}: &c{2} ({3} points)");
+            new YamlI18nOption("WarnMessage", "{TARGETDISPLAYNAME}&4 has been warned by {DISPLAYNAME}: &c{0} ({1} points)");
     public static YamlI18nOption SAS_REPLACE_DOMAIN = new YamlI18nOption("ReplaceDomain", "google.com");
     public static YamlI18nOption SAS_REPLACE_IP = new YamlI18nOption("ReplaceIP", "127.0.0.1");
     public static YamlI18nOption SAS_WARN_SELF = new YamlI18nOption("WarnSelf", "&4You can't warn yourself!", true);
