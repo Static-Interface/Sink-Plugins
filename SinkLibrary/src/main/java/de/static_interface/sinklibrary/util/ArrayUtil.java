@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class ArrayUtil {
-
+    @SafeVarargs
     public static <T> ArrayList<T> createArrayList(T... elements) {
         ArrayList<T> list = new ArrayList<>();
         Collections.addAll(list, elements);
