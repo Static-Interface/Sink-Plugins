@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -103,10 +104,18 @@ public class Channel extends MessageStream<IngameUser> {
     }
 
     public String formatEventFormat(IngameUser user) {
-        String eventFormat = format;
-        //String eventFormat = format.replaceAll("\\{((PLAYER(NAME)?)|DISPLAYNAME|NAME|FORMATTEDNAME)\\}", "\\$1\\%s");
-        //eventFormat = eventFormat.replaceAll("\\{MESSAGE\\}", "\\$2\\%s");
+        return StringUtil.format(format, user, null, "%2$s", getCustomParams(user), false, null);
+    }
 
+    @Override
+    public String formatMessage(IngameUser user, String message) {
+        String format = this.format;
+        format = format.replace("%1$s", user.getDisplayName());
+        format = format.replace("%2$s", message);
+        return StringUtil.format(format, user, null, message, getCustomParams(user), false, null);
+    }
+
+    private Map<String, Object> getCustomParams(IngameUser user) {
         HashMap<String, Object> customParams = new HashMap<>();
         if (SinkChat.getInstance().isTownyAvailable()) {
             customParams.put("NationTag", TownyHelper.getNationTag(user.getPlayer()));
@@ -114,7 +123,7 @@ public class Channel extends MessageStream<IngameUser> {
             customParams.put("Town(y)?", TownyHelper.getTown(user.getPlayer()));
             customParams.put("Nation", TownyHelper.getNation(user.getPlayer()));
         }
-        return StringUtil.format(eventFormat, user, null, "%2$s", customParams, false, null);
+        return customParams;
     }
 
     public void handleMessage(IngameUser sender, Set<Player> recipients, String message) {

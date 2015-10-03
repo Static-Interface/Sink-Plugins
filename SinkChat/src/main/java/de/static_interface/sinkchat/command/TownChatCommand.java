@@ -41,8 +41,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,13 +59,12 @@ public class TownChatCommand extends SinkCommand {
         getCommandOptions().setMinRequiredArgs(1);
         SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("townchat") {
             @Override
-            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
-                Player player = user.getPlayer();
-                Resident resident = TownyHelper.getResident(player.getName());
+            public String formatMessage(IngameUser user, String message) {
+                Resident resident = TownyHelper.getResident(user.getName());
 
                 if (!resident.hasTown()) {
-                    player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
-                    return false;
+                    user.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
+                    return null;
                 }
 
                 Town town;
@@ -73,18 +72,31 @@ public class TownChatCommand extends SinkCommand {
                     town = resident.getTown();
                 } catch (NotRegisteredException ignored) //Shouldn't happen...
                 {
-                    return false;
+                    return null;
                 }
 
                 String prefixName = TownyHelper.getFormattedResidentName(resident, true, false);
+                return ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": "
+                       + ChatColor.WHITE
+                       + message.trim();
+            }
 
-                String
-                        formattedMessage =
-                        ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": "
-                        + ChatColor.WHITE
-                        + message.trim();
+            @Override
+            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
+                Resident resident = TownyHelper.getResident(user.getName());
+                Town town;
+                try {
+                    town = resident.getTown();
+                } catch (NotRegisteredException ignored) //Shouldn't happen...
+                {
+                    return false;
+                }
+                String formattedMessage = formatMessage(user, message);
+                if (StringUtil.isEmptyOrNull(formattedMessage)) {
+                    return false;
+                }
 
-                List<Player> sendPlayers = new ArrayList<>();
+                Set<Player> sendPlayers = new HashSet<>();
 
                 for (Resident townResident : town.getResidents()) {
                     if (townResident.isNPC()) {
@@ -98,7 +110,7 @@ public class TownChatCommand extends SinkCommand {
                 }
 
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!onlinePlayer.hasPermission("sinkchat.townyspy")) {
+                    if (!onlinePlayer.hasPermission("sinkchat.command.townyspy")) {
                         continue;
                     }
                     if (sendPlayers.contains(onlinePlayer)) {

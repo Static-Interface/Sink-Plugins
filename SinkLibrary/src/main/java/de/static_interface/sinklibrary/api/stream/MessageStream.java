@@ -40,6 +40,10 @@ public abstract class MessageStream<T extends SinkUser> {
         onSendMessage(sender, message);
     }
 
+    public String formatMessage(T sender, String message) {
+        return message;
+    }
+
     protected abstract boolean onSendMessage(@Nullable T sender, String message);
 
 

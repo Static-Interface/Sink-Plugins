@@ -59,18 +59,18 @@ public class NationChatCommand extends SinkCommand {
         getCommandOptions().setMinRequiredArgs(1);
         SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("nationchat") {
             @Override
-            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
+            public String formatMessage(IngameUser user, String message) {
                 Player player = user.getPlayer();
                 Resident resident = TownyHelper.getResident(player.getName());
 
                 if (!resident.hasTown()) {
                     player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
-                    return false;
+                    return null;
                 }
 
                 if (!resident.hasNation()) {
                     player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_NATION.format());
-                    return false;
+                    return null;
                 }
 
                 Nation nation;
@@ -80,18 +80,33 @@ public class NationChatCommand extends SinkCommand {
                     nation = town.getNation();
                 } catch (NotRegisteredException ignored) //Shouldn't happen...
                 {
-                    return false;
+                    return null;
                 }
 
                 String prefixName = TownyHelper.getFormattedResidentName(resident, false, true);
 
                 String townPrefix = ChatColor.GREEN + "[" + TownyHelper.getFormattedTownName(town, true) + "] ";
 
-                String
-                        formattedMessage =
+                return
                         ChatColor.GRAY + "[" + ChatColor.GOLD + nation.getName() + ChatColor.GRAY + "] " + townPrefix + prefixName + ChatColor.GRAY
                         + ": "
                         + ChatColor.WHITE + message.trim();
+            }
+
+            @Override
+            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
+                String formattedMessage = formatMessage(user, message);
+                if (StringUtil.isEmptyOrNull(formattedMessage)) {
+                    return false;
+                }
+                Resident resident = TownyHelper.getResident(user.getName());
+                Nation nation;
+                try {
+                    nation = resident.getTown().getNation();
+                } catch (NotRegisteredException ignored) //Shouldn't happen...
+                {
+                    return false;
+                }
 
                 List<Player> sendPlayers = new ArrayList<>();
 

@@ -49,8 +49,13 @@ public class NewbiechatCommand extends SinkCommand implements CommandExecutor {
         getCommandOptions().setMinRequiredArgs(1);
         SinkLibrary.getInstance().registerMessageStream(new MessageStream<SinkUser>("newbiechat") {
             @Override
-            protected boolean onSendMessage(@Nullable SinkUser sender, String message) {
-                BukkitUtil.broadcast(PREFIX + sender.getDisplayName() + ChatColor.RESET + ": " + message, "sinkcommands.command.newbiechat", false);
+            public String formatMessage(SinkUser user, String message) {
+                return PREFIX + user.getDisplayName() + ChatColor.RESET + ": " + message;
+            }
+
+            @Override
+            protected boolean onSendMessage(@Nullable SinkUser user, String message) {
+                BukkitUtil.broadcast(formatMessage(user, message), "sinkcommands.command.newbiechat", false);
                 return true;
             }
         });
