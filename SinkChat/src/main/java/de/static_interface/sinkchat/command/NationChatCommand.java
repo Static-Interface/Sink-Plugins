@@ -26,6 +26,7 @@ import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.config.ScLanguage;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
+import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
@@ -46,6 +47,7 @@ import javax.annotation.Nonnull;
 @Description("Chat Channel for Towny Nations")
 @Aliases("tnc")
 @Usage("<message>")
+@DefaultPermission
 public class NationChatCommand extends SinkCommand implements CommandExecutor {
 
     public NationChatCommand(@Nonnull Plugin plugin, Configuration config) {
