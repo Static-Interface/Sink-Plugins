@@ -110,7 +110,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
         this.permission = permission;
     }
 
-    protected String getCommandPrefix(CommandSender sender) {
+    protected String getCommandPrefix(@Nullable CommandSender sender) {
         if (sender instanceof IrcCommandSender) {
             return SinkIrcReflection.getIrcCommandPrefix().trim();
         }
@@ -482,7 +482,11 @@ public abstract class SinkCommandBase implements CommandExecutor {
         return usageSyntax;
     }
 
-    public void setUsageSyntax(String usage) {
+    public void setUsageSyntax(@Nullable String usage) {
+        if (usage != null) {
+            usage = usage.replaceAll("/<command>\\s?", "").trim();
+        }
+
         this.usageSyntax = usage;
     }
 
