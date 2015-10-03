@@ -36,6 +36,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
@@ -161,11 +162,11 @@ public class CommandUtil {
 
         boolean permSet = false;
         Permission perm = annonatedElement.getAnnotation(Permission.class);
-        if (perm != null) {
+        if (perm != null && !StringUtil.isEmptyOrNull(perm.value())) {
             command.setCommandPermission(perm.value());
             permSet = true;
         } else if (annonatedElement.getAnnotation(DefaultPermission.class) != null) {
-            if (command.getDefaultPermission() != null) {
+            if (!StringUtil.isEmptyOrNull(command.getDefaultPermission())) {
                 command.setCommandPermission(command.getDefaultPermission());
                 permSet = true;
             }
@@ -180,6 +181,8 @@ public class CommandUtil {
         }
 
         if(!permSet) {
+            SinkLibrary.getInstance().getLogger()
+                    .log(Level.WARNING, "Command " + command.getConfigPath() + " doesn't have any permission set. Permissions won't work!");
             command.setCommandPermission(null);
         }
 
