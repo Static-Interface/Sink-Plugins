@@ -23,17 +23,20 @@ import com.palmergames.bukkit.towny.object.Town;
 import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.config.ScLanguage;
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -42,79 +45,82 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Description("Chat Channel for Towny Towns")
 @Aliases("ttc")
 @Usage("<message>")
 @DefaultPermission
-public class TownChatCommand extends SinkCommand implements CommandExecutor {
+public class TownChatCommand extends SinkCommand {
 
     public TownChatCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
         getCommandOptions().setMinRequiredArgs(1);
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("townchat") {
+            @Override
+            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
+                Player player = user.getPlayer();
+                Resident resident = TownyHelper.getResident(player.getName());
+
+                if (!resident.hasTown()) {
+                    player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
+                    return false;
+                }
+
+                Town town;
+                try {
+                    town = resident.getTown();
+                } catch (NotRegisteredException ignored) //Shouldn't happen...
+                {
+                    return false;
+                }
+
+                String prefixName = TownyHelper.getFormattedResidentName(resident, true, false);
+
+                String
+                        formattedMessage =
+                        ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": "
+                        + ChatColor.WHITE
+                        + message.trim();
+
+                List<Player> sendPlayers = new ArrayList<>();
+
+                for (Resident townResident : town.getResidents()) {
+                    if (townResident.isNPC()) {
+                        continue;
+                    }
+                    Player onlineResident = BukkitUtil.getPlayer(townResident.getName());
+                    if (onlineResident == null) {
+                        continue;
+                    }
+                    sendPlayers.add(onlineResident);
+                }
+
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    if (!onlinePlayer.hasPermission("sinkchat.townyspy")) {
+                        continue;
+                    }
+                    if (sendPlayers.contains(onlinePlayer)) {
+                        continue;
+                    }
+                    sendPlayers.add(onlinePlayer);
+                }
+
+                for (Player p : sendPlayers) {
+                    p.sendMessage(formattedMessage);
+                }
+
+                SinkChat.getInstance().getLogger().info(formattedMessage);
+                return true;
+            }
+        });
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        Player player = (Player) sender;
-        Resident resident = TownyHelper.getResident(player.getName());
-
-        if (!resident.hasTown()) {
-            player.sendMessage(ScLanguage.SC_TOWNY_NOT_IN_TOWN.format());
-            return true;
-        }
-
-        Town town;
-        try {
-            town = resident.getTown();
-        } catch (NotRegisteredException ignored) //Shouldn't happen...
-        {
-            return true;
-        }
-
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + ' ';
-        }
-
-        msg = msg.trim();
-
-        String prefixName = TownyHelper.getFormattedResidentName(resident, true, false);
-
-        String
-                formattedMessage =
-                ChatColor.GRAY + "[" + ChatColor.GOLD + town.getName() + ChatColor.GRAY + "] " + prefixName + ChatColor.GRAY + ": " + ChatColor.WHITE
-                + msg;
-
-        List<Player> sendPlayers = new ArrayList<>();
-
-        for (Resident townResident : town.getResidents()) {
-            if (townResident.isNPC()) {
-                continue;
-            }
-            Player onlineResident = BukkitUtil.getPlayer(townResident.getName());
-            if (onlineResident == null) {
-                continue;
-            }
-            sendPlayers.add(onlineResident);
-        }
-
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (!onlinePlayer.hasPermission("sinkchat.townyspy")) {
-                continue;
-            }
-            if (sendPlayers.contains(onlinePlayer)) {
-                continue;
-            }
-            sendPlayers.add(onlinePlayer);
-        }
-
-        for (Player p : sendPlayers) {
-            p.sendMessage(formattedMessage);
-        }
-
-        SinkChat.getInstance().getLogger().info(formattedMessage);
+        IngameUser user = SinkLibrary.getInstance().getIngameUser((Player) sender);
+        SinkLibrary.getInstance().getMessageStream("townchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
         return true;
     }
 }

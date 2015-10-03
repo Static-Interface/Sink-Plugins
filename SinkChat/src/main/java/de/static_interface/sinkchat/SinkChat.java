@@ -108,6 +108,7 @@ public class SinkChat extends JavaPlugin {
             String format = (String) channelconfigs.get(pathPrefix + ChannelValues.FORMAT);
 
             channel = new Channel(key, callChar, enabled, permission, sendToIRC, range, format);
+            SinkLibrary.getInstance().registerMessageStream(channel);
             ChannelHandler.registerChannel(channel);
         }
     }

@@ -25,6 +25,7 @@ import de.static_interface.sinkirc.irc_command.ListCommand;
 import de.static_interface.sinkirc.irc_command.SayCommand;
 import de.static_interface.sinkirc.irc_command.SetCommand;
 import de.static_interface.sinkirc.queue.IrcQueue;
+import de.static_interface.sinkirc.stream.IrcMessageStream;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -178,6 +179,7 @@ public class SinkIRC extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, commandsConfig));
         SinkLibrary.getInstance().registerCommand("set", new SetCommand(this, commandsConfig));
 
+        SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream());
         initialized = true;
     }
 

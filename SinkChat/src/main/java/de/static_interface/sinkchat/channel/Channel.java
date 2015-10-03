@@ -21,6 +21,7 @@ import de.static_interface.sinkchat.SinkChat;
 import de.static_interface.sinkchat.TownyHelper;
 import de.static_interface.sinkchat.Util;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -34,7 +35,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class Channel {
+public class Channel extends MessageStream<IngameUser> {
 
     private String name;
     private String callCode;
@@ -46,6 +47,7 @@ public class Channel {
 
     public Channel(String name, String callCode, boolean enabled, String permission,
                    boolean sendToIRC, int range, @Nullable String format) {
+        super(name);
         this.name = name;
         this.callCode = callCode;
         this.enabled = enabled;
@@ -53,10 +55,6 @@ public class Channel {
         this.sendToIRC = sendToIRC;
         this.range = range;
         this.format = format;
-    }
-
-    public String getName() {
-        return name;
     }
 
     /**
@@ -119,7 +117,7 @@ public class Channel {
         return StringUtil.format(eventFormat, user, null, "%2$s", customParams, false, null);
     }
 
-    public void handleRecipients(IngameUser sender, Set<Player> recipients, String message) {
+    public void handleMessage(IngameUser sender, Set<Player> recipients, String message) {
         for (Player p : new HashSet<>(recipients)) {
             if ((getRange() > 0 && !Util.isInRange(sender, p, getRange()))
                 || (!enabledForPlayer(p.getUniqueId()))
@@ -143,5 +141,17 @@ public class Channel {
 
     public String formatMessage(String message) {
         return message.replaceFirst("\\Q" + getCallCode() + "\\E", "");
+    }
+
+    @Override
+    protected boolean onSendMessage(@Nullable IngameUser sender, String message) {
+        message = formatMessage(message);
+        String formattedMessage = StringUtil.format(format, sender, message);
+        Set<Player> recipients = new HashSet<>(Bukkit.getOnlinePlayers());
+        handleMessage(sender, recipients, formattedMessage);
+        for(Player p : recipients) {
+            p.sendMessage(formattedMessage);
+        }
+        return true;
     }
 }

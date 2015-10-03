@@ -27,14 +27,15 @@ import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.provider.BanProvider;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
 import de.static_interface.sinklibrary.command.SinkReloadCommand;
 import de.static_interface.sinklibrary.command.SinkVersionCommand;
-import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
@@ -43,6 +44,8 @@ import de.static_interface.sinklibrary.provider.SimpleBanProvider;
 import de.static_interface.sinklibrary.provider.StringConvertProvider;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitPlayerChatMessageStream;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -127,6 +130,7 @@ public class SinkLibrary extends JavaPlugin {
     private boolean ircExceptionOccured = false;
     private SimpleBanProvider defaultBanProvider = new SimpleBanProvider();
     private Map<String, SinkCommand> commands = new HashMap<>();
+    private Map<String, MessageStream> registeredMessageStreams = new HashMap<>();
     /**
      * Get the instance of this plugin
      * @return instance
@@ -229,6 +233,10 @@ public class SinkLibrary extends JavaPlugin {
         registerUserImplementation(ProxiedCommandSender.class, proxiedUserProvider);
         registerUserImplementation(ProxiedConsoleCommandSender.class, proxiedUserProvider);
         registerUserImplementation(ProxiedPlayer.class, new ProxiedIngameUserProvider());
+
+        registerMessageStream(new BukkitPlayerChatMessageStream());
+        registerMessageStream(new BukkitBroadcastMessageStream());
+
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
         if ((!LIB_FOLDER.exists() && !LIB_FOLDER.mkdirs())) {
@@ -347,6 +355,23 @@ public class SinkLibrary extends JavaPlugin {
             getLogger().info("Loaded " + loadedLibs.size() + " Libraries");
         }
     }
+
+    @Nullable
+    public <T> T getMessageStream(@Nonnull String name, Class<T> returnClass) {
+        Validate.notNull(name);
+        name = name.toLowerCase().trim();
+        return (T) registeredMessageStreams.get(name);
+    }
+
+    @Nullable
+    public MessageStream getMessageStream(@Nonnull String name) {
+        return getMessageStream(name, MessageStream.class);
+    }
+
+    public final void registerMessageStream(MessageStream stream) {
+        registeredMessageStreams.put(stream.getName().toLowerCase().trim(), stream);
+    }
+
 
     @Unstable
     public void addClassToClasspath(String path) throws Exception {

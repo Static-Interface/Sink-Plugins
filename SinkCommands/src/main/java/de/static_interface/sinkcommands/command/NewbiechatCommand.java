@@ -17,12 +17,15 @@
 
 package de.static_interface.sinkcommands.command;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
@@ -32,6 +35,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @DefaultPermission
 @Usage("<Message>")
@@ -42,16 +46,20 @@ public class NewbiechatCommand extends SinkCommand implements CommandExecutor {
 
     public NewbiechatCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
+        getCommandOptions().setMinRequiredArgs(1);
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream<SinkUser>("newbiechat") {
+            @Override
+            protected boolean onSendMessage(@Nullable SinkUser sender, String message) {
+                BukkitUtil.broadcast(PREFIX + sender.getDisplayName() + ChatColor.RESET + ": " + message, "sinkcommands.command.newbiechat", false);
+                return true;
+            }
+        });
     }
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (args.length < 1) {
-            return false;
-        }
-        String message = StringUtil.formatArrayToString(args, " ");
-
-        BukkitUtil.broadcast(PREFIX + BukkitUtil.getSenderName(sender) + ChatColor.WHITE + ": " + message, "sinkcommands.command.newbiechat", false);
+        SinkUser user = SinkLibrary.getInstance().getUser(sender);
+        SinkLibrary.getInstance().getMessageStream("newbiechat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
         return true;
     }
 }

@@ -86,7 +86,7 @@ public class ChatListener implements Listener {
 
                 event.setFormat(channel.formatEventFormat(user));
                 event.setMessage(channel.formatMessage(event.getMessage()));
-                channel.handleRecipients(user, event.getRecipients(), message);
+                channel.handleMessage(user, event.getRecipients(), message);
 
                 if (channel.sendToIRC()) {
                     SinkLibrary.getInstance().sendIrcMessage(
