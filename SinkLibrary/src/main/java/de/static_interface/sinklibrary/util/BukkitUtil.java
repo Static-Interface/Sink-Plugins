@@ -21,6 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -143,7 +144,7 @@ public class BukkitUtil {
      * @param sendIRC If true, message will be broadcasted to IRC if available
      */
     public static void broadcastMessage(String message, boolean sendIRC) {
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(message);
         }
         Bukkit.getConsoleSender().sendMessage(message);
@@ -157,7 +158,7 @@ public class BukkitUtil {
      * @param message Message to send
      */
     public static void broadcastMessage(String message) {
-        broadcastMessage(message, true);
+        SinkLibrary.getInstance().getMessageStream("bukkitbroadcast", BukkitBroadcastMessageStream.class).sendMessage(message);
     }
 
     /**
@@ -170,7 +171,7 @@ public class BukkitUtil {
      * @param sendIRC    If true, message will broadcasted to IRC if available
      */
     public static void broadcast(String message, String permission, boolean sendIRC) {
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
             if (!user.hasPermission(permission)) {
                 continue;

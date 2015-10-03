@@ -17,8 +17,10 @@
 
 package de.static_interface.sinklibrary.api.stream;
 
+import de.static_interface.sinklibrary.api.event.MessageStreamEvent;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +39,10 @@ public abstract class MessageStream<T extends SinkUser> {
     }
 
     public final void sendMessage(@Nullable T sender, String message) {
-        onSendMessage(sender, message);
+        if (onSendMessage(sender, message)) {
+            MessageStreamEvent event = new MessageStreamEvent(this);
+            Bukkit.getPluginManager().callEvent(event);
+        }
     }
 
     public String formatMessage(T sender, String message) {

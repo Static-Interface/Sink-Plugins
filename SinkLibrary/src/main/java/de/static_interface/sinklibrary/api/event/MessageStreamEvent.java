@@ -15,29 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.stream;
+package de.static_interface.sinklibrary.api.event;
 
 import de.static_interface.sinklibrary.api.stream.MessageStream;
-import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-import javax.annotation.Nullable;
+public class MessageStreamEvent extends Event {
 
-public class BukkitBroadcastMessageStream extends MessageStream {
+    private static final HandlerList handlers = new HandlerList();
+    private MessageStream messageStream;
 
-    public BukkitBroadcastMessageStream() {
-        super("bukkitbroadcast");
+    public MessageStreamEvent(MessageStream messageStream) {
+        this.messageStream = messageStream;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override
-    protected boolean onSendMessage(@Nullable SinkUser sender, String message) {
-        message = StringUtil.format(message, sender, null);
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(message);
-        }
-        Bukkit.getConsoleSender().sendMessage(message);
-        return true;
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public MessageStream getMessageStream() {
+        return messageStream;
     }
 }
