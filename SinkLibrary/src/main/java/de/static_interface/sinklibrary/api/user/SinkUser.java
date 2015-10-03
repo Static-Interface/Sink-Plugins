@@ -17,8 +17,9 @@
 
 package de.static_interface.sinklibrary.api.user;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.api.stream.SinkUserMessageStream;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.Debug;
 import org.apache.commons.lang3.Validate;
@@ -30,6 +31,7 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
 
     SinkUserProvider provider;
     private T base;
+    private SinkUserMessageStream messageStream;
 
     public SinkUser(T base, SinkUserProvider provider) {
         Validate.notNull(base);
@@ -37,6 +39,12 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
 
         this.provider = provider;
         this.base = base;
+        messageStream = new SinkUserMessageStream(this);
+        SinkLibrary.getInstance().registerMessageStream(messageStream);
+    }
+
+    protected SinkUserMessageStream getMessageStream() {
+        return messageStream;
     }
 
     public T getBase() {
