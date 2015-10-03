@@ -18,7 +18,6 @@
 package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
@@ -44,11 +43,6 @@ public class ConsoleUser extends SinkUser<ConsoleCommandSender> {
     @Override
     public String getDisplayName() {
         return ChatColor.DARK_RED + "Console" + ChatColor.RESET;
-    }
-
-    @Override
-    public Configuration getConfiguration() {
-        return null;
     }
 
     @Override

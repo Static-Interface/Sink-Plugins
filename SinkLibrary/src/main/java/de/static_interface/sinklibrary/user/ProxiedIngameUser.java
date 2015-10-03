@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
+import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.sender.ProxiedObject;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import org.bukkit.OfflinePlayer;
@@ -52,6 +53,11 @@ public class ProxiedIngameUser extends IngameUser implements ProxiedObject<Ingam
         return baseUser.equals(o);
     }
 
+    @Override
+    public IngameUserConfiguration getConfiguration() {
+        return baseUser.getConfiguration();
+    }
+    
     @Override
     public IngameUser getBaseObject() {
         return baseUser;

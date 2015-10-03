@@ -19,7 +19,6 @@ package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -56,11 +55,6 @@ public class IrcUser extends SinkUser<User> {
             return ChatColor.DARK_RED + getName() + ChatColor.RESET;
         }
         return ChatColor.DARK_AQUA + getName() + ChatColor.RESET;
-    }
-
-    @Override
-    public Configuration getConfiguration() {
-        return null;
     }
 
     @Override

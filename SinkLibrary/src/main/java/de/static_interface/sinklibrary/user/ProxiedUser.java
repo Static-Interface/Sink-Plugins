@@ -19,7 +19,6 @@ package de.static_interface.sinklibrary.user;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
-import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
@@ -48,11 +47,6 @@ public class ProxiedUser<T extends ProxiedCommandSender, K extends SinkUser> ext
     @Override
     public String getDisplayName() {
         return base.getDisplayName();
-    }
-
-    @Override
-    public Configuration getConfiguration() {
-        return base.getConfiguration();
     }
 
     @Override

@@ -17,9 +17,11 @@
 
 package de.static_interface.sinklibrary.api.user;
 
+import de.static_interface.sinklibrary.api.configuration.Configuration;
+
 import java.util.UUID;
 
-public interface Identifiable {
-
+public interface Identifiable<T extends Configuration> {
+    T getConfiguration();
     UUID getUniqueId();
 }

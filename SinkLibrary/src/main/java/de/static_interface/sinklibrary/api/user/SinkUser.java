@@ -51,8 +51,6 @@ public abstract class SinkUser<T> implements Comparable<SinkUser> {
 
     public abstract String getDisplayName();
 
-    public abstract Configuration getConfiguration();
-
     @Deprecated
     public abstract CommandSender getSender();
 
