@@ -29,7 +29,7 @@ import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.exception.NotEnoughPermissionsException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
-import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -110,8 +110,8 @@ public class WarnCommand extends SinkCommand {
 
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
         UUID uuid = null;
-        if (user instanceof Identifiable) {
-            uuid = ((Identifiable) user).getUniqueId();
+        if (user instanceof IdentifiableUser) {
+            uuid = ((IdentifiableUser) user).getUniqueId();
         }
         String name = (sender instanceof IrcCommandSender) ? user.getDisplayName() + " (IRC)" : user.getDisplayName();
 

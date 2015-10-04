@@ -98,8 +98,8 @@ public abstract class SinkUserProvider<K, E extends SinkUser<K>> {
             E value = instances.get(base);
 
             if (value == user) {
-                if (user instanceof Identifiable && ((Identifiable) user).getConfiguration() != null) {
-                    ((Identifiable) user).getConfiguration().save();
+                if (user instanceof IdentifiableUser && ((IdentifiableUser) user).getConfiguration() != null) {
+                    ((IdentifiableUser) user).getConfiguration().save();
                 }
                 instances.remove(base);
                 return true;

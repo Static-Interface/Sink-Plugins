@@ -29,7 +29,7 @@ import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.database.query.Order;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -204,8 +204,8 @@ public class WarnUtil {
 
     public static void deleteWarning(Warning warning, @Nullable SinkUser deleter) {
         UUID uuid = null;
-        if (deleter != null && deleter instanceof Identifiable) {
-            uuid = ((Identifiable) deleter).getUniqueId();
+        if (deleter != null && deleter instanceof IdentifiableUser) {
+            uuid = ((IdentifiableUser) deleter).getUniqueId();
         }
         String name = deleter == null ? null : ((deleter instanceof IrcUser) ? deleter.getDisplayName() + " (IRC)" : deleter.getDisplayName());
 

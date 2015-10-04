@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.provider;
 
 import de.static_interface.sinklibrary.api.provider.BanProvider;
-import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -181,8 +181,8 @@ public class SimpleBanProvider implements BanProvider {
     @Override
     public void setBanner(IngameUser user, SinkUser banner) {
         UUID id = null;
-        if (banner instanceof Identifiable) {
-            id = ((Identifiable) banner).getUniqueId();
+        if (banner instanceof IdentifiableUser) {
+            id = ((IdentifiableUser) banner).getUniqueId();
         }
 
         user.getConfiguration().setBannerUniqueId(id);
@@ -192,8 +192,8 @@ public class SimpleBanProvider implements BanProvider {
     @Override
     public void setUnbanner(IngameUser user, SinkUser unbanner) {
         UUID id = null;
-        if (unbanner instanceof Identifiable) {
-            id = ((Identifiable) unbanner).getUniqueId();
+        if (unbanner instanceof IdentifiableUser) {
+            id = ((IdentifiableUser) unbanner).getUniqueId();
         }
 
         user.getConfiguration().setUnbannerUniqueId(id);

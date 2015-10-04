@@ -21,7 +21,7 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.exception.EconomyNotAvailableException;
 import de.static_interface.sinklibrary.api.exception.PermissionsNotAvailableException;
-import de.static_interface.sinklibrary.api.user.Identifiable;
+import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
@@ -46,7 +46,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class IngameUser extends SinkUser<OfflinePlayer> implements Identifiable {
+public class IngameUser extends SinkUser<OfflinePlayer> implements IdentifiableUser {
 
     private Player player = null;
     private OfflinePlayer base = null;
