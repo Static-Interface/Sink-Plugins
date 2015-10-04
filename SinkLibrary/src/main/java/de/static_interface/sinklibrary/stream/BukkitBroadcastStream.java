@@ -15,25 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinkirc.stream;
+package de.static_interface.sinklibrary.stream;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.util.StringUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
-public class IrcMessageStream extends MessageStream<SinkUser> {
-    private String target;
-    public IrcMessageStream(String target) {
-        super("irc_" + target);
-        this.target = target;
+public class BukkitBroadcastStream extends MessageStream {
+
+    public BukkitBroadcastStream() {
+        super("bukkit_broadcast");
+    }
+
+    public BukkitBroadcastStream(String name) {
+        super(name);
     }
 
     @Override
     protected boolean onSendMessage(@Nullable SinkUser sender, String message, Object... args) {
-        message = StringUtil.format(message, sender, null);
-        return SinkLibrary.getInstance().sendIrcMessage(message, target);
+        if (args.length < 1) {
+            SinkLibrary.getInstance().getMessageStream("bukkit_broadcastmessage").sendMessage(sender, message);
+        }
+        String permission = (String) args[0];
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.hasPermission(permission)) {
+                p.sendMessage(message);
+            }
+        }
+        return true;
     }
 }

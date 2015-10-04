@@ -32,9 +32,9 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.database.query.Order;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 
@@ -66,7 +66,11 @@ public class WarnUtil {
             perm = "sinkantispam.warnmessage";
         }
 
-        BukkitUtil.broadcast(message, perm, !warning.isAutoWarning);
+        if (warning.isAutoWarning) {
+            SinkLibrary.getInstance().getMessageStream("sas_autowarning", BukkitBroadcastStream.class).sendMessage(null, message, perm);
+        } else {
+            SinkLibrary.getInstance().getMessageStream("sas_warning", BukkitBroadcastStream.class).sendMessage(null, message, perm);
+        }
 
         if (target.isOnline() && !target.hasPermission(perm)) {
             target.sendMessage(message);

@@ -43,10 +43,15 @@ public class IrcUtil {
     private static List<String> loadedChannels = new CopyOnWriteArrayList<>();
 
     public static boolean isOp(User user) {
-        return SinkIRC.getInstance().getMainChannel().isOp(user);
+        for (Channel channel : SinkIRC.getInstance().getJoinedChannels()) {
+            if (channel.isOp(user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static void setOp(User user, Boolean value) {
+    public static void setOp(User user, Channel channel, Boolean value) {
         if (value && isOp(user)) {
             return;
         }
@@ -55,9 +60,9 @@ public class IrcUtil {
         }
 
         if (value) {
-            SinkIRC.getInstance().getMainChannel().send().op(user);
+            channel.send().op(user);
         } else {
-            SinkIRC.getInstance().getMainChannel().send().deOp(user);
+            channel.send().deOp(user);
         }
     }
 
@@ -100,15 +105,20 @@ public class IrcUtil {
     }
 
     @Nullable
-    public static User getUser(Channel channel, String name) {
-        Debug.logMethodCall(channel.getName(), name);
+    public static User getUser(String name) {
+        Debug.logMethodCall(name);
         List<User> matchedUsers = new ArrayList<>();
-        for (User user : channel.getUsers()) {
-            if (user.getNick().startsWith(name)) {
-                matchedUsers.add(user);
-            }
-            if (user.getNick().equalsIgnoreCase(name)) {
-                return user;
+        for (Channel channel : SinkIRC.getInstance().getJoinedChannels()) {
+            for (User user : channel.getUsers()) {
+                if (matchedUsers.contains(user)) {
+                    continue;
+                }
+                if (user.getNick().startsWith(name)) {
+                    matchedUsers.add(user);
+                }
+                if (user.getNick().equalsIgnoreCase(name)) {
+                    return user;
+                }
             }
         }
 
@@ -121,7 +131,7 @@ public class IrcUtil {
 
     @Nullable
     public static Channel getChannel(String name) {
-        for (Channel channel : SinkIRC.getInstance().getIrcBot().getUserBot().getChannels()) {
+        for (Channel channel : SinkIRC.getInstance().getJoinedChannels()) {
             if (channel.getName().equalsIgnoreCase(name)) {
                 if (loadedChannels.contains(channel.getName())) {
                     return channel;
@@ -144,7 +154,7 @@ public class IrcUtil {
             if (target.startsWith("#")) {
                 IrcQueue.addToQueue(message, target);
             } else {
-                String user = getUser(SinkIRC.getInstance().getMainChannel(), target).getNick();
+                String user = getUser(target).getNick();
                 IrcQueue.addToQueue(message, user);
             }
             return true;

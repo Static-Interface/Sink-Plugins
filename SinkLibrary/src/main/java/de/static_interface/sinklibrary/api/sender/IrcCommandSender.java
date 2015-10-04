@@ -171,6 +171,6 @@ public class IrcCommandSender implements RemoteConsoleCommandSender {
 
     @Override
     public void setOp(boolean value) {
-        user.setOp(value);
+        throw new IllegalArgumentException("Invalid Operation: Cannot op IrcCommandSender!");
     }
 }

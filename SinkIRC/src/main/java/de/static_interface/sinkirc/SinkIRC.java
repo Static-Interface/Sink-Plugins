@@ -27,6 +27,7 @@ import de.static_interface.sinkirc.irc_command.SetCommand;
 import de.static_interface.sinkirc.queue.IrcQueue;
 import de.static_interface.sinkirc.stream.IrcMessageStream;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -43,6 +44,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class SinkIRC extends JavaPlugin {
@@ -50,21 +56,21 @@ public class SinkIRC extends JavaPlugin {
     private static SinkIRC instance;
     boolean threadStarted = false;
     private PircBotX ircBot;
-    private String mainChannel;
     private boolean initialized = false;
     private Thread ircThread;
+    private Map<String, List<String>> streamRedirects = new HashMap<>();
+    private long lastCacheUpdate;
 
     public static SinkIRC getInstance() {
         return instance;
     }
 
-    public PircBotX getIrcBot() {
-        return ircBot;
+    public Collection<Channel> getJoinedChannels() {
+        return SinkIRC.getInstance().getIrcBot().getUserBot().getChannels();
     }
 
-    @Deprecated
-    public Channel getMainChannel() {
-        return IrcUtil.getChannel(mainChannel);
+    public PircBotX getIrcBot() {
+        return ircBot;
     }
 
     @Override
@@ -77,6 +83,26 @@ public class SinkIRC extends JavaPlugin {
 
         File sinkIrcDirectory = new File(SinkLibrary.getInstance().getCustomDataFolder(), "SinkIRC");
         new SiSettings(new File(sinkIrcDirectory, "Settings.yml")).init();
+        final Map<String, String> channelsWithPasswords = new HashMap<>();
+        for (String s : SiSettings.SI_SERVER_CHANNELS.getValue()) {
+            if (StringUtil.isEmptyOrNull(s)) {
+                continue;
+            }
+            String[] parts = s.split(":");
+            String channelName = parts[0];
+            if (!channelName.startsWith("#")) {
+                channelName = "#" + channelName;
+            }
+            String password = "";
+            if (parts.length > 1) {
+                password = StringUtil.formatArrayToString(parts, ":", 1);
+            }
+            channelsWithPasswords.put(channelName, password);
+        }
+
+        if (channelsWithPasswords.size() == 0) {
+            throw new IllegalStateException("No channels configured!");
+        }
 
         ircThread = new Thread(new Runnable() {
             @Override
@@ -87,9 +113,6 @@ public class SinkIRC extends JavaPlugin {
                     }
 
                     threadStarted = true;
-
-                    mainChannel = SiSettings.SI_SERVER_CHANNEL.getValue();
-
                     Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
                             .setName(SiSettings.SI_NICKNAME.getValue())
                             .setLogin("SinkIRC")
@@ -106,7 +129,9 @@ public class SinkIRC extends JavaPlugin {
                         configBuilder = configBuilder.setServerPassword(password);
                     }
                     if (!SiSettings.SI_AUTHENTIFICATION_ENABLED.getValue()) {
-                        configBuilder = configBuilder.addAutoJoinChannel(mainChannel);
+                        for (String s : channelsWithPasswords.keySet()) {
+                            configBuilder = configBuilder.addAutoJoinChannel(s, channelsWithPasswords.get(s));
+                        }
                     }
 
                     ircBot = new PircBotX(configBuilder.buildConfiguration());
@@ -136,8 +161,12 @@ public class SinkIRC extends JavaPlugin {
                                 break;
                             }
                         }
-                        ircBot.sendIRC().joinChannel(SiSettings.SI_SERVER_CHANNEL.getValue());
+                        for (String s : channelsWithPasswords.keySet()) {
+                            ircBot.sendIRC().joinChannel(s, channelsWithPasswords.get(s));
+                        }
                     }
+
+                    List<String> waitQueue = new ArrayList<>(SiSettings.SI_SERVER_CHANNELS.getValue());
 
                     //wait for bot join
                     while (true) {
@@ -149,29 +178,30 @@ public class SinkIRC extends JavaPlugin {
                             break;
                         }
 
-                        if (event.getUser().getNick().equals(getIrcBot().getNick()) &&
-                            event.getChannel().getName().equals(getMainChannel().getName())) {
+                        if (event.getUser().getNick().equals(getIrcBot().getNick()) && waitQueue.contains(event.getChannel().getName())) {
+                            waitQueue.remove(event.getChannel().getName());
+                            SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream(event.getChannel().getName()));
+                        }
+
+                        if (waitQueue.size() == 0) {
                             break;
                         }
                     }
-
                 } catch (IOException | IrcException e) {
                     e.printStackTrace();
                 }
             }
         });
         ircThread.start();
+
         IrcQueue.getInstance().start();
         Bukkit.getPluginManager().registerEvents(new IrcListener(), this);
 
         de.static_interface.sinklibrary.api.configuration.Configuration
-                commandsConfig = new de.static_interface.sinklibrary.api.configuration.Configuration(new File(sinkIrcDirectory, "Commands.yml")) {
-            @Override
-            public void addDefaults() {
-
-            }
-        };
+                commandsConfig = new de.static_interface.sinklibrary.api.configuration.Configuration(new File(sinkIrcDirectory, "Commands.yml"));
         commandsConfig.init();
+
+        Debug.log("Parsing streams...");
 
         SinkLibrary.getInstance().registerCommand("irckick", new IrcKickCommand(this, commandsConfig));
         SinkLibrary.getInstance().registerCommand("exec", new ExecCommand(this, commandsConfig));
@@ -179,8 +209,6 @@ public class SinkIRC extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("kick", new KickCommand(this, commandsConfig));
         SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, commandsConfig));
         SinkLibrary.getInstance().registerCommand("set", new SetCommand(this, commandsConfig));
-
-        SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream(mainChannel));
         initialized = true;
     }
 
@@ -216,5 +244,60 @@ public class SinkIRC extends JavaPlugin {
         ircThread = null;
         ircBot = null;
         instance = null;
+    }
+
+    public Map<String, List<String>> getStreamRedirects() {
+        if (lastCacheUpdate + (1000 * 10) <= System.currentTimeMillis()) {
+            streamRedirects.clear();
+            for (String s : SiSettings.SI_SERVER_STREAMS.getValue()) {
+                if (StringUtil.isEmptyOrNull(s)) {
+                    continue;
+                }
+                s = s.trim();
+                String[] parts = s.split("\\Q>>\\E");
+                if (parts.length != 2) {
+                    SinkIRC.getInstance().getLogger().warning("Error at parsing config: " + s + ": invalid format: \"" + s + "\"");
+                    continue;
+                }
+
+                String source = parts[0].trim();
+
+                boolean isSourceChannel = source.startsWith("#");
+                boolean isSourceStream = SinkLibrary.getInstance().getMessageStream(source) != null;
+                if (!isSourceChannel && !isSourceStream) {
+                    SinkIRC.getInstance().getLogger()
+                            .warning("Error at parsing config: " + s + ": source channel or stream \"" + source + "\" not found");
+                    continue;
+                }
+
+                String target = parts[1].trim();
+                boolean isTargetChannel = target.startsWith("#");
+                if (isSourceChannel && isTargetChannel) {
+                    SinkIRC.getInstance().getLogger().warning("Error at parsing config: " + s + ": source & target are both channels");
+                    continue;
+                }
+
+                boolean isTargetStream = SinkLibrary.getInstance().getMessageStream(target) != null;
+                if (isSourceStream && isTargetStream) {
+                    SinkIRC.getInstance().getLogger().warning("Error at parsing config: " + s + ": source & target are both streams");
+                    continue;
+                }
+
+                if (!isTargetChannel && !isTargetStream) {
+                    SinkIRC.getInstance().getLogger()
+                            .warning("Error at parsing config: " + s + ": target channel or stream \"" + target + "\" not found");
+                    continue;
+                }
+
+                List<String> targets = streamRedirects.get(source);
+                if (targets == null) {
+                    targets = new ArrayList<>();
+                }
+                targets.add(target);
+                streamRedirects.put(source, targets);
+            }
+            lastCacheUpdate = System.currentTimeMillis();
+        }
+        return streamRedirects;
     }
 }

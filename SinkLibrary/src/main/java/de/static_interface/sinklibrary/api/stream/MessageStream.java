@@ -17,8 +17,10 @@
 
 package de.static_interface.sinklibrary.api.stream;
 
+import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.event.MessageStreamEvent;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.util.Debug;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 
@@ -27,32 +29,53 @@ import javax.annotation.Nullable;
 
 public abstract class MessageStream<T extends SinkUser> {
 
-    private final String name;
+    private String name;
 
     public MessageStream(@Nonnull String name) {
         Validate.notNull(name);
         this.name = name;
     }
 
-    public final void sendMessage(String message) {
-        sendMessage(null, message);
+    public MessageStream() {
+        this.name = null;
     }
 
-    public final void sendMessage(@Nullable T sender, String message) {
-        if (onSendMessage(sender, message)) {
-            MessageStreamEvent event = new MessageStreamEvent(this);
+    public final boolean sendMessage(String message) {
+        return sendMessage(null, message);
+    }
+
+    public final boolean sendMessage(@Nullable T user, String message, Object... args) {
+        Debug.logMethodCall(user != null ? user.getName() : null, message);
+        if (getName() == null) {
+            throw new IllegalStateException("Name was not set!");
+        }
+
+        if (SinkLibrary.getInstance().getMessageStream(getName()) == null) {
+            throw new IllegalStateException("MessageStream is not registered");
+        }
+
+        String formatMessage = formatMessage(user, message);
+
+        boolean result = onSendMessage(user, formatMessage, args);
+        if (result) {
+            MessageStreamEvent event = new MessageStreamEvent(this, user, message);
             Bukkit.getPluginManager().callEvent(event);
         }
+
+        return result;
     }
 
-    public String formatMessage(T sender, String message) {
+    public String formatMessage(@Nullable T user, String message) {
         return message;
     }
 
-    protected abstract boolean onSendMessage(@Nullable T sender, String message);
-
+    protected abstract boolean onSendMessage(@Nullable T user, String message, Object... args);
 
     public final String getName() {
         return name;
+    }
+
+    public final void setName(String name) {
+        this.name = name;
     }
 }

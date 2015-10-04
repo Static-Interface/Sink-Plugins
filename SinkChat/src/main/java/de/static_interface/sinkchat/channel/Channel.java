@@ -48,7 +48,7 @@ public class Channel extends MessageStream<IngameUser> {
 
     public Channel(String name, String callCode, boolean enabled, String permission,
                    boolean sendToIRC, int range, @Nullable String format) {
-        super(name);
+        super(name.toLowerCase());
         this.name = name;
         this.callCode = callCode;
         this.enabled = enabled;
@@ -104,6 +104,9 @@ public class Channel extends MessageStream<IngameUser> {
     }
 
     public String formatEventFormat(IngameUser user) {
+        if (format == null) {
+            return null;
+        }
         return StringUtil.format(format, user, null, "%2$s", getCustomParams(user), false, null);
     }
 
@@ -111,8 +114,8 @@ public class Channel extends MessageStream<IngameUser> {
     public String formatMessage(IngameUser user, String message) {
         String format = this.format;
         format = format.replace("%1$s", user.getDisplayName());
-        format = format.replace("%2$s", message);
-        return StringUtil.format(format, user, null, message, getCustomParams(user), false, null);
+        format = format.replace("%2$s", formatMessage(message));
+        return StringUtil.format(format, user, null, formatMessage(message), getCustomParams(user), false, null);
     }
 
     private Map<String, Object> getCustomParams(IngameUser user) {
@@ -153,8 +156,11 @@ public class Channel extends MessageStream<IngameUser> {
     }
 
     @Override
-    protected boolean onSendMessage(@Nullable IngameUser sender, String message) {
-        message = formatMessage(message);
+    protected boolean onSendMessage(@Nullable IngameUser sender, String message, Object... args) {
+        if (args.length > 0 && args[0] == Boolean.TRUE) {
+            return true;
+        }
+
         String formattedMessage = StringUtil.format(format, sender, message);
         Set<Player> recipients = new HashSet<>(Bukkit.getOnlinePlayers());
         handleMessage(sender, recipients, formattedMessage);

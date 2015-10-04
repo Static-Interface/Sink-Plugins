@@ -22,7 +22,7 @@ import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
-import de.static_interface.sinklibrary.user.IngameUser;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -136,54 +136,21 @@ public class BukkitUtil {
     }
 
     /**
-     * Use this instead of {@link org.bukkit.Bukkit#broadcast(String, String).}.
-     * Send message to all players with specified permission.
-     * It will also send the message also to IRC
-     *
-     * @param message Message to send
-     * @param sendIRC If true, message will be broadcasted to IRC if available
-     */
-    @Deprecated
-    public static void broadcastMessage(String message, boolean sendIRC) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(message);
-        }
-        Bukkit.getConsoleSender().sendMessage(message);
-        if (!sendIRC) {
-            return;
-        }
-        SinkLibrary.getInstance().sendIrcMessage(message);
-    }
-
-    /**
      * @param message Message to send
      */
     public static void broadcastMessage(String message) {
-        SinkLibrary.getInstance().getMessageStream("bukkitbroadcast", BukkitBroadcastMessageStream.class).sendMessage(message);
+        SinkLibrary.getInstance().getMessageStream("bukkit_broadcastmessage", BukkitBroadcastMessageStream.class).sendMessage(message);
     }
 
     /**
      * Use this instead of {@link org.bukkit.Bukkit#broadcast(String message, String permission).
      * Send message to all players with specified permission.
-     * It will also send the message to IRC if the default permission is true}.
      *
      * @param message    Message to send
      * @param permission Permission needed to receive the message
-     * @param sendIRC    If true, message will broadcasted to IRC if available
      */
-    @Deprecated
-    public static void broadcast(String message, String permission, boolean sendIRC) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            IngameUser user = SinkLibrary.getInstance().getIngameUser(p);
-            if (!user.hasPermission(permission)) {
-                continue;
-            }
-            p.sendMessage(message);
-        }
-        Bukkit.getConsoleSender().sendMessage(message);
-        if (sendIRC) {
-            SinkLibrary.getInstance().sendIrcMessage(message);
-        }
+    public static void broadcast(String message, String permission) {
+        SinkLibrary.getInstance().getMessageStream("bukkit_broadcast", BukkitBroadcastStream.class).sendMessage(null, message, permission);
     }
 
     public static World getMainWorld() {

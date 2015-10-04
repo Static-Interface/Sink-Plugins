@@ -26,9 +26,9 @@ import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,15 +50,15 @@ public class TeamchatCommand extends SinkCommand implements CommandExecutor {
     public TeamchatCommand(@Nonnull Plugin plugin, Configuration config) {
         super(plugin, config);
         getCommandOptions().setMinRequiredArgs(1);
-        SinkLibrary.getInstance().registerMessageStream(new MessageStream<SinkUser>("teamchat") {
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream<SinkUser>("scmd_teamchat") {
             @Override
             public String formatMessage(SinkUser user, String message) {
                 return PREFIX + user.getDisplayName() + ChatColor.RESET + ": " + message;
             }
 
             @Override
-            protected boolean onSendMessage(@Nullable SinkUser user, String message) {
-                BukkitUtil.broadcast(formatMessage(user, message), getPermission(), false);
+            protected boolean onSendMessage(@Nullable SinkUser user, String message, Object... args) {
+                Bukkit.broadcast(message, getPermission());
                 return true;
             }
         });
@@ -67,7 +67,7 @@ public class TeamchatCommand extends SinkCommand implements CommandExecutor {
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         SinkUser user = SinkLibrary.getInstance().getUser(sender);
-        SinkLibrary.getInstance().getMessageStream("teamchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
+        SinkLibrary.getInstance().getMessageStream("scmd_teamchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
         return true;
     }
 }

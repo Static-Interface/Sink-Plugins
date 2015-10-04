@@ -57,7 +57,7 @@ public class NationChatCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
         getCommandOptions().setMinRequiredArgs(1);
-        SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("nationchat") {
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("sc_nationchat") {
             @Override
             public String formatMessage(IngameUser user, String message) {
                 Player player = user.getPlayer();
@@ -94,11 +94,7 @@ public class NationChatCommand extends SinkCommand {
             }
 
             @Override
-            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
-                String formattedMessage = formatMessage(user, message);
-                if (StringUtil.isEmptyOrNull(formattedMessage)) {
-                    return false;
-                }
+            protected boolean onSendMessage(@Nullable IngameUser user, String message, Object... args) {
                 Resident resident = TownyHelper.getResident(user.getName());
                 Nation nation;
                 try {
@@ -132,10 +128,10 @@ public class NationChatCommand extends SinkCommand {
                 }
 
                 for (Player p : sendPlayers) {
-                    p.sendMessage(formattedMessage);
+                    p.sendMessage(message);
                 }
 
-                SinkChat.getInstance().getLogger().info(formattedMessage);
+                SinkChat.getInstance().getLogger().info(message);
                 return true;
             }
         });
@@ -144,7 +140,7 @@ public class NationChatCommand extends SinkCommand {
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         IngameUser user = SinkLibrary.getInstance().getIngameUser((Player) sender);
-        SinkLibrary.getInstance().getMessageStream("nationchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
+        SinkLibrary.getInstance().getMessageStream("sc_nationchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
         return true;
     }
 }

@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.api.event;
 
 import de.static_interface.sinklibrary.api.stream.MessageStream;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -25,9 +26,13 @@ public class MessageStreamEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private MessageStream messageStream;
+    private SinkUser user;
+    private String message;
 
-    public MessageStreamEvent(MessageStream messageStream) {
+    public MessageStreamEvent(MessageStream messageStream, SinkUser user, String message) {
         this.messageStream = messageStream;
+        this.user = user;
+        this.message = message;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -42,5 +47,13 @@ public class MessageStreamEvent extends Event {
 
     public MessageStream getMessageStream() {
         return messageStream;
+    }
+
+    public SinkUser getUser() {
+        return user;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

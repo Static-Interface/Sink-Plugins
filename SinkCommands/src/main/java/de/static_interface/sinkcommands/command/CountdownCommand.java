@@ -25,8 +25,8 @@ import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.api.user.SinkUser;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
 import de.static_interface.sinklibrary.user.IngameUser;
-import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -52,6 +52,7 @@ public class CountdownCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setIrcOpOnly(true);
         getCommandOptions().setCliOptions(buildOptions());
+        SinkLibrary.getInstance().registerMessageStream(new BukkitBroadcastMessageStream("scmd_countdown"));
     }
 
     private Options buildOptions() {
@@ -163,14 +164,14 @@ public class CountdownCommand extends SinkCommand {
     }
 
     private void broadcastCounterGlobal(final CommandSender sender, String message, final String command, final boolean skipLastMsg) {
-        BukkitUtil.broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!", true);
+        broadcastMessage(PREFIX + ChatColor.GOLD + "Countdown für " + message + " gestartet!");
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (secondsLeftGlobal <= 0) {
                     secondsLeftGlobal = 0;
                     if (!skipLastMsg) {
-                        BukkitUtil.broadcastMessage(PREFIX + ChatColor.GREEN + "Los!", true);
+                        broadcastMessage(PREFIX + ChatColor.GREEN + "Los!");
                     }
                     if (command != null) {
                         Bukkit.dispatchCommand(sender, command);
@@ -180,14 +181,18 @@ public class CountdownCommand extends SinkCommand {
                 }
                 if (secondsLeftGlobal > 10) {
                     if (secondsLeftGlobal % 10 == 0) {
-                        BukkitUtil.broadcastMessage(PREFIX + ChatColor.RED + secondsLeftGlobal + "...", true);
+                        broadcastMessage(PREFIX + ChatColor.RED + secondsLeftGlobal + "...");
                     }
                 } else {
-                    BukkitUtil.broadcastMessage(PREFIX + ChatColor.DARK_RED + secondsLeftGlobal, true);
+                    broadcastMessage(PREFIX + ChatColor.DARK_RED + secondsLeftGlobal);
                 }
                 secondsLeftGlobal--;
             }
         }.runTaskTimer(getPlugin(), 0, 20L);
+    }
+
+    private void broadcastMessage(String s) {
+        SinkLibrary.getInstance().getMessageStream("scmd_countdown").sendMessage(s);
     }
 
     private void broadcastCounterLocal(final IngameUser executor, String message, final String command, final int radius, final boolean skipLastMsg,

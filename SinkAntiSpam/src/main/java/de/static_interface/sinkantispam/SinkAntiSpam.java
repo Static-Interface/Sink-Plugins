@@ -37,6 +37,7 @@ import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConfiguration;
 import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -70,6 +71,9 @@ public class SinkAntiSpam extends JavaPlugin {
 
         new SasSettings(new File(sinkAntiSpamDirectory, "Settings.yml")).init();
         new SasLanguage(new File(sinkAntiSpamDirectory, "Language.yml")).init();
+
+        SinkLibrary.getInstance().registerMessageStream(new BukkitBroadcastStream("sas_autowarning"));
+        SinkLibrary.getInstance().registerMessageStream(new BukkitBroadcastStream("sas_warning"));
 
         Configuration commandsConfig = new Configuration(new File(sinkAntiSpamDirectory, "Commands.yml"));
         commandsConfig.init();

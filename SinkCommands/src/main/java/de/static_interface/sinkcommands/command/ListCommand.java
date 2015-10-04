@@ -125,6 +125,7 @@ public class ListCommand extends SinkCommand implements CommandExecutor {
             }
         }
 
+        /*
         if (SinkLibrary.getInstance().isIrcAvailable()) {
             HashMap<String, List<org.pircbotx.User>> ircGroupUsers = new HashMap<>(); // group - list of users in group
             Collection<org.pircbotx.User> onlineIrcUsers = de.static_interface.sinkirc.SinkIRC.getInstance().getMainChannel().getUsers();
@@ -166,7 +167,7 @@ public class ListCommand extends SinkCommand implements CommandExecutor {
                 }
             }
         }
-
+        */
         int onlineUsersCount = onlineUsers.size() - vanishUsers;
         String tmp = onlineUsersCount == 1 ? "ist" : "sind";
 

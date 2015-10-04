@@ -26,6 +26,7 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.command.annotation.Usage;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -52,6 +53,28 @@ public class SinkDebugCommand extends SinkCommand {
 
     @Override
     public void onRegistered() {
+        registerSubCommand(new SinkSubCommand<SinkDebugCommand>(this, "streams") {
+            @Description("List all registered Streams")
+            @Override
+            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
+                String s = "";
+                int i = 0;
+                for (MessageStream stream : SinkLibrary.getInstance().getMessageStreams()) {
+                    if (stream == null) {
+                        i++;
+                        continue;
+                    }
+                    if (s.equals("")) {
+                        s = stream.getName();
+                        continue;
+                    }
+                    s += ", " + stream.getName();
+                }
+                sender.sendMessage("Registered Streams: " + s);
+                sender.sendMessage("Null streams: " + i);
+                return true;
+            }
+        });
         registerSubCommand(new SinkSubCommand<SinkDebugCommand>(this, "anonymoustest") {
             @Usage("<option> <key>")
             @Description("Anonymous SinkSubCommand test")

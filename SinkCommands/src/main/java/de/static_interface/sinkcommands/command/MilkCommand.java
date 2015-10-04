@@ -70,8 +70,8 @@ public class MilkCommand extends SinkCommand {
             }
             if (i > 0) {
                 BukkitUtil.broadcast(PREFIX + "Der Unsichtbarkeits Trank von den folgenden Spielern wurde durch " + BukkitUtil.getSenderName(sender)
-                                     + " entfernt:", "sinkcommands.milk.message", false);
-                BukkitUtil.broadcast(PREFIX + s, "sinkcommands.milk.message", false);
+                                     + " entfernt:", "sinkcommands.milk.message");
+                BukkitUtil.broadcast(PREFIX + s, "sinkcommands.milk.message");
                 return true;
             }
             sender.sendMessage(PREFIX + ChatColor.RED + "Es gibt zur Zeit keine Spieler die einen Unsichtbarkeits Trank haben...");
@@ -97,7 +97,7 @@ public class MilkCommand extends SinkCommand {
         if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
             BukkitUtil.broadcast(
                     PREFIX + "Der Unsichtbarkeits Trank von " + target.getDisplayName() + " wurde durch " + BukkitUtil.getSenderName(sender)
-                    + " entfernt.", "sinkcommands.milk.message", false);
+                    + " entfernt.", "sinkcommands.milk.message");
             target.removePotionEffect(PotionEffectType.INVISIBILITY);
             return true;
         }

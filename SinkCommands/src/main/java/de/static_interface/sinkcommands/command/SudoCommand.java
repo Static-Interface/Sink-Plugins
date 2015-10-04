@@ -18,7 +18,6 @@
 package de.static_interface.sinkcommands.command;
 
 import de.static_interface.sinkirc.IrcUtil;
-import de.static_interface.sinkirc.SinkIRC;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
@@ -62,6 +61,13 @@ public class SudoCommand extends SinkCommand {
                 .longOpt("silent")
                 .build();
         options.addOption(silent);
+        Option channel = Option.builder("c")
+                .desc("Target channel")
+                .longOpt("channel")
+                .hasArg()
+                .argName("<#channel>")
+                .build();
+        options.addOption(channel);
         getCommandOptions().setCliOptions(options);
         getCommandOptions().setMinRequiredArgs(2);
     }
@@ -124,7 +130,14 @@ public class SudoCommand extends SinkCommand {
 
         try {
             if (target instanceof IrcUser) {
-                IrcUtil.handleCommand(cmd, args, SinkIRC.getInstance().getMainChannel().getName(), ((IrcUser) target).getBase(), commandLine);
+                String source = target.getName();
+                if (getCommandLine().hasOption('c')) {
+                    source = getCommandLine().getOptionValue('c');
+                    if (!source.startsWith("#")) {
+                        return false;
+                    }
+                }
+                IrcUtil.handleCommand(cmd, args, source, ((IrcUser) target).getBase(), commandLine);
             } else {
                 Bukkit.dispatchCommand(fakeSender, commandLine);
             }

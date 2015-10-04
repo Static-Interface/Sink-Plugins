@@ -57,7 +57,7 @@ public class TownChatCommand extends SinkCommand {
         super(plugin, config);
         getCommandOptions().setPlayerOnly(true);
         getCommandOptions().setMinRequiredArgs(1);
-        SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("townchat") {
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream<IngameUser>("sc_townchat") {
             @Override
             public String formatMessage(IngameUser user, String message) {
                 Resident resident = TownyHelper.getResident(user.getName());
@@ -82,17 +82,13 @@ public class TownChatCommand extends SinkCommand {
             }
 
             @Override
-            protected boolean onSendMessage(@Nullable IngameUser user, String message) {
+            protected boolean onSendMessage(@Nullable IngameUser user, String message, Object... args) {
                 Resident resident = TownyHelper.getResident(user.getName());
                 Town town;
                 try {
                     town = resident.getTown();
                 } catch (NotRegisteredException ignored) //Shouldn't happen...
                 {
-                    return false;
-                }
-                String formattedMessage = formatMessage(user, message);
-                if (StringUtil.isEmptyOrNull(formattedMessage)) {
                     return false;
                 }
 
@@ -120,10 +116,10 @@ public class TownChatCommand extends SinkCommand {
                 }
 
                 for (Player p : sendPlayers) {
-                    p.sendMessage(formattedMessage);
+                    p.sendMessage(message);
                 }
 
-                SinkChat.getInstance().getLogger().info(formattedMessage);
+                SinkChat.getInstance().getLogger().info(message);
                 return true;
             }
         });
@@ -132,7 +128,7 @@ public class TownChatCommand extends SinkCommand {
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
         IngameUser user = SinkLibrary.getInstance().getIngameUser((Player) sender);
-        SinkLibrary.getInstance().getMessageStream("townchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
+        SinkLibrary.getInstance().getMessageStream("sc_townchat").sendMessage(user, StringUtil.formatArrayToString(args, " "));
         return true;
     }
 }

@@ -54,13 +54,13 @@ public class SinkIrcReflection {
         return value;
     }
 
-    public static void setOp(User user, boolean value) {
+    public static void setOp(User user, Channel channel, boolean value) {
         try {
             //Use reflection because we can't add SinkIRC as dependency
             Class<?> c = Class.forName("de.static_interface.sinkirc.IrcUtil");
-            Method method = c.getMethod("setOp", User.class, Boolean.class);
+            Method method = c.getMethod("setOp", User.class, Channel.class, Boolean.class);
             method.setAccessible(true);
-            method.invoke(null, user, value);
+            method.invoke(null, user, channel, value);
         } catch (Exception e) {
             throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }
@@ -74,17 +74,6 @@ public class SinkIrcReflection {
                 method.setAccessible(true);
             }
             return (String) method.invoke(null);
-        } catch (Exception e) {
-            throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
-        }
-    }
-
-    public static Channel getMainChannel() {
-        try {
-            Class<?> c = Class.forName("de.static_interface.sinkirc.SinkIRC");
-            Method method = c.getMethod("getMainChannel");
-            method.setAccessible(true);
-            return (Channel) method.invoke(Bukkit.getPluginManager().getPlugin("SinkIRC"));
         } catch (Exception e) {
             throw new RuntimeException("Couldn't access SinkIRC! Did you install the correct version?", e);
         }

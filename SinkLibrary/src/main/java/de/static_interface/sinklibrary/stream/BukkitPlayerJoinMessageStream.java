@@ -22,33 +22,33 @@ import de.static_interface.sinklibrary.api.stream.EventMessageStream;
 import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BukkitPlayerChatMessageStream extends EventMessageStream<IngameUser, AsyncPlayerChatEvent> {
+public class BukkitPlayerJoinMessageStream extends EventMessageStream<IngameUser, PlayerJoinEvent> {
 
-    public BukkitPlayerChatMessageStream(Plugin plugin) {
+    public BukkitPlayerJoinMessageStream(Plugin plugin) {
         super(plugin);
     }
 
     @Override
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onEvent(AsyncPlayerChatEvent event) {
+    public void onEvent(PlayerJoinEvent event) {
         super.onEvent(event);
     }
 
     @Nullable
     @Override
-    public IngameUser getUser(AsyncPlayerChatEvent event) {
+    public IngameUser getUser(PlayerJoinEvent event) {
         return SinkLibrary.getInstance().getIngameUser(event.getPlayer());
     }
 
     @Nonnull
     @Override
-    public String getMessage(AsyncPlayerChatEvent event) {
-        return event.getFormat().replace("%1$s", event.getPlayer().getDisplayName()).replace("%2$s", event.getMessage());
+    public String getMessage(PlayerJoinEvent event) {
+        return event.getJoinMessage();
     }
 }

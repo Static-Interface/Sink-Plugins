@@ -28,11 +28,15 @@ import javax.annotation.Nullable;
 public class BukkitBroadcastMessageStream extends MessageStream {
 
     public BukkitBroadcastMessageStream() {
-        super("bukkitbroadcast");
+        super("bukkit_broadcastmessage");
+    }
+
+    public BukkitBroadcastMessageStream(String name) {
+        super(name);
     }
 
     @Override
-    protected boolean onSendMessage(@Nullable SinkUser sender, String message) {
+    protected boolean onSendMessage(@Nullable SinkUser sender, String message, Object... args) {
         message = StringUtil.format(message, sender, null);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(message);

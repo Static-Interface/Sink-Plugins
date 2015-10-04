@@ -25,7 +25,6 @@ import de.static_interface.sinkcommands.command.DrugCommand;
 import de.static_interface.sinkcommands.command.GlobalmuteCommand;
 import de.static_interface.sinkcommands.command.GupCommand;
 import de.static_interface.sinkcommands.command.LagCommand;
-import de.static_interface.sinkcommands.command.ListCommand;
 import de.static_interface.sinkcommands.command.MessageCommands;
 import de.static_interface.sinkcommands.command.MilkCommand;
 import de.static_interface.sinkcommands.command.NewbiechatCommand;
@@ -120,7 +119,7 @@ public class SinkCommands extends JavaPlugin {
 
         SinkLibrary.getInstance().registerCommand("teamchat", new TeamchatCommand(this, config));
         SinkLibrary.getInstance().registerCommand("newbiechat", new NewbiechatCommand(this, config));
-        SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, config));
+        //SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, config));
         SinkLibrary.getInstance().registerCommand("milk", new MilkCommand(this, config));
         SinkLibrary.getInstance().registerCommand("rename", new RenameCommand(this, config));
         SinkLibrary.getInstance().registerCommand("clearinventory", new ClearCommand(this, config));

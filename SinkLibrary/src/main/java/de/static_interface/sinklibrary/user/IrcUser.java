@@ -84,7 +84,7 @@ public class IrcUser extends SinkUser<User> {
 
     @Override
     public void setOp(boolean value) {
-        SinkIrcReflection.setOp(getBase(), value);
+        throw new IllegalArgumentException("Invalid Operation: Cannot op IrcUser!");
     }
 
     @Override

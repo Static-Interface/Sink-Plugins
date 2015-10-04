@@ -40,13 +40,17 @@ import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
-import de.static_interface.sinklibrary.listener.IrcLinkListener;
 import de.static_interface.sinklibrary.provider.SimpleBanProvider;
 import de.static_interface.sinklibrary.provider.StringConvertProvider;
 import de.static_interface.sinklibrary.sender.ProxiedConsoleCommandSender;
 import de.static_interface.sinklibrary.sender.ProxiedPlayer;
 import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
 import de.static_interface.sinklibrary.stream.BukkitPlayerChatMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitPlayerDeathMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitPlayerJoinMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitPlayerKickMessageStream;
+import de.static_interface.sinklibrary.stream.BukkitPlayerQuitMessageStream;
 import de.static_interface.sinklibrary.user.ConsoleUser;
 import de.static_interface.sinklibrary.user.ConsoleUserProvider;
 import de.static_interface.sinklibrary.user.IngameUser;
@@ -78,7 +82,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import java.io.File;
@@ -235,8 +238,9 @@ public class SinkLibrary extends JavaPlugin {
         registerUserImplementation(ProxiedConsoleCommandSender.class, proxiedUserProvider);
         registerUserImplementation(ProxiedPlayer.class, new ProxiedIngameUserProvider());
 
-        registerMessageStream(new BukkitPlayerChatMessageStream());
+        registerMessageStream(new BukkitBroadcastStream());
         registerMessageStream(new BukkitBroadcastMessageStream());
+        registerEventMessageStreams();
 
         LIB_FOLDER = new File(getCustomDataFolder(), "libs");
 
@@ -289,12 +293,15 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
-
-        if (!isSinkChatAvailable()) {
-            Bukkit.getPluginManager().registerEvents(new IrcLinkListener(), this);
-        }
-
         loadLibs(getConsoleUser());
+    }
+
+    private void registerEventMessageStreams() {
+        registerMessageStream(new BukkitPlayerDeathMessageStream(this));
+        registerMessageStream(new BukkitPlayerJoinMessageStream(this));
+        registerMessageStream(new BukkitPlayerQuitMessageStream(this));
+        registerMessageStream(new BukkitPlayerKickMessageStream(this));
+        registerMessageStream(new BukkitPlayerChatMessageStream(this));
     }
 
     public SinkTabCompleter getDefaultTabCompleter() {
@@ -364,15 +371,26 @@ public class SinkLibrary extends JavaPlugin {
         return (T) registeredMessageStreams.get(name);
     }
 
+    public Collection<MessageStream> getMessageStreams() {
+        return Collections.unmodifiableCollection(registeredMessageStreams.values());
+    }
+
     @Nullable
     public MessageStream getMessageStream(@Nonnull String name) {
         return getMessageStream(name, MessageStream.class);
     }
 
     public final void registerMessageStream(MessageStream stream) {
-        registeredMessageStreams.put(stream.getName().toLowerCase().trim(), stream);
+        Validate.notNull(stream);
+        if (stream.getName() == null) {
+            throw new IllegalStateException("stream has no name, class: " + stream.getClass().getName());
+        }
+        String name = stream.getName().toLowerCase().trim();
+        if (registeredMessageStreams.containsKey(name)) {
+            registeredMessageStreams.remove(name);
+        }
+        registeredMessageStreams.put(name, stream);
     }
-
 
     @Unstable
     public void addClassToClasspath(String path) throws Exception {
@@ -385,7 +403,7 @@ public class SinkLibrary extends JavaPlugin {
         Class<URLClassLoader> clazz = URLClassLoader.class;
 
         // Use reflection to access protected "addURL" method
-        Method method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
+        Method method = clazz.getDeclaredMethod("addURL", URL.class);
         method.setAccessible(true);
         method.invoke(classLoader, url);
     }
@@ -419,7 +437,7 @@ public class SinkLibrary extends JavaPlugin {
         }
 
         try {
-            SinkIrcReflection.getMainChannel();
+            SinkIrcReflection.getIrcCommandPrefix();
         } catch (Throwable e) {
             Debug.log(e);
             ircExceptionOccured = true;
@@ -513,27 +531,13 @@ public class SinkLibrary extends JavaPlugin {
     }
 
     /**
-     * Send Message to IRC via SinkIRC Plugin to the default channel.
-     *
-     * @param message Message to send
-     */
-    @Deprecated
-    public boolean sendIrcMessage(@Nonnull String message) {
-        Channel channel = SinkIrcReflection.getMainChannel();
-        if (channel != null) {
-            return sendIrcMessage(message, channel.getName());
-        }
-        Debug.log("channel == null!");
-        return false;
-    }
-
-    /**
      * Send Message to IRC via SinkIRC Plugin.
      *
      * @param message Message to send
      * @param target Target user/channel, use null for default channel
      * @return true if successfully added to queue, false if exception happened or irc not available
      */
+    @Deprecated
     public boolean sendIrcMessage(@Nonnull String message, @Nonnull String target) {
         if (!isIrcAvailable()) {
             return false;

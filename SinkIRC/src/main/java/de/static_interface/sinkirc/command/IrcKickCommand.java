@@ -43,16 +43,13 @@ public class IrcKickCommand extends SinkCommand {
         getTabCompleterOptions().setIncludeIngameUsers(false);
         getTabCompleterOptions().setIncludeIrcUsers(true);
         getTabCompleterOptions().setIncludeSuffix(false);
+        getCommandOptions().setMinRequiredArgs(1);
         getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override
     public boolean onExecute(CommandSender sender, String label, String[] args) {
         SinkUser user = SinkLibrary.getInstance().getUser((Object) sender);
-
-        if (args.length < 1) {
-            return false;
-        }
 
         String reason = StringUtil.formatArrayToString(args, " ", 1);
 
@@ -62,8 +59,9 @@ public class IrcKickCommand extends SinkCommand {
             reason = "Kicked by " + user.getDisplayName();
         }
 
-        Channel channel = SinkIRC.getInstance().getIrcBot().getUserBot().getChannels().first();
-        channel.send().kick(IrcUtil.getUser(channel, target), reason);
+        for (Channel channel : SinkIRC.getInstance().getJoinedChannels()) {
+            channel.send().kick(IrcUtil.getUser(target), reason);
+        }
         return true;
     }
 }

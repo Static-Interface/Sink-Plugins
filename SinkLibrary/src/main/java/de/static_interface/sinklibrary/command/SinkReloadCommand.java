@@ -23,13 +23,11 @@ import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.DefaultPermission;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.pircbotx.User;
 
 import java.util.Map;
 
@@ -61,13 +59,6 @@ public class SinkReloadCommand extends SinkCommand {
         for (Player player : Bukkit.getOnlinePlayers()) {
             SinkLibrary.getInstance().unloadUser(player.getUniqueId());
             SinkLibrary.getInstance().loadUser(player);
-        }
-
-        if (SinkLibrary.getInstance().isIrcAvailable()) {
-            for (User ircUser : SinkIrcReflection.getMainChannel().getUsers()) {
-                SinkLibrary.getInstance().unloadIrcUser(ircUser);
-                SinkLibrary.getInstance().loadIrcUser(ircUser, SinkIrcReflection.getMainChannel().getName()); //?
-            }
         }
 
         sender.sendMessage(PREFIX + "Reloading Libraries...");

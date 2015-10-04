@@ -24,8 +24,8 @@ import de.static_interface.sinklibrary.user.IngameUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -73,7 +73,7 @@ public class StringUtil {
      *                           with "Hello"
      * @return Formatted String
      */
-    public static String format(String str, @Nullable HashMap<String, Object> customPlaceholders) {
+    public static String format(String str, @Nullable Map<String, Object> customPlaceholders) {
         return format(str, (SinkUser) null, null, customPlaceholders, null, null);
     }
 
@@ -103,7 +103,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable String userMessage,
-                                @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
+                                @Nullable Map<String, Object> customPlaceholders, @Nullable Object... paramValues) {
         return format(str, user, null, userMessage, customPlaceholders, paramValues);
     }
 
@@ -121,7 +121,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable SinkUser target, @Nullable String userMessage,
-                                @Nullable HashMap<String, Object> customPlaceholders, @Nullable Object... paramValues) {
+                                @Nullable Map<String, Object> customPlaceholders, @Nullable Object... paramValues) {
         return format(str, user, target, userMessage, customPlaceholders, true, paramValues);
     }
 
@@ -139,7 +139,7 @@ public class StringUtil {
      * @return Formatted String
      */
     public static String format(String str, @Nullable SinkUser user, @Nullable SinkUser target, @Nullable String userMessage,
-                                @Nullable HashMap<String, Object> customPlaceholders, boolean formatS, @Nullable Object... paramValues) {
+                                @Nullable Map<String, Object> customPlaceholders, boolean formatS, @Nullable Object... paramValues) {
         if (user != null) {
             str = str.replaceAll("(?i)\\{(PLAYER(NAME)?|NAME)\\}", user.getName());
             str = str.replaceAll("(?i)\\{(DISPLAYNAME|FORMATTEDNAME)\\}", user.getDisplayName());
@@ -330,11 +330,12 @@ public class StringUtil {
 
         String tmp = "";
         for (int i = startIndex; i < endIndex; i++) {
-            if (tmp.equals("")) {
-                tmp = input[i].toString();
+            if (input[i] == null) {
                 continue;
             }
-            if (input[i] == null) {
+
+            if (tmp.equals("")) {
+                tmp = input[i].toString();
                 continue;
             }
             tmp += character + input[i].toString();

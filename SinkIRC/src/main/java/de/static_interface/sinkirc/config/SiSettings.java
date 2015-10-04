@@ -22,9 +22,12 @@ import de.static_interface.sinklibrary.api.configuration.option.YamlBooleanOptio
 import de.static_interface.sinklibrary.api.configuration.option.YamlIntegerOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlParentOption;
+import de.static_interface.sinklibrary.api.configuration.option.YamlStringListOption;
 import de.static_interface.sinklibrary.api.configuration.option.YamlStringOption;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class SiSettings extends Configuration {
 
@@ -34,10 +37,14 @@ public class SiSettings extends Configuration {
     public final static YamlOption<String> SI_SERVER_ADDRESS = new YamlStringOption(SI_SERVER_PARENT, "Address", "irc.example.com");
     public final static YamlOption<String> SI_SERVER_PASSWORD = new YamlStringOption(SI_SERVER_PARENT, "Password", "");
     public final static YamlOption<Integer> SI_SERVER_PORT = new YamlIntegerOption(SI_SERVER_PARENT, "Port", 6667);
-    public final static YamlOption<String> SI_SERVER_CHANNEL = new YamlStringOption(SI_SERVER_PARENT, "Channel", "#SinkIRCBot");
+    public final static YamlOption<List<String>>
+            SI_SERVER_CHANNELS =
+            new YamlStringListOption(SI_SERVER_PARENT, "Channels", Arrays.asList("#SinkIRCBot"));
     public final static YamlParentOption SI_AUTHENTIFICATION_PARENT = new YamlParentOption("Authentification");
     public final static YamlOption<Boolean> SI_AUTHENTIFICATION_ENABLED = new YamlBooleanOption(SI_AUTHENTIFICATION_PARENT, "Enabled", false);
     public final static YamlOption<String> SI_AUTHENTIFICATION_AUTHBOT = new YamlStringOption(SI_AUTHENTIFICATION_PARENT, "AuthBot", "NickServ");
+    public final static YamlOption<List<String>>
+            SI_SERVER_STREAMS = new YamlStringListOption(SI_SERVER_PARENT, "Streams", Arrays.asList("event_asyncplayerchatevent >> #SinkIRCBot"));
     public final static YamlOption<String>
             SI_AUTHENTIFICATION_MESSAGE =
             new YamlStringOption(SI_AUTHENTIFICATION_PARENT, "AuthMessage", "identify <NickServPasswordHere>");
