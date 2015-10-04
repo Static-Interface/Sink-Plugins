@@ -32,7 +32,7 @@ public class IrcSendMessageEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     /**
-     * Don't fire this event by yourself, use {@link de.static_interface.sinklibrary.SinkLibrary#sendIrcMessage(String)} instead!
+     * Don't fire this event by yourself, use {@link de.static_interface.sinklibrary.SinkLibrary#sendIrcMessage(String, String)} instead!
      * @param message Message to send
      */
     public IrcSendMessageEvent(String message, String target) {

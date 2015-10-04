@@ -25,14 +25,15 @@ import de.static_interface.sinklibrary.util.StringUtil;
 import javax.annotation.Nullable;
 
 public class IrcMessageStream extends MessageStream<SinkUser> {
-
-    public IrcMessageStream() {
-        super("irc");
+    private String target;
+    public IrcMessageStream(String target) {
+        super("irc_" + target);
+        this.target = target;
     }
 
     @Override
     protected boolean onSendMessage(@Nullable SinkUser sender, String message) {
         message = StringUtil.format(message, sender, null);
-        return SinkLibrary.getInstance().sendIrcMessage(message);
+        return SinkLibrary.getInstance().sendIrcMessage(message, target);
     }
 }

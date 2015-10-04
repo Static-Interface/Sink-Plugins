@@ -62,6 +62,7 @@ public class SinkIRC extends JavaPlugin {
         return ircBot;
     }
 
+    @Deprecated
     public Channel getMainChannel() {
         return IrcUtil.getChannel(mainChannel);
     }
@@ -179,7 +180,7 @@ public class SinkIRC extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("list", new ListCommand(this, commandsConfig));
         SinkLibrary.getInstance().registerCommand("set", new SetCommand(this, commandsConfig));
 
-        SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream());
+        SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream(mainChannel));
         initialized = true;
     }
 

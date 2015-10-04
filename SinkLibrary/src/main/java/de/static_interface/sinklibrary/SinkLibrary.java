@@ -28,6 +28,7 @@ import de.static_interface.sinklibrary.api.provider.BanProvider;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.sender.ProxiedCommandSender;
 import de.static_interface.sinklibrary.api.stream.MessageStream;
+import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.api.user.SinkUserProvider;
 import de.static_interface.sinklibrary.command.SinkDebugCommand;
@@ -516,6 +517,7 @@ public class SinkLibrary extends JavaPlugin {
      *
      * @param message Message to send
      */
+    @Deprecated
     public boolean sendIrcMessage(@Nonnull String message) {
         Channel channel = SinkIrcReflection.getMainChannel();
         if (channel != null) {
@@ -626,6 +628,14 @@ public class SinkLibrary extends JavaPlugin {
             throw new UserNotFoundException();
         }
         return user;
+    }
+
+    /**
+     * @param uuid the uuid
+     * @return the {@link SinkUser} class which implements {@link IdentifiableUser}
+     */
+    public SinkUser getUser(UUID uuid) {
+        return getIngameUser(uuid); //Todo
     }
 
     /**
