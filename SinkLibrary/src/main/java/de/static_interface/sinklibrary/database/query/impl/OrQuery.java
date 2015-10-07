@@ -17,11 +17,12 @@
 
 package de.static_interface.sinklibrary.database.query.impl;
 
+import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
-public class OrQuery<T> extends WhereQuery<T> {
+public class OrQuery<T extends Row> extends WhereQuery<T> {
 
-    public OrQuery(WhereQuery parent, String columName,
+    public OrQuery(WhereQuery<T> parent, String columName,
                    WhereCondition condition) {
         super(parent, columName, condition);
     }

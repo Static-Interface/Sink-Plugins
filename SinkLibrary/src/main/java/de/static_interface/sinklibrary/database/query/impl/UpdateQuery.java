@@ -19,24 +19,16 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
-import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
-public class SelectQuery<T extends Row> extends Query<T> {
+public class UpdateQuery<T extends Row> extends Query<T> {
 
-    private final String[] columns;
-
-    public SelectQuery(FromQuery<T> parent, String... columns) {
+    public UpdateQuery(FromQuery<T> parent) {
         super(parent);
-        this.columns = columns;
     }
 
-    public WhereQuery<T> where(String columName, WhereCondition condition) {
-        WhereQuery<T> query = new WhereQuery(this, columName, condition);
+    public SetQuery<T> set(String column, String value) {
+        SetQuery<T> query = new SetQuery(this, column, value);
         setChild(query);
         return query;
-    }
-
-    public String[] getColumns() {
-        return columns;
     }
 }

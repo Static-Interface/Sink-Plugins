@@ -30,7 +30,7 @@ import de.static_interface.sinklibrary.database.query.impl.OrderByQuery;
 
 import javax.annotation.Nonnull;
 
-public abstract class Query<T> {
+public abstract class Query<T extends Row> {
 
     private Query child;
     private Query parent;
@@ -197,8 +197,6 @@ public abstract class Query<T> {
         if (getFromQuery() != null) {
             return getFromQuery();
         }
-
-        //todo: also include UpdateQueries
 
         throw new IllegalStateException("Master query type not found");
     }

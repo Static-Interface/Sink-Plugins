@@ -17,15 +17,16 @@
 
 package de.static_interface.sinklibrary.database.query.impl;
 
+import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Order;
 import de.static_interface.sinklibrary.database.query.Query;
 
-public class OrderByQuery<T> extends Query<T> {
+public class OrderByQuery<T extends Row> extends Query<T> {
 
     private final String column;
     private Order order;
 
-    public OrderByQuery(Query parent, String column, Order order) {
+    public OrderByQuery(Query<T> parent, String column, Order order) {
         super(parent);
         this.column = column;
         this.order = order;

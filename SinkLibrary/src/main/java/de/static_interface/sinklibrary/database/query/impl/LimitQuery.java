@@ -17,14 +17,15 @@
 
 package de.static_interface.sinklibrary.database.query.impl;
 
+import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
 
-public class LimitQuery<T> extends Query<T> {
+public class LimitQuery<T extends Row> extends Query<T> {
 
     private int offset;
     private int rowCount;
 
-    public LimitQuery(Query parent, int offset, int rowCount) {
+    public LimitQuery(Query<T> parent, int offset, int rowCount) {
         super(parent);
         this.offset = offset;
         this.rowCount = rowCount;

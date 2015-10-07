@@ -28,11 +28,14 @@ import de.static_interface.sinklibrary.database.query.condition.GreaterThanEqual
 import de.static_interface.sinklibrary.database.query.condition.LikeCondition;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 import de.static_interface.sinklibrary.database.query.impl.AndQuery;
+import de.static_interface.sinklibrary.database.query.impl.DeleteQuery;
 import de.static_interface.sinklibrary.database.query.impl.FromQuery;
 import de.static_interface.sinklibrary.database.query.impl.LimitQuery;
 import de.static_interface.sinklibrary.database.query.impl.OrQuery;
 import de.static_interface.sinklibrary.database.query.impl.OrderByQuery;
 import de.static_interface.sinklibrary.database.query.impl.SelectQuery;
+import de.static_interface.sinklibrary.database.query.impl.SetQuery;
+import de.static_interface.sinklibrary.database.query.impl.UpdateQuery;
 import de.static_interface.sinklibrary.database.query.impl.WhereQuery;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.plugin.Plugin;
@@ -52,6 +55,10 @@ public abstract class Database {
     protected HikariDataSource dataSource;
     protected Plugin plugin;
     protected Connection connection;
+    int queryType = 0;
+    int selectQuery = 1;
+    int updateQuery = 2;
+    int deleteQuery = 3;
 
     /**
      *
@@ -176,9 +183,9 @@ public abstract class Database {
         String sql = "";
         while (tQuery != null) {
             sql += toSql(tQuery);
-
             tQuery = tQuery.getChild();
         }
+        queryType = 0;
         return sql.trim();
     }
 
@@ -189,7 +196,27 @@ public abstract class Database {
         }
 
         if (tQuery instanceof SelectQuery) {
+            queryType = selectQuery;
             return "SELECT " + StringUtil.formatArrayToString(((SelectQuery) tQuery).getColumns(), ",") + " FROM " + bt + "{TABLE}" + bt + " ";
+        }
+
+        if (tQuery instanceof UpdateQuery) {
+            queryType = updateQuery;
+            return "UPDATE " + bt + "{TABLE}" + bt + " SET ";
+        }
+
+        if (tQuery instanceof DeleteQuery) {
+            queryType = deleteQuery;
+            return "DELETE " + bt + "{TABLE}" + bt + " ";
+        }
+
+        if (tQuery instanceof SetQuery) {
+            if (queryType != updateQuery) {
+                throw new IllegalStateException("Can only use SET statements on UPDATE queries!");
+            }
+            String columnName = ((SetQuery) tQuery).getColumn();
+            String value = ((SetQuery) tQuery).getValue();
+            return bt + columnName + bt + "=" + value + " ";
         }
 
         if (tQuery instanceof AndQuery) {
