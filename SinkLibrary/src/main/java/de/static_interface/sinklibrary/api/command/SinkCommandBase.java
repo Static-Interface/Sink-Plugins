@@ -161,6 +161,8 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 throw new IllegalStateException("Trying to register a command as its own subcommand");
             }
         }
+
+        subCommand.setParentCommand((T) this);
         subCommands.add(subCommand);
         subCommand.onRegistered();
     }

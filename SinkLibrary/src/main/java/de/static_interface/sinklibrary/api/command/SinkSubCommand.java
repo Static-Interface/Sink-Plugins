@@ -17,12 +17,14 @@
 
 package de.static_interface.sinklibrary.api.command;
 
+import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
@@ -33,13 +35,21 @@ import javax.annotation.Nullable;
 public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkCommandBase implements ConfigurableCommand {
 
     private final String name;
-    private final T parentCommand;
+    private T parentCommand;
     private String description;
     private List<String> aliases;
 
+    @Deprecated
     public SinkSubCommand(T parentCommand, String name) {
-        super(parentCommand.getPlugin(), parentCommand.getConfig(), false);
-        this.parentCommand = parentCommand;
+        this(parentCommand.getPlugin(), parentCommand.getConfig(), name);
+    }
+
+    public SinkSubCommand(Plugin plugin, String name) {
+        this(plugin, null, name);
+    }
+
+    public SinkSubCommand(Plugin plugin, @Nullable Configuration config, String name) {
+        super(plugin, config, false);
         this.name = name.toLowerCase();
 
         AnnotatedElement element;
@@ -63,6 +73,10 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
 
     public T getParentCommand() {
         return parentCommand;
+    }
+
+    void setParentCommand(T parentCommand) {
+        this.parentCommand = parentCommand;
     }
 
     @Override
