@@ -19,10 +19,16 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
 public class DeleteQuery<T extends Row> extends Query<T> {
-
     public DeleteQuery(FromQuery<T> parent) {
         super(parent);
+    }
+
+    public WhereQuery<T> where(String columName, WhereCondition condition) {
+        WhereQuery<T> query = new WhereQuery(this, columName, condition);
+        setChild(query);
+        return query;
     }
 }
