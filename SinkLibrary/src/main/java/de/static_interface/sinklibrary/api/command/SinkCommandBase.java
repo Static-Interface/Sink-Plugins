@@ -162,7 +162,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
             }
         }
 
-        subCommand.setParentCommand((T) this);
+        subCommand.validateParent((T) this);
         subCommands.add(subCommand);
         subCommand.onRegistered();
     }

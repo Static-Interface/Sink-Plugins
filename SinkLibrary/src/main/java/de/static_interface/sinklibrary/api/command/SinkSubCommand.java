@@ -17,14 +17,12 @@
 
 package de.static_interface.sinklibrary.api.command;
 
-import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
@@ -38,21 +36,11 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
     private T parentCommand;
     private String description;
     private List<String> aliases;
-    private String configPrefix;
 
-    @Deprecated
     public SinkSubCommand(T parentCommand, String name) {
-        this(parentCommand.getPlugin(), parentCommand.getConfig(), name, parentCommand.getConfigPath());
-    }
-
-    public SinkSubCommand(Plugin plugin, String name, String configPrefix) {
-        this(plugin, null, name, configPrefix);
-    }
-
-    public SinkSubCommand(Plugin plugin, @Nullable Configuration config, String name, @Nonnull String configPrefix) {
-        super(plugin, config, false);
-        this.configPrefix = configPrefix;
+        super(parentCommand.getPlugin(), parentCommand.getConfig(), false);
         this.name = name.toLowerCase();
+        this.parentCommand = parentCommand;
 
         AnnotatedElement element;
         if (this.getClass().isAnonymousClass()) {
@@ -77,8 +65,10 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
         return parentCommand;
     }
 
-    void setParentCommand(T parentCommand) {
-        this.parentCommand = parentCommand;
+    void validateParent(T parentCommand) {
+        if (this.parentCommand != parentCommand) {
+            throw new RuntimeException("Command " + getConfigPath() + " parent is wrong!");
+        }
     }
 
     @Override
@@ -125,7 +115,7 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
     @Nonnull
     @Override
     public String getConfigPath() {
-        return configPrefix + ".SubCommand." + WordUtils.capitalizeFully(getName());
+        return getParentCommand().getConfigPath() + ".SubCommand." + WordUtils.capitalizeFully(getName());
     }
 
     @Nullable
