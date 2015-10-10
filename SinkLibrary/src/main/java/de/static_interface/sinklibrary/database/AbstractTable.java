@@ -643,7 +643,7 @@ public abstract class AbstractTable<T extends Row> {
         try {
             PreparedStatement statement = createPreparedStatement(sql, bindings);
             try {
-                statement.executeQuery();
+                statement.executeUpdate();
             } catch (Exception e) {
                 Debug.log(e);
                 if (e instanceof SQLNonTransientConnectionException && !reconnected) {
