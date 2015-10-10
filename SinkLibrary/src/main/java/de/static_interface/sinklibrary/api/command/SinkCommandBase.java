@@ -197,6 +197,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
         if (args.length > 0 && hasSubCommands()) {
             SinkSubCommand subCmd = getSubCommand(args[0]);
             if (subCmd != null) {
+                if (!testPermission(sender, subCmd.getPermission())) {
+                    sender.sendMessage(GeneralLanguage.PERMISSIONS_GENERAL.getValue());
+                    return true;
+                }
                 args = Arrays.copyOfRange(args, 1, args.length);
                 subCmd.onCommand(sender, command, label, args);
                 return true;
@@ -327,7 +331,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
             return getCommandOptions().isIrcEnabled() && (!getCommandOptions().isIrcOpOnly() || sender.isOp());
         }
 
-        return permission == null || sender.hasPermission(permission);
+        return StringUtil.isEmptyOrNull(permission) || sender.hasPermission(permission);
     }
 
     protected boolean onPostExecute(CommandSender sender, Command command, String label, String[] args, boolean success,
