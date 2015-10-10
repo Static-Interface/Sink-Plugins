@@ -288,7 +288,7 @@ public class SinkLibrary extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, getSinkTimer(), 1000, 50);
 
         // Init players (reload etc)
-        for (Player p : BukkitUtil.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             onRefreshDisplayName(p);
         }
 

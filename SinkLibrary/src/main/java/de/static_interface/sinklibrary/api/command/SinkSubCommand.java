@@ -38,18 +38,20 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
     private T parentCommand;
     private String description;
     private List<String> aliases;
+    private String configPrefix;
 
     @Deprecated
     public SinkSubCommand(T parentCommand, String name) {
-        this(parentCommand.getPlugin(), parentCommand.getConfig(), name);
+        this(parentCommand.getPlugin(), parentCommand.getConfig(), name, parentCommand.getConfigPath());
     }
 
-    public SinkSubCommand(Plugin plugin, String name) {
-        this(plugin, null, name);
+    public SinkSubCommand(Plugin plugin, String name, String configPrefix) {
+        this(plugin, null, name, configPrefix);
     }
 
-    public SinkSubCommand(Plugin plugin, @Nullable Configuration config, String name) {
+    public SinkSubCommand(Plugin plugin, @Nullable Configuration config, String name, @Nonnull String configPrefix) {
         super(plugin, config, false);
+        this.configPrefix = configPrefix;
         this.name = name.toLowerCase();
 
         AnnotatedElement element;
@@ -123,7 +125,7 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
     @Nonnull
     @Override
     public String getConfigPath() {
-        return getParentCommand().getConfigPath() + ".SubCommand." + WordUtils.capitalizeFully(getName());
+        return configPrefix + ".SubCommand." + WordUtils.capitalizeFully(getName());
     }
 
     @Nullable
