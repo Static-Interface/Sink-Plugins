@@ -24,6 +24,8 @@ import de.static_interface.sinkchat.channel.Channel;
 import de.static_interface.sinkchat.channel.ChannelHandler;
 import de.static_interface.sinkchat.config.ScSettings;
 import de.static_interface.sinklibrary.SinkLibrary;
+import de.static_interface.sinklibrary.api.stream.MessageStream;
+import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -39,8 +41,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
 
+import javax.annotation.Nullable;
+
 public class ChatListener implements Listener {
 
+    public ChatListener() {
+        SinkLibrary.getInstance().registerMessageStream(new MessageStream("sc_spy") {
+            @Override
+            protected boolean onSendMessage(@Nullable SinkUser user, String message, Object... args) {
+                return true;
+            }
+        });
+    }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         try {
@@ -135,6 +147,8 @@ public class ChatListener implements Listener {
                 p.sendMessage(spyMessage);
             }
         }
+
+        SinkLibrary.getInstance().getMessageStream("sc_spy").sendMessage(spyMessage);
 
         //Bukkit.getConsoleSender().sendMessage(spyMessage);
     }
