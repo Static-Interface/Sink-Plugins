@@ -31,6 +31,7 @@ import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.util.BukkitUtil;
 import de.static_interface.sinklibrary.util.Debug;
+import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -65,15 +66,21 @@ public class IrcListener implements Listener {
         }
 
         Debug.log("targetChannels.size() = " + targetChannels.size());
+
+        String msg = event.getMessage();
+        if (StringUtil.isEmptyOrNull(msg)) {
+            return;
+        }
+        SinkUser sender = event.getUser();
+        msg = event.getMessageStream().formatMessage(sender, msg);
+
         for (String channelName : targetChannels) {
             Channel channel = IrcUtil.getChannel(channelName);
             if (channel == null) {
                 Debug.log(channelName + "->channel == null");
                 continue;
             }
-            SinkUser sender = event.getUser();
-            String msg = event.getMessage();
-            msg = event.getMessageStream().formatMessage(sender, msg);
+
             channel.send().message(IrcUtil.replaceColorCodes(msg));
         }
     }
