@@ -120,6 +120,9 @@ public class SinkCommandOptions {
     }
 
     public Options getCliOptions() {
+        if (cliOptions == null) {
+            return new Options();
+        }
         if (cliOptions != null && !cliOptions.hasOption("h") && !cliOptions.hasLongOption("help") && isDefaultHelpEnabled()) {
             cliOptions.addOption("h", "help", false, "Shows this message");
         }
@@ -128,6 +131,10 @@ public class SinkCommandOptions {
 
     public void setCliOptions(Options cliOptions) {
         this.cliOptions = cliOptions;
+    }
+
+    public boolean hasCliOptions() {
+        return cliOptions != null;
     }
 
     public int getMinRequiredArgs() {

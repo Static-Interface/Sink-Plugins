@@ -254,17 +254,14 @@ public abstract class SinkCommandBase implements CommandExecutor {
                         }
 
                         String[] parsedCmdArgs = parseCmdArgs(finalArgs);
-                        String parsedLabel = label;
                         Options options = getCommandOptions().getCliOptions();
-                        if (options != null) {
-                            setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
-                            if (getCommandOptions().isDefaultHelpEnabled() && getCommandLine().hasOption('h')) {
-                                sendUsage(sender, finalCommand);
-                                return true;
-                            }
-                            parsedCmdArgs = parseCmdArgs(getCommandLine().getArgs());
-                            parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
+                        setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
+                        if (getCommandOptions().hasCliOptions() && getCommandOptions().isDefaultHelpEnabled() && getCommandLine().hasOption('h')) {
+                            sendCliUsage(sender, finalCommand);
+                            return true;
                         }
+                        parsedCmdArgs = parseCmdArgs(getCommandLine().getArgs());
+                        String parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
 
                         int minArgs = getCommandOptions().getMinRequiredArgs();
 
@@ -352,13 +349,13 @@ public abstract class SinkCommandBase implements CommandExecutor {
             reportException = false;
         } else if (exception instanceof NotEnoughArgumentsException) {
             sender.sendMessage(GeneralLanguage.GENERAL_NOT_ENOUGH_ARGUMENTS.format());
-            sendUsage(sender, command);
+            sendUsage(sender, false);
             reportException = false;
         } else if (exception instanceof UserNotFoundException || exception instanceof UserNotOnlineException) {
             sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             reportException = false;
         } else if (exception instanceof ParseException) {
-            sendUsage(sender, command);
+            sendCliUsage(sender, command);
             sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             return true;
         } else if (exception instanceof NumberFormatException) {
@@ -383,7 +380,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");
             }
         } else if (!success && reportException) {
-            sendUsage(sender, command);
+            sendUsage(sender, true);
             return true;
         }
         return false;
@@ -446,32 +443,30 @@ public abstract class SinkCommandBase implements CommandExecutor {
         return CommandUtil.parseValue(new String[]{args[index]}, returnType, false);
     }
 
-    protected void sendUsage(CommandSender sender, Command command) {
-        Options options = getCommandOptions().getCliOptions();
+    public void sendCliUsage(CommandSender sender, Command command) {
+        Debug.logMethodCall(sender, command);
+
         String commandLineUsage;
-        if (options != null) {
-            StringWriter writer = new StringWriter();
-            getCommandOptions().getCliHelpFormatter(sender, command, writer);
-            commandLineUsage = writer.toString();
-            if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
-                commandLineUsage += System.lineSeparator() + commandLineUsage;
-                sender.sendMessage(commandLineUsage);
-            }
+        if (!getCommandOptions().hasCliOptions()) {
+            throw new IllegalStateException("getCliUsage: Command: " + getPlugin().getName() + ":" + getName() + " doesn't have cli options!");
         }
-
-        String usage = getUsage(sender);
-
-        if (usage != null) {
-            if (command != null) {
-                usage = getUsage(sender).replaceAll("\\Q<command>\\E", command.getName());
-            }
-
-            sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
+        StringWriter writer = new StringWriter();
+        getCommandOptions().getCliHelpFormatter(sender, command, writer);
+        commandLineUsage = writer.toString();
+        if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
+            commandLineUsage += System.lineSeparator() + commandLineUsage;
+            sender.sendMessage(commandLineUsage);
         }
+    }
 
-
-        if (hasSubCommands()) {
-            sendSubCommandList(sender, false);
+    public void sendUsage(CommandSender sender, boolean sendSubCommands) {
+        if (sendSubCommands && hasSubCommands()) {
+            sendSubCommandList(sender, true);
+        } else {
+            String usage = getUsage(sender);
+            if (!StringUtil.isEmptyOrNull(usage)) {
+                sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + usage);
+            }
         }
     }
 
@@ -485,6 +480,9 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     @Nullable
     public String getUsageSyntax() {
+        if (getCommandOptions().hasCliOptions() && StringUtil.isEmptyOrNull(usageSyntax)) {
+            usageSyntax = "<options>";
+        }
         return usageSyntax;
     }
 
