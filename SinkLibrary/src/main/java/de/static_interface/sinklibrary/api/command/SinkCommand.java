@@ -65,7 +65,16 @@ public abstract class SinkCommand extends SinkCommandBase {
     }
 
     public String getName() {
-        return command.getName();
+        if (command != null) {
+            return command.getName();
+        }
+        Class<?> clazz = getClass();
+        if (clazz.getDeclaringClass() != null) {
+            clazz = clazz.getDeclaringClass();
+            return clazz.getSimpleName().toLowerCase().replace("command", "");
+        } else {
+            return clazz.getSimpleName();
+        }
     }
 
     @Nullable

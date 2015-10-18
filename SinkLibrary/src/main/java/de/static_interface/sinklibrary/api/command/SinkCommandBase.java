@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,6 +95,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
     }
 
     public void setCommandLine(CommandLine cmdLine) {
+        Debug.logMethodCall(getDebuggableName(), Objects.toString(cmdLine));
         this.cmdLine = cmdLine;
     }
 
@@ -155,6 +157,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
     }
 
     public final <T extends SinkCommandBase> void registerSubCommand(SinkSubCommand<T> subCommand) {
+        Debug.logMethodCall(getDebuggableName(), subCommand);
         if (this instanceof SinkSubCommand) {
             if (this == subCommand) {
                 throw new IllegalStateException("Trying to register a command as its own subcommand");
@@ -188,10 +191,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     @Override
     public final boolean onCommand(final CommandSender sender, @Nullable Command command, final String label, String[] args) {
-        Debug.logMethodCall(sender, command, label, args);
+        Debug.logMethodCall(getDebuggableName(), sender, command, label, args);
 
         if (!checkSender(sender)) {
-            Debug.log("checkSender failed");
+            debug("checkSender failed");
             return true;
         }
 
@@ -238,13 +241,43 @@ public abstract class SinkCommandBase implements CommandExecutor {
                 Exception exception = null;
 
                 boolean success = true;
-                boolean preExecuteSuccess;
-                try {
-                    preExecuteSuccess = onPreExecute(sender, finalCommand, label, finalArgs);
-                } catch (Exception e) {
-                    preExecuteSuccess = false;
-                    exception = e;
+
+                String[] parsedCmdArgs = parseCmdArgs(finalArgs);
+
+                boolean hasCliOptions = getCommandOptions().hasCliOptions();
+                debug("hasCliOptions == " + hasCliOptions);
+
+                if (hasCliOptions) {
+                    Options options = getCommandOptions().getCliOptions();
+                    debug("Options count: " + options.getOptions().size());
+                    try {
+                        setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
+                    } catch (ParseException e) {
+                        exception = e;
+                    }
+
+                    if (exception == null) {
+                        if (getCommandOptions().hasCliOptions() && getCommandOptions().isDefaultHelpEnabled() && getCommandLine()
+                                .hasOption('h')) {
+                            sendCliUsage(sender);
+                            return true;
+                        }
+                        parsedCmdArgs = getCommandLine().getArgs();
+                    }
                 }
+
+                String parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
+
+                boolean preExecuteSuccess = false;
+                if (exception == null) {
+                    try {
+                        preExecuteSuccess = onPreExecute(sender, finalCommand, parsedLabel, parsedCmdArgs);
+                    } catch (Exception e) {
+                        exception = e;
+                    }
+                }
+
+                debug("preExecuteSuccess == " + preExecuteSuccess);
 
                 if (preExecuteSuccess) {
                     try {
@@ -252,20 +285,6 @@ public abstract class SinkCommandBase implements CommandExecutor {
                             throw new NotEnoughPermissionsException(getPermission());
                         }
 
-                        String[] parsedCmdArgs = parseCmdArgs(finalArgs);
-
-                        if (getCommandOptions().hasCliOptions()) {
-                            Options options = getCommandOptions().getCliOptions();
-                            setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
-                            if (getCommandOptions().hasCliOptions() && getCommandOptions().isDefaultHelpEnabled() && getCommandLine()
-                                    .hasOption('h')) {
-                                sendCliUsage(sender);
-                                return true;
-                            }
-                            parsedCmdArgs = getCommandLine().getArgs();
-                        }
-
-                        String parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
                         int minArgs = getCommandOptions().getMinRequiredArgs();
 
                         success = (minArgs <= 0 || parsedCmdArgs.length >= minArgs) && onExecute(sender, parsedLabel, parsedCmdArgs);
@@ -290,6 +309,10 @@ public abstract class SinkCommandBase implements CommandExecutor {
         } else {
             return task.execute();
         }
+    }
+
+    public void debug(String s) {
+        Debug.log(getDebuggableName() + ": " + s);
     }
 
     public void sendSubCommandList(CommandSender sender, boolean includeSelf) {
@@ -441,7 +464,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
     }
 
     public void sendCliUsage(CommandSender sender) {
-        Debug.logMethodCall(sender);
+        Debug.logMethodCall(getDebuggableName(), sender);
 
         String commandLineUsage;
         if (!getCommandOptions().hasCliOptions()) {
@@ -499,6 +522,11 @@ public abstract class SinkCommandBase implements CommandExecutor {
     protected abstract boolean onPreExecute(CommandSender sender, Command cmd, String label, String[] args);
 
     public abstract String getConfigPath();
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + getDebuggableName() + "]";
+    }
 
     private abstract class CommandTask implements Runnable {
 

@@ -78,7 +78,14 @@ public class Debug {
             if (StringUtil.isEmptyOrNull(className)) {
                 return ANONYMOUS_CLASS;
             }
-            return Class.forName(className).getSimpleName();
+            Class<?> clazz = Class.forName(className);
+            if (clazz.getDeclaringClass() != null) {
+                clazz = clazz.getDeclaringClass();
+            }
+            if (clazz.isAnonymousClass()) {
+                return ANONYMOUS_CLASS;
+            }
+            return clazz.getSimpleName();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
