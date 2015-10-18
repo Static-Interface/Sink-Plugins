@@ -25,7 +25,6 @@ import de.static_interface.sinklibrary.api.exception.UserNotFoundException;
 import de.static_interface.sinklibrary.api.exception.UserNotOnlineException;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
-import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.util.CommandUtil;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
@@ -204,7 +203,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
                     return true;
                 }
                 args = Arrays.copyOfRange(args, 1, args.length);
-                subCmd.onCommand(sender, command, label, args);
+                subCmd.onCommand(sender, null, label, args);
                 return true;
             } else if (getCommandOptions().isDefaultHelpEnabled() && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?"))) {
                 sendSubCommandList(sender, true);
@@ -254,15 +253,19 @@ public abstract class SinkCommandBase implements CommandExecutor {
                         }
 
                         String[] parsedCmdArgs = parseCmdArgs(finalArgs);
-                        Options options = getCommandOptions().getCliOptions();
-                        setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
-                        if (getCommandOptions().hasCliOptions() && getCommandOptions().isDefaultHelpEnabled() && getCommandLine().hasOption('h')) {
-                            sendCliUsage(sender, finalCommand);
-                            return true;
-                        }
-                        parsedCmdArgs = parseCmdArgs(getCommandLine().getArgs());
-                        String parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
 
+                        if (getCommandOptions().hasCliOptions()) {
+                            Options options = getCommandOptions().getCliOptions();
+                            setCommandLine(getCommandParser().parse(options, parsedCmdArgs));
+                            if (getCommandOptions().hasCliOptions() && getCommandOptions().isDefaultHelpEnabled() && getCommandLine()
+                                    .hasOption('h')) {
+                                sendCliUsage(sender);
+                                return true;
+                            }
+                            parsedCmdArgs = getCommandLine().getArgs();
+                        }
+
+                        String parsedLabel = StringUtil.formatArrayToString(parsedCmdArgs, " ");
                         int minArgs = getCommandOptions().getMinRequiredArgs();
 
                         success = (minArgs <= 0 || parsedCmdArgs.length >= minArgs) && onExecute(sender, parsedLabel, parsedCmdArgs);
@@ -340,7 +343,6 @@ public abstract class SinkCommandBase implements CommandExecutor {
 
     protected final boolean handleResult(CommandSender sender, Command command, String label, String[] args, Exception exception, boolean success) {
         boolean reportException = true;
-        boolean exceptionReported = false;
 
         if (handleException(sender, command, label, args, exception)) {
             return true;
@@ -355,7 +357,7 @@ public abstract class SinkCommandBase implements CommandExecutor {
             sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             reportException = false;
         } else if (exception instanceof ParseException) {
-            sendCliUsage(sender, command);
+            sendCliUsage(sender);
             sender.sendMessage(GeneralLanguage.GENERAL_ERROR.format(exception.getMessage()));
             return true;
         } else if (exception instanceof NumberFormatException) {
@@ -363,18 +365,11 @@ public abstract class SinkCommandBase implements CommandExecutor {
             reportException = false;
         }
 
-        if (Debug.isEnabled() && exception != null) {
+        if (exception != null && (Debug.isEnabled() || reportException)) {
+            SinkLibrary.getInstance().getLogger().severe("Command \"" + getDebuggableName() + "\": Unexpected exception occurred: ");
             exception.printStackTrace();
-            exceptionReported = true;
-        }
 
-        if (exception != null && reportException) {
-            if (!exceptionReported) {
-                SinkLibrary.getInstance().getLogger().severe("Unexpected exception occurred: ");
-                exception.printStackTrace();
-            }
-
-            if (GeneralSettings.GENERAL_DEBUG.getValue()) {
+            if (Debug.isEnabled()) {
                 sender.sendMessage(exception.getMessage());
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "An internal error occured.");
@@ -427,6 +422,8 @@ public abstract class SinkCommandBase implements CommandExecutor {
         return arguments.toArray(new String[arguments.size()]);
     }
 
+    public abstract String getDebuggableName();
+
     public final SinkCommandOptions getCommandOptions() {
         return defaultCommandOptions;
     }
@@ -443,18 +440,18 @@ public abstract class SinkCommandBase implements CommandExecutor {
         return CommandUtil.parseValue(new String[]{args[index]}, returnType, false);
     }
 
-    public void sendCliUsage(CommandSender sender, Command command) {
-        Debug.logMethodCall(sender, command);
+    public void sendCliUsage(CommandSender sender) {
+        Debug.logMethodCall(sender);
 
         String commandLineUsage;
         if (!getCommandOptions().hasCliOptions()) {
-            throw new IllegalStateException("getCliUsage: Command: " + getPlugin().getName() + ":" + getName() + " doesn't have cli options!");
+            getPlugin().getLogger().warning("getCliUsage: Command: " + getDebuggableName() + " doesn't have cli options!");
+            return;
         }
         StringWriter writer = new StringWriter();
-        getCommandOptions().getCliHelpFormatter(sender, command, writer);
+        getCommandOptions().getCliHelpFormatter(sender, writer);
         commandLineUsage = writer.toString();
         if (!StringUtil.isEmptyOrNull(commandLineUsage)) {
-            commandLineUsage += System.lineSeparator() + commandLineUsage;
             sender.sendMessage(commandLineUsage);
         }
     }

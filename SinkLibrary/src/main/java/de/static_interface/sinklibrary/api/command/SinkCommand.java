@@ -55,6 +55,11 @@ public abstract class SinkCommand extends SinkCommandBase {
     }
 
     @Override
+    public String getDebuggableName() {
+        return (getPlugin() != null ? getPlugin().getName() : "<unknown plugin>") + ":" + getName();
+    }
+
+    @Override
     public String getConfigPath() {
         return "Commands." + WordUtils.capitalizeFully(getName());
     }

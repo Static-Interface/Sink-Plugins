@@ -72,6 +72,11 @@ public abstract class SinkSubCommand<T extends SinkCommandBase> extends SinkComm
     }
 
     @Override
+    public String getDebuggableName() {
+        return (getParentCommand() != null ? getParentCommand().getDebuggableName() : " <unknown parent>") + ":" + getName();
+    }
+
+    @Override
     public final String getName() {
         return name;
     }

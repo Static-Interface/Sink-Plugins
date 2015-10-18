@@ -22,13 +22,13 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.io.PrintWriter;
 import java.io.Writer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class SinkCommandOptions {
 
@@ -38,7 +38,7 @@ public class SinkCommandOptions {
     private boolean isIrcOpOnly = false;
     private boolean isIrcQueryOnly = false;
     private boolean defaultHelpEnabled = true;
-    private Options cliOptions = null;
+    private Options cliOptions = new Options();
     private String cmdLineSyntax = "";
     private HelpFormatter cliHelpFormatter = null;
     private CommandLineParser cliParser = null;
@@ -120,21 +120,18 @@ public class SinkCommandOptions {
     }
 
     public Options getCliOptions() {
-        if (cliOptions == null) {
-            return new Options();
-        }
         if (cliOptions != null && !cliOptions.hasOption("h") && !cliOptions.hasLongOption("help") && isDefaultHelpEnabled()) {
             cliOptions.addOption("h", "help", false, "Shows this message");
         }
         return cliOptions;
     }
 
-    public void setCliOptions(Options cliOptions) {
+    public void setCliOptions(@Nullable Options cliOptions) {
         this.cliOptions = cliOptions;
     }
 
     public boolean hasCliOptions() {
-        return cliOptions != null;
+        return cliOptions != null && cliOptions.getOptions().size() > 0;
     }
 
     public int getMinRequiredArgs() {
@@ -162,7 +159,7 @@ public class SinkCommandOptions {
         this.cliHelpFormatter = cliHelpFormatter;
     }
 
-    public HelpFormatter getCliHelpFormatter(CommandSender sender, Command cmd, Writer writer) {
+    public HelpFormatter getCliHelpFormatter(CommandSender sender, Writer writer) {
         if (cliHelpFormatter == null) {
             cliHelpFormatter = new HelpFormatter();
             cliHelpFormatter.setNewLine(System.lineSeparator());
