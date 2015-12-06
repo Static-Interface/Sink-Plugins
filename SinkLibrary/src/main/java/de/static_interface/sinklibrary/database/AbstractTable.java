@@ -24,6 +24,7 @@ import de.static_interface.sinklibrary.database.annotation.Index;
 import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
 import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
+import de.static_interface.sinklibrary.database.query.Query;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
@@ -317,7 +318,9 @@ public abstract class AbstractTable<T extends Row> {
      * @param query The SQL query, <code>{TABLE}</code> will be replaced with {@link #getName()}
      * @param bindings the {@link PreparedStatement} bindings
      * @return the {@link ResultSet} deserialized as {@link T}
+     * @deprecated Use the {@link Query} API with {@link Query#get(Object...)} or {@link Query#getResults(Object...)}
      */
+    @Deprecated
     public T[] get(String query, Object... bindings) {
         try {
             query = query.replaceAll("\\Q{TABLE}\\E", getName());
@@ -635,10 +638,12 @@ public abstract class AbstractTable<T extends Row> {
     }
 
     /**
-     * Execute a native SQL update without auto deserialisation<br/>
+     * Executes a plain SQL update statement with given bindings<br/>
      * @param sql the sql query, <code>{TABLE}</code> will be replaced with {@link #getName()}
      * @param bindings the {@link PreparedStatement} bindings
+     * @deprecated Use the {@link Query} API with {@link Query#execute(Object...)})}
      */
+    @Deprecated
     public void executeUpdate(String sql, @Nullable Object... bindings) {
         try {
             PreparedStatement statement = createPreparedStatement(sql, bindings);
@@ -663,7 +668,7 @@ public abstract class AbstractTable<T extends Row> {
                 throw new RuntimeException(e);
             }
         } catch (Exception e) {
-            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update: " + sqlToString(sql, bindings));
+            SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL update statement: " + sqlToString(sql, bindings));
             throw new RuntimeException(e);
         }
         reconnected = false;

@@ -24,9 +24,12 @@ import de.static_interface.sinklibrary.database.query.condition.GreaterThanCondi
 import de.static_interface.sinklibrary.database.query.condition.GreaterThanEqualsCondition;
 import de.static_interface.sinklibrary.database.query.condition.LikeCondition;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
+import de.static_interface.sinklibrary.database.query.impl.DeleteQuery;
 import de.static_interface.sinklibrary.database.query.impl.FromQuery;
 import de.static_interface.sinklibrary.database.query.impl.LimitQuery;
 import de.static_interface.sinklibrary.database.query.impl.OrderByQuery;
+import de.static_interface.sinklibrary.database.query.impl.SelectQuery;
+import de.static_interface.sinklibrary.database.query.impl.UpdateQuery;
 
 import javax.annotation.Nonnull;
 
@@ -148,10 +151,21 @@ public abstract class Query<T extends Row> {
     }
 
     /**
+     * Execute {@link DeleteQuery} and {@link UpdateQuery}s <br/>
+     * For {@link SelectQuery}s please use {@link #get(Object...)} or {@link #getResults(Object...)}
+     * @param bindings the SQL bindings
+     */
+    @SuppressWarnings("deprecation")
+    public void execute(Object... bindings) {
+        getFromQuery().getTable().executeUpdate(toSql(), bindings);
+    }
+
+    /**
      * Get the Result as {@link T}[] array
      * @param bindings the SQL bindings
      */
     @Nonnull
+    @SuppressWarnings("deprecation")
     public T[] getResults(Object... bindings) {
         return (T[]) getFromQuery().getTable().get(toSql(), bindings);
     }
