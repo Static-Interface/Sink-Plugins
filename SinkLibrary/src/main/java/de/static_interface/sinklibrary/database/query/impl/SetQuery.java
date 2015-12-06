@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
 public class SetQuery<T extends Row> extends Query<T> {
 
@@ -33,6 +34,12 @@ public class SetQuery<T extends Row> extends Query<T> {
 
     public SetQuery<T> set(String column, String value) {
         SetQuery<T> query = new SetQuery(this, column, value);
+        setChild(query);
+        return query;
+    }
+
+    public WhereQuery<T> where(String columName, WhereCondition condition) {
+        WhereQuery<T> query = new WhereQuery(this, columName, condition);
         setChild(query);
         return query;
     }
