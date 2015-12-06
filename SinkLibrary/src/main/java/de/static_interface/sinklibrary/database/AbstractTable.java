@@ -321,6 +321,7 @@ public abstract class AbstractTable<T extends Row> {
      * @deprecated Use the {@link Query} API with {@link Query#get(Object...)} or {@link Query#getResults(Object...)}
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public T[] get(String query, Object... bindings) {
         try {
             query = query.replaceAll("\\Q{TABLE}\\E", getName());
