@@ -59,6 +59,7 @@ public abstract class Database {
     int selectQuery = 1;
     int updateQuery = 2;
     int deleteQuery = 3;
+    private boolean firstSetCall = true;
 
     /**
      *
@@ -186,6 +187,7 @@ public abstract class Database {
             tQuery = tQuery.getChild();
         }
         queryType = 0;
+        firstSetCall = true;
         return sql.trim();
     }
 
@@ -216,7 +218,14 @@ public abstract class Database {
             }
             String columnName = ((SetQuery) tQuery).getColumn();
             String value = ((SetQuery) tQuery).getValue();
-            return bt + columnName + bt + "=" + value + " ";
+
+            String s = bt + columnName + bt + "=" + value + " ";
+            if (!firstSetCall) {
+                s = ", " + s;
+            } else {
+                firstSetCall = false;
+            }
+            return s;
         }
 
         if (tQuery instanceof AndQuery) {
