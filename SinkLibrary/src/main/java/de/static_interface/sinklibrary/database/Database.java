@@ -39,7 +39,6 @@ import de.static_interface.sinklibrary.database.query.impl.UpdateQuery;
 import de.static_interface.sinklibrary.database.query.impl.WhereQuery;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -51,7 +50,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public abstract class Database {
-
     private final DatabaseConnectionInfo info;
     private final SQLDialect dialect;
     private final char backtick;
@@ -66,24 +64,14 @@ public abstract class Database {
     /**
      *
      * @param info the connection info
-     * @param plugin the plugin creating the database
      * @param dialect the sql dialect
      * @param backtick the backtick used by the database sql synrax
      */
     @Deprecated
-    public Database(@Nullable DatabaseConnectionInfo info, @Nullable Plugin plugin, SQLDialect dialect, char backtick) {
+    public Database(@Nullable DatabaseConnectionInfo info, SQLDialect dialect, char backtick) {
         this.info = info;
         this.dialect = dialect;
         this.backtick = backtick;
-    }
-
-    /**
-     * @param info the connection info
-     * @param dialect the sql dialect
-     * @param backtick the backtick used by the database sql synrax
-     */
-    public Database(@Nullable DatabaseConnectionInfo info, SQLDialect dialect, char backtick) {
-        this(info, null, dialect, backtick);
     }
 
     /**
@@ -394,5 +382,18 @@ public abstract class Database {
         }
 
         throw new IllegalStateException("Condition not supported: " + condition.getClass().getName());
+    }
+
+    /**
+     * Escapes a string and adds "'s to start and end
+     * @param s the string to convert
+     * @return the converted string
+     */
+    public String stringify(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = s.replaceAll("['\"\\\\]", "\\\\$0");
+        return "\"" + s + "\"";
     }
 }

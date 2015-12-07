@@ -80,8 +80,7 @@ public class SinkAntiSpam extends JavaPlugin {
 
         db =
                 new MySqlDatabase(
-                        new DatabaseConfiguration(sinkAntiSpamDirectory, "Database.yml", "SAS_", "SinkPlugins"),
-                        this);
+                        new DatabaseConfiguration(sinkAntiSpamDirectory, "Database.yml", "SAS_", "SinkPlugins"));
         try {
             db.connect();
         } catch (SQLException e) {

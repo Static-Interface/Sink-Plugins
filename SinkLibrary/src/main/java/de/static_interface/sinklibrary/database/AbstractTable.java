@@ -25,12 +25,10 @@ import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
 import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
 import de.static_interface.sinklibrary.database.query.Query;
-import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang.Validate;
-import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -49,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -57,10 +56,10 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractTable<T extends Row> {
 
+    private static Map<Class<?>, Map<Class<?>, SqlObjectConverter>> convertProviders = new HashMap<>();
     private final String name;
     protected Database db;
     private boolean reconnected = false;
-
     /**
      * @param name the name of the table
      * @param db the database of this table
@@ -68,6 +67,25 @@ public abstract class AbstractTable<T extends Row> {
     public AbstractTable(String name, Database db) {
         this.name = name;
         this.db = db;
+    }
+
+    public static <K, E> void registerSqlConverter(@Nonnull Class<K> databaseType, @Nonnull Class<E> objectType, SqlObjectConverter<K, E> converter) {
+        if (databaseType != Database.class && !Database.class.isAssignableFrom(databaseType)) {
+            throw new ClassCastException("Can't cast class \"" + databaseType.getName() + "\" to \"" + Database.class.getName() + "\"!");
+        }
+        Map<Class<?>, SqlObjectConverter> converters = convertProviders.get(databaseType);
+        if (converters == null) {
+            converters = new HashMap<>();
+        }
+
+        if (converters.get(objectType) != null) {
+            throw new IllegalStateException(
+                    "Class \"" + objectType.getSimpleName() + "\" already has a sql converter for database type: \"" + databaseType.getSimpleName()
+                    + "\"");
+        }
+
+        converters.put(objectType, converter);
+        convertProviders.put(databaseType, converters);
     }
 
     /**
@@ -85,6 +103,61 @@ public abstract class AbstractTable<T extends Row> {
             }
         }
         return false;
+    }
+
+    public <K, E> SqlObjectConverter<K, E> getSqlConverter(Class<K> databaseType, Class<E> objectType) {
+        Map<Class<?>, SqlObjectConverter> converters = convertProviders.get(databaseType);
+
+        if (converters != null) {
+            if (converters.containsKey(objectType)) {
+                return converters.get(objectType);
+            }
+
+            // No converter for this class available, search for of the interfaces
+
+            Class<?> matchedClass = objectType;
+            int found = 0;
+
+            for (Class<?> clazz : objectType.getInterfaces()) {
+                if (converters.containsKey(clazz)) {
+                    found++;
+                    matchedClass = clazz;
+                }
+            }
+
+            if (found > 0) {
+                if (found > 1) {
+                    throw new IllegalStateException(
+                            "Found multiple possible SqlObjectConverters for class: " + objectType.getSimpleName() + " in database: " + databaseType
+                                    .getSimpleName());
+                }
+
+                return converters.get(matchedClass);
+            }
+
+            // Loop trough all superclasses, since there is also no SqlObjectConverter for the interface
+            while (true) {
+                if (converters.containsKey(matchedClass)) {
+                    break;
+                }
+
+                matchedClass = matchedClass.getSuperclass();
+                if (matchedClass == null) {
+                    break;
+                }
+            }
+
+            if (matchedClass != null) {
+                return converters.get(matchedClass);
+            }
+        }
+
+        if (databaseType.getSuperclass() != null && (databaseType == Database.class ||
+                                                     Database.class.isAssignableFrom(databaseType.getSuperclass()))) {
+            return (SqlObjectConverter<K, E>) getSqlConverter((Class<? extends Database>) databaseType.getSuperclass(), objectType);
+        }
+
+        return null;
     }
 
     /**
@@ -316,7 +389,6 @@ public abstract class AbstractTable<T extends Row> {
         return "InnoDB"; // Table implemetations may override this
     }
 
-
     /**
      * @see {@link #toSqlValue(Object, boolean)}
      */
@@ -332,6 +404,11 @@ public abstract class AbstractTable<T extends Row> {
      * @return the parsed sql value
      */
     public String toSqlValue(Object o, boolean strict) {
+        SqlObjectConverter converter = getSqlConverter(getDatabase().getClass(), o.getClass());
+        if (converter != null) {
+            return converter.convert(getDatabase(), o, strict);
+        }
+
         if (o instanceof String) {
             if (o.equals("?") && !strict) {
                 return (String) o;
@@ -342,29 +419,14 @@ public abstract class AbstractTable<T extends Row> {
             }
         }
 
-        if (o instanceof IngameUser) {
-            o = ((IngameUser) o).getUniqueId();
-        }
-
-        if (o instanceof OfflinePlayer) {
-            o = ((OfflinePlayer) o).getUniqueId();
-        }
-
-        /*
-        if(o instanceof UUID) {
-            o = o.toString();
-        }
-        */
-
-        //Todo: expand supported types (e.g. like Date etc)
+        //Todo: expand default supported types (e.g. like Date etc)
 
         if (ReflectionUtil.isPrimitiveClass(o.getClass()) ||
             ReflectionUtil.isWrapperClass(o.getClass())) {
             return o.toString();
         }
 
-        String s = o.toString().replaceAll("['\"\\\\]", "\\\\$0");
-        return "\"" + s + "\"";
+        return getDatabase().stringify(o.toString());
     }
 
     /**

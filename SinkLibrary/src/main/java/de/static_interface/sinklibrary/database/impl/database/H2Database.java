@@ -23,7 +23,6 @@ import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import de.static_interface.sinklibrary.database.SQLDialect;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -40,9 +39,8 @@ public class H2Database extends Database {
     /**
      * @param file the file to be used for storage
      * @param prefix the prefix for tables
-     * @param plugin the plugin creating the database
      */
-    public H2Database(File file, final String prefix, Plugin plugin) {
+    public H2Database(File file, final String prefix) {
         super(new DatabaseConnectionInfo() {
             @Override
             public String getAddress() {
@@ -73,18 +71,8 @@ public class H2Database extends Database {
             public String getDatabaseName() {
                 return null;
             }
-        }, plugin, SQLDialect.H2, '\0');
+        }, SQLDialect.H2, '\0');
         dbFile = file;
-    }
-
-    /**
-     * @param info the connection info
-     * @param plugin the plugin creating the database
-     */
-    @Deprecated
-    public H2Database(DatabaseConnectionInfo info, Plugin plugin) {
-        super(info, plugin, SQLDialect.H2, '\0');
-        dbFile = new File(plugin.getDataFolder(), info.getDatabaseName() + ".h2");
     }
 
     @Override

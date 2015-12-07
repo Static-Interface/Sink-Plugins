@@ -22,7 +22,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import de.static_interface.sinklibrary.database.SQLDialect;
-import org.bukkit.plugin.Plugin;
 
 import java.sql.SQLException;
 
@@ -34,10 +33,9 @@ public class MySqlDatabase extends Database {
 
     /**
      * @param info the connection info
-     * @param plugin the plugin creating the database
      */
-    public MySqlDatabase(DatabaseConnectionInfo info, Plugin plugin) {
-        super(info, plugin, SQLDialect.MySQL, '`');
+    public MySqlDatabase(DatabaseConnectionInfo info) {
+        super(info, SQLDialect.MySQL, '`');
     }
 
     @Override

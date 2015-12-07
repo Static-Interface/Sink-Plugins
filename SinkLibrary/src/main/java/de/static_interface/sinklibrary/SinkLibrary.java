@@ -37,6 +37,9 @@ import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
+import de.static_interface.sinklibrary.database.AbstractTable;
+import de.static_interface.sinklibrary.database.Database;
+import de.static_interface.sinklibrary.database.SqlObjectConverter;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
@@ -70,6 +73,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
@@ -230,6 +234,8 @@ public class SinkLibrary extends JavaPlugin {
         consoleUserProvider = new ConsoleUserProvider();
         ircUserProvider = new IrcUserProvider();
 
+        registerSqlObjectConverters();
+
         registerUserImplementation(ConsoleCommandSender.class, consoleUserProvider);
         registerUserImplementation(User.class, ircUserProvider);
         registerUserImplementation(Player.class, ingameUserProvider);
@@ -294,6 +300,29 @@ public class SinkLibrary extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
         loadLibs(getConsoleUser());
+    }
+
+    private void registerSqlObjectConverters() {
+        AbstractTable.registerSqlConverter(Database.class, IdentifiableUser.class, new SqlObjectConverter<Database, IdentifiableUser>() {
+            @Override
+            public String convert(Database db, IdentifiableUser o, boolean strict) {
+                return db.stringify(o.getUniqueId().toString());
+            }
+        });
+
+        AbstractTable.registerSqlConverter(Database.class, OfflinePlayer.class, new SqlObjectConverter<Database, OfflinePlayer>() {
+            @Override
+            public String convert(Database db, OfflinePlayer o, boolean strict) {
+                return db.stringify(o.getUniqueId().toString());
+            }
+        });
+
+        AbstractTable.registerSqlConverter(Database.class, UUID.class, new SqlObjectConverter<Database, UUID>() {
+            @Override
+            public String convert(Database db, UUID o, boolean strict) {
+                return db.stringify(o.toString());
+            }
+        });
     }
 
     private void registerEventMessageStreams() {
