@@ -19,20 +19,20 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.SubQuery;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
-public class SetQuery<T extends Row> extends Query<T> {
-
+public class SetQuery<T extends Row> extends SubQuery<T> {
     private final String column;
-    private final String value;
+    private final Object value;
 
-    public SetQuery(Query<T> parent, String column, String value) {
+    public SetQuery(Query<T> parent, String column, Object value) {
         super(parent);
         this.column = column;
         this.value = value;
     }
 
-    public SetQuery<T> set(String column, String value) {
+    public SetQuery<T> set(String column, Object value) {
         SetQuery<T> query = new SetQuery(this, column, value);
         setChild(query);
         return query;
@@ -44,7 +44,7 @@ public class SetQuery<T extends Row> extends Query<T> {
         return query;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

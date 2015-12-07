@@ -19,19 +19,13 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.AbstractTable;
 import de.static_interface.sinklibrary.database.Row;
+import de.static_interface.sinklibrary.database.query.MasterQuery;
 import de.static_interface.sinklibrary.database.query.Query;
 
 public class FromQuery<T extends Row> extends Query<T> {
-
-    private AbstractTable table;
-
     public FromQuery(AbstractTable<T> table) {
         super(null);
-        this.table = table;
-    }
-
-    public AbstractTable getTable() {
-        return table;
+        setTable(table);
     }
 
     /**
@@ -67,5 +61,10 @@ public class FromQuery<T extends Row> extends Query<T> {
         DeleteQuery<T> query = new DeleteQuery<>(this);
         setChild(query);
         return query;
+    }
+
+    @Override
+    public MasterQuery<T> getMasterQuery() {
+        return (MasterQuery<T>) getChild();
     }
 }

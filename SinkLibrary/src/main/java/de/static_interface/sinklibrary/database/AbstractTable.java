@@ -25,10 +25,12 @@ import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
 import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.lang.Validate;
+import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -107,6 +109,7 @@ public abstract class AbstractTable<T extends Row> {
      * @see Index
      * @throws SQLException if the {@link Row} class is malformed
      */
+    @SuppressWarnings("deprecation")
     public void create() throws SQLException {
         char bt = db.getBacktick();
         String sql = "CREATE TABLE IF NOT EXISTS " + bt + getName() + bt + " (";
@@ -311,6 +314,57 @@ public abstract class AbstractTable<T extends Row> {
      */
     public String getEngine() {
         return "InnoDB"; // Table implemetations may override this
+    }
+
+
+    /**
+     * @see {@link #toSqlValue(Object, boolean)}
+     */
+    public String toSqlValue(Object o) {
+        return toSqlValue(o, false);
+    }
+
+    /**
+     * Tries to convert an object to an sql parsable value<br/>
+     * Adds (")'s to the start and ends of strings and escapes all other "'s
+     * @param o The object to parse
+     * @param strict if strict, strings like "?" and "null" will also be string values and not auto converted
+     * @return the parsed sql value
+     */
+    public String toSqlValue(Object o, boolean strict) {
+        if (o instanceof String) {
+            if (o.equals("?") && !strict) {
+                return (String) o;
+            }
+
+            if (((String) o).equalsIgnoreCase("null") && !strict) {
+                return null;
+            }
+        }
+
+        if (o instanceof IngameUser) {
+            o = ((IngameUser) o).getUniqueId();
+        }
+
+        if (o instanceof OfflinePlayer) {
+            o = ((OfflinePlayer) o).getUniqueId();
+        }
+
+        /*
+        if(o instanceof UUID) {
+            o = o.toString();
+        }
+        */
+
+        //Todo: expand supported types (e.g. like Date etc)
+
+        if (ReflectionUtil.isPrimitiveClass(o.getClass()) ||
+            ReflectionUtil.isWrapperClass(o.getClass())) {
+            return o.toString();
+        }
+
+        String s = o.toString().replaceAll("['\"\\\\]", "\\\\$0");
+        return "\"" + s + "\"";
     }
 
     /**
@@ -571,6 +625,7 @@ public abstract class AbstractTable<T extends Row> {
      * @deprecated Use {@link #get(String, Object...)} instead
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public ResultSet executeQuery(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
@@ -645,6 +700,7 @@ public abstract class AbstractTable<T extends Row> {
      * @deprecated Use the {@link Query} API with {@link Query#execute(Object...)})}
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void executeUpdate(String sql, @Nullable Object... bindings) {
         try {
             PreparedStatement statement = createPreparedStatement(sql, bindings);

@@ -19,9 +19,9 @@ package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.SubQuery;
 
-public class LimitQuery<T extends Row> extends Query<T> {
-
+public class LimitQuery<T extends Row> extends SubQuery<T> {
     private int offset;
     private int rowCount;
 

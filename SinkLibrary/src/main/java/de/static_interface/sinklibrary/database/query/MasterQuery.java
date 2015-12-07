@@ -15,28 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.static_interface.sinklibrary.database.query.impl;
+package de.static_interface.sinklibrary.database.query;
 
 import de.static_interface.sinklibrary.database.Row;
-import de.static_interface.sinklibrary.database.query.Order;
-import de.static_interface.sinklibrary.database.query.Query;
-import de.static_interface.sinklibrary.database.query.SubQuery;
 
-public class OrderByQuery<T extends Row> extends SubQuery<T> {
-    private final String column;
-    private Order order;
+public abstract class MasterQuery<T extends Row> extends SubQuery<T> {
 
-    public OrderByQuery(Query<T> parent, String column, Order order) {
+    public MasterQuery(Query<T> parent) {
         super(parent);
-        this.column = column;
-        this.order = order;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public String getColumn() {
-        return column;
+    @Override
+    public MasterQuery<T> getMasterQuery() {
+        return this;
     }
 }

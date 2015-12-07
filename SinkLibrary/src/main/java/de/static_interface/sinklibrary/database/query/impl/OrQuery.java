@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.database.Row;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
 public class OrQuery<T extends Row> extends WhereQuery<T> {
-
     public OrQuery(WhereQuery<T> parent, String columName,
                    WhereCondition condition) {
         super(parent, columName, condition);

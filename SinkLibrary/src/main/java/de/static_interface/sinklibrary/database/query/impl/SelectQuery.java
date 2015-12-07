@@ -18,11 +18,10 @@
 package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
-import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.MasterQuery;
 import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
 
-public class SelectQuery<T extends Row> extends Query<T> {
-
+public class SelectQuery<T extends Row> extends MasterQuery<T> {
     private final String[] columns;
 
     public SelectQuery(FromQuery<T> parent, String... columns) {

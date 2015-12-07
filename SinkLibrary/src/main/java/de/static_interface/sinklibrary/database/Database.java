@@ -37,13 +37,16 @@ import de.static_interface.sinklibrary.database.query.impl.SelectQuery;
 import de.static_interface.sinklibrary.database.query.impl.SetQuery;
 import de.static_interface.sinklibrary.database.query.impl.UpdateQuery;
 import de.static_interface.sinklibrary.database.query.impl.WhereQuery;
+import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -192,6 +195,11 @@ public abstract class Database {
     }
 
     protected String toSql(Query tQuery) {
+        String s = handleQuery(tQuery);
+        if (!StringUtil.isEmptyOrNull(s)) {
+            return s;
+        }
+
         char bt = getBacktick();
         if (tQuery instanceof FromQuery) {
             return "";
@@ -199,12 +207,13 @@ public abstract class Database {
 
         if (tQuery instanceof SelectQuery) {
             queryType = selectQuery;
+            validateColumnNames(tQuery, ((SelectQuery) tQuery).getColumns());
             return "SELECT " + StringUtil.formatArrayToString(((SelectQuery) tQuery).getColumns(), ",") + " FROM " + bt + "{TABLE}" + bt + " ";
         }
 
         if (tQuery instanceof UpdateQuery) {
             queryType = updateQuery;
-            return "UPDATE " + bt + "{TABLE}" + bt + " SET ";
+            return "UPDATE " + bt + "{TABLE}" + bt + " ";
         }
 
         if (tQuery instanceof DeleteQuery) {
@@ -217,15 +226,17 @@ public abstract class Database {
                 throw new IllegalStateException("Can only use SET statements on UPDATE queries!");
             }
             String columnName = ((SetQuery) tQuery).getColumn();
-            String value = ((SetQuery) tQuery).getValue();
+            validateColumnNames(tQuery, columnName);
+            String value = tQuery.getTable().toSqlValue(((SetQuery) tQuery).getValue());
 
-            String s = bt + columnName + bt + "=" + value + " ";
+            String setStatement = bt + columnName + bt + "=" + value + " ";
             if (!firstSetCall) {
-                s = ", " + s;
+                setStatement = ", " + setStatement;
             } else {
+                setStatement = "SET " + setStatement;
                 firstSetCall = false;
             }
-            return s;
+            return setStatement;
         }
 
         if (tQuery instanceof AndQuery) {
@@ -242,6 +253,7 @@ public abstract class Database {
 
         if (tQuery instanceof OrderByQuery) {
             String columnName = ((OrderByQuery) tQuery).getColumn();
+            validateColumnNames(tQuery, columnName);
             String order = ((OrderByQuery) tQuery).getOrder().name().toUpperCase();
             return "ORDER BY " + bt + columnName + bt + " " + order + " ";
         }
@@ -251,6 +263,62 @@ public abstract class Database {
         }
 
         throw new IllegalStateException("Query not supported: " + tQuery.getClass().getName());
+    }
+
+    private String handleQuery(Query query) {
+        //easier integration for 3rd party extensions
+        return null;
+    }
+
+    private void validateColumnNames(Query query, String... columns) {
+        if (query.isColumnVerificationDisabled()) {
+            return;
+        }
+
+        if (columns.length < 1) {
+            return;
+        }
+
+        AbstractTable table = query.getTable();
+        Class<Row> rowClass = table.getRowClass();
+
+        List<String> rowColumns = new ArrayList<>();
+        for (Field f : ReflectionUtil.getAllFields(rowClass)) {
+            if (f == null) {
+                continue;
+            }
+            String name = f.getName();
+            Column c = FieldCache.getAnnotation(f, Column.class);
+            if (!StringUtil.isEmptyOrNull(c.name())) {
+                name = c.name();
+            }
+            rowColumns.add(name.trim());
+        }
+
+        boolean isInvalid = false;
+        for (String s : columns) {
+            if (StringUtil.isEmptyOrNull(s)) {
+                isInvalid = true;
+            }
+
+            if (s.contains("'")) {
+                isInvalid = true;
+            }
+
+            if (s.contains("'")) {
+                isInvalid = true;
+            }
+
+            if (isInvalid) {
+                throw new IllegalArgumentException("Column \"" + s + "\" has an illegal name in query \"" + query.getClass().getSimpleName() + "\"");
+            }
+
+            if (!rowColumns.contains(s.trim())) {
+                throw new IllegalStateException(
+                        "Column \"" + s + "\"" + " not found in table \"" + table.getName() + "\"" + " in query " + query.getClass().getSimpleName()
+                        + "\"");
+            }
+        }
     }
 
     protected String whereStatementToSql(WhereQuery tQuery) {
@@ -267,6 +335,7 @@ public abstract class Database {
 
         char bt = getBacktick();
         String columName = bt + tQuery.getColumn() + bt;
+        validateColumnNames(tQuery, columName);
 
         if (condition instanceof GreaterThanCondition) {
             String operator = "";
@@ -284,7 +353,10 @@ public abstract class Database {
             if ((isEquals && !isNegated) || (!isEquals && condition.isNegated())) {
                 operator += "=";
             }
-            return prefix + columName + " " + operator + " " + condition.getValue().toString() + suffix;
+
+            String value = tQuery.getTable().toSqlValue(condition.getValue(), false);
+
+            return prefix + columName + " " + operator + " " + value + suffix;
         }
 
         if (condition instanceof EqualsCondition) {
@@ -292,6 +364,7 @@ public abstract class Database {
             if (condition.isNegated()) {
                 equalsOperator = "!=";
             }
+
             Object o = condition.getValue();
             if (o == null) {
                 equalsOperator = "IS";

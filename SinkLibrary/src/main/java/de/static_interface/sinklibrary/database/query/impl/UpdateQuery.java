@@ -18,15 +18,14 @@
 package de.static_interface.sinklibrary.database.query.impl;
 
 import de.static_interface.sinklibrary.database.Row;
-import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.database.query.MasterQuery;
 
-public class UpdateQuery<T extends Row> extends Query<T> {
-
+public class UpdateQuery<T extends Row> extends MasterQuery<T> {
     public UpdateQuery(FromQuery<T> parent) {
         super(parent);
     }
 
-    public SetQuery<T> set(String column, String value) {
+    public SetQuery<T> set(String column, Object value) {
         SetQuery<T> query = new SetQuery(this, column, value);
         setChild(query);
         return query;

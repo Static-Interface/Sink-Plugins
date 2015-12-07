@@ -35,10 +35,12 @@ import javax.annotation.Nonnull;
 
 public abstract class Query<T extends Row> {
 
-    private Query child;
-    private Query parent;
+    private SubQuery<T> child;
+    private Query<T> parent;
+    private AbstractTable<T> table;
+    private boolean disableColumnVerification;
 
-    public Query(Query parent) {
+    public Query(Query<T> parent) {
         this.parent = parent;
     }
 
@@ -108,14 +110,6 @@ public abstract class Query<T extends Row> {
         return new LikeCondition(pattern);
     }
 
-    public Query<T> getChild() {
-        return child;
-    }
-
-    protected void setChild(Query query) {
-        this.child = query;
-    }
-
     public Query<T> getParent() {
         return parent;
     }
@@ -157,7 +151,7 @@ public abstract class Query<T extends Row> {
      */
     @SuppressWarnings("deprecation")
     public void execute(Object... bindings) {
-        getFromQuery().getTable().executeUpdate(toSql(), bindings);
+        getMasterQuery().getTable().executeUpdate(toSql(), bindings);
     }
 
     /**
@@ -167,7 +161,7 @@ public abstract class Query<T extends Row> {
     @Nonnull
     @SuppressWarnings("deprecation")
     public T[] getResults(Object... bindings) {
-        return (T[]) getFromQuery().getTable().get(toSql(), bindings);
+        return getMasterQuery().getTable().get(toSql(), bindings);
     }
 
     /**
@@ -175,23 +169,7 @@ public abstract class Query<T extends Row> {
      * @return the query as sql query
      */
     public String toSql() {
-        return getFromQuery().getTable().getDatabase().buildQuery(getMasterQuery());
-    }
-
-    private FromQuery<T> getFromQuery() {
-        Query<T> q = this;
-        while (q != null) {
-            if (q instanceof FromQuery) {
-                break;
-            }
-            q = q.getParent();
-        }
-
-        if (q == null || !(q instanceof FromQuery)) {
-            throw new IllegalStateException("Query is not a from() query!");
-        }
-
-        return (FromQuery<T>) q;
+        return getMasterQuery().getTable().getDatabase().buildQuery(getMasterQuery());
     }
 
     /**
@@ -207,11 +185,46 @@ public abstract class Query<T extends Row> {
         return results[0];
     }
 
-    public Query<T> getMasterQuery() {
-        if (getFromQuery() != null) {
-            return getFromQuery();
-        }
+    public abstract MasterQuery<T> getMasterQuery();
 
-        throw new IllegalStateException("Master query type not found");
+    /**
+     * @return the table associated with this query
+     */
+    public AbstractTable<T> getTable() {
+        return table;
+    }
+
+    /**
+     * Set the table associated with this query
+     * @param table the table
+     */
+    public void setTable(AbstractTable<T> table) {
+        this.table = table;
+    }
+
+
+    public final SubQuery<T> getChild() {
+        return child;
+    }
+
+    protected final void setChild(SubQuery<T> query) {
+        this.child = query;
+    }
+
+
+    /**
+     * Disables the checking of the column names and definitions
+     * @return self
+     */
+    public Query<T> disableColumnVerification() {
+        disableColumnVerification = true;
+        return this;
+    }
+
+    /**
+     * @return true if {@link #disableColumnVerification()} has been called
+     */
+    public boolean isColumnVerificationDisabled() {
+        return disableColumnVerification;
     }
 }
