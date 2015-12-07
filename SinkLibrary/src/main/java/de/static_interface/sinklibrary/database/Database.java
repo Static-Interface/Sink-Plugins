@@ -56,7 +56,6 @@ public abstract class Database {
     private final SQLDialect dialect;
     private final char backtick;
     protected HikariDataSource dataSource;
-    protected Plugin plugin;
     protected Connection connection;
     int queryType = 0;
     int selectQuery = 1;
@@ -71,11 +70,20 @@ public abstract class Database {
      * @param dialect the sql dialect
      * @param backtick the backtick used by the database sql synrax
      */
-    public Database(@Nullable DatabaseConnectionInfo info, Plugin plugin, SQLDialect dialect, char backtick) {
-        this.plugin = plugin;
+    @Deprecated
+    public Database(@Nullable DatabaseConnectionInfo info, @Nullable Plugin plugin, SQLDialect dialect, char backtick) {
         this.info = info;
         this.dialect = dialect;
         this.backtick = backtick;
+    }
+
+    /**
+     * @param info the connection info
+     * @param dialect the sql dialect
+     * @param backtick the backtick used by the database sql synrax
+     */
+    public Database(@Nullable DatabaseConnectionInfo info, SQLDialect dialect, char backtick) {
+        this(info, null, dialect, backtick);
     }
 
     /**
