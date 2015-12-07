@@ -60,7 +60,6 @@ import javax.annotation.Nullable;
 public abstract class SqlDatabase extends Database {
 
     private final char backtick;
-    private final SqlDialect dialect;
     int queryType = 0;
     int selectQuery = 1;
     int updateQuery = 2;
@@ -69,20 +68,11 @@ public abstract class SqlDatabase extends Database {
 
     /**
      *  @param info the connection info
-     * @param dialect the sql dialect
      * @param backtick the backtick used by the database sql synrax
      */
-    public SqlDatabase(@Nullable DatabaseConnectionInfo info, SqlDialect dialect, char backtick) {
+    public SqlDatabase(@Nullable DatabaseConnectionInfo info, char backtick) {
         super(info);
         this.backtick = backtick;
-        this.dialect = dialect;
-    }
-
-    /**
-     * @return the {@link SqlDialect}
-     */
-    public SqlDialect getDialect() {
-        return dialect;
     }
 
     @Override
@@ -226,7 +216,7 @@ public abstract class SqlDatabase extends Database {
         throw new IllegalStateException("Query not supported: " + tQuery.getClass().getName());
     }
 
-    private String handleQuery(Query query) {
+    protected String handleQuery(Query query) {
         //easier integration for 3rd party extensions
         return null;
     }
@@ -559,7 +549,7 @@ public abstract class SqlDatabase extends Database {
         }
 
         sql += ")";
-        if (getDialect() == SqlDialect.MySQL || getDialect() == SqlDialect.MariaDB)
+        if (supportsEngines())
 
         {
             //Todo: do other SQL databases support engines?
@@ -570,6 +560,8 @@ public abstract class SqlDatabase extends Database {
 
         abstractTable.executeUpdate(sql);
     }
+
+    protected abstract boolean supportsEngines();
 
     protected String addForeignKey(String sql, String name, Class<? extends AbstractTable> targetClass, String columnName, CascadeAction onUpdate,
                                    CascadeAction onDelete) {
