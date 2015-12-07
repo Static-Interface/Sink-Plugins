@@ -67,9 +67,9 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
     /**
      * @return the database type
      */
-    public SQLDialect getDatabaseType() {
+    public SqlDialect getDatabaseType() {
         try {
-            return SQLDialect.parse(((String) get("Type")));
+            return SqlDialect.parse(((String) get("Type")));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }

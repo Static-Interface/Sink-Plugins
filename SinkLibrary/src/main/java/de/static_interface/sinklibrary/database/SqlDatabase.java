@@ -60,7 +60,7 @@ import javax.annotation.Nullable;
 public abstract class SqlDatabase extends Database {
 
     private final char backtick;
-    private final SQLDialect dialect;
+    private final SqlDialect dialect;
     int queryType = 0;
     int selectQuery = 1;
     int updateQuery = 2;
@@ -72,16 +72,16 @@ public abstract class SqlDatabase extends Database {
      * @param dialect the sql dialect
      * @param backtick the backtick used by the database sql synrax
      */
-    public SqlDatabase(@Nullable DatabaseConnectionInfo info, SQLDialect dialect, char backtick) {
+    public SqlDatabase(@Nullable DatabaseConnectionInfo info, SqlDialect dialect, char backtick) {
         super(info);
         this.backtick = backtick;
         this.dialect = dialect;
     }
 
     /**
-     * @return the {@link SQLDialect}
+     * @return the {@link SqlDialect}
      */
-    public SQLDialect getDialect() {
+    public SqlDialect getDialect() {
         return dialect;
     }
 
@@ -559,7 +559,7 @@ public abstract class SqlDatabase extends Database {
         }
 
         sql += ")";
-        if (getDialect() == SQLDialect.MySQL || getDialect() == SQLDialect.MariaDB)
+        if (getDialect() == SqlDialect.MySQL || getDialect() == SqlDialect.MariaDB)
 
         {
             //Todo: do other SQL databases support engines?

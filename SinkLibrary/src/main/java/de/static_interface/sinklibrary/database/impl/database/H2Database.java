@@ -21,7 +21,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
-import de.static_interface.sinklibrary.database.SQLDialect;
+import de.static_interface.sinklibrary.database.SqlDialect;
 import de.static_interface.sinklibrary.database.SqlDatabase;
 
 import java.io.File;
@@ -71,7 +71,7 @@ public class H2Database extends SqlDatabase {
             public String getDatabaseName() {
                 return null;
             }
-        }, SQLDialect.H2, '\0');
+        }, SqlDialect.H2, '\0');
         dbFile = file;
     }
 

@@ -20,7 +20,7 @@ package de.static_interface.sinklibrary.database.impl.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
-import de.static_interface.sinklibrary.database.SQLDialect;
+import de.static_interface.sinklibrary.database.SqlDialect;
 import de.static_interface.sinklibrary.database.SqlDatabase;
 
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ public class MySqlDatabase extends SqlDatabase {
      * @param info the connection info
      */
     public MySqlDatabase(DatabaseConnectionInfo info) {
-        super(info, SQLDialect.MySQL, '`');
+        super(info, SqlDialect.MySQL, '`');
     }
 
     @Override

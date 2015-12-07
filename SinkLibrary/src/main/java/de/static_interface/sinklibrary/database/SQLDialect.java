@@ -20,7 +20,7 @@ package de.static_interface.sinklibrary.database;
 import de.static_interface.sinklibrary.database.impl.database.H2Database;
 import de.static_interface.sinklibrary.database.impl.database.MySqlDatabase;
 
-public enum SQLDialect {
+public enum SqlDialect {
     /**
      * @see MySqlDatabase
      */
@@ -34,8 +34,8 @@ public enum SQLDialect {
      */
     H2;
 
-    public static SQLDialect parse(String s) {
-        for (SQLDialect dialect : values()) {
+    public static SqlDialect parse(String s) {
+        for (SqlDialect dialect : values()) {
             if (dialect.name().equalsIgnoreCase(s.trim())) {
                 return dialect;
             }
