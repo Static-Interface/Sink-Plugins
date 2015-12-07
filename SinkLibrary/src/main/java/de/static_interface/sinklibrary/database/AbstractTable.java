@@ -21,14 +21,10 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.database.annotation.Column;
 import de.static_interface.sinklibrary.database.annotation.ForeignKey;
 import de.static_interface.sinklibrary.database.annotation.Index;
-import de.static_interface.sinklibrary.database.annotation.UniqueKey;
-import de.static_interface.sinklibrary.database.exception.InvalidSqlColumnException;
-import de.static_interface.sinklibrary.database.impl.table.OptionsTable;
 import de.static_interface.sinklibrary.database.query.Query;
 import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.StringUtil;
-import org.apache.commons.lang.Validate;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -41,7 +37,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,202 +179,7 @@ public abstract class AbstractTable<T extends Row> {
      */
     @SuppressWarnings("deprecation")
     public void create() throws SQLException {
-        char bt = db.getBacktick();
-        String sql = "CREATE TABLE IF NOT EXISTS " + bt + getName() + bt + " (";
-
-        List<String> primaryKeys = new ArrayList<>();
-        List<String> uniqueKeys = new ArrayList<>();
-        List<Field> foreignKeys = new ArrayList<>();
-        List<Field> indexes = new ArrayList<>();
-        HashMap<Integer, List<String>> combinedUniqueKeys = new HashMap<>();
-
-        Class foreignOptionsTable = null;
-
-        if (this instanceof OptionsTable) {
-            foreignOptionsTable = ((OptionsTable) this).getForeignTable();
-        }
-
-        for (Field f : getRowClass().getFields()) {
-            Column column = FieldCache.getAnnotation(f, Column.class);
-            if (column == null) {
-                continue;
-            }
-            String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-
-            sql += bt + name + bt + " " + db.toDatabaseType(f);
-
-            if (column.zerofill()) {
-                if (!ReflectionUtil.isNumber(f.getType())) {
-                    throw new InvalidSqlColumnException(this, f, name, "column was annotated as ZEROFILL but wrapper type is not a number");
-                }
-                sql += " ZEROFILL";
-            }
-
-            if (column.unsigned()) {
-                if (!ReflectionUtil.isNumber(f.getType())) {
-                    throw new InvalidSqlColumnException(this, f, name,
-                                                        "column was annotated as UNSIGNED but wrapper type is not a number");
-                }
-                sql += " UNSIGNED";
-            }
-
-            if (column.autoIncrement()) {
-                if (!ReflectionUtil.isNumber(f.getType())) {
-                    throw new InvalidSqlColumnException(this, f, name,
-                                                        "column was annotated as AUTO_INCREMENT but wrapper type is not a number");
-                }
-                sql += " AUTO_INCREMENT";
-            }
-
-            if (column.uniqueKey()) {
-                uniqueKeys.add(name);
-            }
-
-            UniqueKey uniqueKey = FieldCache.getAnnotation(f, UniqueKey.class);
-            if (uniqueKey != null) {
-                if (uniqueKey.combinationId() == Integer.MAX_VALUE) {
-                    uniqueKeys.add(name);
-                } else {
-                    List<String> keys = combinedUniqueKeys.get(uniqueKey.combinationId());
-                    if (keys == null) {
-                        keys = new ArrayList<>();
-                    }
-                    keys.add(name);
-                    combinedUniqueKeys.put(uniqueKey.combinationId(), keys);
-                }
-            }
-
-            if (column.primaryKey()) {
-                primaryKeys.add(name);
-            }
-
-            if (FieldCache.getAnnotation(f, Nullable.class) == null) {
-                sql += " NOT NULL";
-            } else if (ReflectionUtil.isPrimitiveClass(f.getType())) {
-                // The column is nullable but the wrapper type is a primitive value, which can't be null
-                throw new InvalidSqlColumnException(this, f, name,
-                                                    "column was annotated as NULLABLE but wrapper type is a primitive type");
-            }
-
-            if (!StringUtil.isEmptyOrNull(column.defaultValue())) {
-                sql += " DEFAULT " + column.defaultValue();
-            }
-
-            if (!StringUtil.isEmptyOrNull(column.comment())) {
-                sql += " COMMENT '" + column.comment() + "'";
-            }
-
-            if (FieldCache.getAnnotation(f, ForeignKey.class) != null) {
-                foreignKeys.add(f);
-            }
-
-            if (FieldCache.getAnnotation(f, Index.class) != null) {
-                indexes.add(f);
-            }
-
-            sql += ",";
-        }
-
-        if (primaryKeys.size() > 0) {
-            String columns = "";
-            for (String f : primaryKeys) {
-                if (!columns.equals("")) {
-                    columns += ", ";
-                }
-                columns += bt + f + bt;
-            }
-            sql += "PRIMARY KEY (" + columns + "),";
-        }
-
-        if (uniqueKeys.size() > 0) {
-            for (String s : uniqueKeys) {
-                sql += "UNIQUE (" + bt + s + bt + "),";
-            }
-        }
-
-        if (combinedUniqueKeys.size() > 0) {
-            for (List<String> columnsList : combinedUniqueKeys.values()) {
-                String columns = "";
-                String first = null;
-                for (String f : columnsList) {
-                    if (!columns.equals("")) {
-                        columns += ", ";
-                    }
-                    if (first == null) {
-                        first = f;
-                    }
-                    columns += bt + f + bt;
-                }
-                sql += "UNIQUE KEY " + bt + first + "_uk" + bt + " (" + columns + "),";
-            }
-        }
-
-        for (Field f : foreignKeys) {
-            Column column = FieldCache.getAnnotation(f, Column.class);
-            String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-            ForeignKey foreignKey = FieldCache.getAnnotation(f, ForeignKey.class);
-
-            sql = addForeignKey(sql, name, foreignKey.table(), foreignKey.column(), foreignKey.onUpdate(), foreignKey.onDelete());
-        }
-
-        if (foreignOptionsTable != null) {
-            String column = ((OptionsTable) this).getForeignColumn();
-            CascadeAction onUpdate = ((OptionsTable) this).getForeignOnUpdateAction();
-            CascadeAction onDelete = ((OptionsTable) this).getForeignOnDeleteAction();
-            sql = addForeignKey(sql, "foreignTarget", foreignOptionsTable, column, onUpdate, onDelete);
-        }
-
-        for (Field f : indexes) {
-            if (getEngine().equalsIgnoreCase("InnoDB") && foreignKeys.contains(f)) {
-                continue; //InnoDB already creates indexes for foreign keys, so skip these...
-            }
-
-            Column column = FieldCache.getAnnotation(f, Column.class);
-            String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-
-            Index index = FieldCache.getAnnotation(f, Index.class);
-            String indexName = StringUtil.isEmptyOrNull(index.name()) ? name + "_I" : index.name();
-
-            sql += "INDEX " + bt + indexName + bt + " (" + bt + name + bt + ")";
-
-            sql += ",";
-        }
-
-        if (sql.endsWith(",")) {
-            sql = sql.substring(0, sql.length() - 1);
-        }
-
-        sql += ")";
-        if (db.getDialect() == SQLDialect.MySQL || db.getDialect() == SQLDialect.MariaDB) {
-            //Todo: do other SQL databases support engines?
-            sql += " ENGINE=" + getEngine();
-        }
-        sql += ";";
-
-        executeUpdate(sql);
-    }
-
-    protected String addForeignKey(String sql, String name, Class<? extends AbstractTable> targetClass, String columnName, CascadeAction onUpdate,
-                                   CascadeAction onDelete) {
-        char bt = db.getBacktick();
-
-        String tablename;
-        try {
-            tablename = targetClass.getField("TABLE_NAME").get(null).toString();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException("Static String Field TABLE_NAME was not declared in table wrapper class " + targetClass.getName() + "!", e);
-        }
-
-        sql +=
-                "FOREIGN KEY (" + bt + name + bt + ") REFERENCES " + db.getConnectionInfo().getTablePrefix() + tablename + " (" + bt + columnName
-                + bt + ")";
-        sql += " ON UPDATE " + onUpdate.toSql() + " ON DELETE " + onDelete.toSql();
-
-        sql += ",";
-
-        return sql;
+        db.createTable(this);
     }
 
     /**
@@ -468,88 +268,7 @@ public abstract class AbstractTable<T extends Row> {
      * @return the {@link T} object with auto-incremented fields
      */
     public T insert(T row) {
-        Validate.notNull(row);
-        String columns = "";
-        char bt = db.getBacktick();
-        int i = 0;
-        List<Field> fields = ReflectionUtil.getAllFields(getRowClass());
-        Map<Field, String> autoIncrements = new HashMap<>();
-        for (Field f : fields) {
-            Column column = FieldCache.getAnnotation(f, Column.class);
-            if (column == null) {
-                continue;
-            }
-
-            String name = StringUtil.isEmptyOrNull(column.name()) ? f.getName() : column.name();
-
-            if (column.autoIncrement()) {
-                autoIncrements.put(f, name);
-            }
-
-            name = bt + name + bt;
-            if (i == 0) {
-                columns = name;
-                i++;
-                continue;
-            }
-            columns += ", " + name;
-            i++;
-        }
-
-        if (i == 0) {
-            throw new IllegalStateException(getRowClass().getName() + " doesn't have any public fields!");
-        }
-
-        String valuesPlaceholders = "";
-        for (int k = 0; k < i; k++) {
-            if (k == 0) {
-                valuesPlaceholders = "?";
-                continue;
-            }
-            valuesPlaceholders += ",?";
-        }
-
-        String sql = "INSERT INTO `{TABLE}` (" + columns + ") " + "VALUES(" + valuesPlaceholders + ")";
-        List<Object> values = new ArrayList<>();
-        for (Field f : fields) {
-            try {
-                values.add(f.get(row));
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        PreparedStatement ps = createPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS, values.toArray(new Object[values.size()]));
-        try {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        ResultSet rs;
-        try {
-            rs = ps.getGeneratedKeys();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        for (Field f : autoIncrements.keySet()) {
-            setFieldFromResultSet(row, rs, f, autoIncrements.get(f));
-        }
-
-        try {
-            rs.close();
-        } catch (SQLException e) {
-            Debug.log(e);
-        }
-
-        return row;
+        return db.insert(this, row);
     }
 
     protected T setFieldFromResultSet(T instance, ResultSet rs, Field f, String columnName) {

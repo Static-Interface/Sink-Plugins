@@ -20,9 +20,9 @@ package de.static_interface.sinklibrary.database.impl.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.api.annotation.Unstable;
-import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import de.static_interface.sinklibrary.database.SQLDialect;
+import de.static_interface.sinklibrary.database.SqlDatabase;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * See <a href="http://www.h2database.com/html/main.html">H2 homepage</a> for more information about H2
  */
 @Unstable
-public class H2Database extends Database {
+public class H2Database extends SqlDatabase {
 
     private final File dbFile;
 

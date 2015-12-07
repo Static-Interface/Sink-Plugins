@@ -169,7 +169,7 @@ public abstract class Query<T extends Row> {
      * @return the query as sql query
      */
     public String toSql() {
-        return getMasterQuery().getTable().getDatabase().buildQuery(getMasterQuery());
+        return getMasterQuery().getTable().getDatabase().parseQuery(getMasterQuery());
     }
 
     /**

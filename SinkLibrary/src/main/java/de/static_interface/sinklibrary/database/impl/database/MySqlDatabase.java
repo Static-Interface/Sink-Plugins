@@ -19,9 +19,9 @@ package de.static_interface.sinklibrary.database.impl.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import de.static_interface.sinklibrary.database.Database;
 import de.static_interface.sinklibrary.database.DatabaseConnectionInfo;
 import de.static_interface.sinklibrary.database.SQLDialect;
+import de.static_interface.sinklibrary.database.SqlDatabase;
 
 import java.sql.SQLException;
 
@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * MySQL database implementation<br/>
  * See <a href="https://www.mysql.com/">MySQL homepage</a> for more information about MySQL
  */
-public class MySqlDatabase extends Database {
+public class MySqlDatabase extends SqlDatabase {
 
     /**
      * @param info the connection info

@@ -18,67 +18,24 @@
 package de.static_interface.sinklibrary.database;
 
 import com.zaxxer.hikari.HikariDataSource;
-import de.static_interface.sinklibrary.database.annotation.Column;
-import de.static_interface.sinklibrary.database.annotation.ForeignKey;
-import de.static_interface.sinklibrary.database.annotation.UniqueKey;
 import de.static_interface.sinklibrary.database.query.Query;
-import de.static_interface.sinklibrary.database.query.condition.EqualsCondition;
-import de.static_interface.sinklibrary.database.query.condition.GreaterThanCondition;
-import de.static_interface.sinklibrary.database.query.condition.GreaterThanEqualsCondition;
-import de.static_interface.sinklibrary.database.query.condition.LikeCondition;
-import de.static_interface.sinklibrary.database.query.condition.WhereCondition;
-import de.static_interface.sinklibrary.database.query.impl.AndQuery;
-import de.static_interface.sinklibrary.database.query.impl.DeleteQuery;
-import de.static_interface.sinklibrary.database.query.impl.FromQuery;
-import de.static_interface.sinklibrary.database.query.impl.LimitQuery;
-import de.static_interface.sinklibrary.database.query.impl.OrQuery;
-import de.static_interface.sinklibrary.database.query.impl.OrderByQuery;
-import de.static_interface.sinklibrary.database.query.impl.SelectQuery;
-import de.static_interface.sinklibrary.database.query.impl.SetQuery;
-import de.static_interface.sinklibrary.database.query.impl.UpdateQuery;
-import de.static_interface.sinklibrary.database.query.impl.WhereQuery;
-import de.static_interface.sinklibrary.util.ReflectionUtil;
-import de.static_interface.sinklibrary.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
 public abstract class Database {
     private final DatabaseConnectionInfo info;
-    private final SQLDialect dialect;
-    private final char backtick;
     protected HikariDataSource dataSource;
     protected Connection connection;
-    int queryType = 0;
-    int selectQuery = 1;
-    int updateQuery = 2;
-    int deleteQuery = 3;
-    private boolean firstSetCall = true;
 
     /**
-     *
      * @param info the connection info
-     * @param dialect the sql dialect
-     * @param backtick the backtick used by the database sql synrax
      */
-    @Deprecated
-    public Database(@Nullable DatabaseConnectionInfo info, SQLDialect dialect, char backtick) {
+    public Database(@Nullable DatabaseConnectionInfo info) {
         this.info = info;
-        this.dialect = dialect;
-        this.backtick = backtick;
-    }
-
-    /**
-     * @return The backtick used by the database sql syntax
-     */
-    public char getBacktick() {
-        return backtick;
     }
 
     /**
@@ -87,57 +44,7 @@ public abstract class Database {
      * @return the SQL type
      * @throws RuntimeException if there is no native SQL type representation
      */
-    public String toDatabaseType(Field f) {
-        Class clazz = f.getType();
-        Column column = FieldCache.getAnnotation(f, Column.class);
-        String keyLength = "";
-        if (column.keyLength() >= 0) {
-            keyLength = "(" + column.keyLength() + ")";
-        }
-
-        boolean isKey = column.primaryKey()
-                        || column.uniqueKey()
-                        || FieldCache.getAnnotation(f, ForeignKey.class) != null
-                        || FieldCache.getAnnotation(f, UniqueKey.class) != null;
-
-
-
-        if (clazz == Date.class) {
-            throw new RuntimeException("Date is not supported for now !");
-        }
-        if (clazz == java.sql.Date.class) {
-            throw new RuntimeException("Date is not supported for now!");
-        }
-        if (clazz == Integer.class || clazz == int.class) {
-            return "INT" + keyLength;
-        }
-        if (clazz == Boolean.class || clazz == boolean.class) {
-            return keyLength.equals("") ? "TINYINT(1)" : "TINYINT" + keyLength;
-        }
-        if (clazz == Double.class || clazz == double.class) {
-            return "DOUBLE" + keyLength;
-        }
-        if (clazz == Float.class || clazz == float.class) {
-            return "FLOAT" + keyLength;
-        }
-        if (clazz == Long.class || clazz == long.class) {
-            return "BIGINT" + keyLength;
-        }
-        if (clazz == Short.class || clazz == short.class) {
-            return "SMALLINT" + keyLength;
-        }
-        if (clazz == Byte.class || clazz == byte.class) {
-            return "TINYINT" + keyLength;
-        }
-        if (clazz == String.class) {
-            if (keyLength.equals("")) {
-                return isKey ? "VARCHAR(255)" : "VARCHAR(999)";
-            } else {
-                return "VARCHAR" + keyLength;
-            }
-        }
-        throw new RuntimeException("No database type available for: " + clazz.getName());
-    }
+    public abstract String toDatabaseType(Field f);
 
     protected abstract void setupConfig();
 
@@ -169,231 +76,19 @@ public abstract class Database {
     }
 
     /**
-     * @return the {@link SQLDialect}
-     */
-    public SQLDialect getDialect() {
-        return dialect;
-    }
-
-    /**
      * @param tQuery the query to build
-     * @return the query in sql
+     * @return the parsed query
      */
-    public String buildQuery(Query tQuery) {
-        String sql = "";
-        while (tQuery != null) {
-            sql += toSql(tQuery);
-            tQuery = tQuery.getChild();
-        }
-        queryType = 0;
-        firstSetCall = true;
-        return sql.trim();
-    }
-
-    protected String toSql(Query tQuery) {
-        String s = handleQuery(tQuery);
-        if (!StringUtil.isEmptyOrNull(s)) {
-            return s;
-        }
-
-        char bt = getBacktick();
-        if (tQuery instanceof FromQuery) {
-            return "";
-        }
-
-        if (tQuery instanceof SelectQuery) {
-            queryType = selectQuery;
-            validateColumnNames(tQuery, ((SelectQuery) tQuery).getColumns());
-            return "SELECT " + StringUtil.formatArrayToString(((SelectQuery) tQuery).getColumns(), ",") + " FROM " + bt + "{TABLE}" + bt + " ";
-        }
-
-        if (tQuery instanceof UpdateQuery) {
-            queryType = updateQuery;
-            return "UPDATE " + bt + "{TABLE}" + bt + " ";
-        }
-
-        if (tQuery instanceof DeleteQuery) {
-            queryType = deleteQuery;
-            return "DELETE " + bt + "{TABLE}" + bt + " ";
-        }
-
-        if (tQuery instanceof SetQuery) {
-            if (queryType != updateQuery) {
-                throw new IllegalStateException("Can only use SET statements on UPDATE queries!");
-            }
-            String columnName = ((SetQuery) tQuery).getColumn();
-            validateColumnNames(tQuery, columnName);
-            String value = tQuery.getTable().toSqlValue(((SetQuery) tQuery).getValue());
-
-            String setStatement = bt + columnName + bt + "=" + value + " ";
-            if (!firstSetCall) {
-                setStatement = ", " + setStatement;
-            } else {
-                setStatement = "SET " + setStatement;
-                firstSetCall = false;
-            }
-            return setStatement;
-        }
-
-        if (tQuery instanceof AndQuery) {
-            return "AND " + whereStatementToSql((WhereQuery) tQuery) + " ";
-        }
-
-        if (tQuery instanceof OrQuery) {
-            return "OR " + whereStatementToSql((WhereQuery) tQuery) + " ";
-        }
-
-        if (tQuery instanceof WhereQuery) {
-            return "WHERE " + whereStatementToSql((WhereQuery) tQuery) + " ";
-        }
-
-        if (tQuery instanceof OrderByQuery) {
-            String columnName = ((OrderByQuery) tQuery).getColumn();
-            validateColumnNames(tQuery, columnName);
-            String order = ((OrderByQuery) tQuery).getOrder().name().toUpperCase();
-            return "ORDER BY " + bt + columnName + bt + " " + order + " ";
-        }
-
-        if (tQuery instanceof LimitQuery) {
-            return "LIMIT " + ((LimitQuery) tQuery).getOffset() + "," + ((LimitQuery) tQuery).getRowCount() + " ";
-        }
-
-        throw new IllegalStateException("Query not supported: " + tQuery.getClass().getName());
-    }
-
-    private String handleQuery(Query query) {
-        //easier integration for 3rd party extensions
-        return null;
-    }
-
-    private void validateColumnNames(Query query, String... columns) {
-        if (query.isColumnVerificationDisabled()) {
-            return;
-        }
-
-        if (columns.length < 1) {
-            return;
-        }
-
-        AbstractTable table = query.getTable();
-        Class<Row> rowClass = table.getRowClass();
-
-        List<String> rowColumns = new ArrayList<>();
-        for (Field f : ReflectionUtil.getAllFields(rowClass)) {
-            if (f == null) {
-                continue;
-            }
-            String name = f.getName();
-            Column c = FieldCache.getAnnotation(f, Column.class);
-            if (!StringUtil.isEmptyOrNull(c.name())) {
-                name = c.name();
-            }
-            rowColumns.add(name.trim());
-        }
-
-        boolean isInvalid = false;
-        for (String s : columns) {
-            if (StringUtil.isEmptyOrNull(s)) {
-                isInvalid = true;
-            }
-
-            if (s.contains("'")) {
-                isInvalid = true;
-            }
-
-            if (s.contains("'")) {
-                isInvalid = true;
-            }
-
-            if (isInvalid) {
-                throw new IllegalArgumentException("Column \"" + s + "\" has an illegal name in query \"" + query.getClass().getSimpleName() + "\"");
-            }
-
-            if (!rowColumns.contains(s.trim())) {
-                throw new IllegalStateException(
-                        "Column \"" + s + "\"" + " not found in table \"" + table.getName() + "\"" + " in query " + query.getClass().getSimpleName()
-                        + "\"");
-            }
-        }
-    }
-
-    protected String whereStatementToSql(WhereQuery tQuery) {
-        WhereCondition condition = tQuery.getCondition();
-        String prefix = "";
-        String suffix = "";
-        if (tQuery.getParanthesisState() == 1) {
-            prefix = "(";
-        }
-
-        if (tQuery.getParanthesisState() == 2) {
-            suffix = ")";
-        }
-
-        char bt = getBacktick();
-        String columName = bt + tQuery.getColumn() + bt;
-        validateColumnNames(tQuery, columName);
-
-        if (condition instanceof GreaterThanCondition) {
-            String operator = "";
-            boolean isInverted = ((GreaterThanCondition) condition).isInverted();
-            boolean isNegated = condition.isNegated();
-            if (isInverted && !isNegated || !isInverted && condition.isNegated()) {
-                operator = "<";
-            } else if (isInverted && isNegated) {
-                operator = ">";
-            } else if (!isInverted && !isNegated) {
-                operator = ">";
-            }
-
-            boolean isEquals = condition instanceof GreaterThanEqualsCondition;
-            if ((isEquals && !isNegated) || (!isEquals && condition.isNegated())) {
-                operator += "=";
-            }
-
-            String value = tQuery.getTable().toSqlValue(condition.getValue(), false);
-
-            return prefix + columName + " " + operator + " " + value + suffix;
-        }
-
-        if (condition instanceof EqualsCondition) {
-            String equalsOperator = "=";
-            if (condition.isNegated()) {
-                equalsOperator = "!=";
-            }
-
-            Object o = condition.getValue();
-            if (o == null) {
-                equalsOperator = "IS";
-                if (condition.isNegated()) {
-                    equalsOperator = "IS NOT";
-                }
-            }
-
-            return prefix + columName + " " + equalsOperator + " " + (o == null ? "NULL" : o.toString()) + suffix;
-        }
-
-        if (condition instanceof LikeCondition) {
-            String likeOperator = "LIKE";
-            if (condition.isNegated()) {
-                likeOperator = "NOT LIKE";
-            }
-
-            return prefix + columName + " " + likeOperator + ((LikeCondition) condition).getPattern() + suffix;
-        }
-
-        throw new IllegalStateException("Condition not supported: " + condition.getClass().getName());
-    }
+    public abstract String parseQuery(Query tQuery);
 
     /**
      * Escapes a string and adds "'s to start and end
      * @param s the string to convert
      * @return the converted string
      */
-    public String stringify(String s) {
-        if (s == null) {
-            return null;
-        }
-        s = s.replaceAll("['\"\\\\]", "\\\\$0");
-        return "\"" + s + "\"";
-    }
+    public abstract String stringify(String s);
+
+    public abstract <T extends Row> void createTable(AbstractTable<T> abstractTable);
+
+    public abstract <T extends Row> T insert(AbstractTable<T> abstractTable, T row);
 }
