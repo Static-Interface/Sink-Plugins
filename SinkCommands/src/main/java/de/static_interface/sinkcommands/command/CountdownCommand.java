@@ -37,6 +37,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @DefaultPermission
 @Aliases("cd")
 @Description("Start a countdown")
@@ -47,6 +50,7 @@ public class CountdownCommand extends SinkCommand {
     private static long secondsLeftGlobal;
 
     //Todo: allow multiple local countdowns at the same time
+    private List<IngameUser> cachedUsers = new ArrayList<>();
 
     public CountdownCommand(Plugin plugin, Configuration config) {
         super(plugin, config);
@@ -206,6 +210,7 @@ public class CountdownCommand extends SinkCommand {
             @Override
             public void run() {
                 if (secondsLeft[0] <= 0) {
+                    cachedUsers = new ArrayList<>();
                     if (!skipLastMsg) {
                         for (IngameUser user : executor.getUsersInRadius(radius)) {
                             user.sendMessage(PREFIX + ChatColor.GREEN + "Los!");
@@ -217,14 +222,18 @@ public class CountdownCommand extends SinkCommand {
                     cancel();
                     return;
                 }
+                List<IngameUser> usersInRadius = (executor.isOnline() ? executor.getUsersInRadius(radius) : cachedUsers);
                 if (secondsLeft[0] > 10) {
                     if (secondsLeft[0] % 10 == 0) {
-                        for (IngameUser user : executor.getUsersInRadius(radius)) {
+                        for (IngameUser user : usersInRadius) {
+                            if (!cachedUsers.contains(user)) {
+                                cachedUsers.add(user);
+                            }
                             user.sendMessage(PREFIX + ChatColor.RED + secondsLeft[0] + "...");
                         }
                     }
                 } else {
-                    for (IngameUser user : executor.getUsersInRadius(radius)) {
+                    for (IngameUser user : usersInRadius) {
                         user.sendMessage(PREFIX + ChatColor.DARK_RED + secondsLeft[0]);
                     }
                 }
