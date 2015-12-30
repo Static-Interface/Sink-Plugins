@@ -93,7 +93,13 @@ public class ReflectionUtil {
     }
 
     public static boolean isNumber(Class<?> type) {
-        return Number.class.isAssignableFrom(type);
+        return Number.class.isAssignableFrom(type)
+               || byte.class.isAssignableFrom(type)
+               || short.class.isAssignableFrom(type)
+               || int.class.isAssignableFrom(type)
+               || float.class.isAssignableFrom(type)
+               || long.class.isAssignableFrom(type)
+               || double.class.isAssignableFrom(type);
     }
 
     public static Object primitiveToWrapper(Object c) {

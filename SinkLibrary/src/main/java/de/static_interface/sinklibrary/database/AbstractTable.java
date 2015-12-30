@@ -159,6 +159,7 @@ public abstract class AbstractTable<T extends Row> {
      * @return the prefixed name of the table
      */
     public final String getName() {
+        validateConnection();
         return db.getConnectionInfo().getTablePrefix() + name;
     }
 
@@ -241,6 +242,7 @@ public abstract class AbstractTable<T extends Row> {
     public T[] get(String query, Object... bindings) {
         try {
             query = query.replaceAll("\\Q{TABLE}\\E", getName());
+            validateConnection();
             PreparedStatement statement = db.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             if (bindings != null && bindings.length > 0) {
                 int i = 1;
@@ -259,6 +261,12 @@ public abstract class AbstractTable<T extends Row> {
         } catch (SQLException e) {
             SinkLibrary.getInstance().getLogger().severe("Couldn't execute SQL query: " + sqlToString(query, bindings));
             throw new RuntimeException(e);
+        }
+    }
+
+    protected void validateConnection() {
+        if (!db.isConnected()) {
+            throw new IllegalStateException("DB not connected");
         }
     }
 
@@ -310,7 +318,7 @@ public abstract class AbstractTable<T extends Row> {
         if ((f.getType() == boolean.class || f.getType() == Boolean.class) && ReflectionUtil.isNumber(value.getClass())
             && value != (Object) false && value != (Object) true && value != Boolean.TRUE
             && value != Boolean.FALSE) {
-            value = ((byte) value) != 0; // for some reason this is returned as int on TINYINT(1)..
+            value = value != (Object) 0; // for some reason this is returned as int on TINYINT(1)..
         }
 
         if (value == null && (ReflectionUtil.isPrimitiveClass(f.getType()) || (FieldCache.getAnnotation(f, Nullable.class) == null && !column
@@ -410,15 +418,10 @@ public abstract class AbstractTable<T extends Row> {
     public ResultSet executeQuery(String sql, @Nullable Object... bindings) {
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
+            validateConnection();
             PreparedStatement statement = db.getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
                                                                               ResultSet.CONCUR_UPDATABLE);
-            if (bindings != null) {
-                int i = 1;
-                for (Object s : bindings) {
-                    statement.setObject(i, s);
-                    i++;
-                }
-            }
+            parseBindings(statement, bindings);
             ResultSet rs;
             try {
                 rs = statement.executeQuery();
@@ -453,6 +456,7 @@ public abstract class AbstractTable<T extends Row> {
     }
 
     public PreparedStatement createPreparedStatement(String sql, Integer flags, @Nullable Object... bindings) {
+        validateConnection();
         sql = sql.replaceAll("\\Q{TABLE}\\E", getName());
         try {
             PreparedStatement statement;
@@ -461,16 +465,21 @@ public abstract class AbstractTable<T extends Row> {
             } else {
                 statement = db.getConnection().prepareStatement(sql);
             }
-            if (bindings != null) {
-                int i = 1;
-                for (Object s : bindings) {
-                    statement.setObject(i, s);
-                    i++;
-                }
-            }
+
+            parseBindings(statement, bindings);
             return statement;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void parseBindings(PreparedStatement statement, Object... bindings) throws SQLException {
+        if (bindings != null) {
+            int i = 1;
+            for (Object s : bindings) {
+                statement.setObject(i, s);
+                i++;
+            }
         }
     }
 
@@ -483,6 +492,7 @@ public abstract class AbstractTable<T extends Row> {
     @Deprecated
     @SuppressWarnings("deprecation")
     public void executeUpdate(String sql, @Nullable Object... bindings) {
+        validateConnection();
         try {
             PreparedStatement statement = createPreparedStatement(sql, bindings);
             try {
@@ -529,6 +539,7 @@ public abstract class AbstractTable<T extends Row> {
      * @return true if the table exists
      */
     public boolean exists() {
+        validateConnection();
         try {
             DatabaseMetaData dbm = db.getConnection().getMetaData();
             ResultSet tables = dbm.getTables(null, null, name, null);

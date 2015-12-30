@@ -19,6 +19,7 @@ package de.static_interface.sinklibrary.database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import de.static_interface.sinklibrary.database.query.Query;
+import de.static_interface.sinklibrary.util.Debug;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -91,4 +92,16 @@ public abstract class Database {
     public abstract <T extends Row> void createTable(AbstractTable<T> abstractTable);
 
     public abstract <T extends Row> T insert(AbstractTable<T> abstractTable, T row);
+
+    /**
+     * @return true if connected to database
+     */
+    public boolean isConnected() {
+        try {
+            return getConnection() != null && !getConnection().isClosed();
+        } catch (SQLException e) {
+            Debug.log(e);
+            return false;
+        }
+    }
 }

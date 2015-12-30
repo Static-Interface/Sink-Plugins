@@ -222,6 +222,9 @@ public abstract class SqlDatabase extends Database {
     }
 
     private void validateColumnNames(Query query, String... columns) {
+        if (true) {
+            return; // not stable
+        }
         if (query.isColumnVerificationDisabled()) {
             return;
         }
@@ -248,6 +251,9 @@ public abstract class SqlDatabase extends Database {
 
         boolean isInvalid = false;
         for (String s : columns) {
+            if (s.equals("*")) {
+                continue;
+            }
             if (StringUtil.isEmptyOrNull(s)) {
                 isInvalid = true;
             }
