@@ -169,7 +169,7 @@ public abstract class SqlDatabase extends Database {
 
         if (tQuery instanceof DeleteQuery) {
             queryType = deleteQuery;
-            return "DELETE " + bt + "{TABLE}" + bt + " ";
+            return "DELETE FROM " + bt + "{TABLE}" + bt + " ";
         }
 
         if (tQuery instanceof SetQuery) {
