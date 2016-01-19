@@ -49,13 +49,13 @@ public class DeletePredefinedWarningCommand extends SinkCommand {
 
     @Override
     protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-        if (args.length < 1) {
+        if (args.length < 0) {
             return false;
         }
 
-        PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[1]);
+        PredefinedWarning pWarning = WarnUtil.getPredefinedWarning(args[0]);
         if (pWarning == null) {
-            sender.sendMessage(GeneralLanguage.GENERAL_UNKNOWN_VALUE.format(args[1]));
+            sender.sendMessage(GeneralLanguage.GENERAL_UNKNOWN_VALUE.format(args[0]));
             return true;
         }
 
