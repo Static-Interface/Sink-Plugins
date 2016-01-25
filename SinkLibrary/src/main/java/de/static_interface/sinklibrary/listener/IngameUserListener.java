@@ -53,7 +53,7 @@ public class IngameUserListener implements Listener {
 
         String timeLeft = "";
 
-        if (user.getBanTimeOut() < System.currentTimeMillis()) {
+        if (user.getBanTimeOut() != null && user.getBanTimeOut() < System.currentTimeMillis()) {
             Debug.log("Bantimeout occurred. Unbanning player.");
             user.unban();
             return;
@@ -61,7 +61,7 @@ public class IngameUserListener implements Listener {
 
         Debug.log("User is banned, calculating time left...");
 
-        if (user.getBanTimeOut() > 0) {
+        if (user.getBanTimeOut() != null && user.getBanTimeOut() > 0) {
             long t = user.getBanTimeOut() - System.currentTimeMillis();
             timeLeft = ", " + ChatColor.GOLD + GeneralLanguage.GENERAL_TIME_LEFT.format(DateUtil.formatTimeLeft(new Date(t)));
         }
