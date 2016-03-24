@@ -397,7 +397,7 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements IdentifiableU
 
     public void unban() {
         SinkLibrary.getInstance().getBanProvider().unban(this);
-        setUnbanTime(System.currentTimeMillis());
+        setUnbanTime(System.currentTimeMillis(), false);
     }
 
     public boolean isBanned() {
@@ -424,8 +424,12 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements IdentifiableU
     }
 
     public void setUnbanTime(@Nullable Long unbanTime) {
+        setUnbanTime(unbanTime, true);
+    }
+
+    public void setUnbanTime(@Nullable Long unbanTime, boolean unban) {
         SinkLibrary.getInstance().getBanProvider().setUnbanTime(this, unbanTime);
-        if (unbanTime != null && unbanTime <= System.currentTimeMillis()) {
+        if (unban && unbanTime != null && unbanTime <= System.currentTimeMillis()) {
             unban();
         }
     }
