@@ -1,5 +1,5 @@
 name: SinkLibrary
-version: ${project.version}
+version: ${project.version.formatted}
 description: Library required for Sink Plugins. This does nothing without a plugin that uses it.
 author: [Trojaner, _ShadowRaven_]
 website: http://static-interface.de

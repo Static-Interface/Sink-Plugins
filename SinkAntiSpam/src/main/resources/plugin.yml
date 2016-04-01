@@ -1,5 +1,5 @@
 name: SinkAntiSpam
-version: ${project.version}
+version: ${project.version.formatted}
 description: Sink Anti Spam
 author: Trojaner
 website: http://static-interface.de

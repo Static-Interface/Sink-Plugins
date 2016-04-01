@@ -1,8 +1,8 @@
 name: SinkCommands
-version: ${project.version}
+version: ${project.version.formatted}
 description: General Commands Plugin
 author: Trojaner
-authors: [Diar, _ShadowRaven_, Scary_Block]
+authors: [_ShadowRaven_, Scary_Block]
 website: http://static-interface.de
 main: de.static_interface.sinkcommands.SinkCommands
 depend: [SinkLibrary, SinkIRC]

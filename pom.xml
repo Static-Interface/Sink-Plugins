@@ -15,7 +15,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -128,6 +128,7 @@
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.basedir}</main.basedir>
+        <project.version.formatted>${project.version} - (git-#${git.commit.id.abbrev})</project.version.formatted>
     </properties>
 
     <build>
@@ -216,8 +217,8 @@
                     <filesToInclude>**/src/main/resources/*</filesToInclude>
                     <replacements>
                         <replacement>
-                            <token>$${project.version}</token>
-                            <value>${project.version}</value>
+                            <token>$${project.version.formatted}</token>
+                            <value>${project.version.formatted}</value>
                         </replacement>
                     </replacements>
                 </configuration>
@@ -285,6 +286,32 @@
                         </plugin>
                     </reportPlugins>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <verbose>false</verbose>
+                    <format>properties</format>
+                    <skipPoms>true</skipPoms>
+                    <failOnUnableToExtractRepoInfo>true</failOnUnableToExtractRepoInfo>
+                    <skip>false</skip>
+                    <runOnlyOnce>false</runOnlyOnce>
+                    <useNativeGit>false</useNativeGit>
+                    <abbrevLength>7</abbrevLength>
+                    <commitIdGenerationMode>flat</commitIdGenerationMode>
+                </configuration>
+
             </plugin>
         </plugins>
         <resources>
