@@ -31,7 +31,6 @@ import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.util.MathUtil;
-import de.static_interface.sinklibrary.util.StringUtil;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.ChatColor;
@@ -75,39 +74,8 @@ public class SinkDebugCommand extends SinkCommand {
                 return true;
             }
         });
-        registerSubCommand(new SinkSubCommand<SinkDebugCommand>(this, "anonymoustest") {
-            @Usage("<option> <key>")
-            @Description("Anonymous SinkSubCommand test")
-            @Override
-            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-                if (args.length < 2) {
-                    return false;
-                }
-                sender.sendMessage("Yay!");
-                return true;
-            }
-        });
 
-        SinkSubCommand inner = new SinkSubCommand<SinkDebugCommand>(this, "inner") {
-            @Usage("<args/nestedinner>")
-            @Override
-            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-                sender.sendMessage("inner: Args: [" + StringUtil.formatArrayToString(args, ", ") + "]");
-                return args.length >= 1;
-            }
-        };
-
-        SinkSubCommand nestedinner = new SinkSubCommand<SinkSubCommand>(inner, "nestedinner") {
-            @Usage("<args>")
-            @Override
-            protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-                sender.sendMessage("nestedinner: Args: [" + StringUtil.formatArrayToString(args, ", ") + "]");
-                return args.length >= 1;
-            }
-        };
-
-        inner.registerSubCommand(nestedinner);
-        registerSubCommand(inner);
+        registerSubCommand(new InjectionTestCommand(this));
 
         registerSubCommand(new InnerClassTestCommand(this));
     }
@@ -228,7 +196,7 @@ public class SinkDebugCommand extends SinkCommand {
 
         @Override
         protected boolean onExecute(CommandSender sender, String label, String[] args) throws ParseException {
-            sender.sendMessage("Inner working too? Permission:" + getPermission());
+            sender.sendMessage("Inner working? Permission:" + getPermission());
             sender.sendMessage("List of all subcommand: ");
             for (SinkSubCommand cmd : getParentCommand().getSubCommands()) {
                 sender.sendMessage(cmd.getName() + ": " + cmd.getCommandDescription());
@@ -236,4 +204,6 @@ public class SinkDebugCommand extends SinkCommand {
             return true;
         }
     }
+
+
 }

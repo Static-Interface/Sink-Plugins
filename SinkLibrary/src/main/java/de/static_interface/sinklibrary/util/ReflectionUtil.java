@@ -125,6 +125,7 @@ public class ReflectionUtil {
     }
 
     public static Method getDeclaredMethod(Class<?> type, String name, Class<?>... params) throws NoSuchMethodException {
+        String baseType = type.getName();
         Method m = null;
         try {
             m = type.getDeclaredMethod(name, params);
@@ -148,7 +149,7 @@ public class ReflectionUtil {
             }
         }
 
-        throw new NoSuchMethodException();
+        throw new NoSuchMethodException(name + "(..) not found in class " + baseType);
     }
 
     public static Object getDeclaredField(Object object, String field) {

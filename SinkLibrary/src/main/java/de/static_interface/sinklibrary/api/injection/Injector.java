@@ -17,12 +17,16 @@
 
 package de.static_interface.sinklibrary.api.injection;
 
+import de.static_interface.sinklibrary.util.ReflectionUtil;
+import de.static_interface.sinklibrary.util.StringUtil;
 import javassist.CannotCompileException;
+import javassist.ClassPath;
 import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
+import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.util.HotSwapper;
 import org.apache.commons.lang.Validate;
@@ -54,35 +58,56 @@ public class Injector {
         for (Method m : clazz.getMethods()) {
             for (Annotation a : m.getAnnotations()) {
                 if (a instanceof Inject) {
-                    injectMethod(m, (Inject) a);
+                    injectMethod(cl, m, (Inject) a);
                 }
 
                 if (a instanceof InjectConstructor) {
-                    injectConstructor(m, (InjectConstructor) a);
+                    injectConstructor(cl, m, (InjectConstructor) a);
                 }
 
                 if (a instanceof InjectAt) {
-                    injectAt(m, (InjectAt) a);
+                    injectAt(cl, m, (InjectAt) a);
                 }
             }
         }
     }
 
-    private static void injectMethod(Method targetMethod, Inject params)
+    private static CtMethod getMethod(ClassPool cp, CtClass clazz, String method, Class[] args) throws NotFoundException {
+        //CtClass[] args = toCtClass(cp, params.methodArgs());
+        //CtMethod m = clazz.getDeclaredMethod(method, toCtClass(cp, args));
+        CtMethod m = null;
+
+        for (CtMethod p : clazz.getDeclaredMethods()) {
+            //Todo: support multiple methods with the same name
+            if (p.getName().equals(method)) {
+                m = p;
+                break;
+            }
+        }
+        if (m == null) {
+            throw new IllegalArgumentException("Failed to find method " + method + " in class " + clazz.getName());
+        }
+        return m;
+    }
+
+    private static void injectMethod(ClassLoader cl, Method targetMethod, Inject params)
             throws CannotCompileException, NotFoundException, IOException, NoSuchMethodException, ClassNotFoundException {
         ClassPool cp = ClassPool.getDefault();
+        ClassPath classPath = new LoaderClassPath(cl);
+        cp.appendClassPath(classPath);
         CtClass cc = cp.get(params.targetClass());
-        CtClass[] args = toCtClass(cp, params.methodArgs());
-        CtMethod m = cc.getDeclaredMethod(params.method(), args);
+        CtMethod m = getMethod(cp, cc, params.method(), params.methodArgs());
         String line = buildCall(cc, m, targetMethod);
         insert(m, line, params.injectTarget());
         postProcess(targetMethod.getDeclaringClass(), cc);
     }
 
-    private static void injectConstructor(Method targetMethod, InjectConstructor params) throws NotFoundException, CannotCompileException,
-                                                                                                IOException, NoSuchMethodException,
-                                                                                                ClassNotFoundException {
+    private static void injectConstructor(ClassLoader cl, Method targetMethod, InjectConstructor params)
+            throws NotFoundException, CannotCompileException,
+                   ClassNotFoundException, NoSuchMethodException, IOException {
         ClassPool cp = ClassPool.getDefault();
+        ClassPath classPath = new LoaderClassPath(cl);
+        cp.appendClassPath(classPath);
         CtClass cc = cp.get(params.targetClass());
         CtClass[] args = toCtClass(cp, params.methodArgs());
         CtConstructor m = cc.getDeclaredConstructor(args);
@@ -92,7 +117,6 @@ public class Injector {
     }
 
     private static void insert(CtBehavior behavior, String line, InjectTarget target) throws CannotCompileException {
-
         switch (target) {
             case BEFORE_METHOD:
                 behavior.insertBefore(line);
@@ -106,12 +130,13 @@ public class Injector {
         }
     }
 
-    private static void injectAt(Method targetMethod, InjectAt params)
+    private static void injectAt(ClassLoader cl, Method targetMethod, InjectAt params)
             throws NotFoundException, CannotCompileException, IOException, NoSuchMethodException, ClassNotFoundException {
         ClassPool cp = ClassPool.getDefault();
+        ClassPath classPath = new LoaderClassPath(cl);
+        cp.appendClassPath(classPath);
         CtClass cc = cp.get(params.targetClass());
-        CtClass[] args = toCtClass(cp, params.methodArgs());
-        CtMethod m = cc.getDeclaredMethod(params.method(), args);
+        CtMethod m = getMethod(cp, cc, params.method(), params.methodArgs());
         String line = buildCall(cc, m, targetMethod);
         m.insertAt(params.line(), params.modify(), line);
         postProcess(targetMethod.getDeclaringClass(), cc);
@@ -136,7 +161,19 @@ public class Injector {
         Class[] args = new Class[classes.length];
         int i = 0;
         for (CtClass c : classes) {
-            args[i] = Class.forName(c.getName());
+            String name = c.getName();
+            if (name.endsWith("[]")) {
+                name = "L" + name;
+            }
+
+            while (name.endsWith("[]")) {
+                name = "[" + StringUtil.replaceLast(name, "[]", "");
+            }
+
+            name = name.replace("]", "");
+
+            name = name.replace("/", ".");
+            args[i] = Class.forName(name);
             i++;
         }
         return args;
@@ -147,8 +184,10 @@ public class Injector {
         swapper.reload(origin.getName(), targetByteCode);
     }
 
-    private static String buildCall(CtClass clazz, CtBehavior method, Method targetMethod)
+    private static String buildCall(CtClass clazz, CtBehavior behaviour, Method targetMethod)
             throws NotFoundException, ClassNotFoundException, NoSuchMethodException {
+        Validate.notNull(clazz, "CtClass is null");
+        Validate.notNull(behaviour, "CtBehaviour is null");
         Class declaringClass = targetMethod.getDeclaringClass();
         String line;
         if (targetMethod.getParameterTypes().length == 0) {
@@ -158,7 +197,8 @@ public class Injector {
             return line;
         }
 
-        Method m = Class.forName(clazz.getName()).getMethod(method.getName(), toClass(method.getParameterTypes()));
+        //Todo: support multiple methods with the same name
+        Method m = ReflectionUtil.getDeclaredMethod(Class.forName(clazz.getName()), behaviour.getName(), toClass(behaviour.getParameterTypes()));
 
         String args = "";
         for (Parameter param : m.getParameters()) {
