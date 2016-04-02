@@ -58,7 +58,6 @@ public class SinkCommands extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         if (!checkDependencies()) {
             return;
         }
@@ -99,7 +98,7 @@ public class SinkCommands extends JavaPlugin {
             essentialsPlugin = (com.earth2me.essentials.Essentials) tmp;
         } else {
             essentialsPlugin = null;
-            SinkCommands.getInstance().getLogger().info("Essentials not found. Disabling Essentials features");
+            getLogger().info("Essentials not found. Disabling Essentials features");
         }
 
         return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
