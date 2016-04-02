@@ -125,10 +125,10 @@
     </dependencies>
 
     <properties>
-        <jdk.version>1.7</jdk.version>
+        <jdk.version>1.8</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.basedir}</main.basedir>
-        <project.version.formatted>${project.version} - (git-#${git.commit.id.abbrev})</project.version.formatted>
+        <project.version.formatted>${project.version} (git-#${git.commit.id.abbrev})</project.version.formatted>
     </properties>
 
     <build>
