@@ -17,9 +17,9 @@
 
 package de.static_interface.sinkantispam;
 
-import static de.static_interface.sinksql.database.query.Query.eq;
-import static de.static_interface.sinksql.database.query.Query.from;
-import static de.static_interface.sinksql.database.query.Query.gt;
+import static de.static_interface.sinksql.query.Query.eq;
+import static de.static_interface.sinksql.query.Query.from;
+import static de.static_interface.sinksql.query.Query.gt;
 
 import de.static_interface.sinkantispam.config.SasLanguage;
 import de.static_interface.sinkantispam.config.SasSettings;
@@ -31,7 +31,7 @@ import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.IdentifiableUser;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinksql.database.query.Order;
+import de.static_interface.sinksql.query.Order;
 import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
 import de.static_interface.sinklibrary.user.IngameUser;
 import de.static_interface.sinklibrary.user.IrcUser;

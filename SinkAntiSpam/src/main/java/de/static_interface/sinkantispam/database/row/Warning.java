@@ -21,10 +21,10 @@ import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinksql.database.CascadeAction;
-import de.static_interface.sinksql.database.Row;
-import de.static_interface.sinksql.database.annotation.Column;
-import de.static_interface.sinksql.database.annotation.ForeignKey;
+import de.static_interface.sinksql.CascadeAction;
+import de.static_interface.sinksql.Row;
+import de.static_interface.sinksql.annotation.Column;
+import de.static_interface.sinksql.annotation.ForeignKey;
 
 import java.util.UUID;
 

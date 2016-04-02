@@ -18,7 +18,7 @@
 package de.static_interface.sinklibrary.database;
 
 import de.static_interface.sinklibrary.api.configuration.Configuration;
-import de.static_interface.sinksql.database.DatabaseConnectionInfo;
+import de.static_interface.sinksql.DatabaseConnectionInfo;
 
 import java.io.File;
 

@@ -36,8 +36,8 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import de.static_interface.sinklibrary.database.DatabaseConfiguration;
 import de.static_interface.sinklibrary.stream.BukkitBroadcastStream;
-import de.static_interface.sinksql.database.Database;
-import de.static_interface.sinksql.database.impl.database.MySqlDatabase;
+import de.static_interface.sinksql.Database;
+import de.static_interface.sinksql.impl.database.MySqlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

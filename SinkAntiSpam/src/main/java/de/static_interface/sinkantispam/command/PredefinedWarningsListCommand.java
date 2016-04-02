@@ -17,7 +17,7 @@
 
 package de.static_interface.sinkantispam.command;
 
-import static de.static_interface.sinksql.database.query.Query.*;
+import static de.static_interface.sinksql.query.Query.*;
 
 import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
