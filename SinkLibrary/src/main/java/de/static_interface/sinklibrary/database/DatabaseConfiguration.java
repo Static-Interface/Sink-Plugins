@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 - 2015 http://static-interface.de and contributors
+ * Copyright (c) 2013 - 2016 http://static-interface.de and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,6 +18,7 @@
 package de.static_interface.sinklibrary.database;
 
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinksql.database.DatabaseConnectionInfo;
 
 import java.io.File;
 

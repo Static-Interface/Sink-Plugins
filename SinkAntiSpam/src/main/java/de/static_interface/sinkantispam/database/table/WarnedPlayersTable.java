@@ -18,8 +18,8 @@
 package de.static_interface.sinkantispam.database.table;
 
 import de.static_interface.sinkantispam.database.row.WarnedPlayer;
-import de.static_interface.sinklibrary.database.AbstractTable;
-import de.static_interface.sinklibrary.database.Database;
+import de.static_interface.sinksql.database.AbstractTable;
+import de.static_interface.sinksql.database.Database;
 
 public class WarnedPlayersTable extends AbstractTable<WarnedPlayer> {
 

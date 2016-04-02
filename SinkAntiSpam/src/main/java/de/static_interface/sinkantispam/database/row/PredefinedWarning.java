@@ -17,8 +17,8 @@
 
 package de.static_interface.sinkantispam.database.row;
 
-import de.static_interface.sinklibrary.database.Row;
-import de.static_interface.sinklibrary.database.annotation.Column;
+import de.static_interface.sinksql.database.Row;
+import de.static_interface.sinksql.database.annotation.Column;
 
 import javax.annotation.Nullable;
 

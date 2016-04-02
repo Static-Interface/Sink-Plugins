@@ -28,25 +28,20 @@
 
     <licenses>
         <license>
-            <name>GNU General Public License Version 3</name>
+            <name>GNU Affero General Public License Version 3</name>
             <url>http://www.gnu.org/licenses</url>
         </license>
     </licenses>
 
     <organization>
         <name>Static Interface</name>
-        <url>http://static-interface.de/</url>
+        <url>http://github.com/Static-Interface</url>
     </organization>
 
-    <ciManagement>
-        <system>Static Interface CI</system>
-        <url>http://ci.static-interface.de/</url>
-    </ciManagement>
-
     <scm>
-        <connection>scm:git:https://github.com/Adventuria/Sink-Plugins.git</connection>
-        <developerConnection>scm:git:https://github.com/Adventuria/Sink-Plugins.git</developerConnection>
-        <url>https://github.com/Adventuria/Sink-Plugins</url>
+        <connection>scm:git:https://github.com/Static-Interface/Sink-Plugins.git</connection>
+        <developerConnection>scm:git:https://github.com/Static-Interface/Sink-Plugins.git</developerConnection>
+        <url>https://github.com/Static-Interface/Sink-Plugins</url>
     </scm>
 
     <repositories>
@@ -121,6 +116,11 @@
             <groupId>net.sourceforge.streamsupport</groupId>
             <artifactId>streamsupport</artifactId>
             <version>1.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>de.static_interface</groupId>
+            <artifactId>sinksql</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
