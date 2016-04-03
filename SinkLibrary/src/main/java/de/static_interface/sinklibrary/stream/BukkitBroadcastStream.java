@@ -21,7 +21,6 @@ import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.stream.MessageStream;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
@@ -41,11 +40,7 @@ public class BukkitBroadcastStream extends MessageStream {
             SinkLibrary.getInstance().getMessageStream("bukkit_broadcastmessage").sendMessage(sender, message);
         }
         String permission = (String) args[0];
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.hasPermission(permission)) {
-                p.sendMessage(message);
-            }
-        }
+        Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(message));
         return true;
     }
 }

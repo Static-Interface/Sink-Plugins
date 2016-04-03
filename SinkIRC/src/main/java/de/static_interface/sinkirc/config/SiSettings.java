@@ -32,7 +32,6 @@ import java.util.List;
 public class SiSettings extends Configuration {
 
     public final static YamlOption<String> SI_NICKNAME = new YamlStringOption("Nickname", "SinkIRCBot");
-    public final static YamlOption<Integer> SI_MAX_JOIN_LEAVE_USERS = new YamlIntegerOption("JoinLeaveMaxUsers", 20);
     public final static YamlParentOption SI_SERVER_PARENT = new YamlParentOption("Server");
     public final static YamlOption<String> SI_SERVER_ADDRESS = new YamlStringOption(SI_SERVER_PARENT, "Address", "irc.example.com");
     public final static YamlOption<String> SI_SERVER_PASSWORD = new YamlStringOption(SI_SERVER_PARENT, "Password", "");

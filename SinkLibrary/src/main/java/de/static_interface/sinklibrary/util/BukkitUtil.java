@@ -18,7 +18,6 @@
 package de.static_interface.sinklibrary.util;
 
 import de.static_interface.sinklibrary.SinkLibrary;
-import de.static_interface.sinklibrary.api.annotation.Unstable;
 import de.static_interface.sinklibrary.api.sender.IrcCommandSender;
 import de.static_interface.sinklibrary.api.user.SinkUser;
 import de.static_interface.sinklibrary.stream.BukkitBroadcastMessageStream;
@@ -30,47 +29,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 public class BukkitUtil {
-
-    /** Since Bukkit 1.7.9 R0.3, the return type of {@link org.bukkit.Bukkit#getOnlinePlayers()} changed, so
-     *  plugins will possibly break when using this method on older bukkit versions
-     *
-     * @return The current online players
-     * @deprecated Older Bukkit versions are not supported anymore
-     */
-    @Unstable
-    @Deprecated
-    public static List<Player> getOnlinePlayers() {
-        return new CopyOnWriteArrayList<>(Bukkit.getOnlinePlayers());
-
-        //List<Player> tmp = new CopyOnWriteArrayList<>();
-        //try {
-        //    if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) // 1.7.9 R0.3 and newer
-        //    {
-        //        tmp = (List<Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null);
-        //    } else {
-        //        Collections.addAll(tmp, ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)));
-        //    }
-        //} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-        //}
-        //return tmp;
-    }
-
     public static List<Player> getOnlinePlayersForPlayer(Player p) {
         List<Player> players = new CopyOnWriteArrayList<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!p.canSee(player)) {
-                players.remove(player);
-            }
-        }
+        Bukkit.getOnlinePlayers().stream().filter(player -> !p.canSee(player)).forEach(players::remove);
 
         if(players.size() == 0 ){
             return new CopyOnWriteArrayList<>(Bukkit.getOnlinePlayers());
@@ -88,12 +59,9 @@ public class BukkitUtil {
      */
     @Nullable
     public static Player getPlayer(String name) {
-        List<String> matchedPlayers = new ArrayList<>();
-        for (Player player : BukkitUtil.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(name.toLowerCase())) {
-                matchedPlayers.add(player.getName());
-            }
-        }
+        List<String> matchedPlayers =
+                Bukkit.getOnlinePlayers().stream().filter(player -> player.getName().toLowerCase().startsWith(name.toLowerCase()))
+                        .map((Function<Player, String>) Player::getName).collect(Collectors.toList());
 
         Player exactPlayer = Bukkit.getPlayerExact(name);
         Collections.sort(matchedPlayers);

@@ -161,7 +161,7 @@ public class Configuration {
                     node = true;
 
                     // Grab the index of the end of the node name
-                    int index = 0;
+                    int index;
                     index = line.indexOf(": ");
                     if (index < 0) {
                         index = line.length() - 1;
@@ -272,15 +272,6 @@ public class Configuration {
      */
     public void setComment(String path, String comment) {
         comments.put(path, comment);
-    }
-
-    /**
-     * Create Configuration File
-     * @deprecated use {@link #init()} instead
-     */
-    @Deprecated
-    public void create() {
-        init();
     }
 
     /**
@@ -397,15 +388,6 @@ public class Configuration {
      */
     public boolean exists() {
         return getFile() != null && getFile().exists();
-    }
-
-    /**
-     * Load Configuration
-     * @deprecated use {@link #init()} instead
-     */
-    @Deprecated
-    public void load() {
-        init();
     }
 
     /**

@@ -104,92 +104,89 @@ public class SinkIRC extends JavaPlugin {
             throw new IllegalStateException("No channels configured!");
         }
 
-        ircThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        ircThread = new Thread(() -> {
+            try {
+                if (threadStarted) {
+                    return;
+                }
+
+                threadStarted = true;
+                Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
+                        .setName(SiSettings.SI_NICKNAME.getValue())
+                        .setLogin("SinkIRC")
+                        .setAutoNickChange(true)
+                        .setMessageDelay(1)
+                        .setShutdownHookEnabled(true)
+                        .setServer(SiSettings.SI_SERVER_ADDRESS.getValue(),
+                                   SiSettings.SI_SERVER_PORT.getValue())
+                        .addListener(new PircBotXLinkListener())
+                        .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
+
+                String password = SiSettings.SI_SERVER_PASSWORD.getValue();
+                if (!StringUtil.isEmptyOrNull(password)) {
+                    configBuilder = configBuilder.setServerPassword(password);
+                }
+                if (!SiSettings.SI_AUTHENTIFICATION_ENABLED.getValue()) {
+                    for (String s : channelsWithPasswords.keySet()) {
+                        configBuilder = configBuilder.addAutoJoinChannel(s, channelsWithPasswords.get(s));
+                    }
+                }
+
+                ircBot = new PircBotX(configBuilder.buildConfiguration());
                 try {
-                    if (threadStarted) {
-                        return;
-                    }
-
-                    threadStarted = true;
-                    Configuration.Builder<PircBotX> configBuilder = new Configuration.Builder<>()
-                            .setName(SiSettings.SI_NICKNAME.getValue())
-                            .setLogin("SinkIRC")
-                            .setAutoNickChange(true)
-                            .setMessageDelay(1)
-                            .setShutdownHookEnabled(true)
-                            .setServer(SiSettings.SI_SERVER_ADDRESS.getValue(),
-                                       SiSettings.SI_SERVER_PORT.getValue())
-                            .addListener(new PircBotXLinkListener())
-                            .setVersion("SinkIRC for Bukkit - visit http://dev.bukkit.org/bukkit-plugins/sink-plugins/");
-
-                    String password = SiSettings.SI_SERVER_PASSWORD.getValue();
-                    if (!StringUtil.isEmptyOrNull(password)) {
-                        configBuilder = configBuilder.setServerPassword(password);
-                    }
-                    if (!SiSettings.SI_AUTHENTIFICATION_ENABLED.getValue()) {
-                        for (String s : channelsWithPasswords.keySet()) {
-                            configBuilder = configBuilder.addAutoJoinChannel(s, channelsWithPasswords.get(s));
-                        }
-                    }
-
-                    ircBot = new PircBotX(configBuilder.buildConfiguration());
-                    try {
-                        ircBot.startBot();
-                    } catch (SocketException e) {
-                        getLogger().log(Level.SEVERE,
-                                        "Couldn't connect to host: " + SiSettings.SI_SERVER_ADDRESS.getValue(), e);
-                        Bukkit.getPluginManager().disablePlugin(SinkIRC.this);
-                        return;
-                    }
-                    WaitForQueue queue = new WaitForQueue(ircBot);
-                    if (SiSettings.SI_AUTHENTIFICATION_ENABLED.getValue()) {
-                        ircBot.sendIRC().message(SiSettings.SI_AUTHENTIFICATION_AUTHBOT.getValue(),
-                                                 SiSettings.SI_AUTHENTIFICATION_MESSAGE.getValue());
-                        //Wait for AuthBot reply before joining
-                        while (true) {
-                            PrivateMessageEvent event;
-                            try {
-                                event = queue.waitFor(PrivateMessageEvent.class);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                                break;
-                            }
-
-                            if (event.getUser().getNick().equals(SiSettings.SI_AUTHENTIFICATION_AUTHBOT.getValue())) {
-                                break;
-                            }
-                        }
-                        for (String s : channelsWithPasswords.keySet()) {
-                            ircBot.sendIRC().joinChannel(s, channelsWithPasswords.get(s));
-                        }
-                    }
-
-                    List<String> waitQueue = new ArrayList<>(SiSettings.SI_SERVER_CHANNELS.getValue());
-
-                    //wait for bot join
+                    ircBot.startBot();
+                } catch (SocketException e) {
+                    getLogger().log(Level.SEVERE,
+                                    "Couldn't connect to host: " + SiSettings.SI_SERVER_ADDRESS.getValue(), e);
+                    Bukkit.getPluginManager().disablePlugin(SinkIRC.this);
+                    return;
+                }
+                WaitForQueue queue = new WaitForQueue(ircBot);
+                if (SiSettings.SI_AUTHENTIFICATION_ENABLED.getValue()) {
+                    ircBot.sendIRC().message(SiSettings.SI_AUTHENTIFICATION_AUTHBOT.getValue(),
+                                             SiSettings.SI_AUTHENTIFICATION_MESSAGE.getValue());
+                    //Wait for AuthBot reply before joining
                     while (true) {
-                        JoinEvent event;
+                        PrivateMessageEvent event;
                         try {
-                            event = queue.waitFor(JoinEvent.class);
+                            event = queue.waitFor(PrivateMessageEvent.class);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                             break;
                         }
 
-                        if (event.getUser().getNick().equals(getIrcBot().getNick()) && waitQueue.contains(event.getChannel().getName())) {
-                            waitQueue.remove(event.getChannel().getName());
-                            SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream(event.getChannel().getName()));
-                        }
-
-                        if (waitQueue.size() == 0) {
+                        if (event.getUser().getNick().equals(SiSettings.SI_AUTHENTIFICATION_AUTHBOT.getValue())) {
                             break;
                         }
                     }
-                } catch (IOException | IrcException e) {
-                    e.printStackTrace();
+                    for (String s : channelsWithPasswords.keySet()) {
+                        ircBot.sendIRC().joinChannel(s, channelsWithPasswords.get(s));
+                    }
                 }
+
+                List<String> waitQueue = new ArrayList<>(SiSettings.SI_SERVER_CHANNELS.getValue());
+
+                //wait for bot join
+                while (true) {
+                    JoinEvent event;
+                    try {
+                        event = queue.waitFor(JoinEvent.class);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+
+                    if (event.getUser().getNick().equals(getIrcBot().getNick()) && waitQueue.contains(event.getChannel().getName())) {
+                        waitQueue.remove(event.getChannel().getName());
+                        SinkLibrary.getInstance().registerMessageStream(new IrcMessageStream(event.getChannel().getName()));
+                    }
+
+                    if (waitQueue.size() == 0) {
+                        break;
+                    }
+                }
+            } catch (IOException | IrcException e) {
+                e.printStackTrace();
             }
         });
         ircThread.start();

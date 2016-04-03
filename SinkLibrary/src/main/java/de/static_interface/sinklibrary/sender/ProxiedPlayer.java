@@ -808,11 +808,6 @@ public class ProxiedPlayer extends CraftPlayer implements ProxiedObject<Player, 
     }
 
     @Override
-    public Player.Spigot spigot() {
-        return getBaseObject().spigot();
-    }
-
-    @Override
     public Map<String, Object> serialize() {
         return getBaseObject().serialize();
     }

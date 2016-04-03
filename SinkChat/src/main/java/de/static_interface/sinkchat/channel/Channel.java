@@ -37,7 +37,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 public class Channel extends MessageStream<IngameUser> {
-
     private String name;
     private String callCode;
     private boolean enabled;
@@ -130,13 +129,10 @@ public class Channel extends MessageStream<IngameUser> {
     }
 
     public void handleMessage(IngameUser sender, Set<Player> recipients, String message) {
-        for (Player p : new HashSet<>(recipients)) {
-            if ((getRange() > 0 && !Util.isInRange(sender, p, getRange()))
-                || (!enabledForPlayer(p.getUniqueId()))
-                || (StringUtil.isEmptyOrNull(getPermission()) && !p.hasPermission(getPermission()))) {
-                recipients.remove(p);
-            }
-        }
+        new HashSet<>(recipients).stream().filter(p -> (getRange() > 0 && !Util.isInRange(sender, p, getRange()))
+                                                       || (!enabledForPlayer(p.getUniqueId()))
+                                                       || (StringUtil.isEmptyOrNull(getPermission()) && !p.hasPermission(getPermission())))
+                .forEach(recipients::remove);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (recipients.contains(p)) {
@@ -168,5 +164,9 @@ public class Channel extends MessageStream<IngameUser> {
             p.sendMessage(formattedMessage);
         }
         return true;
+    }
+
+    public String getChannelName() {
+        return name;
     }
 }

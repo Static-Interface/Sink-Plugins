@@ -19,7 +19,6 @@ package de.static_interface.sinklibrary.api.command;
 
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.SinkUser;
-import de.static_interface.sinklibrary.user.IrcUser;
 import de.static_interface.sinklibrary.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -70,9 +69,7 @@ public class SinkTabCompleter implements TabCompleter {
         }
 
         if (includeIrcUsers) {
-            for (IrcUser user : SinkLibrary.getInstance().getOnlineIrcUsers()) {
-                users.add(user);
-            }
+            users.addAll(SinkLibrary.getInstance().getOnlineIrcUsers());
         }
 
         Collections.sort(users);

@@ -386,11 +386,7 @@ public class DomainValidator implements Serializable {
      */
     public boolean isValid(String domain) {
         String[] groups = domainRegex.match(domain);
-        if (groups != null && groups.length > 0) {
-            return isValidTld(groups[0]);
-        } else {
-            return false;
-        }
+        return groups != null && groups.length > 0 && isValidTld(groups[0]);
     }
 
     /**

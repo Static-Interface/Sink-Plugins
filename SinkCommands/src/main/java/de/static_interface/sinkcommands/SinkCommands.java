@@ -17,7 +17,6 @@
 
 package de.static_interface.sinkcommands;
 
-import com.earth2me.essentials.Essentials;
 import de.static_interface.sinkcommands.command.ChatCommand;
 import de.static_interface.sinkcommands.command.ClearCommand;
 import de.static_interface.sinkcommands.command.CountdownCommand;
@@ -39,7 +38,6 @@ import de.static_interface.sinkcommands.listener.GlobalMuteListener;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.configuration.Configuration;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -50,7 +48,6 @@ public class SinkCommands extends JavaPlugin {
     private static SinkCommands instance;
     private boolean globalmuteEnabled;
     private boolean initialized = false;
-    private com.earth2me.essentials.Essentials essentialsPlugin;
 
     public static SinkCommands getInstance() {
         return instance;
@@ -93,14 +90,6 @@ public class SinkCommands extends JavaPlugin {
             return false;
         }
 
-        Plugin tmp = Bukkit.getPluginManager().getPlugin("Essentials");
-        if (tmp != null && tmp instanceof com.earth2me.essentials.Essentials) {
-            essentialsPlugin = (com.earth2me.essentials.Essentials) tmp;
-        } else {
-            essentialsPlugin = null;
-            getLogger().info("Essentials not found. Disabling Essentials features");
-        }
-
         return SinkLibrary.getInstance().validateApiVersion(SinkLibrary.API_VERSION, this);
     }
 
@@ -134,10 +123,6 @@ public class SinkCommands extends JavaPlugin {
         SinkLibrary.getInstance().registerCommand("chat", new ChatCommand(this, config));
         SinkLibrary.getInstance().registerCommand("message", new MessageCommands.MessageCommand(this, config));
         SinkLibrary.getInstance().registerCommand("reply", new MessageCommands.ReplyCommand(this, config));
-    }
-
-    public Essentials getEssentialsPlugin() {
-        return essentialsPlugin;
     }
 
     public boolean isGlobalmuteEnabled() {

@@ -213,13 +213,10 @@ public class IrcUtil {
         }
 
         final String finalLabel = label;
-        Bukkit.getScheduler().runTaskAsynchronously(SinkIRC.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Debug.log("Firing event...");
-                IrcCommandEvent event = new IrcCommandEvent(sender, cmd, finalLabel, args, SinkIRC.getInstance().getIrcBot());
-                Bukkit.getPluginManager().callEvent(event);
-            }
+        Bukkit.getScheduler().runTaskAsynchronously(SinkIRC.getInstance(), () -> {
+            Debug.log("Firing event...");
+            IrcCommandEvent event = new IrcCommandEvent(sender, cmd, finalLabel, args, SinkIRC.getInstance().getIrcBot());
+            Bukkit.getPluginManager().callEvent(event);
         });
 
     }

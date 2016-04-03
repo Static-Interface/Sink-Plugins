@@ -50,9 +50,7 @@ public class SinkReloadCommand extends SinkCommand {
         sender.sendMessage(PREFIX + "Reloading Configs...");
 
         // Reload all configs
-        for (Configuration base : Configuration.getConfigs().values()) {
-            base.reload();
-        }
+        Configuration.getConfigs().values().forEach(Configuration::reload);
 
         sender.sendMessage(PREFIX + "Reloading Users...");
 

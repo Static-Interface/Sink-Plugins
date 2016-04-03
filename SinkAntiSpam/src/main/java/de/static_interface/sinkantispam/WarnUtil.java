@@ -27,6 +27,8 @@ import de.static_interface.sinkantispam.database.row.PredefinedWarning;
 import de.static_interface.sinkantispam.database.row.WarnedPlayer;
 import de.static_interface.sinkantispam.database.row.Warning;
 import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
+import de.static_interface.sinkantispam.database.table.WarnedPlayersTable;
+import de.static_interface.sinkantispam.database.table.WarningsTable;
 import de.static_interface.sinkantispam.sanction.WarningSanction;
 import de.static_interface.sinklibrary.SinkLibrary;
 import de.static_interface.sinklibrary.api.user.IdentifiableUser;
@@ -155,9 +157,7 @@ public class WarnUtil {
 
             splits = label.split(" ");
             List<String> args = new ArrayList<>();
-            for (int i = 1; i < splits.length; i++) {
-                args.add(splits[i]);
-            }
+            args.addAll(Arrays.asList(splits).subList(1, splits.length));
             map.put(points, args);
         }
 
@@ -213,10 +213,15 @@ public class WarnUtil {
         }
         String name = deleter == null ? null : ((deleter instanceof IrcUser) ? deleter.getDisplayName() + " (IRC)" : deleter.getDisplayName());
 
-        SinkAntiSpam.getInstance().getWarningsTable().executeUpdate(
-                "UPDATE `{TABLE}` SET `is_deleted` = 1, `deleter` = ?, `deleter_uuid` = ?, `delete_time` = ? "
-                + "WHERE `id` = ?",
-                name, uuid == null ? null : uuid.toString(), System.currentTimeMillis(), warning.id);
+        WarningsTable table = SinkAntiSpam.getInstance().getWarningsTable();
+
+        from(table).update()
+                .set("is_deleted", "1")
+                .set("deleter", "?")
+                .set("deleter_uuid", "?")
+                .set("delete_time", "?")
+                .where("id", eq("?"))
+                .execute(name, uuid == null ? null : uuid.toString(), System.currentTimeMillis(), warning.id);
     }
 
     public static PredefinedWarning getPredefinedWarning(String name) {
@@ -241,8 +246,9 @@ public class WarnUtil {
         if (points < 0) {
             return;
         }
-        SinkAntiSpam.getInstance().getWarnedPlayersTable()
-                .executeUpdate("UPDATE `{TABLE}` SET `deleted_points` = ? WHERE `id` = ?", points, wPlayer.id);
+
+        WarnedPlayersTable table = SinkAntiSpam.getInstance().getWarnedPlayersTable();
+        from(table).update().set("deleted_points", "?").where("id", eq("?")).execute(points, wPlayer.id);
     }
 
     public static int getPoints(IngameUser target) {

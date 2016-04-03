@@ -81,19 +81,16 @@ public class IrcQueue {
 
     public void start() {
         work = true;
-        queueThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (work) {
-                    long difference = System.currentTimeMillis() - lastTime;
-                    if (difference >= INTERVAL) {
-                        doWork();
-                    } else {
-                        try {
-                            Thread.sleep(INTERVAL - difference);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+        queueThread = new Thread(() -> {
+            while (work) {
+                long difference = System.currentTimeMillis() - lastTime;
+                if (difference >= INTERVAL) {
+                    doWork();
+                } else {
+                    try {
+                        Thread.sleep(INTERVAL - difference);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }

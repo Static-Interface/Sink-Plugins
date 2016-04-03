@@ -17,9 +17,13 @@
 
 package de.static_interface.sinkantispam.command;
 
+import static de.static_interface.sinksql.query.Query.eq;
+import static de.static_interface.sinksql.query.Query.from;
+
 import de.static_interface.sinkantispam.SinkAntiSpam;
 import de.static_interface.sinkantispam.WarnUtil;
 import de.static_interface.sinkantispam.database.row.PredefinedWarning;
+import de.static_interface.sinkantispam.database.table.PredefinedWarningsTable;
 import de.static_interface.sinklibrary.api.command.SinkCommand;
 import de.static_interface.sinklibrary.api.command.annotation.Aliases;
 import de.static_interface.sinklibrary.api.command.annotation.Description;
@@ -59,7 +63,12 @@ public class DeletePredefinedWarningCommand extends SinkCommand {
             return true;
         }
 
-        SinkAntiSpam.getInstance().getPredefinedWarningsTable().executeUpdate("DELETE FROM `{TABLE}` WHERE `id` = ?", pWarning.id);
+        PredefinedWarningsTable table = SinkAntiSpam.getInstance().getPredefinedWarningsTable();
+        from(table)
+                .delete()
+                .where("id", eq("?"))
+                .execute(pWarning.id);
+
         sender.sendMessage(ChatColor.DARK_GREEN + "Success");
         return true;
     }

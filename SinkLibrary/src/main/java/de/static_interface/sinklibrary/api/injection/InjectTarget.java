@@ -20,5 +20,5 @@ package de.static_interface.sinklibrary.api.injection;
 public enum InjectTarget {
     BEFORE_METHOD,
     AFTER_METHOD,
-    BEFORE_BODY;
+    BEFORE_BODY
 }

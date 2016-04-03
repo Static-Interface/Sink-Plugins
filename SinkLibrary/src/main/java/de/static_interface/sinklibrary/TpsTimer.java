@@ -19,7 +19,7 @@ package de.static_interface.sinklibrary;
 
 import static de.static_interface.sinklibrary.Constants.TICK;
 
-import de.static_interface.sinklibrary.util.BukkitUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -57,7 +57,7 @@ public class TpsTimer implements Runnable {
         }
         lastPoll = startTime;
         int count = 0;
-        for (Player player : BukkitUtil.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             count++;
             if (skip1 > 0) {
                 skip1--;

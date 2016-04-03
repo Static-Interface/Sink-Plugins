@@ -205,18 +205,6 @@ public class IngameUser extends SinkUser<OfflinePlayer> implements IdentifiableU
      * Get Chat prefix
      *
      * @return Player chat prefix
-     * @deprecated use {@link #getChatPrefix()} instead
-     * @throws de.static_interface.sinklibrary.api.exception.ChatNotAvailableException if chat is not available
-     */
-    @Deprecated
-    public String getPrefix() {
-        return getChatPrefix();
-    }
-
-    /**
-     * Get Chat prefix
-     *
-     * @return Player chat prefix
      * @throws de.static_interface.sinklibrary.api.exception.ChatNotAvailableException if chat is not available
      */
     public String getChatPrefix() {

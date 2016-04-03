@@ -47,6 +47,7 @@ public class Debug {
     /**
      * @return True if debug is enabled in the config
      */
+    @SuppressWarnings("deprecation")
     public static boolean isEnabled() {
         //We have to use the default get() method because debug is called before settings were loaded
         if (SinkLibrary.getInstance().getSettings() == null) {

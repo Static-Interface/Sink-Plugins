@@ -142,19 +142,6 @@ public class SinkCommandOptions {
         minArgs = value;
     }
 
-    @Deprecated
-    public String getCmdLineSyntax() {
-        return cmdLineSyntax;
-    }
-
-    @Deprecated
-    public void setCmdLineSyntax(String cmdLineSyntax) {
-        if (cmdLineSyntax == null) {
-            cmdLineSyntax = "";
-        }
-        this.cmdLineSyntax = cmdLineSyntax;
-    }
-
     public void setCliHelpFormatter(HelpFormatter cliHelpFormatter) {
         this.cliHelpFormatter = cliHelpFormatter;
     }

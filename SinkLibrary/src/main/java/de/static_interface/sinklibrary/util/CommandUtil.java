@@ -190,7 +190,7 @@ public class CommandUtil {
         if (aliases != null) {
             command.setCommandAliases(Arrays.asList(aliases.value()));
         } else {
-            command.setCommandAliases(new ArrayList<String>());
+            command.setCommandAliases(new ArrayList<>());
         }
         if (config != null) {
             Object value = config.get(commandPathPrefix + "Aliases");

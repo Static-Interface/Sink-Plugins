@@ -140,7 +140,7 @@ public class FileUtil {
 
             //BufferedWriter out = new BufferedWriter(new FileWriter(FileName));
 
-            source.replaceAll("\n", System.getProperty("line.separator"));
+            source = source.replaceAll("\n", System.getProperty("line.separator"));
 
             out.write(source);
             out.close();

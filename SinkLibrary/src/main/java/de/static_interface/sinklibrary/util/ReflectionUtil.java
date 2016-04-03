@@ -109,7 +109,7 @@ public class ReflectionUtil {
         Class<?> wrapperClass = primitiveMap.get(c.getClass());
 
         if (char.class.isAssignableFrom(c.getClass())) {
-            return Character.valueOf((char) c);
+            return c;
         }
 
         try {
@@ -180,11 +180,11 @@ public class ReflectionUtil {
         }
 
         if (value instanceof Boolean) {
-            return ((Boolean) value).booleanValue();
+            return value;
         }
 
         if (value instanceof Character) {
-            return ((Character) value).charValue();
+            return value;
         }
 
         return value;

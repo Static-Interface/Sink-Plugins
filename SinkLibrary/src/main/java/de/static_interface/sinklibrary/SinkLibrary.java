@@ -66,7 +66,6 @@ import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
 import de.static_interface.sinksql.AbstractTable;
 import de.static_interface.sinksql.Database;
-import de.static_interface.sinksql.SqlObjectConverter;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -111,7 +110,6 @@ import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class SinkLibrary extends JavaPlugin {
 
     public static final int API_VERSION = 2;
@@ -131,7 +129,6 @@ public class SinkLibrary extends JavaPlugin {
     private SinkTabCompleter defaultCompleter;
     private List<String> loadedLibs;
     private GeneralSettings generalSettings;
-    private Logger logger;
     private File customDataFolder;
     private ConsoleUserProvider consoleUserProvider;
     private IngameUserProvider ingameUserProvider;
@@ -296,35 +293,16 @@ public class SinkLibrary extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, getSinkTimer(), 1000, 50);
 
         // Init players (reload etc)
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            onRefreshDisplayName(p);
-        }
+        Bukkit.getOnlinePlayers().forEach(this::onRefreshDisplayName);
 
         Bukkit.getPluginManager().registerEvents(new IrcCommandListener(), this);
         loadLibs(getConsoleUser());
     }
 
     private void registerSqlObjectConverters() {
-        AbstractTable.registerSqlConverter(Database.class, IdentifiableUser.class, new SqlObjectConverter<Database, IdentifiableUser>() {
-            @Override
-            public String convert(Database db, IdentifiableUser o, boolean strict) {
-                return db.stringify(o.getUniqueId().toString());
-            }
-        });
-
-        AbstractTable.registerSqlConverter(Database.class, OfflinePlayer.class, new SqlObjectConverter<Database, OfflinePlayer>() {
-            @Override
-            public String convert(Database db, OfflinePlayer o, boolean strict) {
-                return db.stringify(o.getUniqueId().toString());
-            }
-        });
-
-        AbstractTable.registerSqlConverter(Database.class, UUID.class, new SqlObjectConverter<Database, UUID>() {
-            @Override
-            public String convert(Database db, UUID o, boolean strict) {
-                return db.stringify(o.toString());
-            }
-        });
+        AbstractTable.registerSqlConverter(Database.class, IdentifiableUser.class, (db, o, strict) -> db.stringify(o.getUniqueId().toString()));
+        AbstractTable.registerSqlConverter(Database.class, OfflinePlayer.class, (db, o, strict) -> db.stringify(o.getUniqueId().toString()));
+        AbstractTable.registerSqlConverter(Database.class, UUID.class, (db, o, strict) -> db.stringify(o.toString()));
     }
 
     private void registerEventMessageStreams() {
@@ -982,14 +960,6 @@ public class SinkLibrary extends JavaPlugin {
         return getIrcUserProvider().getUserInstances();
     }
 
-    @Deprecated
-    public Logger getCustomLogger() {
-        if (logger == null) {
-            logger = new Logger();
-        }
-        return logger;
-    }
-
     public void registerCommand(@Nonnull String name, @Nonnull final SinkCommand impl) {
         name = name.toLowerCase().trim();
         Debug.logMethodCall(name, impl);
@@ -1014,11 +984,7 @@ public class SinkLibrary extends JavaPlugin {
 
                 Map<String, Command> knownCommands =
                         (Map<String, Command>) ReflectionUtil.getDeclaredField(getCommandMap(), "knownCommands");
-                for (String s : aliases) {
-                    if (knownCommands.containsKey(s)) {
-                        knownCommands.remove(s);
-                    }
-                }
+                aliases.stream().filter(knownCommands::containsKey).forEach(knownCommands::remove);
                 knownCommands.remove(name);
             } catch (Exception e) {
                 Debug.log(e);
@@ -1177,10 +1143,6 @@ public class SinkLibrary extends JavaPlugin {
         registerCommand("sinkdebug", new SinkDebugCommand(this));
         registerCommand("sinkreload", new SinkReloadCommand(this));
         registerCommand("sinkversion", new SinkVersionCommand(this));
-    }
-
-    public boolean isSinkChatAvailable() {
-        return Bukkit.getPluginManager().getPlugin("SinkChat") != null;
     }
 
     public ConsoleUser getConsoleUser() {
