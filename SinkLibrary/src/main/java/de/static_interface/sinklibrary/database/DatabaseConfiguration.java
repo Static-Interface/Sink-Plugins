@@ -18,40 +18,38 @@
 package de.static_interface.sinklibrary.database;
 
 import de.static_interface.sinklibrary.api.configuration.Configuration;
+import de.static_interface.sinklibrary.util.StringUtil;
 import de.static_interface.sinksql.DatabaseConnectionInfo;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+
+import javax.annotation.Nullable;
 
 public class DatabaseConfiguration extends Configuration implements DatabaseConnectionInfo {
 
     private String defaultDatabase;
-    private String defaultTablePrefix;
+    private Plugin plugin;
 
     /**
      * @param baseFolder the parent directory for the configuration
      * @param defaultDatabase the default database name
-     * @param defaultTablePrefix the default table prefix
+     * @param plugin the plugin
      */
-    public DatabaseConfiguration(File baseFolder, String defaultDatabase, String defaultTablePrefix) {
-        this(baseFolder, "Database.yml", defaultDatabase, defaultTablePrefix);
+    public DatabaseConfiguration(File baseFolder, String defaultDatabase, Plugin plugin) {
+        this(baseFolder, "Database.yml", defaultDatabase, plugin);
     }
 
     /**
      * @param baseFolder the parent directory for the configuration
      * @param fileName the name of the configuration file
      * @param defaultDatabase the default database name
-     * @param defaultTablePrefix the default table prefix
+     * @param plugin the plugin
      */
-    public DatabaseConfiguration(File baseFolder, String fileName, String defaultDatabase, String defaultTablePrefix) {
+    public DatabaseConfiguration(File baseFolder, String fileName, @Nullable String defaultDatabase, Plugin plugin) {
         super(new File(baseFolder, fileName), true);
-        this.defaultDatabase = defaultDatabase;
-        this.defaultTablePrefix = defaultTablePrefix;
-    }
-
-    @Override
-    public void onCreate() {
-        set("TablePrefix", defaultTablePrefix);
-        set("DatabaseName", defaultDatabase);
+        this.defaultDatabase = StringUtil.isEmptyOrNull(defaultDatabase) ? "minecraft" : defaultDatabase;
+        this.plugin = plugin;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
         addDefault("Port", 3306);
         addDefault("Username", "root");
         addDefault("Password", "");
-        addDefault("TablePrefix", defaultTablePrefix);
+        addDefault("TablePrefix", plugin.getName().toLowerCase().trim().replace(" ", "_") + "_");
         addDefault("DatabaseName", defaultDatabase);
     }
 
