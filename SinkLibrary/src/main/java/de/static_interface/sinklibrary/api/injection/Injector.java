@@ -40,6 +40,7 @@ import java.lang.reflect.Method;
  */
 public class Injector {
 
+    private static final int SWAPPER_PORT = 8000;
     private static HotSwapper swapper = null;
 
     public static void loadInjections(Class clazz) throws Exception {
@@ -49,7 +50,7 @@ public class Injector {
 
     public static void loadInjections(Class clazz, ClassLoader cl) throws Exception {
         if (swapper == null) {
-            swapper = new HotSwapper(8000);
+            swapper = new HotSwapper(SWAPPER_PORT);
         }
         Validate.notNull(clazz);
         Validate.notNull(cl);
@@ -80,6 +81,9 @@ public class Injector {
 
     public static void injectCode(String clazz, ClassLoader cl, String method, Class[] methodArgs, String code, InjectTarget target)
             throws Exception {
+        if (swapper == null) {
+            swapper = new HotSwapper(SWAPPER_PORT);
+        }
         ClassPool cp = ClassPool.getDefault();
         ClassPath classPath = new LoaderClassPath(cl);
         cp.appendClassPath(classPath);
@@ -95,6 +99,9 @@ public class Injector {
 
     public static void injectCodeConstructor(String clazz, ClassLoader cl, Class[] methodArgs, String code, InjectTarget target)
             throws Exception {
+        if (swapper == null) {
+            swapper = new HotSwapper(SWAPPER_PORT);
+        }
         ClassPool cp = ClassPool.getDefault();
         ClassPath classPath = new LoaderClassPath(cl);
         cp.appendClassPath(classPath);

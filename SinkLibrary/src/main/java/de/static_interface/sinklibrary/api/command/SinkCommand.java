@@ -65,6 +65,7 @@ public abstract class SinkCommand extends SinkCommandBase {
     }
 
     public String getName() {
+
         if (command != null) {
             return command.getName();
         }
