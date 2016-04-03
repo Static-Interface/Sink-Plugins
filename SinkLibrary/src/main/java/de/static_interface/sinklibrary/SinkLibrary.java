@@ -37,9 +37,6 @@ import de.static_interface.sinklibrary.command.SinkVersionCommand;
 import de.static_interface.sinklibrary.configuration.GeneralLanguage;
 import de.static_interface.sinklibrary.configuration.GeneralSettings;
 import de.static_interface.sinklibrary.configuration.IngameUserConfiguration;
-import de.static_interface.sinksql.AbstractTable;
-import de.static_interface.sinksql.Database;
-import de.static_interface.sinksql.SqlObjectConverter;
 import de.static_interface.sinklibrary.listener.DisplayNameListener;
 import de.static_interface.sinklibrary.listener.IngameUserListener;
 import de.static_interface.sinklibrary.listener.IrcCommandListener;
@@ -67,6 +64,9 @@ import de.static_interface.sinklibrary.util.Debug;
 import de.static_interface.sinklibrary.util.ReflectionUtil;
 import de.static_interface.sinklibrary.util.SinkIrcReflection;
 import de.static_interface.sinklibrary.util.StringUtil;
+import de.static_interface.sinksql.AbstractTable;
+import de.static_interface.sinksql.Database;
+import de.static_interface.sinksql.SqlObjectConverter;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -90,6 +90,8 @@ import org.pircbotx.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -579,6 +581,36 @@ public class SinkLibrary extends JavaPlugin {
             ircExceptionOccured = true;
             return false;
         }
+    }
+
+    /**
+     * @return true if the {@link de.static_interface.sinklibrary.api.injection.Injector} API can be used on this enviroment
+     */
+    public boolean isInjectorAvailable() {
+        try {
+            Class.forName("javassist.util.HotSwapper");
+        } catch (ClassNotFoundException e) {
+            Debug.log("Injector not available: javassist HotSwapper not found");
+            return false;
+        }
+
+        try {
+            Class.forName("com.sun.jdi.VirtualMachine");
+        } catch (ClassNotFoundException e) {
+            Debug.log("Injector not available: Are you missing a reference to tools.jar?");
+            return false;
+        }
+
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        for (String s : arguments) {
+            if (s.startsWith("-agentlib:jdwp=transport=dt_socket")) {
+                return true;
+            }
+        }
+
+        Debug.log("Injector not available: missing required start params");
+        return false;
     }
 
     /**

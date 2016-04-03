@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import javax.annotation.Nullable;
+
 /**
  * To use this, the server needs to be started with these parameters:
  * <p>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000</p>
@@ -75,11 +77,11 @@ public class Injector {
         injectCode(clazz.getName(), clazz.getClassLoader(), method.getName(), method.getParameterTypes(), code, target);
     }
 
-    public static void injectCode(Class clazz, String method, Class[] methodArgs, String code, InjectTarget target) throws Exception {
+    public static void injectCode(Class clazz, String method, @Nullable Class[] methodArgs, String code, InjectTarget target) throws Exception {
         injectCode(clazz.getName(), clazz.getClassLoader(), method, methodArgs, code, target);
     }
 
-    public static void injectCode(String clazz, ClassLoader cl, String method, Class[] methodArgs, String code, InjectTarget target)
+    public static void injectCode(String clazz, ClassLoader cl, String method, @Nullable Class[] methodArgs, String code, InjectTarget target)
             throws Exception {
         if (swapper == null) {
             swapper = new HotSwapper(SWAPPER_PORT);
@@ -93,11 +95,11 @@ public class Injector {
         postProcess(Class.forName(clazz), cc);
     }
 
-    public static void injectCodeConstructor(Class clazz, Class[] constructorArgs, String code, InjectTarget target) throws Exception {
+    public static void injectCodeConstructor(Class clazz, @Nullable Class[] constructorArgs, String code, InjectTarget target) throws Exception {
         injectCodeConstructor(clazz.getName(), clazz.getClassLoader(), constructorArgs, code, target);
     }
 
-    public static void injectCodeConstructor(String clazz, ClassLoader cl, Class[] methodArgs, String code, InjectTarget target)
+    public static void injectCodeConstructor(String clazz, ClassLoader cl, @Nullable Class[] methodArgs, String code, InjectTarget target)
             throws Exception {
         if (swapper == null) {
             swapper = new HotSwapper(SWAPPER_PORT);
@@ -189,6 +191,9 @@ public class Injector {
     }
 
     private static CtClass[] toCtClass(ClassPool cp, Class[] classes) throws NotFoundException {
+        if (classes == null) {
+            return null;
+        }
         CtClass[] args;
         if (classes.length == 1 && classes[0] == Injector.class) {
             args = null;
