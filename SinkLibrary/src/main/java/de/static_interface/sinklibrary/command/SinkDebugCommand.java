@@ -47,7 +47,7 @@ public class SinkDebugCommand extends SinkCommand {
 
     public SinkDebugCommand(Plugin plugin) {
         super(plugin);
-        getCommandOptions().setIrcOpOnly(true);
+        //getCommandOptions().setIrcOpOnly(true);
     }
 
     @Override
@@ -204,6 +204,4 @@ public class SinkDebugCommand extends SinkCommand {
             return true;
         }
     }
-
-
 }

@@ -22,14 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InjectAt {
-
     String targetClass();
-
     String method();
 
-    Class[] methodArgs() default Injector.class;
-
+    String[] methodArgNames();
     int line();
-
     boolean modify() default true;
 }

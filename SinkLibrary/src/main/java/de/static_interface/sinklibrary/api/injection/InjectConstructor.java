@@ -18,12 +18,9 @@
 package de.static_interface.sinklibrary.api.injection;
 
 public @interface InjectConstructor {
-
     String targetClass();
-
     String method();
 
-    Class[] methodArgs() default Injector.class;
-
+    String[] methodArgNames();
     InjectTarget injectTarget();
 }

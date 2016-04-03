@@ -34,7 +34,10 @@ public class InjectionTestCommand extends SinkSubCommand<SinkDebugCommand> {
         super(sinkDebugCommand, "inject");
     }
 
-    @Inject(targetClass = "de.static_interface.sinklibrary.api.command.SinkCommand", method = "onPreExecute", injectTarget = InjectTarget.BEFORE_BODY)
+    @Inject(targetClass = "de.static_interface.sinklibrary.api.command.SinkCommand",
+            method = "onPreExecute",
+            methodArgNames = {"sender", "command", "label", "args"},
+            injectTarget = InjectTarget.BEFORE_METHOD)
     public static void onPreExecuteInject(CommandSender sender, @Nullable Command command, String label, String[] args) {
         SinkLibrary.getInstance().sendIrcMessage("onPreExecute from " + sender.getName(), "#dev");
     }
@@ -44,7 +47,7 @@ public class InjectionTestCommand extends SinkSubCommand<SinkDebugCommand> {
         try {
             Injector.loadInjections(getClass());
         } catch (Exception e) {
-            sender.sendMessage("Exception occurred: " + e.getMessage());
+            sender.sendMessage(e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
             return true;
         }
