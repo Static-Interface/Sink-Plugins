@@ -151,6 +151,14 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>de.static_interface:sinksql</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
