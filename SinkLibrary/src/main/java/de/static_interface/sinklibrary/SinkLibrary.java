@@ -567,14 +567,14 @@ public class SinkLibrary extends JavaPlugin {
     public boolean isInjectorAvailable() {
         try {
             Class.forName("javassist.util.HotSwapper");
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             Debug.log("Injector not available: javassist HotSwapper not found");
             return false;
         }
 
         try {
             Class.forName("com.sun.jdi.VirtualMachine");
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             Debug.log("Injector not available: Are you missing a reference to tools.jar?");
             return false;
         }
