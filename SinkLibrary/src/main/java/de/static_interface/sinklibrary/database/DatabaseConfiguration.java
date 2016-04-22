@@ -38,6 +38,7 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
      */
     public DatabaseConfiguration(File baseFolder, String defaultDatabase, Plugin plugin) {
         this(baseFolder, "Database.yml", defaultDatabase, plugin);
+        this.plugin = plugin;
     }
 
     /**
