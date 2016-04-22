@@ -38,7 +38,6 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
      */
     public DatabaseConfiguration(File baseFolder, String defaultDatabase, Plugin plugin) {
         this(baseFolder, "Database.yml", defaultDatabase, plugin);
-        this.plugin = plugin;
     }
 
     /**
@@ -55,12 +54,16 @@ public class DatabaseConfiguration extends Configuration implements DatabaseConn
 
     @Override
     public void addDefaults() {
+        String tblPrefix = "";
+        if (plugin != null && plugin.getName() != null) {
+            tblPrefix = plugin.getName().toLowerCase().trim().replace(" ", "_") + "_";
+        }
         addDefault("Type", "H2");
         addDefault("Address", "localhost");
         addDefault("Port", 3306);
         addDefault("Username", "root");
         addDefault("Password", "");
-        addDefault("TablePrefix", plugin.getName().toLowerCase().trim().replace(" ", "_") + "_");
+        addDefault("TablePrefix", tblPrefix);
         addDefault("DatabaseName", defaultDatabase);
     }
 
